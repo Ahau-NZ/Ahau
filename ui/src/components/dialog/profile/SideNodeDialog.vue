@@ -21,10 +21,9 @@
         </v-row>
         <v-container>
           <v-row v-if="isEditing">
-
             <!-- Displays the form to edit the profile fields -->
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <v-btn
@@ -59,7 +58,7 @@
 
             <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
-              col="12"
+              cols="12"
               :align="mobile ? '' : 'right'"
               class="pt-0 d-flex justify-space-between"
             >
@@ -69,6 +68,40 @@
               <v-btn @click="submit" text large fab class="blue--text" color="blue">
                 {{ t('save') }}
               </v-btn>
+            </v-col>
+          </v-row>
+
+          <v-row v-if="isEditing">
+            <v-col cols="12" :class="mobile ? 'px-0':'py-0'">
+              <v-divider/>
+            </v-col>
+            <v-col v-if="profile.parents.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+              <EditRelationships
+                :label="t('parents')"
+                :profiles="profile.parents"
+                sideDialog
+                @edit="updateLink($event, 'parent')"
+                @remove="removeLink($event, 'parent')"
+              />
+              <v-divider/>
+            </v-col>
+            <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+              <EditRelationships
+                :label="t('partners')"
+                :profiles="partners"
+                sideDialog
+                @remove="removeLink($event, 'partner')"
+              />
+              <v-divider/>
+            </v-col>
+            <v-col v-if="profile.children.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+              <EditRelationships
+                :label="t('children')"
+                :profiles="profile.children"
+                sideDialog
+                @edit="updateLink($event, 'child')"
+                @remove="removeLink($event, 'child')"
+              />
             </v-col>
           </v-row>
 
@@ -231,14 +264,8 @@
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
-                    :deletable="allowRemoveChildren"
-                    @delete="removeChildLink(profile.children[$event])"
+                    @delete="removeLink(profile.children[$event])"
                   >
-                    <template v-slot:title-actions v-if="profile.children && profile.children.length">
-                      <v-btn class="blue--text" text @click="toggleRemoveChildren">
-                        <v-icon small>{{ allowRemoveChildren ? 'mdi-check' : 'mdi-pencil' }}</v-icon>
-                      </v-btn>
-                    </template>
                     <template v-slot:action>
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
                     </template>
@@ -286,6 +313,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
+import EditRelationships from '@/components/profile/EditRelationships.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -336,7 +364,8 @@ export default {
     AvatarGroup,
     DialogTitleBanner,
     ArchiveIcon,
-    ProfileInfoItem
+    ProfileInfoItem,
+    EditRelationships
   },
   props: {
     profile: { type: Object, default: () => {} },
@@ -387,9 +416,6 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    withRelationships () {
-      return this.scopedProfile.parent !== null
     },
     diedAt () {
       if (this.scopedProfile.aliveInterval) {
@@ -465,9 +491,6 @@ export default {
     ...mapActions(['setDialog', 'setIsFromWhakapapaShow']),
     ...mapPersonActions(['setProfileById']),
     getDisplayName,
-    toggleRemoveChildren () {
-      this.allowRemoveChildren = !this.allowRemoveChildren
-    },
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
       const originalAuthor = await this.getProfile(this.scopedProfile.originalAuthor)
@@ -476,19 +499,53 @@ export default {
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
-    async removeChildLink (child) {
-      await this.removeLinkedPerson(this.scopedProfile.id, child.id)
-      this.$emit('delete-link', child) // needed to reload the tree
-    },
-    async removeLinkedPerson (parent, child) {
-      const { linkId } = await this.getWhakapapaLink(parent, child)
+    async updateLink (person, type) {
+      if (type !== 'parent' && type !== 'child') {
+        console.error('Cannot update a link that isnt a parent or child link')
+        return
+      }
 
-      if (!linkId) throw new Error('No linkId to remove this link!')
+      if (type === 'parent') {
+        await this.updateLinkedPerson(person.id, this.scopedProfile.id, person.relationshipType)
+      } else {
+        await this.updateLinkedPerson(this.scopedProfile.id, person.id, person.relationshipType)
+      }
+
+      // this is needed to reload the whakapapa
+      // TODO: this could be slow for larger whakapapa!
+      this.$emit('reload-whakapapa')
+    },
+    async removeLink (person, type) {
+      var isPartner = type === 'partner'
+      let link
+      if (type === 'parent') link = await this.removeLinkedPerson(person.id, this.scopedProfile.id)
+      else link = await this.removeLinkedPerson(this.scopedProfile.id, person.id, isPartner)
+
+      if (isPartner) person.isPartner = true
+
+      this.$emit('delete-link', { link, mainProfileId: this.scopedProfile.id })
+    },
+    async updateLinkedPerson (parent, child, relationshipType) {
+      const { linkId } = await this.getWhakapapaLink(parent, child)
+      if (!linkId) throw new Error('No linkId to update this link!')
 
       let input = {
+        type: 'link/profile-profile/child',
         linkId,
         child,
         parent,
+        relationshipType
+      }
+
+      await this.saveLink(input)
+    },
+    async removeLinkedPerson (parent, child, isPartner) {
+      const link = await this.getWhakapapaLink(parent, child, isPartner)
+
+      if (!link || !link.linkId) throw new Error('No linkId to remove this link!')
+
+      let input = {
+        linkId: link.linkId,
         tombstone: {
           date: new Date().toISOString().slice(0, 10),
           reason: 'user deleted link'
@@ -497,6 +554,8 @@ export default {
 
       await this.saveLink(input)
       this.$emit('submit', {}) // needed to reload this dialog
+
+      return link
     },
     goArchive () {
       if (

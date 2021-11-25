@@ -178,12 +178,11 @@ const methods = {
       console.error(err)
     }
   },
-  async getWhakapapaLink (parent, child) {
+  async getWhakapapaLink (parent, child, isPartner) {
     try {
       const res = await this.$apollo.query(
-        whakapapaLink(parent, child)
+        whakapapaLink(parent, child, isPartner)
       )
-
       if (res.errors) throw res.errors
 
       return res.data.whakapapaLink

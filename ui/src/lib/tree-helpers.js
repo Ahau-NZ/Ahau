@@ -33,9 +33,11 @@ function flatten (node) {
   var output = {
     [node.id]: flatNode
   }
+
   children.forEach(person => {
     output[person.profile.id] = person.profile
   })
+
   parents.forEach(person => {
     output[person.profile.id] = person.profile
   })
@@ -122,6 +124,7 @@ function updateNode (nestedWhakapapa, node) {
     nestedWhakapapa.children = node.children
     nestedWhakapapa.partners = node.partners
 
+    // leave spread operator: this triggers the computed listener as there is a change in reference
     return { ...nestedWhakapapa }
   }
   // if this nestedWhakapapa isnt the one we are looking for,
@@ -161,6 +164,21 @@ function deleteNode (nestedWhakapapa, id) {
     } else return nestedWhakapapa.children[0]
   }
   // if this nestedWhakapap isnt the one we are looking for,
+  // try searching its otherParents
+  var otherParentIndex = -1
+  nestedWhakapapa.parents.some((parent, i) => {
+    if (parent.id === id) {
+      otherParentIndex = i
+      return true
+    }
+  })
+  // if an index was set
+  if (otherParentIndex > -1) {
+    // remove that parent
+    nestedWhakapapa.parents.splice(otherParentIndex, 1)
+    return nestedWhakapapa
+  }
+
   // try searching its children
   var childIndex = -1
   if (nestedWhakapapa.children && nestedWhakapapa.children.length) {
@@ -350,9 +368,11 @@ function find (nestedWhakapapa, node) {
     return nestedWhakapapa
   }
 
-  for (var child of nestedWhakapapa.children) {
-    var found = this.find(child, node)
-    if (found) return found
+  if (nestedWhakapapa.children) {
+    for (var child of nestedWhakapapa.children) {
+      var found = this.find(child, node)
+      if (found) return found
+    }
   }
 
   return null

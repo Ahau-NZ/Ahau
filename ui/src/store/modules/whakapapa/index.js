@@ -79,13 +79,11 @@ export default function (apollo) {
     },
     deleteNodeInNestedWhakapapa (state, node) {
       var whakapapa = {}
-
       if (node.isPartner) {
         whakapapa = tree.deletePartnerNode(state.nestedWhakapapa, node.id)
       } else {
         whakapapa = tree.deleteNode(state.nestedWhakapapa, node.id)
       }
-
       state.nestedWhakapapa = whakapapa
     }
   }

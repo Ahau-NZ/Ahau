@@ -45,7 +45,8 @@
       @submit="processUpdate($event)"
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
-      @delete-link="deleteNodeInNestedWhakapapa"
+      @delete-link="removeLinkFromTree"
+      @reload-whakapapa="reloadWhakapapa"
       :view="view"
       :preview="previewProfile"
     />
@@ -234,10 +235,13 @@ export default {
     ...mapActions(['loading', 'setDialog']),
     ...mapWhakapapaMutations([
       'updateNodeInNestedWhakapapa',
-      'deleteNodeInNestedWhakapapa'
+      'deleteNodeInNestedWhakapapa',
+      'setNestedWhakapapa',
+      'setView'
     ]),
     ...mapWhakapapaActions([
-      'saveWhakapapaView'
+      'saveWhakapapaView',
+      'getWhakapapaView'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -420,6 +424,10 @@ export default {
     async quickAddParents (child, parents) {
       await Promise.all(
         parents.map(async parent => {
+          // check if a link already exists
+          const link = await this.getWhakapapaLink(parent.id, child)
+          if (link) return
+
           const relationshipAttrs = pick(parent, ['relationshipType', 'legallyAdopted'])
           await this.createChildLink({ child, parent: parent.id, relationshipAttrs })
         })
@@ -428,6 +436,10 @@ export default {
     async quickAddChildren (parent, children) {
       await Promise.all(
         children.map(async child => {
+          // check if a link already exists
+          const link = await this.getWhakapapaLink(parent, child.id)
+          if (link) return
+
           const relationshipAttrs = pick(child, ['relationshipType', 'legallyAdopted'])
           await this.createChildLink({ child: child.id, parent, relationshipAttrs })
         })
@@ -485,6 +497,7 @@ export default {
     },
     async processUpdate (input) {
       if (!input) return
+      if (Object.keys(input).length === 0) return
 
       if (input.recps) { // cant have recps on an update
         delete input.recps
@@ -533,43 +546,167 @@ export default {
       }
     },
     async removeProfile (deleteOrIgnore) {
-      await this.checkImportantRelationships()
+      await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
       if (deleteOrIgnore === 'delete') {
         await this.deletePerson()
       } else {
         await this.ignoreProfile()
       }
     },
-    async checkImportantRelationships () {
-      let relationship
-      this.view.importantRelationships.forEach(rule => {
-        if (rule.profileId === this.selectedProfile.id) {
-          relationship = {
-            profileId: rule.profileId,
+    async removeLinkFromTree ({ link, mainProfileId }) {
+      const removedImportantRelationship = await this.checkAndUpdateImportantRelationships(link.parent, link.child)
+
+      // we want to remove the person from the selectedProfile in the tree
+      if (removedImportantRelationship) await this.reloadWhakapapa() // WARNING: this can get expensive for a larger tree
+      else {
+        if (mainProfileId) this.deleteNodeInNestedWhakapapa({ id: mainProfileId })
+        else await this.reloadWhakapapa()
+      }
+
+      this.setSelectedProfile(this.selectedProfile)
+    },
+
+    // TODO 25-11-2021 cherese move these methods to ssb-graphql-whakapapa
+    async removeProfileFromImportantRelationships (profileId) {
+      // find rule for profileId
+      const rule = this.view.importantRelationships.find(rule => rule.profileId === profileId)
+      if (rule) {
+        await this.saveWhakapapaView({
+          id: this.$route.params.whakapapaId,
+          importantRelationships: {
+            profileId,
             important: []
           }
-        } else {
-          const important = [rule.primary.profileId, ...rule.other.map(d => d.profileId)]
-
-          if (important.includes(this.selectedProfile.id)) {
-            relationship = {
-              profileId: rule.profileId,
-              important: important.filter(id => id !== this.selectedProfile.id)
-            }
-          }
-        }
-      })
-
-      if (relationship) {
-        const update = {
-          id: this.$route.params.whakapapaId,
-          importantRelationships: relationship
-        }
-        await this.saveWhakapapaView(update)
-        // we need to load the different links
-        // await this.$parent.reload() //doesnt work reloading
+        })
       }
+
+      // find rules which mention profileId
+      await Promise.all(
+        this.view.importantRelationships.map(async rule => {
+          const important = [rule.primary.profileId, ...rule.other.map(r => r.profileId)]
+          if (important.includes(profileId)) {
+            return this.saveWhakapapaView({
+              id: this.$route.params.whakapapaId,
+              importantRelationships: {
+                profileId,
+                important: important.filter(id => id !== profileId)
+              }
+            })
+          }
+        })
+      )
     },
+    async checkAndUpdateImportantRelationships (profileIdA, profileIdB) {
+      /*
+        rule = {
+          profileId,
+          primary: { profileId, relationshipType },
+          other: [
+            { profileId, relationshipType }
+          ]
+        }
+
+        // find the rules which are about profileA
+        // see if they mention profileB
+        // -> could be a primary
+        // -> could be in other
+        // IF its in either, we need to set a new rule
+      */
+
+      const findImportantRelationship = (profileId, otherProfileId) => {
+        return this.view.importantRelationships.find(rule => {
+          return (
+            (rule.profileId === profileId) && // A
+            (
+              rule.primary.profileId === otherProfileId || // B
+              rule.other.some(r => r.profileId === otherProfileId) // C
+            )
+          )
+        })
+      }
+
+      let didUpdate = false
+      const ruleA = findImportantRelationship(profileIdA, profileIdB)
+      if (ruleA) {
+        didUpdate = true
+        await this.saveWhakapapaView({
+          id: this.$route.params.whakapapaId,
+          importantRelationships: {
+            profileId: profileIdA,
+            important: [
+              ruleA.primary.profileId,
+              ...ruleA.other.map(r => r.profileId)
+            ]
+              .filter(profileId => profileId !== profileIdB)
+          }
+        })
+      }
+
+      const ruleB = findImportantRelationship(profileIdB, profileIdA)
+      if (ruleB) {
+        didUpdate = true
+        await this.saveWhakapapaView({
+          id: this.$route.params.whakapapaId,
+          importantRelationships: {
+            profileId: profileIdB,
+            important: [
+              ruleB.primary.profileId,
+              ...ruleB.other.map(r => r.profileId)
+            ]
+              .filter(profileId => profileId !== profileIdA)
+          }
+        })
+      }
+
+      return didUpdate
+    },
+    async addImportantRelationship (input) {
+      // Check if we are moving a partner connection
+      var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
+
+      // check if there is already an existing important relationship
+      const exsistingDupe = this.view.importantRelationships.find(dupe => dupe.profileId === profile.id)
+      var lessRelationship
+
+      if (exsistingDupe) {
+        // YES - there is an important relationship so we use that one instead
+        lessRelationship = exsistingDupe.primary.profileId
+      } else {
+        // NO - there isnt an important relationship so we find the parent which takes "presidence"
+        lessRelationship = (profile.parents && profile.parents.length && this.findInTree(profile.parents[0].id))
+          ? profile.parents[0].id // take the first parent
+          : profile.partners && profile.partners.length
+            ? profile.partners[0].id // otherwise take the first partner? TODO: is this logic right @ben? Need to check!
+            : null
+
+        if (!lessRelationship) return
+      }
+
+      var importantRelationship = {
+        profileId: profile.id
+      }
+
+      // check if we are linking a partner connection
+      if (input.moveDup || this.dialogType === 'child') {
+        importantRelationship.important = (input.moveDup)
+          ? [this.selectedProfile.id, lessRelationship]
+          : [lessRelationship, this.selectedProfile.id]
+      } else if (input.moveDup === false && this.dialogType === 'parent') {
+        importantRelationship.important = [lessRelationship, input.id]
+      } else {
+        importantRelationship.important = [input.id, lessRelationship]
+      }
+
+      const update = {
+        id: this.$route.params.whakapapaId,
+        importantRelationships: importantRelationship
+      }
+
+      await this.saveWhakapapaView(update)
+      await this.$parent.reload()
+    },
+    // END TODO
+
     async ignoreProfile () {
       const input = {
         id: this.$route.params.whakapapaId,
@@ -756,48 +893,18 @@ export default {
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)
     },
-    async addImportantRelationship (input) {
-      // Check if we are moving a partner connection
-      var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
+    async reloadWhakapapa () {
+      // this current resets the graph to ensure relationships are rendered right. This needs to be improved
+      const newWhakapapa = await this.loadDescendants(this.view.focus)
+      this.setNestedWhakapapa(newWhakapapa)
 
-      // check if there is already an existing important relationship
-      const exsistingDupe = this.view.importantRelationships.find(dupe => dupe.profileId === profile.id)
-      var lessRelationship
+      // // reload the view as well (for important relationships)
+      // NOTE: we could do this: await this.$parent.reload() but that is an expensive operation
 
-      if (exsistingDupe) {
-        // YES - there is an important relationship so we use that one instead
-        lessRelationship = exsistingDupe.primary.profileId
-      } else {
-        // NO - there isnt an important relationship so we find the parent which takes "presidence"
-        lessRelationship = (profile.parents && profile.parents.length && this.findInTree(profile.parents[0].id))
-          ? profile.parents[0].id // take the first parent
-          : profile.partners && profile.partners.length
-            ? profile.partners[0].id // otherwise take the first partner? TODO: is this logic right @ben? Need to check!
-            : null
-
-        if (!lessRelationship) return
-      }
-
-      var importantRelationship = {
-        profileId: profile.id
-      }
-
-      // check if we are linking a partner connection
-      if (input.moveDup || this.dialogType === 'child') {
-        importantRelationship.important = (input.moveDup)
-          ? [this.selectedProfile.id, lessRelationship]
-          : [lessRelationship, this.selectedProfile.id]
-      } else {
-        importantRelationship.important = [input.id, lessRelationship]
-      }
-
-      const update = {
-        id: this.$route.params.whakapapaId,
-        importantRelationships: importantRelationship
-      }
-
-      await this.saveWhakapapaView(update)
-      await this.$parent.reload()
+      // this is a hacky way, but its less expensive and ensures the changes
+      // made to important relationships are shown
+      const whakapapaView = await this.getWhakapapaView(this.view.id)
+      this.setView(whakapapaView)
     }
   }
 }

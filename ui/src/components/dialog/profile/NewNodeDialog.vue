@@ -295,7 +295,14 @@ export default {
     },
     getSuggestionsByField (field) {
       if (!this.hasProfiles(field)) return []
-      return this.quickAdd[field].filter(Boolean)
+
+      const filterSelection = (profile) => {
+        if (!profile) return false
+        return profile.id !== this.profile.id
+      }
+
+      return this.quickAdd[field]
+        .filter(filterSelection)
     },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
