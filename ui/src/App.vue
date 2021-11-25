@@ -82,7 +82,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
-      if (typeof this.loadingState === 'boolean') return 1500
+      if (typeof this.loadingState === 'boolean') return 4000
       else return 500
     },
     enableMenu () {
