@@ -507,7 +507,9 @@ export default {
         // get all step/whangai parents of the children
         if (person.children.length) otherParents = await this.getOtherParents(person, seen)
 
-        // add half brothers and sisters as children with property of isNonChild
+        otherParents = this.removeDuplicateNodes(otherParents, person.id)
+
+        // add half borthers and sisters as children with property of isNonChild
         if (otherParents.length) {
           otherParents.forEach(parent => {
             parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
@@ -663,8 +665,9 @@ export default {
       }))
     },
 
-    openContextMenu ({ event, profile }) {
-      this.setSelectedProfile(profile)
+    async openContextMenu ({ event, profile }) {
+      var fullProfile = await this.getRelatives(profile.id)
+      this.setSelectedProfile(fullProfile)
       if (this.dialog.active === 'view-edit-node') {
         this.updateDialog(null, null)
       }
