@@ -90,6 +90,14 @@ export default function rootModule (apollo) {
         state.goBack = id
       },
       setCurrentAccess (state, access) {
+        // TODO we need to specify what's needed, this warn will help us spot inconsistencies
+        if (
+          !access.groupId ||
+          ('isPersonalGroup' in access && typeof access.isPersonalGroup !== 'boolean') ||
+          !access.profileId
+        ) {
+          console.warn('expected more feilds on access, got', access)
+        }
         state.currentAccess = access
       },
       setAllowSubmissions (state, allow) {
@@ -107,6 +115,9 @@ export default function rootModule (apollo) {
         if (result.errors) throw result.errors
 
         commit('updateWhoami', result.data.whoami)
+      },
+      setCurrentAccess ({ commit }, access) {
+        commit('setCurrentAccess', access)
       },
       setLoading ({ commit }, loading) {
         commit('updateLoading', loading)

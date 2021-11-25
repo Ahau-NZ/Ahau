@@ -20,7 +20,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -86,8 +86,7 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: '',
-      access: null
+      csv: ''
     }
   },
   watch: {
@@ -96,24 +95,24 @@ export default {
       immediate: true,
       handler (tribe) {
         if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          this.setCurrentAccess(this.access)
+          this.setCurrentAccess({
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id,
+            isPersonalGroup: true
+          })
           return
         }
 
-        this.access = {
-          ...tribe.private.length > 0
-            ? tribe.private[0]
-            : tribe.public[0],
-          groupId: tribe.id
-        }
-
-        this.setCurrentAccess(this.access)
+        this.setCurrentAccess({
+          groupId: tribe.id,
+          profileId: (tribe.private.length ? tribe.private[0] : tribe.public[0]).id,
+          isPersonalGroup: false
+        })
       }
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'access']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -126,11 +125,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapActions(['setLoading']),
+    ...mapActions(['setLoading', 'setCurrentAccess']),
     updateAccess ($event) {
-      this.access = $event
-      this.setCurrentAccess(this.access)
+      this.setCurrentAccess({
+        ...this.access,
+        groupId: $event.type === 'kaitiaki' ? this.tribe.admin.id : this.tribe.id
+      })
     },
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)

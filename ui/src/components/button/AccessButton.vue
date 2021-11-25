@@ -23,21 +23,20 @@
                         v-on="on"
                         text
                         rounded
-                        disabled
                         small
                       >
                         <v-icon small>mdi-eye</v-icon>
-                        <span class="ml-2">{{ group }}</span>
+                        <span class="ml-2">{{ currentAccessOption.label }}</span>
                         <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
                     <v-list>
                       <v-list-item
-                        v-for="(group, index) in groups"
+                        v-for="(accessOption, index) in accessOptions"
                         :key="index"
-                        @click="setGroup(group)"
+                        @click="setSubGroup(accessOption)"
                       >
-                        <v-list-item-title>{{ group }}</v-list-item-title>
+                        <v-list-item-title>{{ accessOption.label }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
@@ -96,6 +95,13 @@ import Avatar from '@/components/Avatar.vue'
 import { mapGetters } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
+const ALL_MEMBERS = 'all members'
+const KAITIAKI = 'kaitiaki'
+
+// TODO 2021-11-25 (mix) : here we have two things called access!
+// 1. props.access - seems to be a community profile with some other data attached (isPersonalGroup)
+// 2. this.accessOptions - the setting about who in the group can read?
+
 export default {
   name: 'AccessButton',
   props: {
@@ -106,9 +112,16 @@ export default {
   data () {
     return {
       toggle: false,
-      groups: [this.t('allMembers'), this.t('kaitiaki')],
-      group: this.t('allMembers'),
-      permissions: [this.t('edit'), this.t('read'), this.t('submit')],
+      accessOptions: [
+        { type: ALL_MEMBERS, label: this.t('allMembers') },
+        { type: KAITIAKI, label: this.t('kaitiaki') }
+      ],
+      currentAccessOption: { type: ALL_MEMBERS, label: this.t('allMembers') },
+      permissions: [
+        this.t('edit'),
+        this.t('read'),
+        this.t('submit')
+      ],
       permission: this.t('edit')
     }
   },
@@ -152,11 +165,12 @@ export default {
     },
     recordPermissions () {
       if (this.access.isPersonalGroup) return this.t('privateAccess', { recordType: this.type })
-      else if (this.group === this.t('allMembers')) {
+      else if (this.currentAccessOption.type === KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
+      else if (this.currentAccessOption.type === ALL_MEMBERS) {
         if (this.permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
         else if (this.permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
         else if (this.permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
-      } else if (this.group === this.t('kaitiaki')) return this.t('kaitiakiAccess', { recordType: this.type })
+      }
       return ''
     }
     // caption () {
@@ -165,11 +179,9 @@ export default {
   },
   methods: {
     getDisplayName,
-    setGroup (group) {
-      this.group = group
-      console.log('change access to group: ', group)
-      // TODO update record backend to connect to group
-      // this.$emit('access', group, permission)
+    setAccess (groupOption) {
+      this.currentAccessOption = groupOption
+      this.$emit('access', groupOption)
     },
     setPermission (permission) {
       // TODO update record backend to hold permission
