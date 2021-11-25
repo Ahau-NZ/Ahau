@@ -8,13 +8,13 @@
             small
             :ripple="false"
           >
-            <Avatar class="" size="20px" :image="access.avatarImage" :isView="!access.avatarImage" :alt="getDisplayName(access)" :gender="access.gender" :aliveInterval="access.aliveInterval" />
-            <span class="ml-1 truncated-x">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span>
+            <Avatar class="" size="20px" :image="profile.avatarImage" :isView="!profile.avatarImage" :alt="getDisplayName(profile)" :gender="profile.gender" :aliveInterval="profile.aliveInterval" />
+            <span class="ml-1 truncated-x">{{ profile ? currentAccess.isPersonalGroup ? t('private') : profile.preferredName : t('setAccess')}}</span>
           </v-btn>
           <v-tooltip top open-delay="200">
             <template v-slot:activator="{ on }">
               <div v-on="on">
-                <template v-if="!access.isPersonalGroup">
+                <template v-if="!currentAccess.isPersonalGroup">
                   <!-- TODO: Update to list groups in Tribe: This is dependant on Groups Epic  -->
                   <v-menu offset-y light hide-details dense rounded outlined>
                     <template v-slot:activator="{ on, attrs }">
@@ -26,15 +26,15 @@
                         small
                       >
                         <v-icon small>mdi-eye</v-icon>
-                        <span class="ml-2">{{ currentAccessOption.label }}</span>
+                        <span class="ml-2">{{ currentAccess.label }}</span>
                         <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
-                    <v-list>
+                    <v-list v-if="accessOptions.length > 1">
                       <v-list-item
                         v-for="(accessOption, index) in accessOptions"
                         :key="index"
-                        @click="setSubGroup(accessOption)"
+                        @click="setCurrentAccess(accessOption)"
                       >
                         <v-list-item-title>{{ accessOption.label }}</v-list-item-title>
                       </v-list-item>
@@ -90,33 +90,37 @@
   </v-row>
 </template>
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import Avatar from '@/components/Avatar.vue'
 // import { getTribes } from '@/lib/community-helpers.js'
-import { mapGetters } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-const ALL_MEMBERS = 'all members'
-const KAITIAKI = 'kaitiaki'
-
-// TODO 2021-11-25 (mix) : here we have two things called access!
-// 1. props.access - seems to be a community profile with some other data attached (isPersonalGroup)
-// 2. this.accessOptions - the setting about who in the group can read?
+const ACCESS_PERSONAL = 'all members'
+const ACCESS_ALL_MEMBERS = 'all members'
+const ACCESS_KAITIAKI = 'kaitiaki'
+const VALID_ACCESS_TYPES = [ACCESS_PERSONAL, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI]
 
 export default {
   name: 'AccessButton',
   props: {
-    access: Object,
+    accessOptions: {
+      type: Array,
+      validator (value) {
+        const isValid = value.every(opt => VALID_ACCESS_TYPES.includes(opt.type) && opt.label && opt.groupId && opt.profileId)
+        if (!isValid) console.log('invalid accessOptions', JSON.stringify(value, null, 2))
+        return isValid
+      },
+      default: () => []
+    },
     disabled: Boolean,
     type: String
   },
   data () {
     return {
+      profile: {},
       toggle: false,
-      accessOptions: [
-        { type: ALL_MEMBERS, label: this.t('allMembers') },
-        { type: KAITIAKI, label: this.t('kaitiaki') }
-      ],
-      currentAccessOption: { type: ALL_MEMBERS, label: this.t('allMembers') },
       permissions: [
         this.t('edit'),
         this.t('read'),
@@ -155,7 +159,7 @@ export default {
     Avatar
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -164,12 +168,14 @@ export default {
       return 'pt-2 ml-2'
     },
     recordPermissions () {
-      if (this.access.isPersonalGroup) return this.t('privateAccess', { recordType: this.type })
-      else if (this.currentAccessOption.type === KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
-      else if (this.currentAccessOption.type === ALL_MEMBERS) {
-        if (this.permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
-        else if (this.permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
-        else if (this.permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
+      const { currentAccess, permission } = this
+
+      if (currentAccess.type === ACCESS_PERSONAL) return this.t('privateAccess', { recordType: this.type })
+      else if (currentAccess.type === ACCESS_KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
+      else if (currentAccess.type === ACCESS_ALL_MEMBERS) {
+        if (permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
+        else if (permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
+        else if (permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
       }
       return ''
     }
@@ -177,12 +183,10 @@ export default {
     //   return this.t('addToArchive', { recordType: this.type })
     // }
   },
+
   methods: {
+    ...mapActions(['setCurrentAccess']),
     getDisplayName,
-    setAccess (groupOption) {
-      this.currentAccessOption = groupOption
-      this.$emit('access', groupOption)
-    },
     setPermission (permission) {
       // TODO update record backend to hold permission
       this.permission = permission
@@ -191,6 +195,20 @@ export default {
     },
     t (key, vars) {
       return this.$t('accessButton.' + key, vars)
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getProfile']
+    })
+  ],
+  watch: {
+    'currentAccess.profileId': {
+      immediate: true,
+      async handler (profileId) {
+        if (!profileId) return
+        this.profile = await this.getProfile(profileId)
+      }
     }
   }
 }

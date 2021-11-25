@@ -23,6 +23,10 @@ export const getTribe = ({
         public {
           ...CommunityFragment
         }
+
+        admin {
+          id
+        }
       }
     }
   `,

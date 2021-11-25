@@ -9,7 +9,7 @@
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
       <template v-slot:before-actions>
-        <AccessButton :access="access" @access="updateAccess" type="whakapapa" />
+        <AccessButton type="whakapapa" :accessOptions="accessOptions"/>
       </template>
     </Dialog>
   </div>
@@ -24,6 +24,10 @@ import { mapActions, mapGetters } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+const ACCESS_PERSONAL = 'all members'
+const ACCESS_ALL_MEMBERS = 'all members'
+const ACCESS_KAITIAKI = 'kaitiaki'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -64,12 +68,6 @@ function whakapapaSubmission (newWhakapapa) {
 
 export default {
   name: 'NewViewDialog',
-  components: {
-    Dialog,
-    WhakapapaForm,
-    AvatarGroup,
-    AccessButton
-  },
   props: {
     title: String,
     show: {
@@ -77,42 +75,22 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      tribe: null, // to be loaded
+      helpertext: false,
+      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
+      csv: '',
+      accessOptions: []
+    }
+  },
   mixins: [
     mapProfileMixins({
       mapApollo: ['tribe']
     })
   ],
-  data () {
-    return {
-      helpertext: false,
-      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: ''
-    }
-  },
-  watch: {
-    tribe: {
-      deep: true,
-      immediate: true,
-      handler (tribe) {
-        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.setCurrentAccess({
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id,
-            isPersonalGroup: true
-          })
-          return
-        }
-
-        this.setCurrentAccess({
-          groupId: tribe.id,
-          profileId: (tribe.private.length ? tribe.private[0] : tribe.public[0]).id,
-          isPersonalGroup: false
-        })
-      }
-    }
-  },
   computed: {
-    ...mapGetters(['whoami', 'access']),
+    ...mapGetters(['whoami', 'currentAccess']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -124,11 +102,48 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
+  watch: {
+    tribe: {
+      deep: true,
+      immediate: true,
+      handler (tribe) {
+        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.accessOptions = [{
+            type: ACCESS_PERSONAL,
+            label: 'personal', // TODO translate
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } // eslint-disable-line
+        else {
+          if (!tribe) return
+
+          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+          this.accessOptions = [
+            {
+              type: ACCESS_ALL_MEMBERS,
+              label: 'all members', // TODO translate
+              groupId: tribe.id,
+              profileId
+            },
+            {
+              type: ACCESS_KAITIAKI,
+              label: 'kaitiaki', // TODO translate
+              groupId: tribe.admin.id,
+              profileId
+            }
+          ]
+        }
+
+        this.setCurrentAccess(this.accessOptions[0])
+      }
+    }
+  },
   methods: {
     ...mapActions(['setLoading', 'setCurrentAccess']),
     updateAccess ($event) {
       this.setCurrentAccess({
-        ...this.access,
+        ...this.currentAccess,
         groupId: $event.type === 'kaitiaki' ? this.tribe.admin.id : this.tribe.id
       })
     },
@@ -148,7 +163,7 @@ export default {
       const newOutput = {
         ...output,
         csv,
-        access: this.access
+        access: this.currentAccess
       }
       this.$emit('submit', newOutput)
       this.close()
@@ -156,6 +171,12 @@ export default {
     setFormData (whakapapa) {
       this.formData = whakapapa
     }
+  },
+  components: {
+    Dialog,
+    WhakapapaForm,
+    AvatarGroup,
+    AccessButton
   }
 }
 </script>
