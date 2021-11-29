@@ -24,7 +24,7 @@
           />
         </div>
         <div
-          v-else-if="(views && views.length < 1) || (views && views[0].views.length < 1)"
+          v-else-if="(views && views.length < 1)"
           class="px-8 py-12 subtitle grey--text"
           :class="{
             'text-center': mobile
@@ -32,10 +32,10 @@
           {{ t('noWhakapapaFound') }}
         </div>
         <div v-else>
-          <div v-for="(group, index ) in views" :key="index" class="py-4">
-            <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+          <div v-for="view in views" :key="view.id">
+            <v-row dense class="mb-2">
               <v-col cols="12" md="10">
-                <WhakapapaViewCard :view="view" cropDescription :tribeId="group.tribeId" />
+                <WhakapapaViewCard :view="view" cropDescription :tribeId="tribe.id" />
               </v-col>
             </v-row>
           </div>
@@ -44,16 +44,16 @@
     </v-row>
 
     <!-- admin only views -->
-    <v-row v-if='adminViews && adminViews.length'>
+    <v-row v-if="(adminViews && adminViews.length)">
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
         <v-divider light class="mt-12" style="max-width:80%"></v-divider>
-        <div v-for="(group, index ) in adminViews" :key="index" class="py-4">
-          <v-row class=" pb-3">
-            <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${group.name} -- ${t('adminWhakapapaRecords')}`}}</p>
-          </v-row>
-          <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+        <v-row class=" pb-3">
+          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${profile.preferredName} -- ${t('adminWhakapapaRecords')}`}}</p>
+        </v-row>
+        <div v-for="view in adminViews" :key="view.id">
+          <v-row dense class="mb-2">
             <v-col cols="12" md="10">
-              <WhakapapaViewCard :view="view" cropDescription :tribeId="group.tribeId" />
+              <WhakapapaViewCard :view="view" cropDescription :tribeId="adminGroupId" />
             </v-col>
           </v-row>
         </div>
@@ -103,6 +103,7 @@ export default {
       showViewForm: false,
       newView: null,
       columns: [],
+      adminGroupId: null,
 
       views: null, // becomes an array when loaded
       adminViews: null
@@ -118,32 +119,14 @@ export default {
   async mounted () {
     const groupId = this.$route.params.tribeId
 
-    // check if this is an admin group
-    // if it is re-route to the parent group...
-    const parentGroup = this.tribes.find(tribe => {
-      return tribe.admin && tribe.admin.id === groupId
-    })
-    debugger
-    if (parentGroup) {
-      console.log('HERE')
-      this.$router.push({
-        name: 'community/whakapapa',
-        params: {
-          tribeId: parentGroup.id,
-          profileId: this.$route.params.profileId
-        }
-      })
-        .catch(() => {})
-      return
-    }
-
     // set the current default access as the current group
     this.views = await this.loadViews(groupId)
 
-    const adminGroupId = this.tribe.admin && this.tribe.admin.id
-    if (adminGroupId) {
-      this.adminViews = await this.loadViews(adminGroupId)
-    } else this.adminViews = []
+    this.adminGroupId = this.tribe.admin && this.tribe.admin.id
+    if (this.adminGroupId) {
+      this.adminViews = await this.loadViews(this.adminGroupId)
+      console.log(this.adminViews)
+    } else this.adminViews = null
   },
   methods: {
     ...mapActions(['setLoading']),
@@ -152,14 +135,7 @@ export default {
     ...mapActions('whakapapa', ['getWhakapapaViews', 'saveWhakapapaView']),
 
     async loadViews (groupId) {
-      const views = await this.getWhakapapaViews({ groupId })
-
-      return [{
-        name: this.profile.preferredName,
-        image: this.profile.avatarImage,
-        views,
-        tribeId: groupId
-      }]
+      return this.getWhakapapaViews({ groupId })
     },
 
     async getSuggestions ($event) {
