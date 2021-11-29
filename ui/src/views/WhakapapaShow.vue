@@ -6,7 +6,7 @@
       <!-- Whakapapa Title Card -->
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
-        <WhakapapaShowViewCard :view="whakapapaView" :access="access" :shadow="false">
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
           <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -210,7 +210,6 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
@@ -233,6 +232,10 @@ const {
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapGetters: mapPersonGetters, mapMutations: mapPersonMutations } = createNamespacedHelpers('person')
 const { mapActions: mapTableActions } = createNamespacedHelpers('table')
+
+const ACCESS_PERSONAL = 'personal'
+const ACCESS_ALL_MEMBERS = 'all members'
+const ACCESS_KAITIAKI = 'kaitiaki'
 
 export default {
   name: 'WhakapapaShow',
@@ -260,7 +263,7 @@ export default {
   ],
   data () {
     return {
-      access: null,
+      accessOptions: [],
       fab: false,
       overflow: 'false',
       pan: 0,
@@ -296,6 +299,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('tribe', ['tribes']),
     ...mapPersonGetters(['selectedProfile']),
     ...mapWhakapapaGetters(['whakapapaView', 'nestedWhakapapa']),
     mobile () {
@@ -350,10 +354,43 @@ export default {
       }
     },
     async whakapapaView (view) {
-      if (view.recps) {
+      if (view && view.recps) {
+        // get the tribe this record is encrypted to
         const tribe = await this.getTribe(view.recps[0])
-        this.access = getTribalProfile(tribe, this.whoami)
-        this.setCurrentAccess(this.access)
+
+        // if its your personal group
+        if (this.whoami.personal.groupId === tribe.id) {
+          this.accessOptions = [{
+            type: ACCESS_PERSONAL,
+            label: 'personal',
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } else {
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === tribe.id)
+
+          if (parentGroup) {
+            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+            this.accessOptions = [{
+              type: ACCESS_KAITIAKI,
+              label: 'kaitiaki', // TODO translate
+              groupId: tribe.id,
+              profileId // community profileId
+            }]
+          } else {
+            const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+            this.accessOptions = [
+              {
+                type: ACCESS_ALL_MEMBERS,
+                label: 'all members', // TODO translate
+                groupId: tribe.id,
+                profileId // community profileId
+              }
+            ]
+          }
+        }
+
+        this.setCurrentAccess(this.accessOptions[0])
       }
     },
     showPartners: async function () {
