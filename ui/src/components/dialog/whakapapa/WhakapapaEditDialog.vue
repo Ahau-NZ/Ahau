@@ -81,8 +81,8 @@
         </v-col>
       </v-row>
     </template>
-    <template v-if="access" v-slot:before-actions>
-      <AccessButton :access.sync="access" disabled type="whakapapa" />
+    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
+      <AccessButton type="whakapapa" disabled :accessOptions="accessOptions"/>
     </template>
   </Dialog>
 </template>
@@ -99,8 +99,11 @@ import isEmpty from 'lodash.isempty'
 
 import { RULES } from '@/lib/constants.js'
 
-import { mapGetters, createNamespacedHelpers } from 'vuex'
-import { getTribalProfile } from '@/lib/community-helpers.js'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+
+const ACCESS_PERSONAL = 'personal'
+const ACCESS_ALL_MEMBERS = 'all members'
+const ACCESS_KAITIAKI = 'kaitiaki'
 
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
@@ -133,15 +136,50 @@ export default {
         valid: true,
         rules: RULES
       },
-      access: null
+      accessOptions: []
     }
   },
   async mounted () {
+    // get the tribe this record is encrypted to
     const tribe = await this.getTribe(this.view.recps[0])
-    this.access = getTribalProfile(tribe, this.whoami)
+
+    // if its your personal group
+    if (this.whoami.personal.groupId === tribe.id) {
+      this.accessOptions = [{
+        type: ACCESS_PERSONAL,
+        label: 'personal',
+        groupId: this.whoami.personal.groupId,
+        profileId: this.whoami.personal.profile.id
+      }]
+    } else {
+      const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === tribe.id)
+
+      if (parentGroup) {
+        const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+        this.accessOptions = [{
+          type: ACCESS_KAITIAKI,
+          label: 'kaitiaki', // TODO translate
+          groupId: tribe.id,
+          profileId // community profileId
+        }]
+      } else {
+        const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+        this.accessOptions = [
+          {
+            type: ACCESS_ALL_MEMBERS,
+            label: 'all members', // TODO translate
+            groupId: tribe.id,
+            profileId // community profileId
+          }
+        ]
+      }
+    }
+
+    this.setCurrentAccess(this.accessOptions[0])
   },
   computed: {
     ...mapGetters(['whoami']),
+    ...mapGetters('tribe', ['tribes']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -161,6 +199,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setCurrentAccess']),
     ...mapTribeActions(['getTribe']),
     cordovaBackButton () {
       this.close()

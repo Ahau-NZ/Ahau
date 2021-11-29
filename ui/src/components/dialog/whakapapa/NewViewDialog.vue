@@ -25,7 +25,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-const ACCESS_PERSONAL = 'all members'
+const ACCESS_PERSONAL = 'personal'
 const ACCESS_ALL_MEMBERS = 'all members'
 const ACCESS_KAITIAKI = 'kaitiaki'
 
