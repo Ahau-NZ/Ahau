@@ -120,11 +120,11 @@ export default {
     const groupId = this.$route.params.tribeId
 
     // set the current default access as the current group
-    this.views = await this.loadViews(groupId)
+    this.views = await this.getWhakapapaViews({ groupId })
 
     this.adminGroupId = this.tribe.admin && this.tribe.admin.id
     if (this.adminGroupId) {
-      this.adminViews = await this.loadViews(this.adminGroupId)
+      this.adminViews = await this.getWhakapapaViews({ groupId: this.adminGroupId })
     }
   },
   methods: {
@@ -132,11 +132,6 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
     ...mapActions('whakapapa', ['getWhakapapaViews', 'saveWhakapapaView']),
-
-    async loadViews (groupId) {
-      return this.getWhakapapaViews({ groupId })
-    },
-
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
