@@ -97,7 +97,7 @@ import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-const ACCESS_PERSONAL = 'all members'
+const ACCESS_PERSONAL = 'personal'
 const ACCESS_ALL_MEMBERS = 'all members'
 const ACCESS_KAITIAKI = 'kaitiaki'
 const VALID_ACCESS_TYPES = [ACCESS_PERSONAL, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI]

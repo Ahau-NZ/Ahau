@@ -13,7 +13,7 @@
     <v-row>
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
         <div
-          v-if="!whakapapas"
+          v-if="!views"
           class="px-8 py-12 subtitle grey--text"
           :class="{
             'text-center': mobile
@@ -24,7 +24,7 @@
           />
         </div>
         <div
-          v-else-if="(whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1)"
+          v-else-if="(views && views.length < 1) || (views && views[0].views.length < 1)"
           class="px-8 py-12 subtitle grey--text"
           :class="{
             'text-center': mobile
@@ -32,21 +32,34 @@
           {{ t('noWhakapapaFound') }}
         </div>
         <div v-else>
-          <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
-            <v-row class="pl-6 pb-3">
-              <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${group.name} ${t('whakapapaRecords')}`}}</p>
-            </v-row>
+          <div v-for="(group, index ) in views" :key="index" class="py-4">
             <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
               <v-col cols="12" md="10">
                 <WhakapapaViewCard :view="view" cropDescription :tribeId="group.tribeId" />
               </v-col>
             </v-row>
-            <v-divider light class="mt-12" style="max-width:80%"></v-divider>
           </div>
         </div>
       </v-col>
     </v-row>
+
+    <!-- admin only views -->
+    <v-row v-if='adminViews && adminViews.length'>
+      <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
+        <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+        <div v-for="(group, index ) in adminViews" :key="index" class="py-4">
+          <v-row class=" pb-3">
+            <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${group.name} -- ${t('adminWhakapapaRecords')}`}}</p>
+          </v-row>
+          <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+            <v-col cols="12" md="10">
+              <WhakapapaViewCard :view="view" cropDescription :tribeId="group.tribeId" />
+            </v-col>
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
+
     <NewViewDialog v-if="showViewForm" :show="showViewForm" :title="t2('createWhakapapa')" @close="toggleViewForm"
       @submit="handleStepOne($event)" />
     <!-- TODO: add suggestions in here as well? -->
@@ -67,7 +80,6 @@ import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
-import Avatar from '@/components/Avatar.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
@@ -75,10 +87,7 @@ import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'WhakapapaIndex',
@@ -86,50 +95,70 @@ export default {
     profile: Object,
     tribe: Object
   },
-  components: {
-    WhakapapaViewCard,
-    NewViewDialog,
-    NewNodeDialog,
-    WhakapapaListHelper,
-    Avatar,
-    BigAddButton,
-    SkeletonLoader
-  },
   data () {
     return {
       suggestions: [],
-      views: [],
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
       newView: null,
       columns: [],
-      whakapapas: null
+
+      views: null, // becomes an array when loaded
+      adminViews: null
     }
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters('tribe', ['tribes']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   async mounted () {
+    const groupId = this.$route.params.tribeId
+
+    // check if this is an admin group
+    // if it is re-route to the parent group...
+    const parentGroup = this.tribes.find(tribe => {
+      return tribe.admin && tribe.admin.id === groupId
+    })
+    debugger
+    if (parentGroup) {
+      console.log('HERE')
+      this.$router.push({
+        name: 'community/whakapapa',
+        params: {
+          tribeId: parentGroup.id,
+          profileId: this.$route.params.profileId
+        }
+      })
+        .catch(() => {})
+      return
+    }
+
     // set the current default access as the current group
-    this.whakapapas = await this.groupedWhakapapaViews()
+    this.views = await this.loadViews(groupId)
+
+    const adminGroupId = this.tribe.admin && this.tribe.admin.id
+    if (adminGroupId) {
+      this.adminViews = await this.loadViews(adminGroupId)
+    } else this.adminViews = []
   },
   methods: {
     ...mapActions(['setLoading']),
-    ...mapAlertMutations(['showAlert']),
-    ...mapTribeActions(['getTribe']),
-    ...mapWhakapapaActions(['getWhakapapaViews', 'saveWhakapapaView']),
+    ...mapActions('alerts', ['showAlert']),
+    ...mapActions('tribe', ['getTribe']),
+    ...mapActions('whakapapa', ['getWhakapapaViews', 'saveWhakapapaView']),
 
-    async groupedWhakapapaViews () {
-      const views = await this.getWhakapapaViews({ groupId: this.$route.params.tribeId })
+    async loadViews (groupId) {
+      const views = await this.getWhakapapaViews({ groupId })
+
       return [{
         name: this.profile.preferredName,
-        views,
         image: this.profile.avatarImage,
-        tribeId: this.$route.params.tribeId
+        views,
+        tribeId: groupId
       }]
     },
 
@@ -182,8 +211,14 @@ export default {
 
       this.newView = {
         ...pick(input, ['name', 'description', 'image', 'recps']),
-        focus: this.whoami.personal.profile.id,
-        mode: 'descendants' // HARD coded at the moment
+        focus: null, // To complete
+        // change this fo profile in the current group
+        mode: 'descendants' // hard-coded at the moment
+      }
+
+      if (input.focus === 'self') {
+        const profileId = this.whoami.private
+        this.newView.focus = profileId
       }
 
       switch (input.focus) {
@@ -381,6 +416,14 @@ export default {
         return false
       }
     }
+  },
+  components: {
+    WhakapapaViewCard,
+    NewViewDialog,
+    NewNodeDialog,
+    WhakapapaListHelper,
+    BigAddButton,
+    SkeletonLoader
   }
 }
 </script>

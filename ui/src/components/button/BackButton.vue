@@ -21,6 +21,7 @@
         </v-row>
       </v-btn>
     </div>
+
     <div v-else-if="isWhakapapaShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goWhakapapaIndex()" text>
         <div v-if="mobile">
@@ -33,7 +34,8 @@
         </v-row>
       </v-btn>
     </div>
-     <div v-else-if="isCollectionShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+
+    <div v-else-if="isCollectionShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goBack()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>

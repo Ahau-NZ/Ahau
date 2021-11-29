@@ -43,6 +43,9 @@ const mutations = {
 }
 
 const actions = {
+  showAlert ({ commit }, input) {
+    commit('showAlert', input)
+  },
   showError ({ commit }, message = 'Sorry! An error occurred!') {
     commit('showAlert', { message, delay: 5000, color: 'red' })
   },

@@ -124,13 +124,13 @@ export default {
               type: ACCESS_ALL_MEMBERS,
               label: 'all members', // TODO translate
               groupId: tribe.id,
-              profileId
+              profileId // community profileId
             },
             {
               type: ACCESS_KAITIAKI,
               label: 'kaitiaki', // TODO translate
               groupId: tribe.admin.id,
-              profileId
+              profileId // community profileId
             }
           ]
         }
