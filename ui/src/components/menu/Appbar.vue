@@ -143,7 +143,7 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
 import { getTribes } from '../../store/modules/tribe/apollo-helpers'
@@ -201,6 +201,12 @@ export default {
   watch: {
     $route (to, from) {
       this.route = { to, from }
+    },
+    tribes: {
+      deep: true,
+      handler (tribes) {
+        this.updateTribes(tribes)
+      }
     }
   },
   computed: {
@@ -229,6 +235,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('tribe', ['updateTribes']),
     ...mapActions(['setWhoami', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
     ...mapPersonActions(['setProfileById']),
     showMobileBackButton ($event) {

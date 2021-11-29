@@ -35,7 +35,7 @@
           <div v-for="view in views" :key="view.id">
             <v-row dense class="mb-2">
               <v-col cols="12" md="10">
-                <WhakapapaViewCard :view="view" cropDescription :tribeId="tribe.id" />
+                <WhakapapaViewCard :view="view" cropDescription :tribeId="$route.params.tribeId" />
               </v-col>
             </v-row>
           </div>
@@ -125,8 +125,7 @@ export default {
     this.adminGroupId = this.tribe.admin && this.tribe.admin.id
     if (this.adminGroupId) {
       this.adminViews = await this.loadViews(this.adminGroupId)
-      console.log(this.adminViews)
-    } else this.adminViews = null
+    }
   },
   methods: {
     ...mapActions(['setLoading']),
