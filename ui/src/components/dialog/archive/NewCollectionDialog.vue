@@ -13,7 +13,7 @@
         </v-btn>
       </v-col>
       <v-row v-if="view">
-        <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+        <v-col v-if="accessOptions && accessOptions.length > 0" cols="auto" class="pb-0">
           <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
           <AvatarGroup
             style="position:relative; bottom:15px; right:15px"
@@ -34,8 +34,8 @@
       </v-row>
     </template>
 
-    <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing || view" type="collection" />
+    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
+      <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing || view"  />
     </template>
   </Dialog>
 </template>
@@ -51,6 +51,10 @@ import AccessButton from '@/components/button/AccessButton.vue'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+
+const ACCESS_PERSONAL = 'personal'
+const ACCESS_ALL_MEMBERS = 'all members'
+const ACCESS_KAITIAKI = 'kaitiaki'
 
 function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
@@ -102,7 +106,7 @@ export default {
   data () {
     return {
       formData: setDefaultCollection(this.collection),
-      access: null
+      accessOptions: []
     }
   },
   mixins: [
@@ -116,24 +120,40 @@ export default {
       deep: true,
       immediate: true,
       handler (tribe) {
-        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          return
+        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.accessOptions = [{
+            type: ACCESS_PERSONAL,
+            label: 'personal', // TODO translate
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } // eslint-disable-line
+        else {
+          if (!tribe) return
+
+          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+          this.accessOptions = [
+            {
+              type: ACCESS_ALL_MEMBERS,
+              label: 'all members', // TODO translate
+              groupId: tribe.id,
+              profileId // community profileId
+            },
+            {
+              type: ACCESS_KAITIAKI,
+              label: 'kaitiaki', // TODO translate
+              groupId: tribe.admin.id,
+              profileId // community profileId
+            }
+          ]
         }
 
-        this.access = {
-          ...tribe.private.length > 0
-            ? tribe.private[0]
-            : tribe.public[0],
-          groupId: tribe.id
-        }
-
-        this.setCurrentAccess(this.access)
+        this.setCurrentAccess(this.accessOptions[0])
       }
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -141,10 +161,6 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
-    updateAccess ($event) {
-      this.access = $event
-      this.setCurrentAccess(this.access)
-    },
     close () {
       this.formData = setDefaultCollection(this.collection)
       this.$emit('close')
@@ -160,7 +176,7 @@ export default {
       } else {
         output = {
           ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
-          recps: [this.access.groupId]
+          recps: [this.currentAccess.groupId]
         }
       }
 
