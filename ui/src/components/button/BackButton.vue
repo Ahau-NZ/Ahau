@@ -111,6 +111,7 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'isFromWhakapapaShow']),
+    ...mapGetters('tribe', ['tribes']),
     ...mapWhakapapaGetters(['lastWhakapapaView']),
     hasPreviousRoute () {
       return !!this.route.from
@@ -162,8 +163,16 @@ export default {
       this.$router.push({ path: this.whakapapaRoute }).catch(() => {})
     },
     goWhakapapaIndex () {
+      // check the group we are going to is an admin one
+      const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
       var type = this.$route.name.split('/whakapapa')[0]
-      this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+
+      if (parentGroup) {
+        // navigate to the parent group instead if we found this group has one
+        this.$router.push({ name: type + '/whakapapa', params: { tribeId: parentGroup.id, profileId: this.$route.params.profileId } }).catch(() => {})
+      } else {
+        this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+      }
     },
     goBack () {
       this.$router.push({ path: this.route.from.fullPath })
