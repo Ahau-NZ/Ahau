@@ -112,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'currentStory']),
+    ...mapGetters('archive', ['showStory', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -155,8 +155,8 @@ export default {
   },
   methods: {
     ...mapMutations(['updateDialog']),
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
-    ...mapActions('archive', ['setCurrentStory']),
+    ...mapActions(['setDialog']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory']),
     setString (name) {
       if (isEmpty(name)) return ''
       return name.toLowerCase().trim()

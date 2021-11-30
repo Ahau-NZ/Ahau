@@ -317,8 +317,8 @@ export const methods = {
 
 export const saveStoryMixin = {
   methods: {
-    ...mapActions(['toggleShowStory', 'setDialog']),
-    ...mapActions('archive', ['setCurrentStory']),
+    ...mapActions(['setDialog']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory']),
     ...methods
   }
 }

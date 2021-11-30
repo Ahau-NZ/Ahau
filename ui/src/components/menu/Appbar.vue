@@ -143,12 +143,10 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
 import { getTribes } from '../../store/modules/tribe/apollo-helpers'
-
-const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 const karakia = `
 ---------------------------------
@@ -210,7 +208,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters(['whoami', 'storeDialog', 'syncing']),
+    ...mapGetters('archive', ['showStory', 'navComponent']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
@@ -236,8 +235,9 @@ export default {
   },
   methods: {
     ...mapMutations('tribe', ['updateTribes']),
-    ...mapActions(['setWhoami', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
-    ...mapPersonActions(['setProfileById']),
+    ...mapActions(['setWhoami', 'setDialog', 'getAllNotifications']),
+    ...mapActions('archive', ['toggleShowStory']),
+    ...mapActions('person', ['setProfileById']),
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },

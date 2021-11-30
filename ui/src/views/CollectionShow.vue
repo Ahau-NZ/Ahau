@@ -97,7 +97,8 @@ export default {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'showStory', 'showArtefact']),
+    ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters('archive', ['showStory', 'showArtefact']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
       return this.collection.stories.map(link => {
@@ -138,8 +139,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setCurrentAccess', 'toggleShowStory', 'setShowArtefact']),
-    ...mapActions('archive', ['setCurrentStory']),
+    ...mapActions(['setCurrentAccess']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory', 'setShowArtefact']),
     ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
     ...mapActions('tribe', ['getTribe']),
     editCollection () {

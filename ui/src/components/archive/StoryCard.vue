@@ -272,7 +272,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, createNamespacedHelpers } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
@@ -293,9 +293,6 @@ import { convertBytes } from '@/lib/artefact-helpers.js'
 
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
-
-const { mapActions: mapStoryActions } = createNamespacedHelpers('story')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'StoryCard',
@@ -347,7 +344,8 @@ export default {
     this.access = [getTribalProfile(tribe, this.whoami)]
   },
   computed: {
-    ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
+    ...mapGetters(['storeDialog', 'whoami']),
+    ...mapGetters('archive', ['showArtefact']),
     artefacts () {
       return this.story.artefacts.map(link => link.artefact)
     },
@@ -418,10 +416,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowArtefact', 'toggleShowStory']),
-    ...mapActions('archive', ['setCurrentStory']),
-    ...mapStoryActions(['deleteStory']),
-    ...mapTribeActions(['getTribe']),
+    ...mapActions('archive', ['setCurrentStory', 'setShowArtefact', 'toggleShowStory']),
+    ...mapActions('story', ['deleteStory']),
+    ...mapActions('tribe', ['getTribe']),
     //  save artefact from showArtefact
     saveArtefact ($event) {
       this.updateArtefacts($event)

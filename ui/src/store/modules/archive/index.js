@@ -9,6 +9,8 @@ const state = {
 }
 
 const getters = {
+  // 2021-12-01 mix: what is this?
+  // very unclear why this is in the archive domain
   navComponent: state => {
     return state.navComponent
   },
@@ -53,6 +55,9 @@ const actions = {
   },
   setShowArtefact ({ commit }, state) {
     commit('updateShowArtefact', state)
+  },
+  setIsFromWhakapapaShow ({ commit }, state) {
+    commit('updateIsFromWhakapapaShow', state)
   }
 }
 
@@ -60,5 +65,6 @@ export default {
   state,
   mutations,
   actions,
-  getters
+  getters,
+  namespaced: true
 }

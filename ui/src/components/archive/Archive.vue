@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -76,9 +76,6 @@ import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { VueContext } from 'vue-context'
-
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
 
 export default {
   name: 'Archive',
@@ -120,7 +117,8 @@ export default {
     await this.loadCollections()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
+    ...mapGetters(['whoami', 'storeDialog', 'currentAccess']),
+    ...mapGetters('archive', ['showStory', 'currentStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -167,9 +165,9 @@ export default {
     }
   },
   methods: {
-    ...mapAlertMutations(['showAlert']),
-    ...mapActions(['toggleShowStory', 'setShowArtefact']),
-    ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
+    ...mapMutations('alerts', ['showAlert']),
+    ...mapActions('archive', ['toggleShowStory', 'setShowArtefact']),
+    ...mapActions('collection', ['createCollection', 'getCollectionsByGroup']),
     getDisplayName,
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]

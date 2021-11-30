@@ -577,7 +577,8 @@ export default {
     if (this.editing) this.addContributor()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami']),
+    ...mapGetters(['whoami']),
+    ...mapGetters('archive', ['showStory']),
     recordCounter () {
       if (this.totalCharLength > 4000) return this.totalCharLength
       else return false

@@ -168,7 +168,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'isKaitiaki']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('archive', ['showStory', 'showArtefact']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },

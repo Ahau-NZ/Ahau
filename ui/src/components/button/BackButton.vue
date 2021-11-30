@@ -56,14 +56,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-const {
-  mapGetters: mapWhakapapaGetters
-} = createNamespacedHelpers('whakapapa')
 
 export default {
   components: {
@@ -110,9 +106,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'isFromWhakapapaShow']),
+    ...mapGetters('archive', ['showStory', 'isFromWhakapapaShow']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapWhakapapaGetters(['lastWhakapapaView']),
+    ...mapGetters('whakapapa', ['lastWhakapapaView']),
     hasPreviousRoute () {
       return !!this.route.from
     },
@@ -156,10 +152,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateIsFromWhakapapaShow']),
-    ...mapActions(['toggleShowStory', 'setIsFromWhakapapaShow']),
+    ...mapActions('archive', ['toggleShowStory', 'setIsFromWhakapapaShow']),
     goWhakapapaShow () {
-      this.updateIsFromWhakapapaShow(false)
+      this.setIsFromWhakapapaShow(false)
       this.$router.push({ path: this.whakapapaRoute }).catch(() => {})
     },
     goWhakapapaIndex () {

@@ -293,21 +293,14 @@
 </template>
 
 <script>
-
-import calculateAge from '../../../lib/calculate-age'
-
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
-import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-
+import { mapActions, mapGetters } from 'vuex'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions, mapMutations, mapGetters, createNamespacedHelpers } from 'vuex'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
-
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
@@ -315,10 +308,11 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import EditRelationships from '@/components/profile/EditRelationships.vue'
 
+import calculateAge from '../../../lib/calculate-age'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
+import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 function defaultData (input) {
   var profile = clone(input)
@@ -487,9 +481,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateIsFromWhakapapaShow']), // TODO replace with an action
-    ...mapActions(['setDialog', 'setIsFromWhakapapaShow']),
-    ...mapPersonActions(['setProfileById']),
+    ...mapActions(['setDialog']),
+    ...mapActions('archive', ['setIsFromWhakapapaShow']),
+    ...mapActions('person', ['setProfileById']),
     getDisplayName,
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
@@ -561,7 +555,7 @@ export default {
       if (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
-      ) this.updateIsFromWhakapapaShow(true)
+      ) this.setIsFromWhakapapaShow(true)
       this.$router.push({
         name: 'person/archive',
         params: {
