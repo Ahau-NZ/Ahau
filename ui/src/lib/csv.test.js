@@ -83,23 +83,6 @@ test('header columns', t => {
     })
 })
 
-test('number', t => {
-  t.plan(2)
-  csv.parse(DUPLICATE_NUMBERS)
-    .then(res => t.error('should have errored'))
-    .catch(err => {
-      t.deepEqual(err, [
-        { row: 2, field: 'number', error: 'the number is not unique', value: '1' }
-      ], 'returns error for duplicate numbers')
-    })
-
-  csv.parse(VALID_NUMBERS)
-    .then(res => {
-      t.true(res.length === 3, 'returns no errors')
-    })
-    .catch(err => t.error(err))
-})
-
 test('parentNumber', t => {
   t.plan(2)
   csv.parse(INVALID_FIRST_PARENT_NUMBER)
@@ -130,10 +113,10 @@ test('csv.parse', t => {
   csv.parse(CORRECT_PERSONS)
     .then(csv => {
       t.deepEqual(csv[1], {
-        csvId: 2, // TODO - confirm if we expect String or Number here
+        csvId: '2',
         link: {
-          parentCsvId: 1,
-          childCsvId: 2,
+          parentCsvId: '1',
+          childCsvId: '2',
           relationshipType: 'birth'
         },
         profile: {
@@ -146,20 +129,24 @@ test('csv.parse', t => {
           placeOfBirth: 'Auckland',
           placeOfDeath: 'Hamilton',
           buriedLocation: 'New Zealand',
-          phone: '021167892345',
-          email: 'cherese@me.com',
-          address: '123 Happy Lane',
           city: 'HappyVille',
           postCode: '1234',
           country: 'New Zealand',
           profession: 'Software Engineer',
           school: null,
           education: null,
-          altNames: null
+          altNames: null,
+
+          // NOTE: commented these out in csv.js as they are breaking backend changes!
+          // phone: '021167892345',
+          // email: 'cherese@me.com',
+          // address: '123 Happy Lane',
         }
       }, 'returns correct profile')
     })
     .catch(err => console.log(err))
+
+   
 
   csv.parse(INCORRECT_PERSONS)
     .catch(err => { // should be 3 errors
