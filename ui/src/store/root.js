@@ -46,10 +46,11 @@ export default function rootModule (apollo) {
 
     getters: {
       loadingState: state => {
-        // if it's been indexing longer than 5 seconds
-        if (state.indexingSince && Date.now() - state.indexingSince > 2 * SECOND) {
-          return state.percentageIndexedSinceStartup
-        }
+        // if it's been indexing longer than 2 seconds
+        if (
+          state.indexingSince &&
+          (Date.now() - state.indexingSince > 2 * SECOND)
+        ) return state.percentageIndexedSinceStartup
 
         return state.loading
       },
@@ -74,10 +75,10 @@ export default function rootModule (apollo) {
         if (!isIndexing && !isRebuilding) state.indexingSince = null
         else if (!state.isIndexingSince) state.indexingSince = Date.now()
 
-        if (isIndexing) state.isIndexing = isIndexing
-        if (isRebuilding) state.isRebuilding = isRebuilding
-        if (percentageIndexed) state.percentageIndexed = percentageIndexed
-        if (percentageIndexedSinceStartup) state.percentageIndexedSinceStartup = percentageIndexedSinceStartup
+        if (typeof isIndexing === 'boolean') state.isIndexing = isIndexing
+        if (typeof isRebuilding === 'boolean') state.isRebuilding = isRebuilding
+        if (typeof percentageIndexed === 'number') state.percentageIndexed = percentageIndexed
+        if (typeof percentageIndexedSinceStartup === 'number') state.percentageIndexedSinceStartup = percentageIndexedSinceStartup
       },
       updateSyncing (state, syncing) {
         state.syncing = syncing
