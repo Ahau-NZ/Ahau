@@ -63,7 +63,8 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile', 'tribe'],
+      mapMethods: ['getProfile']
     })
   ],
   mounted () {
@@ -112,17 +113,14 @@ export default {
       this.formData.relatedRecords = []
       this.formData.collections = (this.collection) ? [this.collection] : []
     },
-    currentAccess (access, prevAccess) {
+    async currentAccess (access, prevAccess) {
       if (!access || this.editing) return
 
-      // TODO! fix this up - need to traces how these profiles are used
-      // COULD be we could "fake" the profiles and just go { id: access.id }
-      // if (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId) {
-      //   this.formData.mentions = [this.profile]
-      // } else {
-      //   this.formData.mentions = [access] //
-      // }
+      const mentionProfile = (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId)
+        ? this.profile
+        : await this.getProfile(access.profileId)
 
+      this.formData.mentions = [mentionProfile]
       // TODO ideally link to your group profile instead
       this.formData.contributors = [this.whoami.public.profile]
       this.formData.tiaki = [this.whoami.public.profile]

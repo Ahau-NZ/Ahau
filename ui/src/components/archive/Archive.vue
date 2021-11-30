@@ -89,7 +89,8 @@ export default {
     saveStoryMixin,
     storiesApolloMixin,
     mapProfileMixins({
-      mapApollo: ['profile']
+      mapApollo: ['profile'],
+      mapMethods: ['getProfile']
     })
   ],
   components: {
@@ -108,7 +109,8 @@ export default {
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false,
-      showCollectionStories: false
+      showCollectionStories: false,
+      currentAccessProfile: {}
     }
   },
   beforeMount () {
@@ -123,7 +125,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     title () {
-      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
+      if (this.profile.id !== this.currentAccess.profileId) return `Stories about ${this.getDisplayName(this.profile)}`
       // TODO i18n on this line ^
       return this.$t('viewArchive.stories')
     },
@@ -136,7 +138,7 @@ export default {
     },
     archiveTitle () {
       if (this.isPersonalArchive) return this.$t('viewArchive.archiveTitle')
-      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
+      return this.currentAccessProfile.preferredName ? `${this.currentAccessProfile.preferredName}'s Archive` : `${this.currentAccessProfile.legalName}'s Archive`
     },
     isPersonalArchive () {
       return this.$route.params.profileId === this.whoami.personal.profile.id
@@ -228,6 +230,17 @@ export default {
             top: this.scrollPosition
           })
         }, 200)
+      }
+    },
+    'currentAccess.profileId': {
+      immediate: true,
+      handler: async (profileId) => {
+        if (!profileId) return
+
+        const profile = await this.getProfile(profileId)
+          .catch(err => console.error(err))
+
+        if (profile) this.currentAccessProfile = profile
       }
     },
     t (key, vars) {

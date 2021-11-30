@@ -26,7 +26,7 @@
             <!-- <v-card-subtitle>{{ view.description || 'No description' }}</v-card-subtitle> -->
             <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
               <!-- Lock icon for access -->
-              <v-tooltip bottom v-if="profile">
+              <v-tooltip bottom v-if="currentAccessProfile">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -63,7 +63,7 @@
           <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
           <v-row class="pl-4">
             <AvatarGroup :profiles="view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
-            <AvatarGroup v-if="currentAccess" :profiles="[profile]" isView groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
+            <AvatarGroup v-if="currentAccess" :profiles="[currentAccessProfile]" isView groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
           </v-row>
         </div>
       </v-expand-transition>
@@ -98,7 +98,7 @@ export default {
   data () {
     return {
       show: false,
-      profile: {}
+      currentAccessProfile: {}
     }
   },
   mixins: [
@@ -110,8 +110,9 @@ export default {
     'currentAccess.profileId': {
       immediate: true,
       async handler (profileId) {
-        if (!profileId) return
-        this.profile = await this.getProfile(profileId)
+        const profile = await this.getProfile(profileId)
+          .catch(console.error)
+        if (profile) this.currentAccessProfile = profile
       }
     }
   },

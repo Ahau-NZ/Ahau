@@ -137,12 +137,6 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading', 'setCurrentAccess']),
-    updateAccess ($event) {
-      this.setCurrentAccess({
-        ...this.currentAccess,
-        groupId: $event.type === 'kaitiaki' ? this.tribe.admin.id : this.tribe.id
-      })
-    },
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()
@@ -159,7 +153,7 @@ export default {
       const newOutput = {
         ...output,
         csv,
-        access: this.currentAccess
+        access: this.currentAccess // TODO! see how this is used
       }
       this.$emit('submit', newOutput)
       this.close()

@@ -9,12 +9,12 @@
             :ripple="false"
           >
             <Avatar class="" size="20px" :image="profile.avatarImage" :isView="!profile.avatarImage" :alt="getDisplayName(profile)" :gender="profile.gender" :aliveInterval="profile.aliveInterval" />
-            <span class="ml-1 truncated-x">{{ profile ? currentAccess.isPersonalGroup ? t('private') : profile.preferredName : t('setAccess')}}</span>
+            <span class="ml-1 truncated-x">{{ profile ? currentAccessIsPersonalGroup ? t('private') : profile.preferredName : t('setAccess')}}</span>
           </v-btn>
           <v-tooltip top open-delay="200">
             <template v-slot:activator="{ on }">
               <div v-on="on">
-                <template v-if="!currentAccess.isPersonalGroup">
+                <template v-if="!currentAccessIsPersonalGroup">
                   <!-- TODO: Update to list groups in Tribe: This is dependant on Groups Epic  -->
                   <v-menu offset-y light hide-details dense rounded outlined>
                     <template v-slot:activator="{ on, attrs }">
@@ -126,32 +126,6 @@ export default {
       permission: this.t('edit')
     }
   },
-  // apollo: {
-  //   tribes () {
-  //     return {
-  //       ...getTribes,
-  //       update ({ tribes }) {
-  //         tribes = tribes
-  //         // a person can only change access to a tribe that it canEdit (is a kaitiaki)
-  //           .filter(tribe => tribe.private.length !== 0 && tribe.private[0].canEdit)
-  //           .map(tribe => {
-  //             return {
-  //               groupId: tribe.id,
-  //               ...tribe.private.length > 0
-  //                 ? tribe.private[0]
-  //                 : tribe.public[0]
-  //             }
-  //           })
-  //         tribes.push({
-  //           groupId: this.whoami.personal.groupId,
-  //           ...this.whoami.personal.profile,
-  //           isPersonalGroup: true
-  //         })
-  //         return tribes
-  //       }
-  //     }
-  //   }
-  // },
   components: {
     Avatar
   },
@@ -175,10 +149,10 @@ export default {
         else if (permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
       }
       return ''
+    },
+    currentAccessIsPersonalGroup () {
+      return (this.currentAccess && this.currentAccess.groupId === this.whoami.personal.groupId)
     }
-    // caption () {
-    //   return this.t('addToArchive', { recordType: this.type })
-    // }
   },
 
   methods: {
