@@ -105,30 +105,27 @@
       </v-col>
     </template>
     <template v-slot:before-actions>
-      <AccessButton v-if="currentAccess" :access="currentAccess" type="person" disabled/>
+      <AccessButton v-if="currentAccess" :accessOptions="[currentAccess]" type="person" disabled/>
     </template>
   </Dialog>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import isEmpty from 'lodash.isempty'
+import pick from 'lodash.pick'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 import ProfileList from '@/components/profile/ProfileList.vue'
-
 import Avatar from '@/components/Avatar.vue'
-import isEmpty from 'lodash.isempty'
-import calculateAge from '@/lib/calculate-age'
-
-import pick from 'lodash.pick'
-
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
-import { mapGetters, createNamespacedHelpers } from 'vuex'
-import { parseInterval } from '@/lib/date-helpers.js'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
+import calculateAge from '@/lib/calculate-age'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 export default {
   name: 'NewNodeDialog',
@@ -278,7 +275,7 @@ export default {
     }
   },
   methods: {
-    ...mapWhakapapaActions(['suggestedChildren', 'suggestedParents']),
+    ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]

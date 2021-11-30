@@ -21,6 +21,7 @@
             show-labels :size="'50px'"
             spacing="pr-2"
           />
+          <!-- FIRE: should this be accessOptions OR currentAccess ??! TODO: check diff --->
         </v-col>
         <v-col v-if="collection.tiaki && collection.tiaki.length > 0" cols="auto" class="pb-0">
           <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
@@ -52,9 +53,7 @@ import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
-const ACCESS_PERSONAL = 'personal'
-const ACCESS_ALL_MEMBERS = 'all members'
-const ACCESS_KAITIAKI = 'kaitiaki'
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
 function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
@@ -122,8 +121,7 @@ export default {
       handler (tribe) {
         if (this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.accessOptions = [{
-            type: ACCESS_PERSONAL,
-            label: 'personal', // TODO translate
+            type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
             profileId: this.whoami.personal.profile.id
           }]
@@ -135,13 +133,11 @@ export default {
           this.accessOptions = [
             {
               type: ACCESS_ALL_MEMBERS,
-              label: 'all members', // TODO translate
               groupId: tribe.id,
               profileId // community profileId
             },
             {
               type: ACCESS_KAITIAKI,
-              label: 'kaitiaki', // TODO translate
               groupId: tribe.admin.id,
               profileId // community profileId
             }

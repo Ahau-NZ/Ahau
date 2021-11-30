@@ -26,7 +26,7 @@
                         small
                       >
                         <v-icon small>mdi-eye</v-icon>
-                        <span class="ml-2">{{ currentAccess.label }}</span>
+                        <span class="ml-2">{{ currentAccess.label || $t(`accessButton.${currentAccess.type}`) }}</span>
                         <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
@@ -36,7 +36,7 @@
                         :key="index"
                         @click="setCurrentAccess(accessOption)"
                       >
-                        <v-list-item-title>{{ accessOption.label }}</v-list-item-title>
+                        <v-list-item-title>{{ accessOption.label || $t(`accessButton.${accessOption.type}`) }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
@@ -97,10 +97,7 @@ import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-const ACCESS_PERSONAL = 'personal'
-const ACCESS_ALL_MEMBERS = 'all members'
-const ACCESS_KAITIAKI = 'kaitiaki'
-const VALID_ACCESS_TYPES = [ACCESS_PERSONAL, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI]
+import { ACCESS_TYPES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
   name: 'AccessButton',
@@ -108,7 +105,7 @@ export default {
     accessOptions: {
       type: Array,
       validator (value) {
-        const isValid = value.every(opt => VALID_ACCESS_TYPES.includes(opt.type) && opt.label && opt.groupId && opt.profileId)
+        const isValid = value.every(opt => (opt.type in ACCESS_TYPES) && opt.groupId && opt.profileId)
         if (!isValid) console.log('invalid accessOptions', JSON.stringify(value, null, 2))
         return isValid
       },
@@ -170,7 +167,7 @@ export default {
     recordPermissions () {
       const { currentAccess, permission } = this
 
-      if (currentAccess.type === ACCESS_PERSONAL) return this.t('privateAccess', { recordType: this.type })
+      if (currentAccess.type === ACCESS_PRIVATE) return this.t('privateAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_ALL_MEMBERS) {
         if (permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })

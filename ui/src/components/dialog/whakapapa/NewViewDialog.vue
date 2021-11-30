@@ -16,18 +16,17 @@
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
-import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import { mapActions, mapGetters } from 'vuex'
+
+import Dialog from '@/components/dialog/Dialog.vue'
+import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-const ACCESS_PERSONAL = 'personal'
-const ACCESS_ALL_MEMBERS = 'all members'
-const ACCESS_KAITIAKI = 'kaitiaki'
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -109,8 +108,7 @@ export default {
       handler (tribe) {
         if (this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.accessOptions = [{
-            type: ACCESS_PERSONAL,
-            label: 'personal', // TODO translate
+            type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
             profileId: this.whoami.personal.profile.id
           }]
@@ -122,13 +120,11 @@ export default {
           this.accessOptions = [
             {
               type: ACCESS_ALL_MEMBERS,
-              label: 'all members', // TODO translate
               groupId: tribe.id,
               profileId // community profileId
             },
             {
               type: ACCESS_KAITIAKI,
-              label: 'kaitiaki', // TODO translate
               groupId: tribe.admin.id,
               profileId // community profileId
             }

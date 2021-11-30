@@ -88,24 +88,17 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
-
-import { RULES } from '@/lib/constants.js'
-
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
-
-const ACCESS_PERSONAL = 'personal'
-const ACCESS_ALL_MEMBERS = 'all members'
-const ACCESS_KAITIAKI = 'kaitiaki'
-
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+import { RULES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
 function setDefaultData (view) {
   return {
@@ -146,8 +139,7 @@ export default {
     // if its your personal group
     if (this.whoami.personal.groupId === tribe.id) {
       this.accessOptions = [{
-        type: ACCESS_PERSONAL,
-        label: 'personal',
+        type: ACCESS_PRIVATE,
         groupId: this.whoami.personal.groupId,
         profileId: this.whoami.personal.profile.id
       }]
@@ -158,7 +150,6 @@ export default {
         const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
         this.accessOptions = [{
           type: ACCESS_KAITIAKI,
-          label: 'kaitiaki', // TODO translate
           groupId: tribe.id,
           profileId // community profileId
         }]
@@ -167,7 +158,6 @@ export default {
         this.accessOptions = [
           {
             type: ACCESS_ALL_MEMBERS,
-            label: 'all members', // TODO translate
             groupId: tribe.id,
             profileId // community profileId
           }
@@ -200,7 +190,7 @@ export default {
   },
   methods: {
     ...mapActions(['setCurrentAccess']),
-    ...mapTribeActions(['getTribe']),
+    ...mapActions('tribe', ['getTribe']),
     cordovaBackButton () {
       this.close()
     },

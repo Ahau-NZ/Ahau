@@ -21,22 +21,22 @@
     </template>
 
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing" type="story" />
+      <AccessButton :accessOptions="accessOptions" @access="setCurrentAccess" :disabled="editing" type="story" />
     </template>
   </Dialog>
 </template>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
-
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'NewRecordDialog',
@@ -56,9 +56,9 @@ export default {
     return {
       tribe: null,
       formData: setDefaultStory(this.story),
-      access: null,
       profile: {},
-      initial: false
+      initial: false,
+      accessOptions: []
     }
   },
   mixins: [
@@ -74,19 +74,32 @@ export default {
       deep: true,
       immediate: true,
       handler (tribe, oldTribe) {
-        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          return
+        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.accessOptions = [{
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } // eslint-disable-line
+        else {
+          if (!tribe) return
+
+          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+          this.accessOptions = [
+            {
+              type: ACCESS_ALL_MEMBERS,
+              groupId: tribe.id,
+              profileId // community profileId
+            },
+            {
+              type: ACCESS_KAITIAKI,
+              groupId: tribe.admin.id,
+              profileId // community profileId
+            }
+          ]
         }
 
-        this.access = {
-          ...tribe.private.length > 0
-            ? tribe.private[0]
-            : tribe.public[0],
-          groupId: tribe.id
-        }
-
-        this.setCurrentAccess(this.access)
+        this.setCurrentAccess(this.accessOptions[0])
       }
     },
     profile (profile) {
@@ -99,15 +112,18 @@ export default {
       this.formData.relatedRecords = []
       this.formData.collections = (this.collection) ? [this.collection] : []
     },
-    access (access, prevAccess) {
+    currentAccess (access, prevAccess) {
       if (!access || this.editing) return
 
-      if (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId) {
-        this.formData.mentions = [this.profile]
-      } else {
-        this.formData.mentions = [access]
-      }
+      // TODO! fix this up - need to traces how these profiles are used
+      // COULD be we could "fake" the profiles and just go { id: access.id }
+      // if (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId) {
+      //   this.formData.mentions = [this.profile]
+      // } else {
+      //   this.formData.mentions = [access] //
+      // }
 
+      // TODO ideally link to your group profile instead
       this.formData.contributors = [this.whoami.public.profile]
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
@@ -116,7 +132,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -124,10 +140,6 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
-    updateAccess ($event) {
-      this.access = $event
-      this.setCurrentAccess(this.access)
-    },
     close () {
       this.formData = setDefaultStory(this.story)
       this.$emit('close')
@@ -143,7 +155,7 @@ export default {
       } else {
         output = {
           ...getObjectChanges(setDefaultStory(EMPTY_STORY), this.formData),
-          recps: [this.access.groupId]
+          recps: [this.currentAccess.groupId]
         }
       }
 

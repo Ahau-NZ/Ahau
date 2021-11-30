@@ -74,3 +74,15 @@ export const SORT = {
   ascending: 1,
   descending: 2
 }
+
+// NOTE - these values must line up with the keys for translations!
+// There is a test which checks this :)
+export const ACCESS_PRIVATE = 'private'
+export const ACCESS_ALL_MEMBERS = 'allMembers'
+export const ACCESS_KAITIAKI = 'kaitiaki'
+
+export const ACCESS_TYPES = {
+  ACCESS_PRIVATE,
+  ACCESS_ALL_MEMBERS,
+  ACCESS_KAITIAKI
+}
