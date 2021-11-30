@@ -41,7 +41,6 @@
 
 <script>
 import { colours } from '@/lib/colours.js'
-import { mapMutations } from 'vuex'
 
 export default {
   name: 'Chip',
@@ -91,9 +90,6 @@ export default {
         return '300'
       }
     }
-  },
-  methods: {
-    ...mapMutations(['setStory'])
   }
 }
 </script>

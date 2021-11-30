@@ -418,8 +418,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    ...mapActions('archive', ['setCurrentStory']),
     ...mapStoryActions(['deleteStory']),
     ...mapTribeActions(['getTribe']),
     //  save artefact from showArtefact
@@ -445,7 +445,7 @@ export default {
 
       window.scrollTo(0, 0)
       var story = await this.getStory(relatedRecord.id)
-      this.setStory(story)
+      this.setCurrentStory(story)
     },
     showRelatedCollection (collection) {
       var type = this.$route.name.split('/archive')[0]

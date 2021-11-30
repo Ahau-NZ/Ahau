@@ -138,7 +138,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setCurrentAccess', 'setStory', 'toggleShowStory', 'setShowArtefact']),
+    ...mapActions(['setCurrentAccess', 'toggleShowStory', 'setShowArtefact']),
+    ...mapActions('archive', ['setCurrentStory']),
     ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
     ...mapActions('tribe', ['getTribe']),
     editCollection () {
@@ -167,7 +168,7 @@ export default {
         return false
       }
       if (this.showStory) {
-        this.setStory(undefined)
+        this.setCurrentStory(undefined)
         this.toggleShowStory()
         return false
       }

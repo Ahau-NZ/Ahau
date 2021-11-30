@@ -168,7 +168,6 @@ export default {
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
-    ...mapMutations(['setStory']),
     ...mapActions(['toggleShowStory', 'setShowArtefact']),
     ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
     getDisplayName,

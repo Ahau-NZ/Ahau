@@ -154,8 +154,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'updateDialog']),
+    ...mapMutations(['updateDialog']),
     ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
+    ...mapActions('archive', ['setCurrentStory']),
     setString (name) {
       if (isEmpty(name)) return ''
       return name.toLowerCase().trim()
@@ -164,7 +165,7 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     toggleStory (story) {
-      this.setStory(story)
+      this.setCurrentStory(story)
       this.toggleShowStory()
       this.setDialog(null)
     },

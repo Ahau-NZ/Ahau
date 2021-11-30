@@ -1,4 +1,5 @@
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
+
 import { saveStory, getStory, getAllStories, getAllStoriesByMentions } from '@/lib/story-helpers.js'
 import { saveArtefact } from '@/lib/artefact-helpers.js'
 import { saveLink, TYPES } from '@/lib/link-helpers.js'
@@ -123,7 +124,7 @@ export const methods = {
       story = await this.getStory(id)
 
       if (input.id) {
-        this.setStory(story)
+        this.setCurrentStory(story)
       } else {
         this.toggleStory(story)
       }
@@ -308,7 +309,7 @@ export const methods = {
     }
   },
   toggleStory (story) {
-    this.setStory(story)
+    this.setCurrentStory(story)
     this.toggleShowStory()
     this.setDialog(null)
   }
@@ -316,8 +317,8 @@ export const methods = {
 
 export const saveStoryMixin = {
   methods: {
-    ...mapMutations(['setStory']),
     ...mapActions(['toggleShowStory', 'setDialog']),
+    ...mapActions('archive', ['setCurrentStory']),
     ...methods
   }
 }
