@@ -79,11 +79,10 @@ import NewSubGroupDialog from './NewSubGroupDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 
 // Calling in tribes to test as replacement data for groups
-import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import { getTribalProfile } from '../../../lib/community-helpers'
 const { mapGetters: mapTribeGetters, mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapActions: mapSubTribeActions } = createNamespacedHelpers('subtribe')
-const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
 
 export default {
   name: 'GroupsList',
@@ -134,7 +133,7 @@ export default {
   methods: {
     ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink']),
     ...mapSubTribeActions(['createSubGroup', 'getSubGroups']),
-    ...mapCommunityActions(['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
+    ...mapActions('community', ['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
     getDisplayName,
     // NOTE: im doing this because the tribe comes from a component which is far up, rather than
     // going through all the components to get there, i'll just reload it locally
