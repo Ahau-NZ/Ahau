@@ -2,6 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
 import { COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
+import { PublicProfileFieldsFragment } from '../../../lib/profile-helpers.js'
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'id',
@@ -104,3 +105,16 @@ export const addAdminsToGroup = (groupId, adminIds) => {
     }
   }
 }
+
+export const getMembers = id => ({
+  query: gql`
+    ${PublicProfileFieldsFragment}
+    query($id: ID!) {
+      listGroupAuthors(id: $id) {
+        ...PublicProfileFields
+      }
+    }
+  `,
+  variables: { id: id },
+  fetchPolicy: 'no-cache'
+})

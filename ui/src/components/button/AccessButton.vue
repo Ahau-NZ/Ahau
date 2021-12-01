@@ -94,7 +94,6 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
-// import { getTribes } from '@/lib/community-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 

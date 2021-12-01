@@ -12,9 +12,6 @@ export default function (apollo) {
   }
 
   const mutations = {
-    updateTribes (state, tribes) {
-      state.tribes = tribes
-    }
   }
 
   const actions = {

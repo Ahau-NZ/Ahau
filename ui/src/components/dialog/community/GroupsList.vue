@@ -81,7 +81,6 @@ import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunity
 // Calling in tribes to test as replacement data for groups
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import { getTribalProfile } from '../../../lib/community-helpers'
-const { mapGetters: mapTribeGetters, mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapActions: mapSubTribeActions } = createNamespacedHelpers('subtribe')
 
 export default {
@@ -115,7 +114,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapTribeGetters(['tribes']),
+    ...mapGetters('tribe', ['tribes']),
     selectedSubGroupProfile () {
       if (!this.selectedSubGroup) return null
 
@@ -131,7 +130,7 @@ export default {
     }
   },
   methods: {
-    ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink']),
+    ...mapActions('tribe', ['getTribe', 'createPrivateGroupProfileLink']),
     ...mapSubTribeActions(['createSubGroup', 'getSubGroups']),
     ...mapActions('community', ['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
     getDisplayName,

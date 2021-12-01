@@ -89,10 +89,10 @@ import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { deleteTribe, getMembers } from '@/lib/community-helpers.js'
+import { deleteTribe } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
+import { ACCESS_PRIVATE, ACCESS_KAITIAKI, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'ProfileShow',
@@ -129,33 +129,50 @@ export default {
       deep: true,
       immediate: true,
       async handler (tribe) {
-        if (!tribe.id) return
+        if (!tribe || !tribe.id || !this.whoami) return
 
-        try {
-          const res = await this.$apollo.query(
-            getMembers(tribe.id)
-          )
+        const groupId = tribe.id
 
-          if (res.errors) throw res.errors
-
-          this.tribe.members = res.data.listGroupAuthors
-
-          // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
-          this.profile.joiningQuestions = tribe.public[0].joiningQuestions
-
+        if (this.whoami.personal.groupId === groupId) {
+          this.setIsKaitiaki(true)
+          // TODO: check if we still need to set joiningQuestions if we are in our personal group
+          this.profile.joiningQuestions = []
           this.setCurrentAccess({
-            type: ACCESS_ALL_MEMBERS,
-            groupId: tribe.id,
-            profileId: this.tribe.private.length ? this.tribe.private[0].id : this.tribe.public[0].id
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
           })
+        } else {
+          const isKaitiaki = tribe.public.length
+            ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
+            : []
 
-          if (this.whoami.personal.profile.id === this.tribe.private[0].id) this.setIsKaitiaki(true)
-          else this.setIsKaitiaki(this.tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId))
-        } catch (err) {
-          const message = this.t('failMembers')
-          console.error(message)
-          console.error(err)
-          this.showAlert({ message, delay: 5000, color: 'red' })
+          this.setIsKaitiaki(isKaitiaki)
+
+          this.tribe.members = await this.getMembers(groupId) || []
+
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
+
+          if (parentGroup) {
+            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+            this.setCurrentAccess({
+              type: ACCESS_KAITIAKI,
+              groupId,
+              profileId // community profileId
+            })
+          } else {
+            const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+
+            this.profile.joiningQuestions = (tribe.public.length)
+              ? tribe.public[0].joiningQuestions
+              : []
+
+            this.setCurrentAccess({
+              type: ACCESS_ALL_MEMBERS,
+              groupId,
+              profileId // community profileId
+            })
+          }
         }
       }
     },
@@ -171,6 +188,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('tribe', ['tribes']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
@@ -216,7 +234,7 @@ export default {
     ...mapMutations(['setIsKaitiaki']),
     ...mapActions(['setWhoami', 'setCurrentAccess']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('tribe', ['addAdminsToGroup']),
+    ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
