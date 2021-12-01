@@ -185,7 +185,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
 import isEmpty from 'lodash.isempty'
@@ -334,30 +334,32 @@ export default {
     async whakapapaView (view) {
       if (view && view.recps) {
         // get the tribe this record is encrypted to
-        const tribe = await this.getTribe(view.recps[0])
+
+        const groupId = view.recps[0]
 
         // if its your personal group
-        if (this.whoami.personal.groupId === tribe.id) {
+        if (this.whoami.personal.groupId === groupId) {
           this.accessOptions = [{
             type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
             profileId: this.whoami.personal.profile.id
           }]
         } else {
-          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === tribe.id)
+          const tribe = await this.getTribe(view.recps[0])
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
 
           if (parentGroup) {
             const profileId = (parentGroup.private[0] || parentGroup.public[0]).id
             this.accessOptions = [{
               type: ACCESS_KAITIAKI,
-              groupId: tribe.id,
+              groupId,
               profileId // community profileId
             }]
           } else {
             const profileId = (tribe.private[0] || tribe.public[0]).id
             this.accessOptions = [{
               type: ACCESS_ALL_MEMBERS,
-              groupId: tribe.id,
+              groupId,
               profileId // community profileId
             }]
           }
@@ -376,8 +378,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('person', ['updateSelectedProfile']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
-    ...mapActions('person', ['updateSelectedProfile']),
     ...mapActions('table', ['resetTableFilters']),
     ...mapActions('tribe', ['getTribe']),
     ...mapActions('whakapapa', ['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),

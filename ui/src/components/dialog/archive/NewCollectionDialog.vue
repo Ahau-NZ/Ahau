@@ -53,7 +53,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)

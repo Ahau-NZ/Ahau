@@ -133,24 +133,26 @@ export default {
     }
   },
   async mounted () {
-    // get the tribe this record is encrypted to
-    const tribe = await this.getTribe(this.view.recps[0])
+    const groupId = this.view.recps[0]
 
     // if its your personal group
-    if (this.whoami.personal.groupId === tribe.id) {
+    if (this.whoami.personal.groupId === groupId) {
       this.accessOptions = [{
         type: ACCESS_PRIVATE,
         groupId: this.whoami.personal.groupId,
         profileId: this.whoami.personal.profile.id
       }]
     } else {
-      const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === tribe.id)
+      // get the tribe this record is encrypted to
+      const tribe = await this.getTribe(groupId)
+
+      const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
 
       if (parentGroup) {
         const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
         this.accessOptions = [{
           type: ACCESS_KAITIAKI,
-          groupId: tribe.id,
+          groupId,
           profileId // community profileId
         }]
       } else {
@@ -158,7 +160,7 @@ export default {
         this.accessOptions = [
           {
             type: ACCESS_ALL_MEMBERS,
-            groupId: tribe.id,
+            groupId,
             profileId // community profileId
           }
         ]

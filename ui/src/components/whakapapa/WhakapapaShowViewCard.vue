@@ -79,10 +79,9 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import niho from '@/assets/niho.svg'
 import whakapapa from '@/assets/whakapapa.svg'
+import { ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
-
-const ACCESS_PERSONAL = 'personal'
 
 export default {
   name: 'WhakapapaShowViewCard',
@@ -119,8 +118,11 @@ export default {
   computed: {
     ...mapGetters(['currentAccess']),
     accessText () {
-      if (this.currentAccess.type === ACCESS_PERSONAL) return this.t('onlyYouHaveAccess')
-      else return `Only ${this.currentAccessProfile.preferredName} has access to this whakapapa` // TODO: translate
+      if (!this.currentAccess) return
+
+      if (this.currentAccess.type === ACCESS_PRIVATE) return this.t('onlyYouHaveAccess')
+      else if (this.currentAccess.type === ACCESS_KAITIAKI) return `Only ${this.currentAccessProfile.preferredName} kaitiaki have access to this whakapapa` // TODO: translate
+      else return `Only ${this.currentAccessProfile.preferredName} members have access to this whakapapa` // TODO: translate
     },
     image () {
       // if there is an image return it
