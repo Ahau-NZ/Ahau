@@ -1,4 +1,3 @@
-/* eslint-disable */
 import * as csv from './csv'
 const test = require('tape')
 const fs = require('fs').promises
@@ -13,18 +12,6 @@ const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,b
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
 const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education'
-
-// for numbers
-const DUPLICATE_NUMBERS = `${ALL_COLUMNS}
-,1,,,,,,,,,,,,,,,,,,
-,1,,,,,,,,,,,,,,,,,,
-`
-
-const VALID_NUMBERS = `${ALL_COLUMNS}
-,1,,,,,,,,,,,,,,,,,,
-1,2,,,,,,,,,,,,,,,,,,
-1,3,,,,,,,,,,,,,,,,,,
-`
 
 // for parentNumber
 const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}
@@ -83,24 +70,6 @@ test('header columns', t => {
     })
 })
 
-test('number', t => {
-  t.plan(2)
-  csv.parse(DUPLICATE_NUMBERS)
-    .catch(err => {
-      t.deepEqual(err, [
-        { row: 2, field: 'number', error: 'the number is not unique', value: '1' }
-      ], 'returns error for duplicate numbers')
-    })
-
-  csv.parse(VALID_NUMBERS)
-    .then(res => {
-      t.true(res.length === 3, 'returns no errors')
-    })
-    .catch(err => {
-      console.log(err)
-    })
-})
-
 test('parentNumber', t => {
   t.plan(2)
   csv.parse(INVALID_FIRST_PARENT_NUMBER)
@@ -131,28 +100,35 @@ test('csv.parse', t => {
   csv.parse(CORRECT_PERSONS)
     .then(csv => {
       t.deepEqual(csv[1], {
-        parentNumber: '1',
-        number: '2',
-        preferredName: 'Cherese',
-        legalName: 'Cherese Eriepa',
-        gender: 'female',
-        relationshipType: 'birth',
-        birthOrder: 2,
-        deceased: true,
-        aliveInterval: '0304-02-24/0305-02-24',
-        placeOfBirth: 'Auckland',
-        placeOfDeath: 'Hamilton',
-        buriedLocation: 'New Zealand',
-        phone: '021167892345',
-        email: 'cherese@me.com',
-        address: '123 Happy Lane',
-        city: 'HappyVille',
-        postCode: '1234',
-        country: 'New Zealand',
-        profession: 'Software Engineer',
-        school: null,
-        education: null,
-        altNames: null
+        csvId: '2',
+        link: {
+          parentCsvId: '1',
+          childCsvId: '2',
+          relationshipType: 'birth'
+        },
+        profile: {
+          preferredName: 'Cherese',
+          legalName: 'Cherese Eriepa',
+          gender: 'female',
+          birthOrder: 2,
+          deceased: true,
+          aliveInterval: '0304-02-24/0305-02-24',
+          placeOfBirth: 'Auckland',
+          placeOfDeath: 'Hamilton',
+          buriedLocation: 'New Zealand',
+          city: 'HappyVille',
+          postCode: '1234',
+          country: 'New Zealand',
+          profession: 'Software Engineer',
+          school: null,
+          education: null,
+          altNames: null
+
+          // NOTE: commented these out in csv.js as they are breaking backend changes!
+          // phone: '021167892345',
+          // email: 'cherese@me.com',
+          // address: '123 Happy Lane',
+        }
       }, 'returns correct profile')
     })
     .catch(err => console.log(err))
@@ -289,63 +265,65 @@ test('csv.schema', t => {
 })
 
 test('real data', (t) => {
-  // t.plan(304)
+  t.plan(304)
 
-  // TODO cherese 21/10/21: this test is failing, possibly because it has outdated test files. I have returned early so the failing test
-  // does mess with other tests and we also want to be reminded that this test fails when we run the tests!
-
-  t.fail('TODO: fix this test and the test files it uses')
-  t.end()
-  return
   const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
   fs.readFile(filepath, 'utf8').then((file) => {
     t.ok(file, 'file read returns result')
-    csv.parse(file).then((rows) => {
-      t.ok(rows, 'csv parse returns result')
 
-      const tree = d3.stratify()
-        .id(function (d) {
-          return d.number
-        })
-        .parentId(function (d) {
-          return d.parentNumber
-        })(rows)
-
-      t.equal(rows.length, 149, 'csv parser returns correct number of rows')
-
-      let count = 1
-      const walk = (row) => {
-        const seen = new Set()
-
-        row.children.forEach((child) => {
-          count += 1
-          if (seen.has(child.id)) {
-            t.fail('have not already seen this child')
-          }
-          seen.add(child.id)
-          if (child.children != null) {
-            walk(child)
-          }
-        })
-      }
-
-      t.ok(tree, 'tree exists')
-      walk(tree)
-      t.equal(count, rows.length, 'tree has correct number of nodes')
-
-      const descendants = tree.descendants()
-
-      t.equal(count, descendants.length, 'descendants has correct number of nodes')
-
-      descendants.forEach((descendant, index) => {
-        t.equal(descendant.number, descendant.data.id, 'number and id are same')
-        if (index === 0) {
-          t.equal(descendant.parent, null, 'root does not have parent')
-        } else {
-          t.ok(descendant.parent, 'non root does have parent')
-        }
+    csv.parse(file)
+      .catch((err) => {
+        t.fail('csv parse failed because of an error')
+        console.log('ERROR: ', JSON.stringify(err, null, 2))
       })
-    })
+      .then((rows) => {
+        t.ok(rows, 'csv parse returns result')
+
+        const tree = d3.stratify()
+          .id(function (d) {
+            return d.csvId
+          })
+          .parentId(function (d) {
+            return (d.link && d.link.parentCsvId)
+              ? d.link.parentCsvId
+              : null // NOTE: only the first d shouldnt have a link.parentCsvId
+          })(rows)
+
+        t.equal(rows.length, 149, 'csv parser returns correct number of rows')
+
+        let count = 1
+        const walk = (row) => {
+          const seen = new Set()
+
+          row.children.forEach((child) => {
+            count += 1
+            if (seen.has(child.id)) {
+              t.fail('have not already seen this child')
+            }
+            seen.add(child.id)
+            if (child.children != null) {
+              walk(child)
+            }
+          })
+        }
+
+        t.ok(tree, 'tree exists')
+        walk(tree)
+        t.equal(count, rows.length, 'tree has correct number of nodes')
+
+        const descendants = tree.descendants()
+
+        t.equal(count, descendants.length, 'descendants has correct number of nodes')
+
+        descendants.forEach((descendant, index) => {
+          t.equal(descendant.number, descendant.data.id, 'number and id are same')
+          if (index === 0) {
+            t.equal(descendant.parent, null, 'root does not have parent')
+          } else {
+            t.ok(descendant.parent, 'non root does have parent')
+          }
+        })
+      })
   })
 })
 

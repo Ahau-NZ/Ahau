@@ -61,10 +61,6 @@ function parse (fileContent) {
         errors.push({ row, field: 'parentNumber', error: 'the first parent number must be empty', value: d.parentNumber })
       }
 
-      // if (seen.has(d.number)) {
-      //   errors.push({ row, field: 'number', error: 'the number is not unique', value: d.number })
-      // }
-
       // the parentNumber should already exist as a number
       if (!isEmpty(d.parentNumber) && !seen.has(d.parentNumber)) {
         errors.push({ row, field: 'parentNumber', error: 'this parentNumber was used before it was assigned or doesnt exist', value: d.parentNumber })
@@ -76,6 +72,7 @@ function parse (fileContent) {
 
       if (errs) {
         errors = [...errors, ...errs]
+        seen.add(d.number)
       } else {
         d.bornAt = convertDate(d.bornAt)
         d.diedAt = convertDate(d.diedAt)
@@ -139,10 +136,6 @@ function parse (fileContent) {
           placeOfBirth: d.placeOfBirth,
           placeOfDeath: d.placeOfDeath,
           buriedLocation: d.buriedLocation,
-          // NOTE: commented these out as they are breaking backend changes!
-          // phone: d.phone,
-          // email: d.email,
-          // address: d.address,
           city: d.city,
           postCode: d.postCode,
           country: d.country,
@@ -150,6 +143,13 @@ function parse (fileContent) {
           school: d.school,
           education: d.education,
           altNames: d.altNames
+
+          // NOTE: commented these out as they are breaking backend changes!
+          // TODO cherese 01/12/21 allow these back in, these were commented out before
+          // group profiles saved changes to these fields
+          // phone: d.phone,
+          // email: d.email,
+          // address: d.address,
         }
 
         seen.add(d.number)

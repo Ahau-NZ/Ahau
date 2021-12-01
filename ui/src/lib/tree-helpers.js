@@ -121,8 +121,8 @@ function updateNode (nestedWhakapapa, node) {
     // merge the values to maintain isNonPartner/isNonChild assignments
     merge(nestedWhakapapa, node)
 
-    nestedWhakapapa.children = node.children
-    nestedWhakapapa.partners = node.partners
+    if (node.children) nestedWhakapapa.children = node.children
+    if (node.partners) nestedWhakapapa.partners = node.partners
 
     // leave spread operator: this triggers the computed listener as there is a change in reference
     return { ...nestedWhakapapa }
