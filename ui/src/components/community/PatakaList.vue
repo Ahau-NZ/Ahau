@@ -57,8 +57,7 @@ import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import patakaConfig from '../../../pataka.config'
-import { mapActions, createNamespacedHelpers } from 'vuex'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+import { mapActions } from 'vuex'
 
 export default {
   name: 'PatakaList',
@@ -132,7 +131,7 @@ export default {
   },
   methods: {
     ...mapActions(['setSyncing']),
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     connected (text) {
       this.dialog = false
       this.showAlert({

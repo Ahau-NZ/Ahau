@@ -70,13 +70,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import mapProfileMixins from '@/mixins/profile-mixins'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 const karakia = `
 ---------------------------------
@@ -136,7 +135,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setSyncing']),
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
