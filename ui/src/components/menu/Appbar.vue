@@ -35,7 +35,7 @@
               >
                 <Avatar
                   v-if="!mobile"
-                  size="45px"
+                  size="46px"
                   :image="tribe.private[0].avatarImage"
                   :alt="tribe.private[0].preferredName"
                   :isView="!tribe.private[0].avatarImage"

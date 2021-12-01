@@ -18,13 +18,19 @@
         <v-divider v-else class="py-5"></v-divider>
       </div>
     </v-row>
+
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
         <SideNavMenu :profile="profile" @new-registration="dialog = 'new-registration'"/>
       </v-col>
+
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'">
+      <v-col cols="12" xs="12" sm="12"
+        :md="isWhakapapaShow ? '12' : '10'"
+        :lg="isWhakapapaShow ? '100p' : '80p'"
+        :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
+      >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
           <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe" />
@@ -32,6 +38,7 @@
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
+
     <NewCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"

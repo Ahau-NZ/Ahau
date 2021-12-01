@@ -1,16 +1,23 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <p class="sub-headline pa-0 mb-4">{{ title }}</p>
-    </v-col>
+  <v-row >
+    <v-col cols="12" class="sub-headline ml-1">
+      {{ title }}
+    </v-col >
+
     <v-col
       v-for="tribe in tribes"
       :key="tribe.id"
       justify-self="start"
       cols="auto"
     >
-      <CommunityCard v-if="tribe.private && tribe.private.length" :community="tribe.private[0]" @click="goTribe(tribe)"/>
-      <CommunityCard v-else :community="tribe.public[0]" @click="goTribe(tribe)"/>
+      <CommunityCard v-if="tribe.private && tribe.private.length"
+        :community="tribe.private[0]"
+        @click="goTribe(tribe)"
+      />
+      <CommunityCard v-else
+        :community="tribe.public[0]"
+        @click="goTribe(tribe)"
+      />
     </v-col>
   </v-row>
 </template>
@@ -44,6 +51,7 @@ export default {
 <style scoped>
 .sub-headline {
   font-size: 0.8rem;
+  letter-spacing: 0.5px;
   color: rgba(0, 0, 0, 0.6);
 }
 </style>

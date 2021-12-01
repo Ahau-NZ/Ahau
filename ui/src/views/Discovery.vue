@@ -3,21 +3,29 @@
     <!-- body of the page -->
     <v-row class="pa-0">
       <!-- top of page -->
-      <v-col cols="12" :class="mobile ? '' : 'mt-4'">
-        <BigAddButton :label="t('newTribeButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="addCommunityDialog" />
-      </v-col>
       <!-- left hand side of page -->
       <v-col v-if="!mobile" cols="12" md="2">
       </v-col>
 
       <!-- main/middle body of page -->
-      <v-col cols="12" md="8">
-        <CommunitiesList />
+      <v-col cols="12" md="8" >
+        <CommunitiesList class="mt-4 mr-12" style="max-width:calc(5 * 214px);" >
+          <div class="mr-3" style="display: flex; justify-content: right;">
+            <BigAddButton
+              :label="t('newTribeButton')"
+              :customClass="mobile ? 'addBtnMobile' : 'addBtnDesktop'"
+              :class="mobile ? 'mt-2' : ''"
+              style="right:unset !important;"
+              @click="addCommunityDialog"
+            />
+          </div>
+        </CommunitiesList >
+
       </v-col>
 
       <!-- right hand side of page -->
       <v-col cols="12" md="2">
-        <PatakaList />
+        <PatakaList :style="customStyle"/>
       </v-col>
     </v-row>
   </v-container>
@@ -46,6 +54,12 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    customStyle () {
+      if (this.isMobile) return {}
+      return {
+        marginTop: '78px'
+      }
     }
   },
   methods: {

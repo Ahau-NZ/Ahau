@@ -19,7 +19,7 @@
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
             style="width:210px; height:310px;"
-            class="pa-0 mt-4 mx-3 mb-5"
+            class="pa-0 mt-4 ml-6 mb-5"
           >
             <v-scale-transition>
               <Collection
@@ -106,40 +106,34 @@ export default {
 }
 </script>
 
-<style>
-.v-slide-group__prev {
-  display: none !important;
-}
-.v-slide-group__next {
-  display: none !important;
-}
-.v-slide-group__wrapper {
-  overflow-x: auto; /* Enables the horizontal scrollbar */
-  /* Next lines hides scrollbar in different browsers for styling purposes */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+<style lang="scss">
+.v-slide-group {
+  .v-slide-group__prev, .v-slide-group__next {
+    display: none !important;
+  }
+  .v-slide-group__wrapper {
+    overflow-x: auto; /* Enables the horizontal scrollbar */
+    /* Next lines hides scrollbar in different browsers for styling purposes */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: lightgrey;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      /* background: #888; */
+      background: #888;
+
+      &:hover {
+        background: #555;
+      }
+    }
+  }
 }
 
-/*
-.v-slide-group__wrapper::-webkit-scrollbar {
-  display: none;
-}
-*/
-
-.v-slide-group__wrapper::-webkit-scrollbar {
-  height: 4px;
-}
-
-.v-slide-group__wrapper::-webkit-scrollbar-track {
-  background: lightgrey;
-}
-
-.v-slide-group__wrapper::-webkit-scrollbar-thumb {
-  /* background: #888; */
-  background: #888;
-}
-
-.v-slide-group__wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 </style>

@@ -51,11 +51,7 @@
         </v-btn>
         <v-avatar :size="isSideViewDialog ? '250px': size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'reduceOpacity' : showPicker}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img
-            v-else
-            :src="getImage"
-            :class="customClass"
-          />
+          <v-img v-else :src="getImage" :class="customClass" />
         </v-avatar>
         <div v-if="isEditing" :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
           <ImagePicker @updateAvatar="updateAvatar($event)" />
@@ -149,8 +145,13 @@ export default {
 }
 
 .isOnline {
-  border: #37e259 solid 3px;
   border-radius: 50% !important;
+  // border: #37e259 solid 3px;
+  // background: #37e259;
+  filter:
+    drop-shadow(0 0 3px #37e259)
+    drop-shadow(0 0 1px #37e259);
+
 }
 
 .image-picker-button {
