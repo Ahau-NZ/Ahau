@@ -94,9 +94,8 @@
 
 <script>
 import gql from 'graphql-tag'
-import { createNamespacedHelpers } from 'vuex'
+import { mapActions } from 'vuex'
 const { startDelay: START_DELAY, intervalTime: INTERVAL_TIME } = require('ssb-hyper-blobs/lib/defaults').autoPrune
-const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 
 const GB = 1024 * 1024 * 1024
 
@@ -198,7 +197,7 @@ export default {
     }
   },
   methods: {
-    ...mapSettingsActions(['getAutoPruneConfig', 'updateAutoPrune', 'disableAutoPrune']),
+    ...mapActions('settings', ['getAutoPruneConfig', 'updateAutoPrune', 'disableAutoPrune']),
     t (key, vars) {
       return this.$t('settingsForm.' + key, vars)
     },

@@ -75,13 +75,7 @@ import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 
-import {
-  mapActions,
-  createNamespacedHelpers,
-  mapGetters
-} from 'vuex'
-
-const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'EditNodeDialog',
@@ -163,7 +157,7 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapSettingsActions(['deleteAhau']),
+    ...mapActions('settings', ['deleteAhau']),
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
     },
