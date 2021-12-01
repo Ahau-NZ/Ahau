@@ -120,7 +120,7 @@ export default {
     ...mapGetters(['currentAccess']),
     accessText () {
       if (this.currentAccess.type === ACCESS_PERSONAL) return this.t('onlyYouHaveAccess')
-      else return `Only ${this.profile.preferredName} has access to this whakapapa` // TODO: translate
+      else return `Only ${this.currentAccessProfile.preferredName} has access to this whakapapa` // TODO: translate
     },
     image () {
       // if there is an image return it
