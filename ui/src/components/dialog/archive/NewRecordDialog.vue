@@ -9,7 +9,7 @@
         ref="recordForm"
         :editing="editing"
         :formData.sync="formData"
-        :access="access"
+        :groupId="currentAccess && currentAccess.groupId"
         :collection="collection"
       />
       <v-col align="center">
@@ -20,7 +20,7 @@
       </v-col>
     </template>
 
-    <template v-if="access" v-slot:before-actions>
+    <template v-if="currentAccess" v-slot:before-actions>
       <AccessButton :accessOptions="accessOptions" @access="setCurrentAccess" :disabled="editing" type="story" />
     </template>
   </Dialog>
@@ -33,7 +33,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
@@ -85,18 +85,19 @@ export default {
         else {
           if (!tribe) return
 
-          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+          const profileId = (tribe.private[0] || tribe.public[0]).id
           this.accessOptions = [
             {
               type: ACCESS_ALL_MEMBERS,
               groupId: tribe.id,
               profileId // community profileId
-            },
-            {
-              type: ACCESS_KAITIAKI,
-              groupId: tribe.admin.id,
-              profileId // community profileId
             }
+            /* NOTE - currently don't have kaitiaki-only archives set up */
+            // {
+            //   type: ACCESS_KAITIAKI,
+            //   groupId: tribe.admin.id,
+            //   profileId // community profileId
+            // }
           ]
         }
 

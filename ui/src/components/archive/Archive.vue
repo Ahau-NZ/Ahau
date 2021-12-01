@@ -80,13 +80,15 @@ import { VueContext } from 'vue-context'
 export default {
   name: 'Archive',
   props: {
-    profile: Object
+    profile: {
+      type: Object,
+      required: true
+    }
   },
   mixins: [
     saveStoryMixin,
     storiesApolloMixin,
     mapProfileMixins({
-      mapApollo: ['profile'],
       mapMethods: ['getProfile']
     })
   ],
@@ -123,9 +125,10 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     title () {
-      if (this.profile.id !== this.currentAccess.profileId) return `Stories about ${this.getDisplayName(this.profile)}`
-      // TODO i18n on this line ^
-      return this.$t('viewArchive.stories')
+      if (!this.currentAccess) return
+      return (this.profile.id !== this.currentAccess.profileId)
+        ? this.$t('viewArchive.storiesAbout', { name: this.getDisplayName(this.profile) })
+        : this.$t('viewArchive.stories')
     },
     hideArchiveTitle () {
       return this.onCollectionPage && this.mobile
@@ -136,7 +139,11 @@ export default {
     },
     archiveTitle () {
       if (this.isPersonalArchive) return this.$t('viewArchive.archiveTitle')
-      return this.currentAccessProfile.preferredName ? `${this.currentAccessProfile.preferredName}'s Archive` : `${this.currentAccessProfile.legalName}'s Archive`
+
+      const name = this.currentAccessProfile.preferredName || this.currentAccessProfile.legalName
+      if (!name) return
+
+      return this.$t('viewArchive.archiveTitleName', { name })
     },
     isPersonalArchive () {
       return this.$route.params.profileId === this.whoami.personal.profile.id
@@ -231,11 +238,11 @@ export default {
     },
     'currentAccess.profileId': {
       immediate: true,
-      handler: async (profileId) => {
+      async handler (profileId) {
         if (!profileId) return
 
         const profile = await this.getProfile(profileId)
-          .catch(err => console.error(err))
+          .catch(console.error)
 
         if (profile) this.currentAccessProfile = profile
       }

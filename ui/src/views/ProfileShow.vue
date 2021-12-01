@@ -69,32 +69,23 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
 import ProfileButton from '@/components/button/ProfileButton.vue'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import { deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { deleteTribe, getMembers } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-
-import {
-  mapGetters,
-  mapMutations,
-  mapActions,
-  createNamespacedHelpers
-} from 'vuex'
-
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'ProfileShow',
@@ -129,8 +120,10 @@ export default {
   watch: {
     tribe: {
       deep: true,
+      immediate: true,
       async handler (tribe) {
         if (!tribe.id) return
+
         try {
           const res = await this.$apollo.query(
             getMembers(tribe.id)
@@ -143,9 +136,11 @@ export default {
           // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
           this.profile.joiningQuestions = tribe.public[0].joiningQuestions
 
-          this.setCurrentAccess(
-            getTribalProfile(tribe, this.whoami)
-          )
+          this.setCurrentAccess({
+            type: ACCESS_ALL_MEMBERS,
+            groupId: tribe.id,
+            profileId: this.tribe.private.length ? this.tribe.private[0].id : this.tribe.public[0].id
+          })
 
           if (this.whoami.personal.profile.id === this.tribe.private[0].id) this.setIsKaitiaki(true)
           else this.setIsKaitiaki(this.tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId))
@@ -211,11 +206,11 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapMutations(['setCurrentAccess', 'setIsKaitiaki']),
-    ...mapAlertMutations(['showAlert']),
-    ...mapTribeActions(['addAdminsToGroup']),
-    ...mapCommunityActions(['updateCommunity']),
-    ...mapActions(['setWhoami']),
+    ...mapMutations(['setIsKaitiaki']),
+    ...mapActions(['setWhoami', 'setCurrentAccess']),
+    ...mapActions('alerts', ['showAlert']),
+    ...mapActions('tribe', ['addAdminsToGroup']),
+    ...mapActions('community', ['updateCommunity']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
       else this.dialog = 'edit-community'

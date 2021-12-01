@@ -42,16 +42,16 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import clone from 'lodash.clonedeep'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
@@ -155,8 +155,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapActions(['setDialog']),
+    ...mapActions(['setDialog', 'setCurrentAccess']),
     close () {
       this.formData = setDefaultCollection(this.collection)
       this.$emit('close')

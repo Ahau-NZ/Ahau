@@ -10,16 +10,16 @@
         <v-slide-group
           v-model="model"
           light
-          center-active
-          style="width: 100%; height: 100%;"
+          show-arrows
+          style="width: 100%; height: 100%; margin-top: 10px; background: rgba(0,0,0, 0.05)"
         >
           <v-slide-item
             v-for="(collection, i) in collections"
             :key="`c-s-g-${i}`"
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
-            style="width:210px;height:310px;"
-            class="pa-0 mx-3 mb-5"
+            style="width:210px; height:310px;"
+            class="pa-0 mt-4 mx-3 mb-5"
           >
             <v-scale-transition>
               <Collection
@@ -32,9 +32,10 @@
         </v-slide-group>
       </v-col>
     </v-row>
+
+    <!-- empty -->
     <v-row v-else>
       <v-col
-        v-if="!collections || (collections && collections.length < 1)"
         cols="12"
         xs="12"
         sm="12"
@@ -47,7 +48,7 @@
               v-for="n in 4"
               :key="`skeleton-${n}`"
               transition="fade-transition"
-              style="width:210px;height:310px;"
+              style="width:210px; height:310px;"
               class="pa-0 mx-3 mb-5"
             >
               <v-scale-transition>

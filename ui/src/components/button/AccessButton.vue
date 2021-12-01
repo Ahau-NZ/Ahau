@@ -27,7 +27,7 @@
                       >
                         <v-icon small>mdi-eye</v-icon>
                         <span class="ml-2">{{ currentAccess.label || $t(`accessButton.${currentAccess.type}`) }}</span>
-                        <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
+                        <v-icon v-if="!disabled && accessOptions.length > 1">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
                     <v-list v-if="accessOptions.length > 1">
@@ -40,6 +40,7 @@
                       </v-list-item>
                     </v-list>
                   </v-menu>
+
                   <!-- Set record Permissions: TODO when enabling this you will need to hide the 'submit' option until the Review and Submissions Epic is completed -->
                   <v-menu offset-y light hide-details dense rounded outlined>
                     <template v-slot:activator="{ on, attrs }">
@@ -104,10 +105,19 @@ export default {
   props: {
     accessOptions: {
       type: Array,
-      validator (value) {
-        const isValid = value.every(opt => (opt.type in ACCESS_TYPES) && opt.groupId && opt.profileId)
-        if (!isValid) console.log('invalid accessOptions', JSON.stringify(value, null, 2))
-        return isValid
+      validator (options) {
+        const errors = []
+        for (const option of options) {
+          if (!ACCESS_TYPES.includes(option.type)) errors.push(`invalid type ${option.type}`)
+          if (!option.groupId) errors.push('missing groupId')
+          if (!option.profileId) errors.push('missing profilId')
+        }
+        if (errors.length) {
+          console.log('invalid accessOptions', JSON.stringify(options, null, 2))
+          console.log(errors.join('\n'))
+          return false
+        }
+        return true
       },
       default: () => []
     },

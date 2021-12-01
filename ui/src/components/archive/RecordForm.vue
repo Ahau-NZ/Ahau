@@ -515,7 +515,7 @@ export default {
       type: Object
     },
     editing: Boolean,
-    access: Object,
+    groupId: String,
     collection: Object
   },
   mixins: [
@@ -557,13 +557,12 @@ export default {
     }
   },
   watch: {
-    async access (group) {
-      if (!group) return
+    async groupId (id) {
+      if (!id) return
 
-      const groupId = group.recps[0]
-      var storyRes = await this.$apollo.query(getAllStories({ groupId }))
+      var storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
       this.stories = storyRes.data.stories
-      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', groupId)
+      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', id)
     },
     form: {
       deep: true,
@@ -642,7 +641,7 @@ export default {
       suggestions = suggestions.filter(record => {
         if (!record.recps) return false // dont suggest public profiles?
 
-        return record.recps.includes(this.access.recps[0])
+        return record.recps.includes(this.groupId)
       })
 
       this[array] = suggestions

@@ -6,7 +6,7 @@
       </v-col>
       <v-col
         v-if="stories.length > 0"
-        cols="12" md="4" class="mr-auto pa-0"
+        cols="12" md="4" class="mr-auto pa-0 mt-6"
       >
         <v-combobox
           v-model="storySearchString"

@@ -81,8 +81,8 @@ export const ACCESS_PRIVATE = 'private'
 export const ACCESS_ALL_MEMBERS = 'allMembers'
 export const ACCESS_KAITIAKI = 'kaitiaki'
 
-export const ACCESS_TYPES = {
+export const ACCESS_TYPES = [
   ACCESS_PRIVATE,
   ACCESS_ALL_MEMBERS,
   ACCESS_KAITIAKI
-}
+]

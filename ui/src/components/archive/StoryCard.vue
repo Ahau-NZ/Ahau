@@ -4,15 +4,14 @@
       v-click-outside="onClickOutside"
       class="mx-auto"
       width="100%"
-      flat
       :class="customClass"
       :ripple="false"
       :light="!showArtefact"
-      :elevation="!mobile && !showArtefact && fullStory ? '24':''"
+      :elevation="(!mobile && !showArtefact && fullStory) ? 24 : 3"
       @click.passive="showStory()"
     >
-      <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:10px">
-        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+      <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:0">
+        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:10px; right:0; margin-right:0px">
           <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
           <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
         </v-list-item-icon>
@@ -137,7 +136,11 @@
           </v-col>
           <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" md="6">
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
-            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
+            <ChipGroup
+              :chips="story.collections.map(c => c.collection)"
+              type="collection"
+              @click="showRelatedCollection"
+            />
           </v-col>
         </v-row>
         <v-row class="px-4 mb-12">
@@ -445,13 +448,15 @@ export default {
       this.setCurrentStory(story)
     },
     showRelatedCollection (collection) {
-      var type = this.$route.name.split('/archive')[0]
+      let name
+      if (this.$route.name === 'community/collection') name = 'community/collection'
+      else name = this.$route.name.split('/archive')[0] + '/collection'
+
       this.$router.push({
-        name: type + '/collection',
-        params: {
-          collectionId: collection.id
-        }
+        name,
+        params: { collectionId: collection.id }
       })
+        .catch(err => !err.message.match(/redundant navigation/) && console.error(err))
       this.close()
     },
     onClickOutside () {
@@ -548,7 +553,7 @@ p {
 }
 
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.3);
+  // border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
   margin-bottom:20px

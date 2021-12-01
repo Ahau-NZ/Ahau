@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
 import isEmpty from 'lodash.isempty'
@@ -204,38 +205,15 @@ import ExportButton from '@/components/button/ExportButton.vue'
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
-
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
-
-import NodeMenu from '@/components/menu/NodeMenu.vue'
-
-import {
-  mapGetters,
-  mapActions,
-  mapMutations,
-  createNamespacedHelpers
-} from 'vuex'
-
-const {
-  mapActions: mapWhakapapaActions,
-  mapGetters: mapWhakapapaGetters
-} = createNamespacedHelpers('whakapapa')
-
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapGetters: mapPersonGetters, mapMutations: mapPersonMutations } = createNamespacedHelpers('person')
-const { mapActions: mapTableActions } = createNamespacedHelpers('table')
-
-const ACCESS_PERSONAL = 'personal'
-const ACCESS_ALL_MEMBERS = 'all members'
-const ACCESS_KAITIAKI = 'kaitiaki'
+import { ACCESS_ALL_MEMBERS, ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
   name: 'WhakapapaShow',
@@ -299,9 +277,9 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapPersonGetters(['selectedProfile']),
-    ...mapWhakapapaGetters(['whakapapaView', 'nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -361,8 +339,7 @@ export default {
         // if its your personal group
         if (this.whoami.personal.groupId === tribe.id) {
           this.accessOptions = [{
-            type: ACCESS_PERSONAL,
-            label: 'personal',
+            type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
             profileId: this.whoami.personal.profile.id
           }]
@@ -370,23 +347,19 @@ export default {
           const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === tribe.id)
 
           if (parentGroup) {
-            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+            const profileId = (parentGroup.private[0] || parentGroup.public[0]).id
             this.accessOptions = [{
               type: ACCESS_KAITIAKI,
-              label: 'kaitiaki', // TODO translate
               groupId: tribe.id,
               profileId // community profileId
             }]
           } else {
-            const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
-            this.accessOptions = [
-              {
-                type: ACCESS_ALL_MEMBERS,
-                label: 'all members', // TODO translate
-                groupId: tribe.id,
-                profileId // community profileId
-              }
-            ]
+            const profileId = (tribe.private[0] || tribe.public[0]).id
+            this.accessOptions = [{
+              type: ACCESS_ALL_MEMBERS,
+              groupId: tribe.id,
+              profileId // community profileId
+            }]
           }
         }
 
@@ -403,12 +376,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapTribeActions(['getTribe']),
-    ...mapPersonMutations(['updateSelectedProfile']),
-    ...mapActions(['setLoading']),
-    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),
-    ...mapTableActions(['resetTableFilters']),
+    ...mapActions(['setLoading', 'setCurrentAccess']),
+    ...mapActions('person', ['updateSelectedProfile']),
+    ...mapActions('table', ['resetTableFilters']),
+    ...mapActions('tribe', ['getTribe']),
+    ...mapActions('whakapapa', ['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
     },

@@ -17,11 +17,18 @@
         skeletonType="card-heading, image@2"
       />
     </v-col>
+
     <v-col v-else cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
-      {{ $t('viewPerson.viewPersonTitle') }}
+        {{ $t('viewPerson.viewPersonTitle') }}
       </v-col>
-      <ProfileInfoCard :myProfile="myProfile" :profile="profile" @setupProfile="setupProfile($event)"/>
+      <ProfileInfoCard
+        :myProfile="myProfile"
+        :profile="profile"
+        @setupProfile="setupProfile($event)"
+        style="max-width: 1200px"
+      />
+
       <template v-if="myProfile">
         <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
           {{ $t('viewPerson.skillsEducationTitle') }}
@@ -36,10 +43,11 @@
           </template>
         </ProfileCard>
       </template>
+
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
         {{ $t('viewPerson.contactInfo.contactInfoTitle') }}
       </v-col>
-      <ProfileCard>
+      <ProfileCard style="max-width: 1200px">
         <template v-slot:content>
           <v-row cols="12" class="pt-0" >
             <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" :title="$t('viewPerson.contactInfo.phone')" :value="profile.phone"/>
@@ -52,6 +60,7 @@
         </template>
       </ProfileCard>
     </v-col>
+
     <!-- RIGHT SIDE COLUMN -->
     <v-col v-if="!isLoaded" cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <SkeletonLoader

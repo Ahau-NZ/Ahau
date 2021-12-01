@@ -91,7 +91,6 @@ export default function rootModule (apollo) {
         state.goBack = id
       },
       setCurrentAccess (state, access) {
-        // TODO we need to specify what's needed, this warn will help us spot inconsistencies
         state.currentAccess = access
       },
       setAllowSubmissions (state, allow) {
