@@ -135,12 +135,13 @@ export default {
               type: ACCESS_ALL_MEMBERS,
               groupId: tribe.id,
               profileId // community profileId
-            },
-            {
-              type: ACCESS_KAITIAKI,
-              groupId: tribe.admin.id,
-              profileId // community profileId
             }
+            /* NOTE - currently don't have kaitiaki-only collections set up */
+            // {
+            //   type: ACCESS_KAITIAKI,
+            //   groupId: tribe.admin.id,
+            //   profileId // community profileId
+            // }
           ]
         }
 
