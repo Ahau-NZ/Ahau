@@ -1,11 +1,13 @@
 {
   "archiveTitle": "Seu Arquivo Pessoal",
+  "archiveTitleName": "{name} Archive",
   "addStory": "Add a story",
   "newCollectionButton": "nova coleção",
   "newStoryButton": "nova história",
   "collections": "Coleções",
   "updated": "Atualizado",
   "stories": "Histórias",
+  "storiesAbout": "Stories about {name}",
   "archiveRecords": "Arquivar Registros",
   "access": "Acesso",
   "mentions": "Menciona",
