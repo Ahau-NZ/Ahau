@@ -120,6 +120,7 @@ import { findByName } from '@/lib/search-helpers.js'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const {
@@ -199,7 +200,7 @@ export default {
   },
   computed: {
     ...mapPersonGetters(['selectedProfile']),
-    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -450,7 +451,7 @@ export default {
       if (input.id) return input.id
 
       // setup new profile required fields
-      input.type = 'person'
+      input.type = this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
       input.authors = {
         add: [
           input.recps.includes(this.whoami.personal.groupId) // if its my personal group
@@ -767,7 +768,11 @@ export default {
         this.suggestions = []
         return
       }
-      let records = await findByName(name, { type: 'person', groupId: this.view.recps[0] })
+
+      let records = await findByName(name, {
+        type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
+        groupId: this.view.recps[0]
+      })
 
       if (this.source !== 'new-registration') {
       //  DOES THIS DO ANYTHING? 4/11/21

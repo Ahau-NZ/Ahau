@@ -132,25 +132,36 @@ export default {
         if (!tribe.id) return
 
         try {
-          const res = await this.$apollo.query(
-            getMembers(tribe.id)
-          )
-
+          const res = await this.$apollo.query(getMembers(tribe.id))
           if (res.errors) throw res.errors
-
           this.tribe.members = res.data.listGroupAuthors
 
+          const communityPublicProfile = this.tribe.public[0]
+          const communityGroupProfile = this.tribe.private[0]
+
           // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
-          this.profile.joiningQuestions = tribe.public[0].joiningQuestions
+          if (communityPublicProfile) {
+            // NOTE if we're looking at an admin group, it has no public profile, and no joiningQuestions
+            this.profile.joiningQuestions = communityPublicProfile.joiningQuestions
+          }
+          // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
+          // Anti-patterns:
+          //   - bolting data onto existing profiles which might mutate
+          //   - watching for data changes instead of just requesting the exact data you need
 
           this.setCurrentAccess({
             type: ACCESS_ALL_MEMBERS,
             groupId: tribe.id,
-            profileId: this.tribe.private.length ? this.tribe.private[0].id : this.tribe.public[0].id
+            profileId: (
+              communityGroupProfile || communityPublicProfile || {}
+            ).id // TODO if there's no ID, stop trying to look it up
           })
 
-          if (this.whoami.personal.profile.id === this.tribe.private[0].id) this.setIsKaitiaki(true)
-          else this.setIsKaitiaki(this.tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId))
+          const isKaitiaki = (
+            (communityGroupProfile && (communityGroupProfile.id === this.whoami.personal.profile.id)) ||
+            (communityPublicProfile && communityGroupProfile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId))
+          )
+          this.setIsKaitiaki(isKaitiaki)
         } catch (err) {
           const message = this.t('failMembers')
           console.error(message)
