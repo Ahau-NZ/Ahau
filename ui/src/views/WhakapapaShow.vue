@@ -744,17 +744,20 @@ export default {
 
       await this.processSaveWhakapapa(input)
 
-      const [newPath] = this.$route.fullPath.split('whakapapa/')
-      this.$router.push({ path: newPath + 'whakapapa' }).catch(() => {})
+      // check the group we are going to is an admin one
+      const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
+      var type = this.$route.name.split('/whakapapa')[0]
+
+      if (parentGroup) {
+        // navigate to the parent group instead if we found this group has one
+        this.$router.push({ name: type + '/whakapapa', params: { tribeId: parentGroup.id, profileId: this.$route.params.profileId } }).catch(() => {})
+      } else {
+        this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+      }
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
-    // sortTable (event) {
-    //   this.$refs.sort.open(event)
-    //   this.sortTableBool = !this.sortTableBool
-    // },
-
     setSearchNode (event) {
       this.searchNodeEvent = event
     }
