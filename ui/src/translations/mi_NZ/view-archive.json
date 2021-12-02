@@ -1,11 +1,13 @@
 {
   "archiveTitle": "Ko tō ake pūranga",
+  "archiveTitleName": "{name} Archive",
   "addStory": "He pūrākau hou",
   "newCollectionButton": "Kohinga hou",
   "newStoryButton": "Kōrero hou",
   "collections": "Ngā kohinga",
   "updated": "Whakahou",
   "stories": "Ngā pūrākau/kōrero",
+  "storiesAbout": "Stories about {name}",
   "archiveRecords": "Ngā pūranga o mua",
   "access": "Te Whakatapoko",
   "mentions": "Tauākī",
