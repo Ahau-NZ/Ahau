@@ -350,6 +350,7 @@ export default {
 
           if (parentGroup) {
             const profileId = (parentGroup.private[0] || parentGroup.public[0]).id
+
             this.accessOptions = [{
               type: ACCESS_KAITIAKI,
               groupId,

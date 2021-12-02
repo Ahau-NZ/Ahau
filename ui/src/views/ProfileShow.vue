@@ -89,10 +89,10 @@ import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { deleteTribe, getMembers } from '@/lib/community-helpers.js'
+import { deleteTribe } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
+import { ACCESS_PRIVATE, ACCESS_KAITIAKI, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'ProfileShow',
@@ -129,44 +129,65 @@ export default {
       deep: true,
       immediate: true,
       async handler (tribe) {
-        if (!tribe.id) return
+        // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
+        // Anti-patterns:
+        //   - bolting data onto existing profiles which might mutate
+        //   - watching for data changes instead of just requesting the exact data you need
 
-        try {
-          const res = await this.$apollo.query(getMembers(tribe.id))
-          if (res.errors) throw res.errors
-          this.tribe.members = res.data.listGroupAuthors
+        if (!tribe || !tribe.id || !this.whoami) return
 
-          const communityPublicProfile = this.tribe.public[0]
-          const communityGroupProfile = this.tribe.private[0]
+        const groupId = tribe.id
 
-          // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
-          if (communityPublicProfile) {
-            // NOTE if we're looking at an admin group, it has no public profile, and no joiningQuestions
-            this.profile.joiningQuestions = communityPublicProfile.joiningQuestions
-          }
-          // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
-          // Anti-patterns:
-          //   - bolting data onto existing profiles which might mutate
-          //   - watching for data changes instead of just requesting the exact data you need
+        // if we are looking at our personal group
+        if (this.whoami.personal.groupId === groupId) {
+          this.setIsKaitiaki(true)
 
           this.setCurrentAccess({
-            type: ACCESS_ALL_MEMBERS,
-            groupId: tribe.id,
-            profileId: (
-              communityGroupProfile || communityPublicProfile || {}
-            ).id // TODO if there's no ID, stop trying to look it up
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
           })
+        } else {
+          // otherwise we are looking at another group which could be:
+          // 1. a group
+          // 2. an admin-only subgroup
 
-          const isKaitiaki = (
-            (communityGroupProfile && (communityGroupProfile.id === this.whoami.personal.profile.id)) ||
-            (communityPublicProfile && communityGroupProfile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId))
-          )
+          // check if we are the kaitiaki of this group
+          const isKaitiaki = tribe.public.length
+            ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
+            : false
+
           this.setIsKaitiaki(isKaitiaki)
-        } catch (err) {
-          const message = this.t('failMembers')
-          console.error(message)
-          console.error(err)
-          this.showAlert({ message, delay: 5000, color: 'red' })
+
+          // load the members of this group
+          this.tribe.members = await this.getMembers(groupId) || []
+
+          // check if this group has a parentGroup
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
+
+          // if it does, it means we are looking at an admin-only subgroup
+          if (parentGroup) {
+            // find the parent groups profile and use that instead
+            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+            this.setCurrentAccess({
+              type: ACCESS_KAITIAKI,
+              groupId,
+              profileId // community profileId of the parentGroup
+            })
+          } else {
+            // no parent group means we are already on a parent group
+            const profileId = (tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+
+            this.profile.joiningQuestions = (tribe.public.length)
+              ? tribe.public[0].joiningQuestions
+              : []
+
+            this.setCurrentAccess({
+              type: ACCESS_ALL_MEMBERS,
+              groupId,
+              profileId // community profileId
+            })
+          }
         }
       }
     },
@@ -183,6 +204,7 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
+    ...mapGetters('tribe', ['tribes']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },
@@ -227,7 +249,7 @@ export default {
     ...mapMutations(['setIsKaitiaki']),
     ...mapActions(['setWhoami', 'setCurrentAccess']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('tribe', ['addAdminsToGroup']),
+    ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
