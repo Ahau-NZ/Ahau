@@ -515,7 +515,7 @@ export default {
       type: Object
     },
     editing: Boolean,
-    access: Object,
+    groupId: String,
     collection: Object
   },
   mixins: [
@@ -557,13 +557,12 @@ export default {
     }
   },
   watch: {
-    async access (group) {
-      if (!group) return
+    async groupId (id) {
+      if (!id) return
 
-      const groupId = group.recps[0]
-      var storyRes = await this.$apollo.query(getAllStories({ groupId }))
+      var storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
       this.stories = storyRes.data.stories
-      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', groupId)
+      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', id)
     },
     form: {
       deep: true,
@@ -577,7 +576,8 @@ export default {
     if (this.editing) this.addContributor()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami']),
+    ...mapGetters(['whoami']),
+    ...mapGetters('archive', ['showStory']),
     recordCounter () {
       if (this.totalCharLength > 4000) return this.totalCharLength
       else return false
@@ -631,20 +631,11 @@ export default {
       if (this.showStory) this.show = true
       if (this.formData.endDate && this.formData.endDate.length > 0) this.hasEndDate = true
     },
-    async getSuggestions (array, $event) {
-      if (!$event) return
-      var suggestions = []
-      if ($event) suggestions = await findByName($event)
+    async getSuggestions (storeAt, name) {
+      if (!name) return
 
-      // filter out suggestions not in this tribe
-      if (!suggestions) return
-      suggestions = suggestions.filter(record => {
-        if (!record.recps) return false // dont suggest public profiles?
-
-        return record.recps.includes(this.access.recps[0])
-      })
-
-      this[array] = suggestions
+      const suggestions = await findByName(name, { type: 'person', groupId: this.groupId })
+      this[storeAt] = suggestions
     },
     toggleDialog ($event, dialog) {
       this.index = $event

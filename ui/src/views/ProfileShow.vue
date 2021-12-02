@@ -18,13 +18,19 @@
         <v-divider v-else class="py-5"></v-divider>
       </div>
     </v-row>
+
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
         <SideNavMenu :profile="profile" @new-registration="dialog = 'new-registration'"/>
       </v-col>
+
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'">
+      <v-col cols="12" xs="12" sm="12"
+        :md="isWhakapapaShow ? '12' : '10'"
+        :lg="isWhakapapaShow ? '100p' : '80p'"
+        :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
+      >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
           <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe" />
@@ -32,6 +38,7 @@
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
+
     <NewCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
@@ -69,32 +76,23 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
 import ProfileButton from '@/components/button/ProfileButton.vue'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import { deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { deleteTribe } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-
-import {
-  mapGetters,
-  mapMutations,
-  mapActions,
-  createNamespacedHelpers
-} from 'vuex'
-
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+import { ACCESS_PRIVATE, ACCESS_KAITIAKI, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'ProfileShow',
@@ -129,31 +127,67 @@ export default {
   watch: {
     tribe: {
       deep: true,
+      immediate: true,
       async handler (tribe) {
-        if (!tribe.id) return
-        try {
-          const res = await this.$apollo.query(
-            getMembers(tribe.id)
-          )
+        // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
+        // Anti-patterns:
+        //   - bolting data onto existing profiles which might mutate
+        //   - watching for data changes instead of just requesting the exact data you need
 
-          if (res.errors) throw res.errors
+        if (!tribe || !tribe.id || !this.whoami) return
 
-          this.tribe.members = res.data.listGroupAuthors
+        const groupId = tribe.id
 
-          // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
-          this.profile.joiningQuestions = tribe.public[0].joiningQuestions
+        // if we are looking at our personal group
+        if (this.whoami.personal.groupId === groupId) {
+          this.setIsKaitiaki(true)
 
-          this.setCurrentAccess(
-            getTribalProfile(tribe, this.whoami)
-          )
+          this.setCurrentAccess({
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          })
+        } else {
+          // otherwise we are looking at another group which could be:
+          // 1. a group
+          // 2. an admin-only subgroup
 
-          if (this.whoami.personal.profile.id === this.tribe.private[0].id) this.setIsKaitiaki(true)
-          else this.setIsKaitiaki(this.tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId))
-        } catch (err) {
-          const message = this.t('failMembers')
-          console.error(message)
-          console.error(err)
-          this.showAlert({ message, delay: 5000, color: 'red' })
+          // check if we are the kaitiaki of this group
+          const isKaitiaki = tribe.public.length
+            ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
+            : false
+
+          this.setIsKaitiaki(isKaitiaki)
+
+          // load the members of this group
+          this.tribe.members = await this.getMembers(groupId) || []
+
+          // check if this group has a parentGroup
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
+
+          // if it does, it means we are looking at an admin-only subgroup
+          if (parentGroup) {
+            // find the parent groups profile and use that instead
+            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
+            this.setCurrentAccess({
+              type: ACCESS_KAITIAKI,
+              groupId,
+              profileId // community profileId of the parentGroup
+            })
+          } else {
+            // no parent group means we are already on a parent group
+            const profileId = (tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+
+            this.profile.joiningQuestions = (tribe.public.length)
+              ? tribe.public[0].joiningQuestions
+              : []
+
+            this.setCurrentAccess({
+              type: ACCESS_ALL_MEMBERS,
+              groupId,
+              profileId // community profileId
+            })
+          }
         }
       }
     },
@@ -168,7 +202,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'isKaitiaki']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('archive', ['showStory', 'showArtefact']),
+    ...mapGetters('tribe', ['tribes']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },
@@ -210,11 +246,11 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapMutations(['setCurrentAccess', 'setIsKaitiaki']),
-    ...mapAlertMutations(['showAlert']),
-    ...mapTribeActions(['addAdminsToGroup']),
-    ...mapCommunityActions(['updateCommunity']),
-    ...mapActions(['setWhoami']),
+    ...mapMutations(['setIsKaitiaki']),
+    ...mapActions(['setWhoami', 'setCurrentAccess']),
+    ...mapActions('alerts', ['showAlert']),
+    ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
+    ...mapActions('community', ['updateCommunity']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
       else this.dialog = 'edit-community'

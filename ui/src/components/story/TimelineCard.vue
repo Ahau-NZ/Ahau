@@ -105,7 +105,7 @@ export default {
     iconColor: '#ffffff'
   }),
   computed: {
-    ...mapGetters(['showArtefact']),
+    ...mapGetters('archive', ['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

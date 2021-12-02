@@ -166,7 +166,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    ...mapGetters(['storeDialog', 'notifications', 'whoami']),
+    ...mapGetters('archive', ['showStory']),
     isCommunity () {
       return this.profile.type === 'community'
     },
@@ -221,8 +222,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['toggleShowStory', 'setDialog']),
-    ...mapMutations(['updateComponent']),
+    ...mapActions(['setDialog']),
+    ...mapActions('archive', ['toggleShowStory']),
+    ...mapMutations('archive', ['updateComponent']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()

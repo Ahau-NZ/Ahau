@@ -1,48 +1,28 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu :readonly="view"
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
     <!-- FORM -->
     <template v-slot:content>
-      <CollectionForm ref="collectionForm" :formData.sync="formData" :readonly="view" @edit="$emit('edit')"/>
+      <CollectionForm ref="collectionForm" :formData.sync="formData" @edit="$emit('edit')"/>
       <v-col v-if="editing" class="pt-8" align="center">
         <v-btn text @click="$emit('delete')">
           Delete this Collection
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
       </v-col>
-      <v-row v-if="view">
-        <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
-          <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
-          <AvatarGroup
-            style="position:relative; bottom:15px; right:15px"
-            :profiles="access"
-            show-labels :size="'50px'"
-            spacing="pr-2"
-          />
-        </v-col>
-        <v-col v-if="collection.tiaki && collection.tiaki.length > 0" cols="auto" class="pb-0">
-          <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
-          <AvatarGroup
-            style="position:relative; bottom:15px; right:15px"
-            :profiles="collection.tiaki"
-            show-labels :size="'50px'"
-            spacing="pr-2"
-          />
-        </v-col>
-      </v-row>
     </template>
 
-    <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing || view" type="collection" />
+    <template v-if="accessOptions.length" v-slot:before-actions>
+      <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing"  />
     </template>
   </Dialog>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import clone from 'lodash.clonedeep'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
@@ -50,7 +30,8 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import AvatarGroup from '@/components/AvatarGroup.vue'
+
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
@@ -86,23 +67,22 @@ const EMPTY_COLLECTION = {
 
 export default {
   name: 'NewCollectionDialog',
+  // TODO 2021-12-03 rename as this is New+Edit
   components: {
     Dialog,
     CollectionForm,
-    AccessButton,
-    AvatarGroup
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
     collection: { type: Object, default () { return EMPTY_COLLECTION } },
     title: String,
-    editing: Boolean,
-    view: Boolean
+    editing: Boolean
   },
   data () {
     return {
       formData: setDefaultCollection(this.collection),
-      access: null
+      accessOptions: []
     }
   },
   mixins: [
@@ -116,35 +96,44 @@ export default {
       deep: true,
       immediate: true,
       handler (tribe) {
-        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          return
+        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.accessOptions = [{
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } // eslint-disable-line
+        else {
+          if (!tribe) return
+
+          const profileId = (tribe.private[0] || tribe.public[0]).id
+          this.accessOptions = [
+            {
+              type: ACCESS_ALL_MEMBERS,
+              groupId: tribe.id,
+              profileId // community profileId
+            }
+            /* NOTE - currently don't have kaitiaki-only collections set up */
+            // {
+            //   type: ACCESS_KAITIAKI,
+            //   groupId: tribe.admin.id,
+            //   profileId // community profileId
+            // }
+          ]
         }
 
-        this.access = {
-          ...tribe.private.length > 0
-            ? tribe.private[0]
-            : tribe.public[0],
-          groupId: tribe.id
-        }
-
-        this.setCurrentAccess(this.access)
+        this.setCurrentAccess(this.accessOptions[0])
       }
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapActions(['setDialog']),
-    updateAccess ($event) {
-      this.access = $event
-      this.setCurrentAccess(this.access)
-    },
+    ...mapActions(['setDialog', 'setCurrentAccess']),
     close () {
       this.formData = setDefaultCollection(this.collection)
       this.$emit('close')
@@ -160,7 +149,7 @@ export default {
       } else {
         output = {
           ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
-          recps: [this.access.groupId]
+          recps: [this.currentAccess.groupId]
         }
       }
 

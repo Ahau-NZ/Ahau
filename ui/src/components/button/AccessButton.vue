@@ -8,13 +8,13 @@
             small
             :ripple="false"
           >
-            <Avatar class="" size="20px" :image="access.avatarImage" :isView="!access.avatarImage" :alt="getDisplayName(access)" :gender="access.gender" :aliveInterval="access.aliveInterval" />
-            <span class="ml-1 truncated-x">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span>
+            <Avatar class="" size="20px" :image="profile.avatarImage" :isView="!profile.avatarImage" :alt="getDisplayName(profile)" :gender="profile.gender" :aliveInterval="profile.aliveInterval" />
+            <span class="ml-1 truncated-x">{{ profile ? currentAccessIsPersonalGroup ? t('private') : profile.preferredName : t('setAccess')}}</span>
           </v-btn>
           <v-tooltip top open-delay="200">
             <template v-slot:activator="{ on }">
               <div v-on="on">
-                <template v-if="!access.isPersonalGroup">
+                <template v-if="!currentAccessIsPersonalGroup">
                   <!-- TODO: Update to list groups in Tribe: This is dependant on Groups Epic  -->
                   <v-menu offset-y light hide-details dense rounded outlined>
                     <template v-slot:activator="{ on, attrs }">
@@ -23,24 +23,24 @@
                         v-on="on"
                         text
                         rounded
-                        disabled
                         small
                       >
                         <v-icon small>mdi-eye</v-icon>
-                        <span class="ml-2">{{ group }}</span>
-                        <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
+                        <span class="ml-2">{{ currentAccess.label || $t(`accessButton.${currentAccess.type}`) }}</span>
+                        <v-icon v-if="!disabled && accessOptions.length > 1">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
-                    <v-list>
+                    <v-list v-if="accessOptions.length > 1">
                       <v-list-item
-                        v-for="(group, index) in groups"
+                        v-for="(accessOption, index) in accessOptions"
                         :key="index"
-                        @click="setGroup(group)"
+                        @click="setCurrentAccess(accessOption)"
                       >
-                        <v-list-item-title>{{ group }}</v-list-item-title>
+                        <v-list-item-title>{{ accessOption.label || $t(`accessButton.${accessOption.type}`) }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
+
                   <!-- Set record Permissions: TODO when enabling this you will need to hide the 'submit' option until the Review and Submissions Epic is completed -->
                   <v-menu offset-y light hide-details dense rounded outlined>
                     <template v-slot:activator="{ on, attrs }">
@@ -78,7 +78,7 @@
                 </template>
               </div>
             </template>
-            <span>{{ $t('support.comingSoon')}}</span>
+            <span>{{ tooltipText }}</span>
           </v-tooltip>
         </v-row>
       </v-col>
@@ -91,58 +91,61 @@
   </v-row>
 </template>
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import Avatar from '@/components/Avatar.vue'
-// import { getTribes } from '@/lib/community-helpers.js'
-import { mapGetters } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import { ACCESS_TYPES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
   name: 'AccessButton',
   props: {
-    access: Object,
+    accessOptions: {
+      type: Array,
+      validator (options) {
+        const errors = []
+        for (const option of options) {
+          if (!ACCESS_TYPES.includes(option.type)) errors.push(`invalid type ${option.type}`)
+          if (!option.groupId) errors.push('missing groupId')
+          if (!option.profileId) errors.push('missing profilId')
+        }
+        if (errors.length) {
+          console.log('invalid accessOptions', JSON.stringify(options, null, 2))
+          console.log(errors.join('\n'))
+          return false
+        }
+        return true
+      },
+      default: () => []
+    },
     disabled: Boolean,
     type: String
   },
   data () {
     return {
+      profile: {},
       toggle: false,
-      groups: [this.t('allMembers'), this.t('kaitiaki')],
-      group: this.t('allMembers'),
-      permissions: [this.t('edit'), this.t('read'), this.t('submit')],
+      permissions: [
+        this.t('edit'),
+        this.t('read'),
+        this.t('submit')
+      ],
       permission: this.t('edit')
     }
   },
-  // apollo: {
-  //   tribes () {
-  //     return {
-  //       ...getTribes,
-  //       update ({ tribes }) {
-  //         tribes = tribes
-  //         // a person can only change access to a tribe that it canEdit (is a kaitiaki)
-  //           .filter(tribe => tribe.private.length !== 0 && tribe.private[0].canEdit)
-  //           .map(tribe => {
-  //             return {
-  //               groupId: tribe.id,
-  //               ...tribe.private.length > 0
-  //                 ? tribe.private[0]
-  //                 : tribe.public[0]
-  //             }
-  //           })
-  //         tribes.push({
-  //           groupId: this.whoami.personal.groupId,
-  //           ...this.whoami.personal.profile,
-  //           isPersonalGroup: true
-  //         })
-  //         return tribes
-  //       }
-  //     }
-  //   }
-  // },
   components: {
     Avatar
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
+    tooltipText () {
+      // NOTE: this is a temporary fix to display different tooltip text when looking at whakapapa
+      // this is because access is coming soon on all other types of records
+      if (this.type === 'whakapapa') return this.t('whoHasAccess', { recordType: 'whakapapa' })
+      return this.$t('support.comingSoon')
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -151,26 +154,25 @@ export default {
       return 'pt-2 ml-2'
     },
     recordPermissions () {
-      if (this.access.isPersonalGroup) return this.t('privateAccess', { recordType: this.type })
-      else if (this.group === this.t('allMembers')) {
-        if (this.permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
-        else if (this.permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
-        else if (this.permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
-      } else if (this.group === this.t('kaitiaki')) return this.t('kaitiakiAccess', { recordType: this.type })
+      const { currentAccess, permission } = this
+
+      if (currentAccess.type === ACCESS_PRIVATE) return this.t('privateAccess', { recordType: this.type })
+      else if (currentAccess.type === ACCESS_KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
+      else if (currentAccess.type === ACCESS_ALL_MEMBERS) {
+        if (permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
+        else if (permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
+        else if (permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
+      }
       return ''
-    }
-    // caption () {
-    //   return this.t('addToArchive', { recordType: this.type })
-    // }
-  },
-  methods: {
-    getDisplayName,
-    setGroup (group) {
-      this.group = group
-      console.log('change access to group: ', group)
-      // TODO update record backend to connect to group
-      // this.$emit('access', group, permission)
     },
+    currentAccessIsPersonalGroup () {
+      return (this.currentAccess && this.currentAccess.groupId === this.whoami.personal.groupId)
+    }
+  },
+
+  methods: {
+    ...mapActions(['setCurrentAccess']),
+    getDisplayName,
     setPermission (permission) {
       // TODO update record backend to hold permission
       this.permission = permission
@@ -179,6 +181,20 @@ export default {
     },
     t (key, vars) {
       return this.$t('accessButton.' + key, vars)
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getProfile']
+    })
+  ],
+  watch: {
+    'currentAccess.profileId': {
+      immediate: true,
+      async handler (profileId) {
+        if (!profileId) return
+        this.profile = await this.getProfile(profileId)
+      }
     }
   }
 }

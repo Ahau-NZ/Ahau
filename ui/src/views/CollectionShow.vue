@@ -12,7 +12,7 @@
         </v-col>
         <v-col v-else cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row class="pb-5">
-            <CollectionTitleCard :collection="collection" :access="[access]" @click="editCollection"/>
+            <CollectionTitleCard :collection="collection" :access="[currentAccess]" @click="editCollection"/>
           </v-row>
         </v-col>
       </v-row>
@@ -37,7 +37,6 @@
       :collection="collection"
       :title="editing ? `Edit ${collection.name || 'Untitled'} Collection` : `${collection.name} Collection`"
       :editing="editing"
-      :view="view"
       @submit="processUpdateCollection"
       @delete="dialog = 'delete-collection'"
       @close="close"
@@ -60,20 +59,17 @@
 </template>
 
 <script>
-import { getTribalProfile } from '@/lib/community-helpers'
-import { saveStoryMixin } from '@/mixins/story-mixins.js'
+import { mapGetters, mapActions } from 'vuex'
 
-import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
-
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
-const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+import { saveStoryMixin } from '@/mixins/story-mixins.js'
+import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'CollectionShow',
@@ -91,17 +87,16 @@ export default {
   data () {
     return {
       collection: null,
-      access: null,
       dialog: false,
-      editing: false,
-      view: false
+      editing: false
     }
   },
   async mounted () {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'showStory', 'showArtefact']),
+    ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters('archive', ['showStory', 'showArtefact']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
       return this.collection.stories.map(link => {
@@ -121,11 +116,15 @@ export default {
   },
   watch: {
     async collection (collection) {
-      if (collection.recps && collection.recps.length > 0) {
-        const tribe = await this.getTribe(collection.recps[0])
-        this.access = getTribalProfile(tribe, this.whoami)
-        this.setCurrentAccess(this.access)
+      if (!collection.recps || !collection.recps.length) return
+
+      const tribe = await this.getTribe(collection.recps[0])
+      const access = {
+        type: ACCESS_ALL_MEMBERS,
+        groupId: tribe.id,
+        profileId: tribe.private[0].id
       }
+      this.setCurrentAccess(access)
     },
     recordCount () {
       if (this.recordCount !== this.collection.recordCount) {
@@ -138,27 +137,23 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess', 'setStory']),
-    ...mapActions(['toggleShowStory', 'setShowArtefact']),
-    ...mapCollectionActions(['getCollection', 'updateCollection', 'deleteCollection']),
-    ...mapTribeActions(['getTribe']),
+    ...mapActions(['setCurrentAccess']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory', 'setShowArtefact']),
+    ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
+    ...mapActions('tribe', ['getTribe']),
     editCollection () {
-      this.view = false
       this.editing = true
       this.dialog = 'edit-collection'
     },
     newStory () {
-      this.view = false
       this.editing = false
       this.dialog = 'new-story'
     },
     viewCollection () {
-      this.view = true
       this.editing = false
       this.dialog = 'edit-collection'
     },
     close () {
-      this.view = false
       this.editing = false
       this.dialog = null
     },
@@ -168,7 +163,7 @@ export default {
         return false
       }
       if (this.showStory) {
-        this.setStory(undefined)
+        this.setCurrentStory(undefined)
         this.toggleShowStory()
         return false
       }

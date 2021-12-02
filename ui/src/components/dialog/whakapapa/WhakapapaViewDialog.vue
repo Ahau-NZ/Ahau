@@ -27,7 +27,7 @@
       </v-row>
       <v-row class="pl-4">
         <AvatarGroup :profiles="view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
-        <AvatarGroup v-if="currentAccess" :profiles="[currentAccess]" :isView="currentAccess.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup v-if="currentAccess" :profiles="[currentAccessProfile]" :isView="currentAccess.type === ACCESS_ALL_MEMBERS" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </v-row>
     </template>
     <template v-slot:actions>
@@ -44,11 +44,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
-import { mapGetters } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'WhakapapaViewDialog',
@@ -71,6 +74,17 @@ export default {
       default: 'Whakapapa View'
     }
   },
+  data () {
+    return {
+      ACCESS_ALL_MEMBERS,
+      currentAccessProfile: {}
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getProfile']
+    })
+  ],
   computed: {
     ...mapGetters(['currentAccess']),
     mobile () {
@@ -84,6 +98,18 @@ export default {
     close (e) {
       if (e) e.preventDefault()
       this.$emit('close')
+    }
+  },
+  watch: {
+    'currentAccess.profileId': {
+      immediate: true,
+      async handler (profileId) {
+        if (!profileId) return
+        const profile = await this.getProfile(profileId)
+          .catch(err => console.error(err))
+
+        if (profile) this.currentAccessProfile = profile
+      }
     }
   }
 }

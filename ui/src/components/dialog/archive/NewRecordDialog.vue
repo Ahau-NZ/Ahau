@@ -9,7 +9,7 @@
         ref="recordForm"
         :editing="editing"
         :formData.sync="formData"
-        :access="access"
+        :groupId="currentAccess && currentAccess.groupId"
         :collection="collection"
       />
       <v-col align="center">
@@ -20,23 +20,23 @@
       </v-col>
     </template>
 
-    <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing" type="story" />
+    <template v-if="currentAccess" v-slot:before-actions>
+      <AccessButton :accessOptions="accessOptions" @access="setCurrentAccess" :disabled="editing" type="story" />
     </template>
   </Dialog>
 </template>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
-
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'NewRecordDialog',
@@ -56,14 +56,15 @@ export default {
     return {
       tribe: null,
       formData: setDefaultStory(this.story),
-      access: null,
       profile: {},
-      initial: false
+      initial: false,
+      accessOptions: []
     }
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile', 'tribe'],
+      mapMethods: ['getProfile']
     })
   ],
   mounted () {
@@ -74,19 +75,33 @@ export default {
       deep: true,
       immediate: true,
       handler (tribe, oldTribe) {
-        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          return
+        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.accessOptions = [{
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } // eslint-disable-line
+        else {
+          if (!tribe) return
+
+          const profileId = (tribe.private[0] || tribe.public[0]).id
+          this.accessOptions = [
+            {
+              type: ACCESS_ALL_MEMBERS,
+              groupId: tribe.id,
+              profileId // community profileId
+            }
+            /* NOTE - currently don't have kaitiaki-only archives set up */
+            // {
+            //   type: ACCESS_KAITIAKI,
+            //   groupId: tribe.admin.id,
+            //   profileId // community profileId
+            // }
+          ]
         }
 
-        this.access = {
-          ...tribe.private.length > 0
-            ? tribe.private[0]
-            : tribe.public[0],
-          groupId: tribe.id
-        }
-
-        this.setCurrentAccess(this.access)
+        this.setCurrentAccess(this.accessOptions[0])
       }
     },
     profile (profile) {
@@ -99,15 +114,15 @@ export default {
       this.formData.relatedRecords = []
       this.formData.collections = (this.collection) ? [this.collection] : []
     },
-    access (access, prevAccess) {
+    async currentAccess (access, prevAccess) {
       if (!access || this.editing) return
 
-      if (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId) {
-        this.formData.mentions = [this.profile]
-      } else {
-        this.formData.mentions = [access]
-      }
+      const mentionProfile = (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId)
+        ? this.profile
+        : await this.getProfile(access.profileId)
 
+      this.formData.mentions = [mentionProfile]
+      // TODO 2021-12-03 mentions, tiaki link to your group profile so people can click through
       this.formData.contributors = [this.whoami.public.profile]
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
@@ -116,7 +131,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -124,10 +139,6 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
-    updateAccess ($event) {
-      this.access = $event
-      this.setCurrentAccess(this.access)
-    },
     close () {
       this.formData = setDefaultStory(this.story)
       this.$emit('close')
@@ -143,7 +154,7 @@ export default {
       } else {
         output = {
           ...getObjectChanges(setDefaultStory(EMPTY_STORY), this.formData),
-          recps: [this.access.groupId]
+          recps: [this.currentAccess.groupId]
         }
       }
 

@@ -6,7 +6,7 @@
       </v-col>
       <v-col
         v-if="stories.length > 0"
-        cols="12" md="4" class="mr-auto pa-0"
+        cols="12" md="4" class="mr-auto pa-0 mt-6"
       >
         <v-combobox
           v-model="storySearchString"
@@ -112,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'currentStory']),
+    ...mapGetters('archive', ['showStory', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -154,8 +154,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'updateDialog']),
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
+    ...mapMutations(['updateDialog']),
+    ...mapActions(['setDialog']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory']),
     setString (name) {
       if (isEmpty(name)) return ''
       return name.toLowerCase().trim()
@@ -164,7 +165,7 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     toggleStory (story) {
-      this.setStory(story)
+      this.setCurrentStory(story)
       this.toggleShowStory()
       this.setDialog(null)
     },

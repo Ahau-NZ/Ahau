@@ -95,7 +95,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact']),
+    ...mapGetters('archive', ['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -112,7 +112,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowArtefact']),
+    ...mapActions('archive', ['setShowArtefact']),
     removeItem () {
       this.$emit('delete', this.selectedIndex)
       this.showArtefact(this.artefacts[0], 0)

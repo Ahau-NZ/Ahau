@@ -3,6 +3,7 @@
   "addWhakapapaButton": "new whakapapa record",
   "noWhakapapaFound": "no whakapapa record found",
   "whakapapaRecords": "Records",
+  "adminWhakapapaRecords": "Admin-only Records",
   "privateRecords": "My private",
   "backToWhakapapa": "Back to whakapapa records",
   "onlyYouHaveAccess": "Only you have access to this whakapapa",

@@ -5,6 +5,7 @@
       <v-img :src="image" cover class="grey darken-4" height="100px">
       </v-img>
     </v-col>
+
     <v-col cols="12" xs="12" sm="12" md="6" class="py-0">
       <v-row class="align-center pl-3">
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
@@ -35,6 +36,9 @@
         </p>
       </div>
     </v-col>
+
+    <v-spacer />
+
     <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
       <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
       <AvatarGroup

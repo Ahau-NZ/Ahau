@@ -35,7 +35,7 @@
               >
                 <Avatar
                   v-if="!mobile"
-                  size="45px"
+                  size="46px"
                   :image="tribe.private[0].avatarImage"
                   :alt="tribe.private[0].preferredName"
                   :isView="!tribe.private[0].avatarImage"
@@ -143,12 +143,10 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
 import { getTribes } from '../../store/modules/tribe/apollo-helpers'
-
-const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 const karakia = `
 ---------------------------------
@@ -201,10 +199,17 @@ export default {
   watch: {
     $route (to, from) {
       this.route = { to, from }
+    },
+    tribes: {
+      deep: true,
+      handler (tribes) {
+        this.updateTribes(tribes)
+      }
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters(['whoami', 'storeDialog', 'syncing']),
+    ...mapGetters('archive', ['showStory', 'navComponent']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
@@ -229,8 +234,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
-    ...mapPersonActions(['setProfileById']),
+    ...mapMutations('tribe', ['updateTribes']),
+    ...mapActions(['setWhoami', 'setDialog', 'getAllNotifications']),
+    ...mapActions('archive', ['toggleShowStory']),
+    ...mapActions('person', ['setProfileById']),
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },

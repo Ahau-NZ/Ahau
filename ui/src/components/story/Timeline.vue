@@ -102,7 +102,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'currentStory', 'whoami']),
+    ...mapGetters(['whoami']),
+    ...mapGetters('archive', ['showStory', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

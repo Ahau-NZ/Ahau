@@ -26,7 +26,7 @@
             <!-- <v-card-subtitle>{{ view.description || 'No description' }}</v-card-subtitle> -->
             <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
               <!-- Lock icon for access -->
-              <v-tooltip bottom v-if="access">
+              <v-tooltip bottom v-if="currentAccessProfile">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -35,8 +35,7 @@
                     <v-icon v-on="on" small color="#555">mdi-eye</v-icon>
                   </v-btn>
                 </template>
-                <span v-if="access.isPersonalGroup">{{ t('onlyYouHaveAccess') }}</span>
-                <span v-else>Only {{ access.preferredName }} has access to this whakapapa</span>
+                <span>{{ accessText }}</span>
               </v-tooltip>
               <!-- Pencil icon -->
               <slot name="edit"></slot>
@@ -64,7 +63,7 @@
           <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
           <v-row class="pl-4">
             <AvatarGroup :profiles="view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
-            <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
+            <AvatarGroup v-if="currentAccess" :profiles="[currentAccessProfile]" isView groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
           </v-row>
         </div>
       </v-expand-transition>
@@ -74,11 +73,13 @@
 
 <script>
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import niho from '@/assets/niho.svg'
 import whakapapa from '@/assets/whakapapa.svg'
+import { ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
@@ -88,19 +89,42 @@ export default {
     type: { type: String, default: 'view' },
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
-    cropDescription: { type: Boolean, default: false },
-    access: Object
+    cropDescription: { type: Boolean, default: false }
   },
   components: {
     AvatarGroup
   },
   data () {
     return {
-      show: false
+      show: false,
+      currentAccessProfile: {}
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getProfile']
+    })
+  ],
+  watch: {
+    'currentAccess.profileId': {
+      immediate: true,
+      async handler (profileId) {
+        if (!profileId) return
+        const profile = await this.getProfile(profileId)
+          .catch(console.error)
+        if (profile) this.currentAccessProfile = profile
+      }
     }
   },
   computed: {
     ...mapGetters(['currentAccess']),
+    accessText () {
+      if (!this.currentAccess) return
+
+      if (this.currentAccess.type === ACCESS_PRIVATE) return this.t('onlyYouHaveAccess')
+      else if (this.currentAccess.type === ACCESS_KAITIAKI) return `Only ${this.currentAccessProfile.preferredName} kaitiaki have access to this whakapapa` // TODO: translate
+      else return `Only ${this.currentAccessProfile.preferredName} members have access to this whakapapa` // TODO: translate
+    },
     image () {
       // if there is an image return it
       if (this.view && this.view.image && this.view.image.uri) return this.view.image.uri

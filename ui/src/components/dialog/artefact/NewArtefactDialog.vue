@@ -255,7 +255,10 @@ export default {
   props: {
     show: Boolean,
     artefacts: Array,
-    index: Number,
+    index: {
+      type: Number,
+      default: 0
+    },
     editing: Boolean
   },
   components: {

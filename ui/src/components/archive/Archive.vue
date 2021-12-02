@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -77,19 +77,19 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { VueContext } from 'vue-context'
 
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
-
 export default {
   name: 'Archive',
   props: {
-    profile: Object
+    profile: {
+      type: Object,
+      required: true
+    }
   },
   mixins: [
     saveStoryMixin,
     storiesApolloMixin,
     mapProfileMixins({
-      mapApollo: ['profile']
+      mapMethods: ['getProfile']
     })
   ],
   components: {
@@ -108,7 +108,8 @@ export default {
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false,
-      showCollectionStories: false
+      showCollectionStories: false,
+      currentAccessProfile: {}
     }
   },
   beforeMount () {
@@ -118,14 +119,16 @@ export default {
     await this.loadCollections()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
+    ...mapGetters(['whoami', 'storeDialog', 'currentAccess']),
+    ...mapGetters('archive', ['showStory', 'currentStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     title () {
-      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
-      // TODO i18n on this line ^
-      return this.$t('viewArchive.stories')
+      if (!this.currentAccess) return
+      return (this.profile.id !== this.currentAccess.profileId)
+        ? this.$t('viewArchive.storiesAbout', { name: this.getDisplayName(this.profile) })
+        : this.$t('viewArchive.stories')
     },
     hideArchiveTitle () {
       return this.onCollectionPage && this.mobile
@@ -136,7 +139,11 @@ export default {
     },
     archiveTitle () {
       if (this.isPersonalArchive) return this.$t('viewArchive.archiveTitle')
-      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
+
+      const name = this.currentAccessProfile.preferredName || this.currentAccessProfile.legalName
+      if (!name) return
+
+      return this.$t('viewArchive.archiveTitleName', { name })
     },
     isPersonalArchive () {
       return this.$route.params.profileId === this.whoami.personal.profile.id
@@ -165,10 +172,9 @@ export default {
     }
   },
   methods: {
-    ...mapAlertMutations(['showAlert']),
-    ...mapMutations(['setStory']),
-    ...mapActions(['toggleShowStory', 'setShowArtefact']),
-    ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
+    ...mapMutations('alerts', ['showAlert']),
+    ...mapActions('archive', ['toggleShowStory', 'setShowArtefact']),
+    ...mapActions('collection', ['createCollection', 'getCollectionsByGroup']),
     getDisplayName,
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]
@@ -228,6 +234,17 @@ export default {
             top: this.scrollPosition
           })
         }, 200)
+      }
+    },
+    'currentAccess.profileId': {
+      immediate: true,
+      async handler (profileId) {
+        if (!profileId) return
+
+        const profile = await this.getProfile(profileId)
+          .catch(console.error)
+
+        if (profile) this.currentAccessProfile = profile
       }
     },
     t (key, vars) {

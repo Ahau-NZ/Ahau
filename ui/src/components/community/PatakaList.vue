@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row class="">
-      <v-col :class="mobile ? 'px-6':'py-0 pr-8 pl-4 mt-12'">
+    <v-row>
+      <v-col :class="mobile ? 'px-6' : 'py-0 pr-8 pl-4 mt-0'">
         <v-divider v-if="mobile" light></v-divider>
         <ProfileCard :title="t('title')" class="mt-7">
           <template v-slot:content>
@@ -17,11 +17,11 @@
             <div v-else-if="patakas && patakas.length > 0">
               <v-row v-for="pataka in patakas" :key="pataka.id" class="align-center ml-6">
                 <v-col cols="2" class="pt-0 pl-0">
-                  <Avatar :size="mobile ? '60px' : '45px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
+                  <Avatar :size="mobile ? '60px' : '46px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
                 </v-col>
                 <v-col cols="10" class="pb-6" justify-center>
                   <p style="color:black;" class="mb-0">{{ pataka.preferredName }} </p>
-                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span>
+                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px; letter-spacing:1px;">online</span>
                 </v-col>
               </v-row>
             </div>
@@ -149,3 +149,6 @@ export default {
   }
 }
 </script>
+
+<style style="scss">
+</style>

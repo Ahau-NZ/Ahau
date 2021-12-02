@@ -6,7 +6,7 @@
       <!-- Whakapapa Title Card -->
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
-        <WhakapapaShowViewCard :view="whakapapaView" :access="access" :shadow="false">
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
           <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
 import isEmpty from 'lodash.isempty'
@@ -204,35 +205,15 @@ import ExportButton from '@/components/button/ExportButton.vue'
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
-
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import { getTribalProfile } from '@/lib/community-helpers'
-
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
-
-import NodeMenu from '@/components/menu/NodeMenu.vue'
-
-import {
-  mapGetters,
-  mapActions,
-  mapMutations,
-  createNamespacedHelpers
-} from 'vuex'
-
-const {
-  mapActions: mapWhakapapaActions,
-  mapGetters: mapWhakapapaGetters
-} = createNamespacedHelpers('whakapapa')
-
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapGetters: mapPersonGetters, mapMutations: mapPersonMutations } = createNamespacedHelpers('person')
-const { mapActions: mapTableActions } = createNamespacedHelpers('table')
+import { ACCESS_ALL_MEMBERS, ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
   name: 'WhakapapaShow',
@@ -260,7 +241,7 @@ export default {
   ],
   data () {
     return {
-      access: null,
+      accessOptions: [],
       fab: false,
       overflow: 'false',
       pan: 0,
@@ -296,8 +277,9 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
-    ...mapPersonGetters(['selectedProfile']),
-    ...mapWhakapapaGetters(['whakapapaView', 'nestedWhakapapa']),
+    ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -350,10 +332,41 @@ export default {
       }
     },
     async whakapapaView (view) {
-      if (view.recps) {
-        const tribe = await this.getTribe(view.recps[0])
-        this.access = getTribalProfile(tribe, this.whoami)
-        this.setCurrentAccess(this.access)
+      if (view && view.recps) {
+        // get the tribe this record is encrypted to
+
+        const groupId = view.recps[0]
+
+        // if its your personal group
+        if (this.whoami.personal.groupId === groupId) {
+          this.accessOptions = [{
+            type: ACCESS_PRIVATE,
+            groupId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }]
+        } else {
+          const tribe = await this.getTribe(view.recps[0])
+          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
+
+          if (parentGroup) {
+            const profileId = (parentGroup.private[0] || parentGroup.public[0]).id
+
+            this.accessOptions = [{
+              type: ACCESS_KAITIAKI,
+              groupId,
+              profileId // community profileId
+            }]
+          } else {
+            const profileId = (tribe.private[0] || tribe.public[0]).id
+            this.accessOptions = [{
+              type: ACCESS_ALL_MEMBERS,
+              groupId,
+              profileId // community profileId
+            }]
+          }
+        }
+
+        this.setCurrentAccess(this.accessOptions[0])
       }
     },
     showPartners: async function () {
@@ -366,12 +379,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapTribeActions(['getTribe']),
-    ...mapPersonMutations(['updateSelectedProfile']),
-    ...mapActions(['setLoading']),
-    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),
-    ...mapTableActions(['resetTableFilters']),
+    ...mapMutations('person', ['updateSelectedProfile']),
+    ...mapActions(['setLoading', 'setCurrentAccess']),
+    ...mapActions('table', ['resetTableFilters']),
+    ...mapActions('tribe', ['getTribe']),
+    ...mapActions('whakapapa', ['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
     },
@@ -732,17 +744,20 @@ export default {
 
       await this.processSaveWhakapapa(input)
 
-      const [newPath] = this.$route.fullPath.split('whakapapa/')
-      this.$router.push({ path: newPath + 'whakapapa' }).catch(() => {})
+      // check the group we are going to is an admin one
+      const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
+      var type = this.$route.name.split('/whakapapa')[0]
+
+      if (parentGroup) {
+        // navigate to the parent group instead if we found this group has one
+        this.$router.push({ name: type + '/whakapapa', params: { tribeId: parentGroup.id, profileId: this.$route.params.profileId } }).catch(() => {})
+      } else {
+        this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+      }
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
-    // sortTable (event) {
-    //   this.$refs.sort.open(event)
-    //   this.sortTableBool = !this.sortTableBool
-    // },
-
     setSearchNode (event) {
       this.searchNodeEvent = event
     }

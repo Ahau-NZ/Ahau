@@ -21,6 +21,7 @@
         </v-row>
       </v-btn>
     </div>
+
     <div v-else-if="isWhakapapaShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goWhakapapaIndex()" text>
         <div v-if="mobile">
@@ -33,7 +34,8 @@
         </v-row>
       </v-btn>
     </div>
-     <div v-else-if="isCollectionShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+
+    <div v-else-if="isCollectionShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goBack()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
@@ -54,14 +56,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-const {
-  mapGetters: mapWhakapapaGetters
-} = createNamespacedHelpers('whakapapa')
 
 export default {
   components: {
@@ -108,8 +106,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'isFromWhakapapaShow']),
-    ...mapWhakapapaGetters(['lastWhakapapaView']),
+    ...mapGetters('archive', ['showStory', 'isFromWhakapapaShow']),
+    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('whakapapa', ['lastWhakapapaView']),
     hasPreviousRoute () {
       return !!this.route.from
     },
@@ -153,15 +152,22 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateIsFromWhakapapaShow']),
-    ...mapActions(['toggleShowStory', 'setIsFromWhakapapaShow']),
+    ...mapActions('archive', ['toggleShowStory', 'setIsFromWhakapapaShow']),
     goWhakapapaShow () {
-      this.updateIsFromWhakapapaShow(false)
+      this.setIsFromWhakapapaShow(false)
       this.$router.push({ path: this.whakapapaRoute }).catch(() => {})
     },
     goWhakapapaIndex () {
+      // check the group we are going to is an admin one
+      const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
       var type = this.$route.name.split('/whakapapa')[0]
-      this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+
+      if (parentGroup) {
+        // navigate to the parent group instead if we found this group has one
+        this.$router.push({ name: type + '/whakapapa', params: { tribeId: parentGroup.id, profileId: this.$route.params.profileId } }).catch(() => {})
+      } else {
+        this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+      }
     },
     goBack () {
       this.$router.push({ path: this.route.from.fullPath })

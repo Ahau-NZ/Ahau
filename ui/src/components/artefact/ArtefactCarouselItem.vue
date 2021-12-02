@@ -125,7 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact']),
+    ...mapGetters('archive', ['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

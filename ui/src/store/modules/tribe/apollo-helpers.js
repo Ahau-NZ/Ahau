@@ -23,6 +23,10 @@ export const getTribe = ({
         public {
           ...CommunityFragment
         }
+
+        admin {
+          id
+        }
       }
     }
   `,
@@ -40,6 +44,10 @@ export const getTribes = ({
         }
         private {
           ...CommunityFragment
+        }
+
+        admin {
+          id
         }
       }
     }

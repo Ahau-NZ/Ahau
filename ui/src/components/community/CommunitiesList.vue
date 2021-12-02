@@ -1,10 +1,15 @@
 <template>
   <div>
-    <v-row class="pa-0">
-      <v-col cols="12" class="headliner black--text pa-0 pl-4">
-        Tribes
+    <v-row class="pa-0" style="max-width:calc(5 * 214px);" >
+      <v-col cols="8" class="headliner black--text pa-0 pl-4">
+        {{t('tribes')}}
+      </v-col>
+
+      <v-col cols="4" class="pa-0">
+        <slot></slot>
       </v-col>
     </v-row>
+
     <v-row v-if="!tribes">
       <SkeletonLoader
         :cols="mobile ? 12 : 3"
@@ -34,10 +39,12 @@
         skeletonType="image, card-heading"
       />
     </v-row>
+
     <v-row v-else>
       <v-col v-if="connectedTribes.length" cols="12" class="py-0">
-        <CommunityList :title="t('connectedTribes')" :tribes="connectedTribes"/>
+        <CommunityList :title="t('connectedTribes')" :tribes="connectedTribes" />
       </v-col>
+
       <v-col v-if="otherTribes.length" cols="12" class="py-0">
         <v-divider light color="grey" class="my-10"></v-divider>
         <CommunityList :title="t('otherTribes')" :tribes="otherTribes"/>
@@ -96,7 +103,7 @@ export default {
   flex-grow: 0;
 }
 .headliner {
-  font-size: 1em;
+  font-size: 1.4rem;
   text-transform: uppercase;
   font-weight: 400;
   letter-spacing: 5px;

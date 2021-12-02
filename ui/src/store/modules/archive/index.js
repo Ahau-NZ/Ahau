@@ -1,5 +1,3 @@
-// import gql from 'graphql-tag'
-
 const state = {
   navComponent: 'profile',
   currentStory: {},
@@ -9,6 +7,8 @@ const state = {
 }
 
 const getters = {
+  // TODO 2021-12-01, mix: this is only used by Appbar currently.
+  // Migrate to root store module?
   navComponent: state => {
     return state.navComponent
   },
@@ -53,6 +53,9 @@ const actions = {
   },
   setShowArtefact ({ commit }, state) {
     commit('updateShowArtefact', state)
+  },
+  setIsFromWhakapapaShow ({ commit }, state) {
+    commit('updateIsFromWhakapapaShow', state)
   }
 }
 
@@ -60,5 +63,6 @@ export default {
   state,
   mutations,
   actions,
-  getters
+  getters,
+  namespaced: true
 }
