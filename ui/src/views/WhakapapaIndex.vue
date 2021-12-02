@@ -171,9 +171,7 @@ export default {
       this.showViewForm = !this.showViewForm
     },
     async handleStepOne (input) {
-      var { access } = input
-
-      if (access && access.groupId) input.recps = [access.groupId]
+      if (this.currentAccess.groupId) input.recps = [this.currentAccess.groupId]
       else throw new Error('Recps field missing from whakapapa input')
 
       this.newView = {

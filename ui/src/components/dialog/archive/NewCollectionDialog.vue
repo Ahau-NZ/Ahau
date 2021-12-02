@@ -1,42 +1,21 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu :readonly="view"
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
     <!-- FORM -->
     <template v-slot:content>
-      <CollectionForm ref="collectionForm" :formData.sync="formData" :readonly="view" @edit="$emit('edit')"/>
+      <CollectionForm ref="collectionForm" :formData.sync="formData" @edit="$emit('edit')"/>
       <v-col v-if="editing" class="pt-8" align="center">
         <v-btn text @click="$emit('delete')">
           Delete this Collection
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
       </v-col>
-      <v-row v-if="view">
-        <v-col v-if="accessOptions && accessOptions.length > 0" cols="auto" class="pb-0">
-          <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
-          <AvatarGroup
-            style="position:relative; bottom:15px; right:15px"
-            :profiles="access"
-            show-labels :size="'50px'"
-            spacing="pr-2"
-          />
-          <!-- FIRE: should this be accessOptions OR currentAccess ??! TODO: check diff --->
-        </v-col>
-        <v-col v-if="collection.tiaki && collection.tiaki.length > 0" cols="auto" class="pb-0">
-          <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
-          <AvatarGroup
-            style="position:relative; bottom:15px; right:15px"
-            :profiles="collection.tiaki"
-            show-labels :size="'50px'"
-            spacing="pr-2"
-          />
-        </v-col>
-      </v-row>
     </template>
 
-    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
-      <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing || view"  />
+    <template v-if="accessOptions.length" v-slot:before-actions>
+      <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing"  />
     </template>
   </Dialog>
 </template>
@@ -48,7 +27,6 @@ import clone from 'lodash.clonedeep'
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -89,18 +67,17 @@ const EMPTY_COLLECTION = {
 
 export default {
   name: 'NewCollectionDialog',
+  // TODO 2021-12-03 rename as this is New+Edit
   components: {
     Dialog,
     CollectionForm,
-    AccessButton,
-    AvatarGroup
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
     collection: { type: Object, default () { return EMPTY_COLLECTION } },
     title: String,
-    editing: Boolean,
-    view: Boolean
+    editing: Boolean
   },
   data () {
     return {
@@ -129,7 +106,7 @@ export default {
         else {
           if (!tribe) return
 
-          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+          const profileId = (tribe.private[0] || tribe.public[0]).id
           this.accessOptions = [
             {
               type: ACCESS_ALL_MEMBERS,
