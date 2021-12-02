@@ -1,4 +1,4 @@
-parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,city,postCode,country,placeOfBirth,placeOfDeath,buriedLocation
+parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,city,postCode,country,placeOfBirth,placeOfDeath,buriedLocation,altNames,school,education
 ,1,Basia,Basia Adanez,,01/03/1987,yes,01/04/1988,,,,,,,,,,
 1,2,Phelia,Phelia Curness,female,,,,,,,,,,,,,
 1,3,Lydia,Lydia Kaveney,female,,,,,,,,,,,,,

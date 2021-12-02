@@ -23,7 +23,7 @@ test('whakapapa.suggestedChildren', async t => {
   // Setup Mock Whakapapa
   // ////
   const state = {
-    whakapapa: {
+    view: {
       ignoredProfiles: ['D']
     }
   }
@@ -95,7 +95,7 @@ test('whakapapa.suggestedParents', async t => {
   // Setup Mock Whakapapa
   // ////
   const state = {
-    whakapapa: {
+    view: {
       ignoredProfiles: []
     },
     nestedWhakapapa: C
