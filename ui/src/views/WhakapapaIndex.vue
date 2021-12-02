@@ -72,9 +72,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
@@ -86,8 +86,7 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-
-import { mapGetters, mapActions } from 'vuex'
+import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -132,26 +131,24 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
     ...mapActions('whakapapa', ['getWhakapapaViews', 'saveWhakapapaView']),
-    async getSuggestions ($event) {
-      if (!$event) {
+    async getSuggestions (name) {
+      if (!name) {
         this.suggestions = []
         return
       }
 
-      var records = await findByName($event)
-
-      var profiles = {} // flatStore for these suggestions
-
-      // filter out all records that arent in the current tribe
-      records = records
-        .filter(profile => {
-          var equals = isEqual(profile.recps, [this.currentAccess.groupId])
-          if (equals) profiles[profile.id] = profile
-          return equals
-        })
+      const { type, groupId } = this.currentAccess
+      let records
+      if (type === ACCESS_ALL_MEMBERS) records = await findByName(name, { groupId, type: 'person' })
+      if (type === ACCESS_KAITIAKI) records = await findByName(name, { groupId, type: 'person/admin' })
+      if (type === ACCESS_PRIVATE) {
+        const source = await findByName(name, { groupId, type: 'person/source' })
+        const other = await findByName(name, { groupId, type: 'person' })
+        records = [...source, ...other]
+      }
 
       // sets suggestions which is passed into the dialogs
-      this.suggestions = Object.assign([], records)
+      this.suggestions = records
     },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper

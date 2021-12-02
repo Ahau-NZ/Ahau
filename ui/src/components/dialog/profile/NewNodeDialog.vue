@@ -32,12 +32,12 @@
               :clearable="hasSelection"
               append-icon=""
               v-bind="customProps"
-              @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
               :readonly="hasSelection"
               :outlined="!hasSelection"
-              @blur.native="clearSuggestions"
               autofocus
+              @click:clear="resetFormData()"
+              @blur.native="clearSuggestions"
             >
 
               <!-- Slot:item = Data -->

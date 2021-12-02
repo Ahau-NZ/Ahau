@@ -98,7 +98,6 @@
 
 <script>
 import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 
@@ -763,22 +762,12 @@ export default {
       }
       this.setSelectedProfile(null)
     },
-    async getSuggestions ($event) {
-      if (!$event) {
+    async getSuggestions (name) {
+      if (!name) {
         this.suggestions = []
         return
       }
-      var records = await findByName($event)
-
-      if (isEmpty(records)) {
-        this.suggestions = []
-        return
-      }
-
-      // filter out all records that arent in the current tribe
-      records = records.filter(record => {
-        return isEqual(record.recps, this.view.recps)
-      })
+      let records = await findByName(name, { type: 'person', groupId: this.view.recps[0] })
 
       if (this.source !== 'new-registration') {
       //  DOES THIS DO ANYTHING? 4/11/21
@@ -814,7 +803,7 @@ export default {
       }
 
       // sets suggestions which is passed into the dialogs
-      this.suggestions = Object.assign([], records)
+      this.suggestions = records
     },
     /*
         needed this function because this.profiles keeps track of more than just the nodes in this tree,

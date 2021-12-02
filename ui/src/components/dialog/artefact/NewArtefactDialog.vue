@@ -296,7 +296,6 @@ export default {
     }
   },
   mounted () {
-    debugger
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
@@ -346,7 +345,6 @@ export default {
       this.$emit('close')
     },
     submit () {
-      debugger
       this.$emit('submit', this.formData)
       this.$emit('close')
     }
