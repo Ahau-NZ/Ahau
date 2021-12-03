@@ -142,8 +142,7 @@ import isEqual from 'lodash.isequal'
 import { dateIntervalToString, intervalToDayMonthYear } from '@/lib/date-helpers.js'
 import { SORT } from '@/lib/constants.js'
 
-import { mapActions, createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
@@ -202,7 +201,7 @@ export default {
   },
 
   computed: {
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
     ...mapTableGetters(['tableFilter', 'tableSort']),
     mobile () {
       return this.$vuetify.breakpoint.xs

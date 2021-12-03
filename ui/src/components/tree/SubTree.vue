@@ -56,8 +56,7 @@ import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-import { createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+import { mapGetters } from 'vuex'
 
 const PARTNER_SHRINK = 0.7
 const X_PADDING = 10
@@ -88,7 +87,7 @@ export default {
     }
   },
   computed: {
-    ...mapWhakapapaGetters(['whakapapaView', 'lessImportantLinks']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'lessImportantLinks']),
     allPartners () {
       return [
         ...this.partners,

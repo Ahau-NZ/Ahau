@@ -66,9 +66,7 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import NodeMenuButton from './NodeMenuButton.vue'
 
-import { createNamespacedHelpers } from 'vuex'
-
-const { mapActions: mapWhakapapaActions, mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Node',
@@ -97,7 +95,7 @@ export default {
     }
   },
   computed: {
-    ...mapWhakapapaGetters(['whakapapaView']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     isDuplicate () {
       return this.whakapapaView.importantRelationships
         .some(rel => rel.profileId === this.node.data.id && rel.other.length > 1)
@@ -162,7 +160,7 @@ export default {
     }
   },
   methods: {
-    ...mapWhakapapaActions(['addNode']),
+    ...mapActions('whakapapa', ['addNode']),
     openMenu (event, profile) {
       profile.isPartner = this.isPartner
       this.$emit('open-menu', { event, profile })

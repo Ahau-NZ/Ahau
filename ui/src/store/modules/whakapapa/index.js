@@ -161,10 +161,10 @@ export default function (apollo) {
   }
 
   const actions = {
-    updateNodeInNestedWhakapapa ({ commit, dispatch }, node) {
+    updateNodeInNestedWhakapapa ({ commit }, node) {
       commit('updateNodeInNestedWhakapapa', node)
     },
-    deleteNodeInNestedWhakapapa ({ commit, dispatch }, node) {
+    deleteNodeInNestedWhakapapa ({ commit }, node) {
       commit('deleteNodeInNestedWhakapapa', node)
     },
     async getWhakapapaView (context, viewId) {
@@ -214,13 +214,16 @@ export default function (apollo) {
         console.error('failed to save the whakapapa', err)
       }
     },
+    setView ({ commit }, view) {
+      commit('setView', view)
+    },
     resetWhakapapaView ({ commit }) {
       commit('resetWhakapapaView')
     },
     addNode ({ commit }, node) {
       commit('addNode', node)
     },
-    setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
+    setNestedWhakapapa ({ commit }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
     },
     async suggestedChildren ({ dispatch, state }, parentId) {
