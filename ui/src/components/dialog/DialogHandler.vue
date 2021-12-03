@@ -129,8 +129,6 @@ const {
   mapActions: mapWhakapapaActions
 } = createNamespacedHelpers('whakapapa')
 
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-
 export default {
   name: 'DialogHandler',
   components: {
@@ -230,7 +228,7 @@ export default {
   methods: {
     getDisplayName,
     ...mapAlertMutations(['showAlert']),
-    ...mapTribeActions(['initGroup']),
+    ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
     ...mapWhakapapaMutations([
       'updateNodeInNestedWhakapapa',

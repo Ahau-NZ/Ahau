@@ -109,19 +109,6 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'joiningQuestions'
 ]
 
-export const getMembers = id => ({
-  query: gql`
-    ${PublicProfileFieldsFragment}
-    query($id: ID!) {
-      listGroupAuthors(id: $id) {
-        ...PublicProfileFields
-      }
-    }
-  `,
-  variables: { id: id },
-  fetchPolicy: 'no-cache'
-})
-
 export const COMMUNITY_FRAGMENT = gql`
 ${PublicProfileFieldsFragment}
   fragment CommunityFragment on Community {

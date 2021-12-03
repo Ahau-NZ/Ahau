@@ -141,7 +141,6 @@ export default {
         // if we are looking at our personal group
         if (this.whoami.personal.groupId === groupId) {
           this.setIsKaitiaki(true)
-
           this.setCurrentAccess({
             type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
@@ -203,6 +202,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters('tribe', ['tribes']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
     ...mapGetters('tribe', ['tribes']),
     myProfile () {
