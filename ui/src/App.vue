@@ -35,7 +35,6 @@ import AlertMessage from './components/dialog/AlertMessage.vue'
 import { getIndexes } from '@/store/modules/settings/apollo-helpers'
 
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
-const { mapGetters: mapAlertGetters } = createNamespacedHelpers('alerts')
 const { mapActions: mapAnalyticsActions } = createNamespacedHelpers('analytics')
 
 const { version } = require('../../desktop/package.json')
@@ -77,7 +76,7 @@ export default {
   },
   computed: {
     ...mapGetters(['storeDialog', 'loadingState']),
-    ...mapAlertGetters(['alertSettings']),
+    ...mapGetters('alerts', ['alertSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

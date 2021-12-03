@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -172,7 +172,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('alerts', ['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     ...mapActions('archive', ['toggleShowStory', 'setShowArtefact']),
     ...mapActions('collection', ['createCollection', 'getCollectionsByGroup']),
     getDisplayName,

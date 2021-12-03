@@ -1,13 +1,12 @@
 import gql from 'graphql-tag'
-import { createNamespacedHelpers } from 'vuex'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+import { mapActions } from 'vuex'
 
 const MB = 1024 * 1024
 const MAX_FILE_SIZE = 5 * MB
 
 export default {
   methods: {
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     async uploadFile (input) {
       try {
         if (input.file && input.file.size > MAX_FILE_SIZE) {
