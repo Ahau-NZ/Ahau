@@ -274,16 +274,11 @@ export default {
       }
       return true
     },
-    async setupNewCommunity ($event) {
-      // (later?)
-      // - [ ] create a copy of your personal profile (recps: [groupId])
-      // - [ ] link your feedId + profile
-      //    - saveFeedProfileLink (recps: [groupId])
+    async setupNewCommunity (input) {
       try {
-        if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
+        const group = await this.initGroup(input)
 
-        const group = await this.initGroup($event)
-        this.$router.push({ name: 'community/profile', params: { tribeId: group.groupId, profileId: group.private[0].id } }).catch(() => {})
+        this.$router.push({ name: 'community/profile', params: { tribeId: group.id, profileId: group.private[0].id } }).catch(() => {})
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
