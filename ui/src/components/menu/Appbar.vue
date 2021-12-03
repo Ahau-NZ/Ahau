@@ -143,7 +143,7 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
 import { getTribes } from '../../store/modules/tribe/apollo-helpers'
@@ -234,7 +234,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('tribe', ['updateTribes']),
+    ...mapActions('tribe', ['updateTribes']),
     ...mapActions(['setWhoami', 'setDialog', 'getAllNotifications']),
     ...mapActions('archive', ['toggleShowStory']),
     ...mapActions('person', ['setProfileById']),

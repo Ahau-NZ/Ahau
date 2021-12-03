@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
@@ -142,8 +142,6 @@ import Avatar from '@/components/Avatar.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
-
-const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'Profile',
@@ -166,7 +164,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapTribeGetters(['tribes']),
+    ...mapGetters('tribe', ['tribes']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id
     },
@@ -197,7 +195,7 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog']),
-    ...mapTribeActions(['getTribes']),
+    ...mapActions('tribe', ['getTribes']),
     ...mapActions('person', ['setProfileById']),
 
     goTribe (tribe) {

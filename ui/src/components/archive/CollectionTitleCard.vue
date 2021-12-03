@@ -66,9 +66,7 @@
 import niho from '@/assets/niho.svg'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import { getTribalProfile } from '@/lib/community-helpers.js'
-import { mapGetters, createNamespacedHelpers } from 'vuex'
-
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'CollectionTitleCard',
@@ -105,7 +103,7 @@ export default {
     }
   },
   methods: {
-    ...mapTribeActions(['getTribe'])
+    ...mapActions('tribe', ['getTribe'])
   }
 }
 </script>

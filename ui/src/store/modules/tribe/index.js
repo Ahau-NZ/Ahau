@@ -1,5 +1,4 @@
-import { initGroup, getTribe, getTribes, addAdminsToGroup } from './apollo-helpers'
-import { getMembers } from '../../../lib/community-helpers'
+import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -19,6 +18,9 @@ export default function (apollo) {
   }
 
   const actions = {
+    updateTribes ({ commit }, tribes) {
+      commit('updateTribes', tribes)
+    },
     async getTribe ({ rootState, dispatch }, id) {
       try {
         if (id === rootState.whoami.personal.groupId) {
@@ -103,7 +105,7 @@ export default function (apollo) {
 
         return res.data.listGroupAuthors
       } catch (err) {
-        console.log('failed to get the groups members', err)
+        console.error('failed to get the groups members', err)
       }
     }
   }
