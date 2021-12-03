@@ -22,15 +22,13 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { mapActions } from 'vuex'
 import { downloadBackup } from '@/lib/download-helper'
-
-const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 
 export default {
   name: 'BackupSettings',
   methods: {
-    ...mapSettingsActions(['getBackup', 'updateKeyBackupSettings']),
+    ...mapActions('settings', ['getBackup', 'updateKeyBackupSettings']),
     async downloadKeys () {
       const backupContent = await this.getBackup()
 
