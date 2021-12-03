@@ -34,9 +34,7 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import AlertMessage from './components/dialog/AlertMessage.vue'
 import { getIndexes } from '@/store/modules/settings/apollo-helpers'
 
-import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
-const { mapActions: mapAnalyticsActions } = createNamespacedHelpers('analytics')
-
+import { mapGetters, mapActions } from 'vuex'
 const { version } = require('../../desktop/package.json')
 // TODO - this is only useful for the desktop installer,
 // this will need to change when we build mobile again
@@ -72,7 +70,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
-    ...mapAnalyticsActions(['appUsed'])
+    ...mapActions('analytics', ['appUsed'])
   },
   computed: {
     ...mapGetters(['storeDialog', 'loadingState']),
