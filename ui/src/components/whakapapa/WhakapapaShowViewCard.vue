@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -80,8 +80,6 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import niho from '@/assets/niho.svg'
 import whakapapa from '@/assets/whakapapa.svg'
 import { ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
-
-const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'WhakapapaShowViewCard',
@@ -155,7 +153,7 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog']),
-    ...mapPersonActions(['setProfileById']),
+    ...mapActions('person', ['setProfileById']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })

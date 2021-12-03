@@ -185,7 +185,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
 import isEmpty from 'lodash.isempty'
@@ -379,7 +379,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('person', ['updateSelectedProfile']),
+    ...mapActions('person', ['updateSelectedProfile']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
     ...mapActions('table', ['resetTableFilters']),
     ...mapActions('tribe', ['getTribe']),

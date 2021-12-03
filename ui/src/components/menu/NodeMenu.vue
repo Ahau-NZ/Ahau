@@ -18,9 +18,8 @@
 
 <script>
 import { VueContext } from 'vue-context'
-import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { mapGetters } from 'vuex'
 import findSuccessor from '@/lib/find-successor'
-const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
 export default {
   name: 'NodeMenu',
@@ -32,7 +31,7 @@ export default {
     VueContext
   },
   computed: {
-    ...mapPersonGetters(['selectedProfile']),
+    ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami']),
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
