@@ -31,6 +31,9 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a person', err)
       }
     },
+    updateSelectedProfile ({ commit }, profile) {
+      commit('updateSelectedProfile', profile)
+    },
 
     async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
       // NOTE to dispatch outide this namespace, we use:

@@ -144,7 +144,6 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
-const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'Profile',
@@ -199,7 +198,7 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     ...mapTribeActions(['getTribes']),
-    ...mapPersonActions(['setProfileById']),
+    ...mapActions('person', ['setProfileById']),
 
     goTribe (tribe) {
       var profile = tribe.private.length > 0

@@ -130,7 +130,6 @@ const {
 } = createNamespacedHelpers('whakapapa')
 
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
 export default {
   name: 'DialogHandler',
@@ -199,7 +198,7 @@ export default {
     }
   },
   computed: {
-    ...mapPersonGetters(['selectedProfile']),
+    ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
