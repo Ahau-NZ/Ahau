@@ -121,12 +121,7 @@ import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
-import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
-const {
-  mapGetters: mapWhakapapaGetters,
-  mapMutations: mapWhakapapaMutations,
-  mapActions: mapWhakapapaActions
-} = createNamespacedHelpers('whakapapa')
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -197,7 +192,7 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -229,15 +224,13 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
-    ...mapWhakapapaMutations([
+    ...mapActions('whakapapa', [
+      'saveWhakapapaView',
+      'getWhakapapaView',
       'updateNodeInNestedWhakapapa',
       'deleteNodeInNestedWhakapapa',
       'setNestedWhakapapa',
       'setView'
-    ]),
-    ...mapWhakapapaActions([
-      'saveWhakapapaView',
-      'getWhakapapaView'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {

@@ -39,8 +39,7 @@ import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 
 import calculateAge from '../../lib/calculate-age'
-import { createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+import { mapGetters, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
@@ -62,7 +61,7 @@ export default {
     }
   },
   computed: {
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
     ...mapTableGetters(['tableFilter']),
 
     customProps () {

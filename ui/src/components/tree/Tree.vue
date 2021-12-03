@@ -49,8 +49,7 @@ import isEqual from 'lodash.isequal'
 
 import settings from '@/lib/link.js'
 
-import { mapActions, createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -88,7 +87,7 @@ export default {
   },
 
   computed: {
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
     radius () {
       return settings.radius
     },
