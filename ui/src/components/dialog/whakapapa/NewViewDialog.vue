@@ -89,7 +89,7 @@ export default {
     })
   ],
   computed: {
-    ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters(['whoami']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -152,8 +152,7 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv,
-        access: this.currentAccess // TODO! see how this is used
+        csv
       }
       this.$emit('submit', newOutput)
       this.close()

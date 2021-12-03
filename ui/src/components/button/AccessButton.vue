@@ -78,7 +78,7 @@
                 </template>
               </div>
             </template>
-            <span>{{ $t('support.comingSoon')}}</span>
+            <span>{{ tooltipText }}</span>
           </v-tooltip>
         </v-row>
       </v-col>
@@ -140,6 +140,12 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    tooltipText () {
+      // NOTE: this is a temporary fix to display different tooltip text when looking at whakapapa
+      // this is because access is coming soon on all other types of records
+      if (this.type === 'whakapapa') return this.t('whoHasAccess', { recordType: 'whakapapa' })
+      return this.$t('support.comingSoon')
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

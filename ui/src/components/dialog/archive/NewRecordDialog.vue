@@ -122,7 +122,7 @@ export default {
         : await this.getProfile(access.profileId)
 
       this.formData.mentions = [mentionProfile]
-      // TODO ideally link to your group profile instead
+      // TODO 2021-12-03 mentions, tiaki link to your group profile so people can click through
       this.formData.contributors = [this.whoami.public.profile]
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []

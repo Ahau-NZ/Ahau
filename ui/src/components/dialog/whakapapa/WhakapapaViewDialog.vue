@@ -104,6 +104,7 @@ export default {
     'currentAccess.profileId': {
       immediate: true,
       async handler (profileId) {
+        if (!profileId) return
         const profile = await this.getProfile(profileId)
           .catch(err => console.error(err))
 

@@ -631,20 +631,11 @@ export default {
       if (this.showStory) this.show = true
       if (this.formData.endDate && this.formData.endDate.length > 0) this.hasEndDate = true
     },
-    async getSuggestions (array, $event) {
-      if (!$event) return
-      var suggestions = []
-      if ($event) suggestions = await findByName($event)
+    async getSuggestions (storeAt, name) {
+      if (!name) return
 
-      // filter out suggestions not in this tribe
-      if (!suggestions) return
-      suggestions = suggestions.filter(record => {
-        if (!record.recps) return false // dont suggest public profiles?
-
-        return record.recps.includes(this.groupId)
-      })
-
-      this[array] = suggestions
+      const suggestions = await findByName(name, { type: 'person', groupId: this.groupId })
+      this[storeAt] = suggestions
     },
     toggleDialog ($event, dialog) {
       this.index = $event

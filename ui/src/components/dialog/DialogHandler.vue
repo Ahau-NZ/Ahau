@@ -98,7 +98,6 @@
 
 <script>
 import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 
@@ -121,6 +120,7 @@ import { findByName } from '@/lib/search-helpers.js'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const {
   mapGetters: mapWhakapapaGetters,
@@ -196,7 +196,7 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['selectedProfile']),
-    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -447,7 +447,7 @@ export default {
       if (input.id) return input.id
 
       // setup new profile required fields
-      input.type = 'person'
+      input.type = this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
       input.authors = {
         add: [
           input.recps.includes(this.whoami.personal.groupId) // if its my personal group
@@ -759,21 +759,15 @@ export default {
       }
       this.setSelectedProfile(null)
     },
-    async getSuggestions ($event) {
-      if (!$event) {
-        this.suggestions = []
-        return
-      }
-      var records = await findByName($event)
-
-      if (isEmpty(records)) {
+    async getSuggestions (name) {
+      if (!name) {
         this.suggestions = []
         return
       }
 
-      // filter out all records that arent in the current tribe
-      records = records.filter(record => {
-        return isEqual(record.recps, this.view.recps)
+      let records = await findByName(name, {
+        type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
+        groupId: this.view.recps[0]
       })
 
       if (this.source !== 'new-registration') {
@@ -810,7 +804,7 @@ export default {
       }
 
       // sets suggestions which is passed into the dialogs
-      this.suggestions = Object.assign([], records)
+      this.suggestions = records
     },
     /*
         needed this function because this.profiles keeps track of more than just the nodes in this tree,

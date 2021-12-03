@@ -5,13 +5,14 @@ import { PERSON_FRAGMENT, WHAKAPAPA_LINK_FRAGMENT } from './person-helpers.js'
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
-export async function findByName (name) {
+export async function findByName (name, opts = {}) {
+  const { groupId, type } = opts
   const request = {
     query: gql`
       ${PERSON_FRAGMENT}
       ${WHAKAPAPA_LINK_FRAGMENT}
-      query($name: String!) {
-        findPersons(name: $name) {
+      query($name: String!, $groupId: String, $type: String) {
+        findPersons(name: $name, groupId: $groupId, type: $type) {
           ...ProfileFragment
           children {
             ...ProfileFragment
@@ -29,7 +30,9 @@ export async function findByName (name) {
       }
     `,
     variables: {
-      name
+      name,
+      groupId, // optional - can be groupId or poBoxId
+      type
     },
     fetchPolicy: 'no-cache'
   }

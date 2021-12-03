@@ -129,39 +129,53 @@ export default {
       deep: true,
       immediate: true,
       async handler (tribe) {
+        // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
+        // Anti-patterns:
+        //   - bolting data onto existing profiles which might mutate
+        //   - watching for data changes instead of just requesting the exact data you need
+
         if (!tribe || !tribe.id || !this.whoami) return
 
         const groupId = tribe.id
 
+        // if we are looking at our personal group
         if (this.whoami.personal.groupId === groupId) {
           this.setIsKaitiaki(true)
-          // TODO: check if we still need to set joiningQuestions if we are in our personal group
-          this.profile.joiningQuestions = []
           this.setCurrentAccess({
             type: ACCESS_PRIVATE,
             groupId: this.whoami.personal.groupId,
             profileId: this.whoami.personal.profile.id
           })
         } else {
+          // otherwise we are looking at another group which could be:
+          // 1. a group
+          // 2. an admin-only subgroup
+
+          // check if we are the kaitiaki of this group
           const isKaitiaki = tribe.public.length
             ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
-            : []
+            : false
 
           this.setIsKaitiaki(isKaitiaki)
 
+          // load the members of this group
           this.tribe.members = await this.getMembers(groupId) || []
 
+          // check if this group has a parentGroup
           const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
 
+          // if it does, it means we are looking at an admin-only subgroup
           if (parentGroup) {
+            // find the parent groups profile and use that instead
             const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
             this.setCurrentAccess({
               type: ACCESS_KAITIAKI,
               groupId,
-              profileId // community profileId
+              profileId // community profileId of the parentGroup
             })
           } else {
-            const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+            // no parent group means we are already on a parent group
+            const profileId = (tribe.private.length ? tribe.private[0] : tribe.public[0]).id
 
             this.profile.joiningQuestions = (tribe.public.length)
               ? tribe.public[0].joiningQuestions
@@ -190,6 +204,7 @@ export default {
     ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
+    ...mapGetters('tribe', ['tribes']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },

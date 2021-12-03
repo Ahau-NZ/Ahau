@@ -37,7 +37,6 @@
       :collection="collection"
       :title="editing ? `Edit ${collection.name || 'Untitled'} Collection` : `${collection.name} Collection`"
       :editing="editing"
-      :view="view"
       @submit="processUpdateCollection"
       @delete="dialog = 'delete-collection'"
       @close="close"
@@ -89,8 +88,7 @@ export default {
     return {
       collection: null,
       dialog: false,
-      editing: false,
-      view: false
+      editing: false
     }
   },
   async mounted () {
@@ -144,22 +142,18 @@ export default {
     ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
     ...mapActions('tribe', ['getTribe']),
     editCollection () {
-      this.view = false
       this.editing = true
       this.dialog = 'edit-collection'
     },
     newStory () {
-      this.view = false
       this.editing = false
       this.dialog = 'new-story'
     },
     viewCollection () {
-      this.view = true
       this.editing = false
       this.dialog = 'edit-collection'
     },
     close () {
-      this.view = false
       this.editing = false
       this.dialog = null
     },

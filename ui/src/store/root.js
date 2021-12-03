@@ -1,4 +1,5 @@
 import { whoami } from '../lib/person-helpers.js'
+import { ACCESS_TYPES } from '../lib/constants.js'
 
 const SECOND = 1000
 
@@ -91,6 +92,15 @@ export default function rootModule (apollo) {
         state.goBack = id
       },
       setCurrentAccess (state, access) {
+        if (
+          !access ||
+          !ACCESS_TYPES.includes(access.type) ||
+          !access.groupId ||
+          !access.profileId
+        ) {
+          console.error('invalid accessOption', access)
+          return
+        }
         state.currentAccess = access
       },
       setAllowSubmissions (state, allow) {

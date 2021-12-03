@@ -133,6 +133,7 @@
               text
               medium
               class="blue--text"
+              v-if="showStoriesButton"
             >
               <ArchiveIcon size="normal" color="blue"/>
               <span class="pl-2 "> {{ t('stories') }} </span>
@@ -309,6 +310,7 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import EditRelationships from '@/components/profile/EditRelationships.vue'
 
 import calculateAge from '../../../lib/calculate-age'
+import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
@@ -383,7 +385,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki']),
+    ...mapGetters(['isKaitiaki', 'currentAccess']),
     scopedProfile () {
       if (this.profile && this.profile.adminProfile) {
         const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
@@ -407,6 +409,9 @@ export default {
     },
     isAdminProfile () {
       return this.profile && this.profile.adminProfile
+    },
+    showStoriesButton () {
+      return this.currentAccess.type !== ACCESS_KAITIAKI
     },
     mobile () {
       return this.$vuetify.breakpoint.xs

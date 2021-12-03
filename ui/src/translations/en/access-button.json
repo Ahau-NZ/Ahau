@@ -1,5 +1,6 @@
 {
   "private": "Private",
+  "whoHasAccess": "Choose who will have access to this { recordType }",
   "privateAccess": "Only you have access to this {recordType}",
   "kaitiaki": "Kaitiaki only",
   "kaitiakiAccess": "Only kaitiaki of this tribe can access this {recordType}",
