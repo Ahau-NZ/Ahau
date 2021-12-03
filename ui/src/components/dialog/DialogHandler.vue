@@ -280,7 +280,7 @@ export default {
 
         this.$router.push({ name: 'community/profile', params: { tribeId: group.id, profileId: group.private[0].id } }).catch(() => {})
       } catch (err) {
-        console.error('Something went wrong while trying to create private group', $event)
+        console.error('Something went wrong while trying to create private group', input)
         console.error(err)
         this.showAlert({
           message: 'Failed to create the private group. Please contact us if this continues to happen',
