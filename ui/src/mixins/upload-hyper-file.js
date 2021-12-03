@@ -1,4 +1,4 @@
-import { createNamespacedHelpers } from 'vuex'
+import { mapActions } from 'vuex'
 import { isCordova } from '../lib/cordova-helpers'
 
 const { ahau: env } = require('ahau-env')()
@@ -9,7 +9,6 @@ const url = `http://localhost:${(env.hyperBlobs && env.hyperBlobs.port) || 26836
 // readKey
 // blobId
 
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const hexTo64 = str => Buffer.from(str, 'hex').toString('base64')
 
 const MB = 1024 * 1024
@@ -42,7 +41,7 @@ function uploadArtefact (file) {
 
 export default {
   methods: {
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     async uploadFile ({ file }) {
       try {
         if (file && file.size > MAX_FILE_SIZE) {

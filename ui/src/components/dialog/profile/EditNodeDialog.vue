@@ -82,7 +82,6 @@ import {
 } from 'vuex'
 
 const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'EditNodeDialog',
@@ -163,7 +162,7 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     ...mapSettingsActions(['deleteAhau']),
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage

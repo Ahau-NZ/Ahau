@@ -122,7 +122,6 @@ import findSuccessor from '@/lib/find-successor'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const {
   mapGetters: mapWhakapapaGetters,
   mapMutations: mapWhakapapaMutations,
@@ -227,7 +226,7 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapAlertMutations(['showAlert']),
+    ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
     ...mapWhakapapaMutations([
