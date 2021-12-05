@@ -168,9 +168,6 @@ export default {
   },
   methods: {
     openContextMenu ({ event, profile }) {
-      // NOTE: this where we will handle which parent to use for addPerson/processUpdate in DialogHandler
-      profile.parent = this.root.parent ? this.root.parent.data : null
-
       this.openMenu({ event, profile })
     },
     mapPartnerNodes (nodes, midway) {

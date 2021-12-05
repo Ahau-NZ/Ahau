@@ -192,7 +192,7 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['getNode', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -232,6 +232,13 @@ export default {
       'setNestedWhakapapa',
       'setView'
     ]),
+    getSelectedProfilesParent () {
+      const node = this.getNode(this.selectedProfile.id)
+
+      if (node && node.parent && node.parent.data) return node.parent.data
+
+      return null
+    },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -319,7 +326,12 @@ export default {
           var child = id
           var parentProfile = this.dialogType === 'child'
             ? this.selectedProfile
-            : this.selectedProfile.parent // for siblings we take the first parent
+            : this.getSelectedProfilesParent()
+
+          if (!parentProfile) {
+            console.error(`Missing the parent profile when add a ${this.dialogType}`)
+            return
+          }
 
           if (!ignored) {
             // create the link
@@ -369,8 +381,9 @@ export default {
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
           } else {
-            if (this.selectedProfile.parent) { // when a node already has a parent node above them, this will be called
-              parentProfile = await this.loadDescendants(this.selectedProfile.parent.id)
+            const hasParentNode = this.getSelectedProfilesParent()
+            if (hasParentNode) { // when a node already has a parent node above them, this will be called
+              parentProfile = await this.loadDescendants(hasParentNode.id)
               // NOTE we're not passing in a "seen" variable, so this call might result in infinite loops
               this.updateNodeInNestedWhakapapa(parentProfile)
 
@@ -495,7 +508,9 @@ export default {
       // update the relationship
       const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
 
-      var { relationshipType, legallyAdopted, parent } = this.selectedProfile
+      var { relationshipType, legallyAdopted } = this.selectedProfile
+
+      const parent = this.getSelectedProfilesParent()
 
       // TEMP: skips saving relationship if there is no relationship on the selectedProfile
       if (!isEmpty(relationshipAttrs) && profileId !== this.view.focus && parent) {
@@ -521,7 +536,6 @@ export default {
 
         this.selectedProfile.relationshipType = relationshipType
         this.selectedProfile.legallyAdopted = legallyAdopted
-        this.selectedProfile.parent = node
 
         this.updateNodeInNestedWhakapapa(node)
       } else {
