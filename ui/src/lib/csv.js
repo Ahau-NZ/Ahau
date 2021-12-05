@@ -2,6 +2,8 @@ import * as d3 from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
 import edtf from 'edtf'
 
+const PERMITTED_CSV_RELATIONSHIPS = [...RELATIONSHIPS, 'partner']
+
 const PERMITTED_CSV_COLUMNS = [
   'parentNumber',
   'number',
@@ -120,7 +122,7 @@ function parse (fileContent) {
           person.link = {
             parentCsvId: d.parentNumber,
             childCsvId: d.number,
-            relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+            relationshipType: d.relationshipType
           }
         }
 
@@ -240,8 +242,8 @@ const schema = {
     msg: 'must be either a string or empty'
   },
   relationshipType: {
-    action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
-    msg: 'only accepts the following: ' + RELATIONSHIPS
+    action: d => PERMITTED_CSV_RELATIONSHIPS.includes(d) || isEmpty(d),
+    msg: 'only accepts the following: ' + PERMITTED_CSV_RELATIONSHIPS
   },
   email: validateString,
   city: validateString,

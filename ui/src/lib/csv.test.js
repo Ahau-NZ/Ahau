@@ -136,7 +136,7 @@ test('csv.parse', t => {
   csv.parse(INCORRECT_PERSONS)
     .catch(err => { // should be 3 errors
       t.deepEqual(err, [
-        { row: 1, field: 'relationshipType', error: 'only accepts the following: birth,whangai,adopted', value: 'bith' },
+        { row: 1, field: 'relationshipType', error: 'only accepts the following: birth,whangai,adopted,partner', value: 'bith' },
         { row: 2, field: 'bornAt', error: 'should be of format DD/MM/YYYY or DD-MM-YYYY', value: '24/02' },
         { row: 3, field: 'gender', error: 'only accepts the following: male,female,other,unknown', value: 'fema' }
       ], 'returns expected errors')
