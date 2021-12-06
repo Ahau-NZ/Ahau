@@ -29,7 +29,9 @@ module.exports = {
   address: null,
   email: null,
   phone: null,
-  avatarImage: null,
+  avatarImage: {
+    uri: 'http://localhost:28067/get/%26%2BKcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU%3D.sha256?unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs'
+  },
   headerImage: null,
   __typename: 'Person',
   children: [
