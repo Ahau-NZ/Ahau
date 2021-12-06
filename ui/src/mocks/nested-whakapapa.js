@@ -30,7 +30,13 @@ module.exports = {
   email: null,
   phone: null,
   avatarImage: {
-    uri: 'http://localhost:28067/get/%26%2BKcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU%3D.sha256?unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs'
+    blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',
+    mimeType: 'image/png',
+    size: 576003,
+    width: null,
+    height: null,
+    uri: 'http://localhost:28067/get/%26%2BKcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU%3D.sha256?unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs',
+    __typename: 'Image'
   },
   headerImage: null,
   __typename: 'Person',
@@ -102,7 +108,15 @@ module.exports = {
           address: null,
           email: null,
           phone: null,
-          avatarImage: null,
+          avatarImage: {
+            blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',
+            mimeType: 'image/png',
+            size: 576003,
+            width: null,
+            height: null,
+            uri: 'http://localhost:28067/get/%26%2BKcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU%3D.sha256?unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs',
+            __typename: 'Image'
+          },
           headerImage: null,
           __typename: 'Person',
           relationshipType: 'birth',
@@ -213,7 +227,15 @@ module.exports = {
               address: null,
               email: null,
               phone: null,
-              avatarImage: null,
+              avatarImage: {
+                blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',
+                mimeType: 'image/png',
+                size: 576003,
+                width: null,
+                height: null,
+                uri: 'http://localhost:28067/get/%26%2BKcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU%3D.sha256?unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs',
+                __typename: 'Image'
+              },
               headerImage: null,
               __typename: 'Person'
             }
