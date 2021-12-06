@@ -123,12 +123,12 @@ test('csv.parse', t => {
           profession: 'Software Engineer',
           school: null,
           education: null,
-          altNames: null
+          altNames: null,
 
-          // NOTE: commented these out in csv.js as they are breaking backend changes!
-          // phone: '021167892345',
-          // email: 'cherese@me.com',
-          // address: '123 Happy Lane',
+          // adminProfile fields
+          phone: '021167892345',
+          email: 'cherese@me.com',
+          address: '123 Happy Lane'
         }
       }, 'returns correct profile')
     })
