@@ -33,7 +33,7 @@
             <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> + </text>
             </g>
-            <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+            <g v-if="flatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> - </text>
             </g>
             <svg :width="columns[2].x - 45" >
@@ -432,7 +432,7 @@ export default {
 
     async collapse (node) {
       const profile = node.data
-      const { children, _children = [] } = profile
+      const { children = [], _children = [] } = profile
 
       if (children.length === 0 && _children.length === 0) return
 
@@ -447,6 +447,7 @@ export default {
       return name.toLowerCase().trim()
     },
     altNames (altArray) {
+      if (isEmpty(altArray)) return ''
       return altArray.join(', ')
     },
     computeDate (requiredDate, age) {
@@ -631,7 +632,7 @@ export default {
     findAltNameMatch (filterString, altNames) {
       var altNameFound = false
 
-      if (altNames.length > 0) {
+      if (altNames && altNames.length > 0) {
         for (var i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
           if (currAltName.includes(filterString)) altNameFound = true
@@ -661,7 +662,7 @@ export default {
       const search = this.setString(this.tableFilter.skills)
       var skillFound = false
 
-      if (skills[0] !== '') {
+      if (skills && skills.length && skills[0] !== '') {
         for (var i = 0; i < skills.length; i++) {
           const currSkill = this.setString(skills[i])
           if (currSkill.includes(search)) skillFound = true
