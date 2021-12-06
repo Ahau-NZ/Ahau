@@ -33,7 +33,7 @@
             <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> + </text>
             </g>
-            <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+            <g v-if="flatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> - </text>
             </g>
             <svg :width="columns[2].x - 45" >
@@ -139,8 +139,9 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
-import { dateIntervalToString, intervalToDayMonthYear } from '@/lib/date-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { SORT } from '@/lib/constants.js'
+import { mapNodesToCsv } from '@/lib/csv.js'
 
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
@@ -357,44 +358,7 @@ export default {
     },
     download (newVal) {
       if (newVal) {
-        var nodes = this.nodes.map(node => {
-          var d = node.data
-          var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval, this.monthTranslations) : null
-          var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
-          var school = d.school.length > 0 ? d.school.join(', ') : null
-          var education = d.education.length > 0 ? d.education.join(', ') : null
-
-          const details = {
-            parentNumber: node.parent ? node.parent.data.id : '',
-            number: d.id,
-            preferredName: d.preferredName,
-            legalName: d.legalName,
-            altNames: altNames,
-            gender: d.gender || 'unknown',
-            relationshipType: d.relationshipType || 'birth',
-            birthOrder: d.birthOrder,
-            deceased: d.deceased ? 'yes' : null,
-            bornAt: aliveInterval && aliveInterval[0].length ? aliveInterval[0] : null,
-            diedAt: aliveInterval && aliveInterval[1].length ? aliveInterval[1] : null,
-            placeOfBirth: d.placeOfBirth,
-            placeOfDeath: d.placeOfDeath,
-            buriedLocation: d.buriedLocation,
-            city: d.city,
-            postCode: d.postCode,
-            country: d.country,
-            profession: d.profession,
-            education: education,
-            school: school
-          }
-
-          details.phone = d.adminProfile ? d.adminProfile.phone : ''
-          details.email = d.adminProfile ? d.adminProfile.email : ''
-          details.address = d.adminProfile ? d.adminProfile.address : ''
-
-          return details
-        })
-
-        var csv = d3.csvFormat(nodes)
+        const csv = mapNodesToCsv(this.nodes)
 
         this.$emit('update:download', false)
 
@@ -468,7 +432,7 @@ export default {
 
     async collapse (node) {
       const profile = node.data
-      const { children, _children = [] } = profile
+      const { children = [], _children = [] } = profile
 
       if (children.length === 0 && _children.length === 0) return
 
@@ -483,6 +447,7 @@ export default {
       return name.toLowerCase().trim()
     },
     altNames (altArray) {
+      if (isEmpty(altArray)) return ''
       return altArray.join(', ')
     },
     computeDate (requiredDate, age) {
@@ -667,7 +632,7 @@ export default {
     findAltNameMatch (filterString, altNames) {
       var altNameFound = false
 
-      if (altNames.length > 0) {
+      if (altNames && altNames.length > 0) {
         for (var i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
           if (currAltName.includes(filterString)) altNameFound = true
@@ -697,7 +662,7 @@ export default {
       const search = this.setString(this.tableFilter.skills)
       var skillFound = false
 
-      if (skills[0] !== '') {
+      if (skills && skills.length && skills[0] !== '') {
         for (var i = 0; i < skills.length; i++) {
           const currSkill = this.setString(skills[i])
           if (currSkill.includes(search)) skillFound = true

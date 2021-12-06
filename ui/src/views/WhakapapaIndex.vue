@@ -312,9 +312,11 @@ export default {
           const relationship = {
             // get the parent and child's actual profileId
             parent: profiles[parentCsvId],
-            child: profiles[childCsvId],
-            relationshipType: relationshipType
+            child: profiles[childCsvId]
           }
+
+          if (relationshipType === 'partner') return this.createPartnerLink(relationship)
+          if (relationshipType !== '' && relationshipType !== null) relationship.relationshipType = relationshipType
 
           return this.createChildLink(relationship)
         })
@@ -346,9 +348,7 @@ export default {
       parent,
       relationshipType,
       legallyAdopted
-    },
-    view
-    ) {
+    }) {
       const input = {
         type: 'link/profile-profile/child',
         child,
@@ -357,16 +357,32 @@ export default {
         legallyAdopted,
         recps: this.newView.recps
       }
+
+      await this.createLink(input)
+    },
+    async createPartnerLink ({ child, parent }) {
+      const input = {
+        type: 'link/profile-profile/partner',
+        child,
+        parent,
+        recps: this.newView.recps
+      }
+
+      await this.createLink(input)
+    },
+    // TODO cherese 6/12/21 move this method to vuex
+    async createLink (input) {
       try {
-        const res = await this.$apollo.mutate(saveLink(input))
-        if (res.errors) {
-          console.error('failed to createChildLink', res)
-          return
-        } else {
-          return res.data.saveLink // TODO return the linkId
-        }
+        const res = await this.$apollo.mutate(
+          saveLink(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.saveLink
       } catch (err) {
-        throw err
+        console.log('failed to create link', input)
+        console.log(err)
       }
     },
     t (key, vars) {

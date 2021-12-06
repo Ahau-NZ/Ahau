@@ -703,6 +703,10 @@ export default {
       this.download = !this.download
     },
     toggleTable () {
+      if (!this.whakapapa.table) {
+        this.showPartners = false
+      }
+
       this.whakapapa.tree = !this.whakapapa.tree
       this.whakapapa.table = !this.whakapapa.table
     },
