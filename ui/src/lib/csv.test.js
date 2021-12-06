@@ -9,10 +9,10 @@ const simpleNestedWhakapapa = require('../mocks/nested-whakapapa')
 
 // for columns
 const ALL_COLUMNS = csv.PERMITTED_CSV_COLUMNS.join(',')
-const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city'
+const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city,avatarImage,headerImage'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
-const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education'
+const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education,avatarImage,headerImage'
 
 // for parentNumber
 const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}

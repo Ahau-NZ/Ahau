@@ -28,7 +28,9 @@ const PERMITTED_CSV_COLUMNS = [
   'profession',
   'altNames',
   'school',
-  'education'
+  'education',
+  'avatarImage',
+  'headerImage'
 ]
 
 function importCsv (file) {
