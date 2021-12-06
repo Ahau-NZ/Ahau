@@ -134,7 +134,7 @@ function parse (fileContent) {
           legalName: d.legalName,
           gender: d.gender || null,
           birthOrder: d.birthOrder,
-          deceased: d.deceased === 'yes',
+          deceased: d.deceased === 'yes' || null,
           aliveInterval,
           placeOfBirth: d.placeOfBirth,
           placeOfDeath: d.placeOfDeath,
@@ -145,14 +145,12 @@ function parse (fileContent) {
           profession: d.profession,
           school: d.school,
           education: d.education,
-          altNames: d.altNames
+          altNames: d.altNames,
 
-          // NOTE: commented these out as they are breaking backend changes!
-          // TODO cherese 01/12/21 allow these back in, these were commented out before
-          // group profiles saved changes to these fields
-          // phone: d.phone,
-          // email: d.email,
-          // address: d.address,
+          // adminProfile fields
+          phone: d.phone,
+          email: d.email,
+          address: d.address
         }
 
         seen.add(d.number)
@@ -183,7 +181,7 @@ function parse (fileContent) {
 
 function mapNodesToCsv (nodes) {
   const rows = []
-  // [Mum, Child]
+
   nodes.forEach(node => {
     const nodeId = node.parent ? node.parent.data.id : ''
     const partnerId = node.data.id
