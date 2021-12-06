@@ -39,9 +39,13 @@ export default function (apollo) {
     nodes: state => {
       return state.nodes
     },
-    // getNode: state => (id) => {
-    //   return state.nodes[id]
-    // },
+    getNode: state => (id) => {
+      const nodeStates = state.nodes[id]
+
+      if (!nodeStates || nodeStates.length === 0) return null
+
+      return clone(nodeStates[nodeStates.length - 1])
+    },
     lessImportantLinks: state => {
       const links = calculateLessImportantLinks(state)
       return links || []
