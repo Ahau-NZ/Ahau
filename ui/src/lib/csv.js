@@ -134,7 +134,7 @@ function parse (fileContent) {
           legalName: d.legalName,
           gender: d.gender || null,
           birthOrder: d.birthOrder,
-          deceased: d.deceased === 'yes',
+          deceased: d.deceased === 'yes' || null,
           aliveInterval,
           placeOfBirth: d.placeOfBirth,
           placeOfDeath: d.placeOfDeath,
