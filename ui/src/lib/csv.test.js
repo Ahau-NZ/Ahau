@@ -4,6 +4,7 @@ const fs = require('fs').promises
 const path = require('path')
 const d3 = require('d3')
 
+const simpleNestedWhakapapa = require('../mocks/nested-whakapapa')
 // NOTE: column names need to be on same line as opening of string literal
 
 // for columns
@@ -339,4 +340,21 @@ test('csv.convertDate', (t) => {
   convert('1/07/1997', '1997-07-01')
   convert('01/7/1997', '1997-07-01')
   convert('1/7/1997', '1997-07-01')
+})
+
+test('csv.mapNodesToCsv', t => {
+  t.plan(1)
+
+  // use the nestedWhakapapa to generate nodes
+  const nodes = d3.hierarchy(simpleNestedWhakapapa)
+    .descendants()
+
+  // run the nodes through the csv row mapping
+  const _csv = csv.mapNodesToCsv(nodes)
+
+  t.deepEqual(
+    _csv,
+    'parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,phone,email,address\n,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,',
+    'returns expected csv'
+  )
 })

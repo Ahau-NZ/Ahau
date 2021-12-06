@@ -139,8 +139,9 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
-import { dateIntervalToString, intervalToDayMonthYear } from '@/lib/date-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { SORT } from '@/lib/constants.js'
+import { mapNodesToCsv } from '@/lib/csv.js'
 
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
@@ -357,44 +358,8 @@ export default {
     },
     download (newVal) {
       if (newVal) {
-        var nodes = this.nodes.map(node => {
-          var d = node.data
-          var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval, this.monthTranslations) : null
-          var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
-          var school = d.school.length > 0 ? d.school.join(', ') : null
-          var education = d.education.length > 0 ? d.education.join(', ') : null
-
-          const details = {
-            parentNumber: node.parent ? node.parent.data.id : '',
-            number: d.id,
-            preferredName: d.preferredName,
-            legalName: d.legalName,
-            altNames: altNames,
-            gender: d.gender || 'unknown',
-            relationshipType: d.relationshipType || 'birth',
-            birthOrder: d.birthOrder,
-            deceased: d.deceased ? 'yes' : null,
-            bornAt: aliveInterval && aliveInterval[0].length ? aliveInterval[0] : null,
-            diedAt: aliveInterval && aliveInterval[1].length ? aliveInterval[1] : null,
-            placeOfBirth: d.placeOfBirth,
-            placeOfDeath: d.placeOfDeath,
-            buriedLocation: d.buriedLocation,
-            city: d.city,
-            postCode: d.postCode,
-            country: d.country,
-            profession: d.profession,
-            education: education,
-            school: school
-          }
-
-          details.phone = d.adminProfile ? d.adminProfile.phone : ''
-          details.email = d.adminProfile ? d.adminProfile.email : ''
-          details.address = d.adminProfile ? d.adminProfile.address : ''
-
-          return details
-        })
-
-        var csv = d3.csvFormat(nodes)
+        const csv = mapNodesToCsv(this.nodes)
+        console.log({ csv })
 
         this.$emit('update:download', false)
 

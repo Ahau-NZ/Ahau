@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
+import { intervalToDayMonthYear } from './date-helpers'
 import edtf from 'edtf'
 
 const PERMITTED_CSV_RELATIONSHIPS = [...RELATIONSHIPS, 'partner']
@@ -178,6 +179,83 @@ function parse (fileContent) {
     if (errors.length) reject(errors)
     else resolve(csv)
   })
+}
+
+function mapNodesToCsv (nodes) {
+  const rows = []
+  // [Mum, Child]
+  nodes.forEach(node => {
+    const nodeId = node.parent ? node.parent.data.id : ''
+    const partnerId = node.data.id
+
+    const childRow = nodeToParent(node, nodeId)
+    rows.push(childRow)
+
+    // for each node, look at their partners and create a mapping!
+    const partnerRows = nodeToPartners(node, partnerId)
+    if (partnerRows && partnerRows.length) rows.push(...partnerRows)
+  })
+
+  // NOTE: this method doesnt currently support exporting children having multiple parents
+  return d3.csvFormat(rows)
+}
+
+function nodeToParent (node, parentId) {
+  return {
+    parentNumber: parentId,
+    ...mapNodeToCsvRow(node.data)
+  }
+}
+
+function nodeToPartners (node, partnerId) {
+  const rows = []
+  node.data.partners.forEach(partner => {
+    const row = nodeToPartner(partner, partnerId)
+    rows.push(row)
+  })
+  return rows
+}
+
+function nodeToPartner (node, partnerId) {
+  return {
+    parentNumber: partnerId,
+    ...mapNodeToCsvRow({ ...node, relationshipType: 'partner' })
+  }
+}
+
+function mapNodeToCsvRow (d) {
+  var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval, this.monthTranslations) : null
+  var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
+  var school = d.school.length > 0 ? d.school.join(', ') : null
+  var education = d.education.length > 0 ? d.education.join(', ') : null
+
+  const row = {
+    number: d.id,
+    preferredName: d.preferredName,
+    legalName: d.legalName,
+    altNames: altNames,
+    gender: d.gender || 'unknown',
+    relationshipType: d.relationshipType,
+    birthOrder: d.birthOrder,
+    deceased: d.deceased ? 'yes' : null,
+    bornAt: aliveInterval && aliveInterval[0].length ? aliveInterval[0] : null,
+    diedAt: aliveInterval && aliveInterval[1].length ? aliveInterval[1] : null,
+    placeOfBirth: d.placeOfBirth,
+    placeOfDeath: d.placeOfDeath,
+    buriedLocation: d.buriedLocation,
+    city: d.city,
+    postCode: d.postCode,
+    country: d.country,
+    profession: d.profession,
+    education: education,
+    school: school
+  }
+
+  row.phone = d.adminProfile ? d.adminProfile.phone : ''
+  row.email = d.adminProfile ? d.adminProfile.email : ''
+  row.address = d.adminProfile ? d.adminProfile.address : ''
+
+  return row
 }
 
 function personErrors (d, row) {
@@ -375,6 +453,7 @@ function downloadCsv () {
 
 export {
   importCsv,
+  mapNodesToCsv,
   convertDate,
   parse,
   downloadCsv,
