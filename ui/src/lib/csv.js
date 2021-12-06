@@ -224,7 +224,7 @@ function nodeToPartner (node, partnerId) {
 }
 
 function mapNodeToCsvRow (d) {
-  var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval, this.monthTranslations) : null
+  var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
   var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
   var school = d.school.length > 0 ? d.school.join(', ') : null
   var education = d.education.length > 0 ? d.education.join(', ') : null

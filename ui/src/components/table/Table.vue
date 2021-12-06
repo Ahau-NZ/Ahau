@@ -359,7 +359,6 @@ export default {
     download (newVal) {
       if (newVal) {
         const csv = mapNodesToCsv(this.nodes)
-        console.log({ csv })
 
         this.$emit('update:download', false)
 
