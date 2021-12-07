@@ -73,12 +73,13 @@ module.exports = {
   win: {
     icon: 'build/win/icon.ico',
     publisherName: [
-      'Ahau NZ Ltd.', // << New name
+      'Āhau NZ Limited', // << New name
       'Ahau NZ Limited' // << old certificate name, to be deprecated
     ],
     // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
     // In future if this name changes, auto-updating will fail D:
-    certificateSubjectName: '??' // The name of the subject of the signing certificate
+    certificateSubjectName: 'Āhau NZ Limited', // The name of the subject of the signing certificate
+    // certificateSha1:
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
