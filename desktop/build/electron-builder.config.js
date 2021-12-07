@@ -78,7 +78,7 @@ module.exports = {
     ],
     // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
     // In future if this name changes, auto-updating will fail D:
-    certificateSubjectName: 'Āhau NZ Limited', // The name of the subject of the signing certificate
+    certificateSubjectName: 'Āhau NZ Limited' // The name of the subject of the signing certificate
     // certificateSha1:
   },
   nsis: {
