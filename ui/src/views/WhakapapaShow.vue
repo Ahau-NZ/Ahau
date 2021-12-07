@@ -524,7 +524,9 @@ export default {
         // add half borthers and sisters as children with property of isNonChild
         if (otherParents.length) {
           otherParents.forEach(parent => {
-            parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
+            parent.children.forEach(child => {
+              if (child.isNonChild) otherChildren.push(child)
+            })
           })
         }
 
@@ -594,7 +596,6 @@ export default {
 
               // exclude existing partners
               .filter(otherParent => person.partners.every(partner => partner.id !== otherParent.id))
-
               /*
                 NOTE
                 there is an edge case where if a child is whangai'd to a grandparent,
@@ -602,6 +603,17 @@ export default {
               */
               // filter out otherParents we have already seen to prevent infinite loops
               .filter(otherParent => !seen.has(otherParent.id))
+
+              /*
+                NOTE
+                this is another edge case where a parent is already a parent of the person
+                we are currently on, which results in an infinite loop
+              */
+              .filter(otherParent => !person.parents.some(
+                parent => {
+                  return parent.id === otherParent.id
+                })
+              )
 
               // exclude less importantRelationships
               .filter(otherParent => {
