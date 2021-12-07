@@ -108,10 +108,18 @@ export const AUTHOR_FRAGMENT = gql`
 `
 
 export const PERSON_FRAGMENT = gql`
+  fragment AvatarFragment on Image {
+    blob
+    mimeType
+    size
+    width
+    height
+    uri
+  }
   fragment ProfileFragment on Person {
     ${PERMITTED_PERSON_PROPS}
-    avatarImage { uri }
-    headerImage { uri }
+    avatarImage { ...AvatarFragment }
+    headerImage { ...AvatarFragment }
   }
 `
 export const SETTINGS_FRAGMENT = gql`

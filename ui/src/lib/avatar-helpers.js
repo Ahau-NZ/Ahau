@@ -12,10 +12,6 @@ import whakapapaPng from '../assets/whakapapa.png'
 import calculateAge from './calculate-age'
 import { isCordova } from './cordova-helpers'
 
-export default {
-  defaultImage
-}
-
 function defaultImage (isView, aliveInterval, gender, noAvatar) {
   if (isView) {
     if (isCordova()) return whakapapaPng
@@ -56,4 +52,8 @@ function defaultImage (isView, aliveInterval, gender, noAvatar) {
     default:
       return account
   }
+}
+
+export default {
+  defaultImage
 }

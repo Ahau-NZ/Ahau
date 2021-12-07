@@ -3,6 +3,8 @@ import { GENDERS, RELATIONSHIPS } from './constants'
 import { intervalToDayMonthYear } from './date-helpers'
 import edtf from 'edtf'
 
+const ssbUri = require('ssb-uri2')
+
 const PERMITTED_CSV_RELATIONSHIPS = [...RELATIONSHIPS, 'partner']
 
 const PERMITTED_CSV_COLUMNS = [
@@ -28,7 +30,9 @@ const PERMITTED_CSV_COLUMNS = [
   'profession',
   'altNames',
   'school',
-  'education'
+  'education',
+  'avatarImage',
+  'headerImage'
 ]
 
 function importCsv (file) {
@@ -150,7 +154,11 @@ function parse (fileContent) {
           // adminProfile fields
           phone: d.phone,
           email: d.email,
-          address: d.address
+          address: d.address,
+
+          // images
+          avatarImage: importImage(d.avatarImage),
+          headerImage: importImage(d.headerImage)
         }
 
         seen.add(d.number)
@@ -246,7 +254,9 @@ function mapNodeToCsvRow (d) {
     country: d.country,
     profession: d.profession,
     education: education,
-    school: school
+    school: school,
+    avatarImage: exportImage(d.avatarImage),
+    headerImage: exportImage(d.headerImage)
   }
 
   row.phone = d.adminProfile ? d.adminProfile.phone : ''
@@ -449,6 +459,41 @@ function downloadCsv () {
   hiddenElement.click()
 }
 
+function exportImage (image) {
+  if (!image || !image.blob) return ''
+
+  let unbox = image.unbox
+
+  // convert the blob to uri
+  const newUri = ssbUri.fromBlobSigil(image.blob)
+    .replace('sha256', 'classic')
+
+  if (!unbox && image.uri) {
+    // get the unbox key from the uri
+    unbox = new URL(image.uri).searchParams.get('unbox')
+  }
+
+  const result = new URL(newUri)
+  result.searchParams.set('mimeType', image.mimeType)
+  result.searchParams.set('unbox', unbox)
+
+  return result.toString()
+}
+
+function importImage (uri) {
+  if (!uri || uri === '') return null
+
+  const blob = ssbUri.toBlobSigil(uri)
+
+  const params = new URL(uri).searchParams
+
+  return {
+    blob,
+    mimeType: params.get('mimeType'),
+    unbox: params.get('unbox')
+  }
+}
+
 export {
   importCsv,
   mapNodesToCsv,
@@ -456,5 +501,7 @@ export {
   parse,
   downloadCsv,
   schema,
-  PERMITTED_CSV_COLUMNS
+  PERMITTED_CSV_COLUMNS,
+  exportImage,
+  importImage
 }
