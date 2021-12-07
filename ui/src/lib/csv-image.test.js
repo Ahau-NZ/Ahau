@@ -17,7 +17,7 @@ test('image (export)', t => {
 
   t.equal(
     imageStr,
-    'ssb:blob/sha256/-Kcwdy0rdeQaR0XhN6_TuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image_png&unbox=Ic28TLLsg6_VxMHTaMoIytL0M1XbuM7prqJ6rf5I-U8=.boxs',
+    'ssb:blob/classic/-Kcwdy0rdeQaR0XhN6_TuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image%2Fpng&unbox=Ic28TLLsg6%2FVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs',
     'can convert an image to uri'
   )
 

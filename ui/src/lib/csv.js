@@ -462,27 +462,22 @@ function downloadCsv () {
 function exportImage (image) {
   if (!image || !image.blob) return ''
 
-  const replaceSpecialChars = (str) => {
-    return str
-      .replace(/\//gi, '_')
-      .replace(/\+/gi, '-')
-  }
-
   let unbox = image.unbox
 
   // convert the blob to uri
   const newUri = ssbUri.fromBlobSigil(image.blob)
+    .replace('sha256', 'classic')
 
   if (!unbox && image.uri) {
     // get the unbox key from the uri
-    unbox = replaceSpecialChars(
-      new URL(image.uri).searchParams.get('unbox')
-    )
+    unbox = new URL(image.uri).searchParams.get('unbox')
   }
 
-  const mimeType = replaceSpecialChars(image.mimeType)
+  const result = new URL(newUri)
+  result.searchParams.set('mimeType', image.mimeType)
+  result.searchParams.set('unbox', unbox)
 
-  return `${newUri}?mimeType=${mimeType}&unbox=${unbox}`
+  return result.toString()
 }
 
 function importImage (uri) {
@@ -490,23 +485,12 @@ function importImage (uri) {
 
   const blob = ssbUri.toBlobSigil(uri)
 
-  const url = new URL(uri)
-
-  const getParam = (param) => {
-    return url.searchParams.get(param)
-      .replace(/_/gi, '/')
-      .replace(/-/gi, '+')
-  }
-
-  const mimeType = getParam('mimeType')
-  const unbox = getParam('unbox')
-
-  // TODO: size!
+  const params = new URL(uri).searchParams
 
   return {
     blob,
-    mimeType,
-    unbox
+    mimeType: params.get('mimeType'),
+    unbox: params.get('unbox')
   }
 }
 

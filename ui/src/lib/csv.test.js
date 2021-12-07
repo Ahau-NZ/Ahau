@@ -357,7 +357,7 @@ test('csv.mapNodesToCsv', t => {
 
   t.deepEqual(
     _csv,
-    'parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,avatarImage,headerImage,phone,email,address\n,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,ssb:blob/sha256/-Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image_png&unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I-U8=.boxs,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,,,',
+    'parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,avatarImage,headerImage,phone,email,address\n,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,ssb:blob/classic/-Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image%2Fpng&unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,,,',
     'returns expected csv'
   )
 })
