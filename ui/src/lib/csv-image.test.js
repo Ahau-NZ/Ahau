@@ -2,7 +2,7 @@ import * as csv from './csv'
 
 const test = require('tape')
 
-test('image (export)', t => {
+test('image (export/import)', t => {
   const unbox = 'Ic28TLLsg6/VxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs'
   const image = {
     blob: '&+Kcwdy0rdeQaR0XhN6/TuFqpxpy8ipWD4vBGzGuRoiU=.sha256',

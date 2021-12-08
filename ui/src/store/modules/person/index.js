@@ -1,4 +1,4 @@
-import { getRelatives, getPerson } from '@/lib/person-helpers'
+import { getRelatives, getPerson, savePerson } from '@/lib/person-helpers'
 
 export default function (apollo) {
   const state = {
@@ -18,6 +18,33 @@ export default function (apollo) {
   }
 
   const actions = {
+    async savePerson (context, input) {
+      try {
+        const res = await apollo.mutate(
+          savePerson(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.saveProfile // profileId
+      } catch (err) {
+        console.error('Something went wrong while trying to save a person', input)
+        console.error(err)
+      }
+    },
+    async createPerson ({ dispatch }, input) {
+      try {
+        if (!input.type) throw new Error('profile.type is required on createPerson()')
+        if (!input.recps) throw new Error('profile.recps is required on createPerson()')
+        if (!input.authors) throw new Error('profile.authors is required on createPerson()')
+        if (input.id) throw new Error('profile.id is not allowed on createPerson()')
+
+        return dispatch('savePerson', input) // profileId
+      } catch (err) {
+        console.error('Something went wrong while trying to create a person', input)
+        console.error(err)
+      }
+    },
     async getPerson (context, profileId) {
       try {
         const res = await apollo.query(
