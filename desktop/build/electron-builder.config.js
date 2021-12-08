@@ -72,7 +72,7 @@ module.exports = {
   /* Windows */
   win: {
     icon: 'build/win/icon.ico',
-    publisherName: ['Ahau NZ Limited']
+    publisherName: ['Āhau NZ Limited', 'Ahau NZ Limited']
     // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
     // In future if this name changes, auto-updating will fail D:
   },

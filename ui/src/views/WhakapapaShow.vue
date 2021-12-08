@@ -608,6 +608,9 @@ export default {
                 NOTE
                 this is another edge case where a parent is already a parent of the person
                 we are currently on, which results in an infinite loop
+
+                this logic says: if me and my child share a parent (possible through whangai)
+                then I dont want to see them as an other parent
               */
               .filter(otherParent => !person.parents.some(
                 parent => {
