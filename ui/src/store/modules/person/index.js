@@ -93,20 +93,20 @@ export default function (apollo) {
       if (!recps) throw new Error('no recps found on the whakapapa input!')
 
       // create a profile for each row in the csv
-      const { profiles, links } = await dispatch('bulkCreateProfiles', rows)
+      const { profiles, links } = await dispatch('bulkCreateProfiles', { rows, recps })
 
       // create all the links from the profiles
-      await dispatch('createLinks', { links, profiles, recps })
+      await dispatch('bulkCreateLinks', { links, profiles, recps })
 
       // the first row is the focus
       whakapapaInput.focus = profiles[rows[0].csvId]
 
       // create whakapapa with first person in the csv as the focus
-      await dispatch('whakapapa/createWhakapapaView', whakapapaInput, { root: true })
+      return dispatch('whakapapa/createWhakapapaView', whakapapaInput, { root: true }) // whakapapaId
     },
-    async bulkCreateProfiles ({ dispatch }, csvData) {
+    async bulkCreateProfiles ({ dispatch }, { rows, recps }) {
       const profiles = {}
-      const links = csvData
+      const links = rows
         .map(row => row.link)
         .filter(Boolean)
 
@@ -119,13 +119,17 @@ export default function (apollo) {
         links = [{ childCsvId, parentCsvId, relationshipType }]
       */
       const res = await Promise.all(
-        csvData.map(async ({ csvId, profile }) => {
+        rows.map(async ({ csvId, profile }) => {
           if (!profile) return
 
           // TODO: check profiles have recps!
-          if (!profile.recps) throw new Error('no recps found on the profile!')
+          profile.recps = recps
+          profile.type = 'person'
+          profile.authors = {
+            add: ['*']
+          }
 
-          var profileId = await dispatch('createProfile', profile)
+          var profileId = await dispatch('createPerson', profile)
           profiles[csvId] = profileId
         })
       )

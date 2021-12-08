@@ -171,7 +171,7 @@ export default function (apollo) {
     deleteNodeInNestedWhakapapa ({ commit }, node) {
       commit('deleteNodeInNestedWhakapapa', node)
     },
-    async createWhakapapaView (dispatch, input) {
+    async createWhakapapaView ({ dispatch }, input) {
       // TODO cherese 6/11/21 get rid of this pruning code
       const pruned = {}
       Object.entries(input).forEach(([key, value]) => {

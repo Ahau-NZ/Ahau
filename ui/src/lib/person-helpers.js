@@ -295,8 +295,6 @@ export const savePerson = input => {
   input = pick(input, PERMITTED_PERSON_ATTRS)
   input = pruneEmptyValues(input)
 
-  console.log(input)
-
   return saveProfile(input)
 }
 

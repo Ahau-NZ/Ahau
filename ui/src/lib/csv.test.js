@@ -1,13 +1,13 @@
 import * as csv from './csv'
-import { createProvider } from '../plugins/vue-apollo'
+// import { createProvider } from '../plugins/vue-apollo'
 
 const test = require('tape')
 const fs = require('fs').promises
 const path = require('path')
 const d3 = require('d3')
 
-const apolloProvider = createProvider({ isTesting: true, fetch: true })
-const apollo = apolloProvider.defaultClient
+// const apolloProvider = createProvider({ isTesting: true, fetch: true })
+// const apollo = apolloProvider.defaultClient
 
 const simpleNestedWhakapapa = require('../mocks/nested-whakapapa.js')
 

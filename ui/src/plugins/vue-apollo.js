@@ -18,7 +18,6 @@ const httpEndpoint =
 
 // Call this in the Vue app file
 export function createProvider (opts = {}) {
-  console.log(opts)
   const apolloClient = new Client(httpEndpoint, { possibleTypes, ...opts })
 
   // Create vue apollo provider
@@ -43,7 +42,7 @@ export function createProvider (opts = {}) {
 }
 
 // currently we just use this so we don't instantiate heaps of providers
-export const apolloProvider = (opts = {}) => createProvider(opts)
+export const apolloProvider = createProvider()
 
 // Manually call this when user log in
 export async function onLogin (apolloClient, token) {

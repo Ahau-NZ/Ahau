@@ -128,7 +128,8 @@ export default {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
-    ...mapActions('whakapapa', ['getWhakapapaViews', 'saveWhakapapaView']),
+    ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews']),
+    ...mapActions('person', ['bulkCreateWhakapapaView']),
     async getSuggestions (name) {
       if (!name) {
         this.suggestions = []
@@ -172,7 +173,7 @@ export default {
       const whakapapaId = await this.createWhakapapaView(input)
       this.goToWhakapapaView(whakapapaId)
     },
-    goToWhakapapa (whakapapaId) {
+    goToWhakapapaView (whakapapaId) {
       var type = this.$route.name.split('/whakapapa')[0]
 
       this.$router.push({
@@ -204,7 +205,7 @@ export default {
         case 'new':
           return this.toggleProfileForm()
         case 'file':
-          return this.processCreateFromCsv(input)
+          return this.processCreateFromCsv(input.csv)
         default:
           this.setLoading(false)
           console.error('Something went wrong while creating a new whakapapa', input)
@@ -242,25 +243,6 @@ export default {
       const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaInput: this.newView, rows })
       this.goToWhakapapaView(whakapapaId)
     },
-    // async createProfile (input) {
-    //   if (input.avatarImage) delete input.avatarImage.uri
-    //   if (input.headerImage) delete input.headerImage.uri
-
-    //   const res = await this.$apollo.mutate(savePerson({
-    //     type: 'person',
-    //     recps: [this.currentAccess.groupId],
-    //     authors: {
-    //       add: ['*']
-    //     },
-    //     ...input
-    //   }))
-
-    //   if (res.errors) {
-    //     console.error('failed to createProfile', res.errors)
-    //   } else {
-    //     return res.data.saveProfile // a profileId
-    //   }
-    // },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)
     },
