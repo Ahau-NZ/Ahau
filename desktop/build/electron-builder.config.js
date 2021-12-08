@@ -73,8 +73,8 @@ module.exports = {
   win: {
     icon: 'build/win/icon.ico',
     publisherName: [
-      'Āhau NZ Limited', // << New name
-      'Ahau NZ Limited' // << old certificate name, to be deprecated
+      'Ahau NZ Limited', // << old certificate name, to be deprecated
+      'Āhau NZ Limited' // << New name
     ],
     // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
     // In future if this name changes, auto-updating will fail D:
