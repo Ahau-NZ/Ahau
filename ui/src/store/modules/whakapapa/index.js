@@ -1,9 +1,11 @@
 import uniqby from 'lodash.uniqby'
+import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
 import Vue from 'vue'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
+import { saveLink } from '../../../lib/link-helpers'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
 
@@ -279,6 +281,111 @@ export default function (apollo) {
         ],
         'id'
       )
+    },
+
+    // create a whakapapa from rows containing a profile + link
+    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaInput, rows }) {
+      dispatch('setLoading', true, { root: true })
+
+      const { recps } = whakapapaInput
+
+      if (!recps) throw new Error('no recps found on the whakapapa input!')
+
+      // create a profile for each row in the csv
+      const { profiles, links } = await dispatch('bulkCreateProfiles', { rows, recps })
+
+      // create all the links from the profiles
+      await dispatch('bulkCreateLinks', { links, profiles, recps })
+
+      // the first row is the focus
+      whakapapaInput.focus = profiles[rows[0].csvId]
+
+      // create whakapapa with first person in the csv as the focus
+      return dispatch('createWhakapapaView', whakapapaInput) // whakapapaId
+    },
+    async bulkCreateProfiles ({ dispatch }, { rows, recps }) {
+      const profiles = {}
+      const links = rows
+        .map(row => row.link)
+        .filter(Boolean)
+
+      /*
+        NOTE:
+        profiles = {
+          [csvId]: profileId
+        }
+
+        links = [{ childCsvId, parentCsvId, relationshipType }]
+      */
+      const res = await Promise.all(
+        rows.map(async ({ csvId, profile }) => {
+          if (!profile) return
+
+          // TODO: check profiles have recps!
+          profile.recps = recps
+          profile.type = 'person'
+          profile.authors = {
+            add: ['*']
+          }
+
+          var profileId = await dispatch('person/createPerson', profile, { root: true })
+          profiles[csvId] = profileId
+        })
+      )
+        .catch((err) => {
+          console.error('failed to create profile with csv bulk create', err)
+          dispatch('setLoading', false, { root: true })
+        })
+
+      if (!res) return
+
+      return { profiles, links }
+    },
+    async bulkCreateLinks ({ dispatch }, { recps, links, profiles }) {
+      await Promise.all(
+        links.map(link => {
+          const { parentCsvId, childCsvId, relationshipType } = link
+
+          const relationship = {
+            // get the parent and child's actual profileId
+            parent: profiles[parentCsvId],
+            child: profiles[childCsvId],
+            recps
+          }
+
+          if (relationshipType === 'partner') return dispatch('createPartnerLink', relationship)
+
+          // TODO: check if this is important
+          if (relationshipType !== '' && relationshipType !== null) relationship.relationshipType = relationshipType
+
+          return dispatch('createChildLink', relationship)
+        })
+      )
+    },
+    async createChildLink ({ dispatch }, input) {
+      input.type = 'link/profile-profile/child'
+
+      await dispatch('createLink', input)
+    },
+    async createPartnerLink ({ dispatch }, input) {
+      input = pick(input, ['child', 'parent', 'recps'])
+      input.type = 'link/profile-profile/partner'
+
+      await dispatch('createLink', input)
+    },
+    async createLink (context, input) {
+      try {
+        const res = await apollo.mutate(
+          saveLink(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.saveLink
+      } catch (err) {
+        console.log('failed to create link', input)
+        console.log(err)
+      }
     }
   }
 

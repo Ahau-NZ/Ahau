@@ -128,8 +128,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
-    ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews']),
-    ...mapActions('person', ['bulkCreateWhakapapaView']),
+    ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
     async getSuggestions (name) {
       if (!name) {
         this.suggestions = []
