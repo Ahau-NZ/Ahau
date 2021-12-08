@@ -6,7 +6,7 @@
 $ npm run install
 ```
 
-## Development 
+## Development
 
 Open two different terminals and run each in the following
 - `cd ui && npm run dev`
@@ -58,6 +58,8 @@ This takes icons from `desktop/build` and generates icon files specific for part
         - notes on aquiring + exporting :
             - https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000zFK0#ie_export_certificate
             - this may need to be done from the same browser as you applied for the certificate from
+
+     - TODO - update this removing pfx notes + adding how to handle EV signing key
 
 **Linux needs**
 _nothing!_

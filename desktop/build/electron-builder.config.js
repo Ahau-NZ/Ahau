@@ -78,8 +78,8 @@ module.exports = {
     ],
     // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
     // In future if this name changes, auto-updating will fail D:
-    certificateSubjectName: 'Āhau NZ Limited' // The name of the subject of the signing certificate
-    // certificateSha1:
+    // certificateSubjectName: 'Āhau NZ Limited', // The name of the subject of the signing certificate
+    certificateSha1: 'A5F49ED3D5EBBCA6EE093BF2A8AA93DA36BDBF56'
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
