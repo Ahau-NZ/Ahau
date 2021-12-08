@@ -170,7 +170,7 @@ export default {
     },
     async processCreateWhakapapaView (input) {
       const whakapapaId = await this.createWhakapapaView(input)
-      this.goToWhakapapaView(whakapapaId)
+      if (whakapapaId) this.goToWhakapapaView(whakapapaId)
     },
     goToWhakapapaView (whakapapaId) {
       var type = this.$route.name.split('/whakapapa')[0]
@@ -239,7 +239,7 @@ export default {
       }
     },
     async processCreateFromCsv (rows) {
-      const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaInput: this.newView, rows })
+      const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaViewInput: this.newView, rows })
       this.goToWhakapapaView(whakapapaId)
     },
     t (key, vars) {

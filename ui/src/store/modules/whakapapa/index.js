@@ -174,12 +174,6 @@ export default function (apollo) {
       commit('deleteNodeInNestedWhakapapa', node)
     },
     async createWhakapapaView ({ dispatch }, input) {
-      // TODO cherese 6/11/21 get rid of this pruning code
-      const pruned = {}
-      Object.entries(input).forEach(([key, value]) => {
-        if (!isEmpty(value)) pruned[key] = value
-      })
-
       if (!input.authors) {
         input.authors = {
           add: ['*']
@@ -284,10 +278,10 @@ export default function (apollo) {
     },
 
     // create a whakapapa from rows containing a profile + link
-    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaInput, rows }) {
+    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaViewInput, rows }) {
       dispatch('setLoading', true, { root: true })
 
-      const { recps } = whakapapaInput
+      const { recps } = whakapapaViewInput
 
       if (!recps) throw new Error('no recps found on the whakapapa input!')
 
@@ -298,10 +292,10 @@ export default function (apollo) {
       await dispatch('bulkCreateLinks', { links, profiles, recps })
 
       // the first row is the focus
-      whakapapaInput.focus = profiles[rows[0].csvId]
+      whakapapaViewInput.focus = profiles[rows[0].csvId]
 
       // create whakapapa with first person in the csv as the focus
-      return dispatch('createWhakapapaView', whakapapaInput) // whakapapaId
+      return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
     },
     async bulkCreateProfiles ({ dispatch }, { rows, recps }) {
       const profiles = {}

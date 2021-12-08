@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty'
 
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '../store/modules/tribe/apollo-helpers'
-import { savePerson, whakapapaLink } from '@/lib/person-helpers.js'
+import { whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
@@ -126,17 +126,7 @@ const methods = {
 
   // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
   async createPerson (input) {
-    try {
-      if (!input.type) throw new Error('profile.type is required on createPerson()')
-      if (!input.recps) throw new Error('profile.recps is required on createPerson()')
-      if (!input.authors) throw new Error('profile.authors is required on createPerson()')
-      if (input.id) throw new Error('profile.id is not allowed on createPerson()')
-
-      return this.savePerson(input) // profileId
-    } catch (err) {
-      console.error('Something went wrong while trying to create a person', input)
-      console.error(err)
-    }
+    this.$store.dispatch('person/createPerson', input)
   },
   async updatePerson (input) {
     try {
@@ -151,19 +141,9 @@ const methods = {
       console.error(err)
     }
   },
+  // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
   async savePerson (input) {
-    try {
-      const res = await this.$apollo.mutate(
-        savePerson(input)
-      )
-
-      if (res.errors) throw res.errors
-
-      return res.data.saveProfile // profileId
-    } catch (err) {
-      console.error('Something went wrong while trying to save a person', input)
-      console.error(err)
-    }
+    this.$store.dispatch('person/savePerson', input)
   },
   async saveLink (input) {
     try {
