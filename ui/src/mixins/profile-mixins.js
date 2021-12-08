@@ -124,6 +124,7 @@ const methods = {
     }
   },
 
+  // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
   async createPerson (input) {
     try {
       if (!input.type) throw new Error('profile.type is required on createPerson()')

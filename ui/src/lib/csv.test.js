@@ -1,12 +1,17 @@
 import * as csv from './csv'
+import { createProvider } from '../plugins/vue-apollo'
+
 const test = require('tape')
 const fs = require('fs').promises
 const path = require('path')
 const d3 = require('d3')
 
-const simpleNestedWhakapapa = require('../mocks/nested-whakapapa')
-// NOTE: column names need to be on same line as opening of string literal
+const apolloProvider = createProvider({ isTesting: true, fetch: true })
+const apollo = apolloProvider.defaultClient
 
+const simpleNestedWhakapapa = require('../mocks/nested-whakapapa.js')
+
+// NOTE: column names need to be on same line as opening of string literal
 // for columns
 const ALL_COLUMNS = csv.PERMITTED_CSV_COLUMNS.join(',')
 const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city,avatarImage,headerImage'
@@ -268,69 +273,6 @@ test('csv.schema', t => {
   t.end()
 })
 
-test('real data', (t) => {
-  t.plan(304)
-
-  const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
-  fs.readFile(filepath, 'utf8').then((file) => {
-    t.ok(file, 'file read returns result')
-
-    csv.parse(file)
-      .catch((err) => {
-        t.fail('csv parse failed because of an error')
-        console.log('ERROR: ', JSON.stringify(err, null, 2))
-      })
-      .then((rows) => {
-        t.ok(rows, 'csv parse returns result')
-
-        const tree = d3.stratify()
-          .id(function (d) {
-            return d.csvId
-          })
-          .parentId(function (d) {
-            return (d.link && d.link.parentCsvId)
-              ? d.link.parentCsvId
-              : null // NOTE: only the first d shouldnt have a link.parentCsvId
-          })(rows)
-
-        t.equal(rows.length, 149, 'csv parser returns correct number of rows')
-
-        let count = 1
-        const walk = (row) => {
-          const seen = new Set()
-
-          row.children.forEach((child) => {
-            count += 1
-            if (seen.has(child.id)) {
-              t.fail('have not already seen this child')
-            }
-            seen.add(child.id)
-            if (child.children != null) {
-              walk(child)
-            }
-          })
-        }
-
-        t.ok(tree, 'tree exists')
-        walk(tree)
-        t.equal(count, rows.length, 'tree has correct number of nodes')
-
-        const descendants = tree.descendants()
-
-        t.equal(count, descendants.length, 'descendants has correct number of nodes')
-
-        descendants.forEach((descendant, index) => {
-          t.equal(descendant.number, descendant.data.id, 'number and id are same')
-          if (index === 0) {
-            t.equal(descendant.parent, null, 'root does not have parent')
-          } else {
-            t.ok(descendant.parent, 'non root does have parent')
-          }
-        })
-      })
-  })
-})
-
 test('csv.convertDate', (t) => {
   t.plan(8)
   function convert (date, expectedRes) {
@@ -346,7 +288,7 @@ test('csv.convertDate', (t) => {
 })
 
 test('csv.mapNodesToCsv', t => {
-  t.plan(1)
+  t.plan(2)
 
   // use the nestedWhakapapa to generate nodes
   const nodes = d3.hierarchy(simpleNestedWhakapapa)
@@ -355,9 +297,34 @@ test('csv.mapNodesToCsv', t => {
   // run the nodes through the csv row mapping
   const _csv = csv.mapNodesToCsv(nodes)
 
-  t.deepEqual(
-    _csv,
-    'parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,avatarImage,headerImage,phone,email,address\n,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,ssb:blob/classic/-Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image%2Fpng&unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,,,\n%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,,,',
-    'returns expected csv'
-  )
+  const filepath = path.join(__dirname, 'fixtures', 'nested-whakapapa.csv')
+  fs.readFile(filepath, 'utf8').then((file) => {
+    t.ok(file, 'file read returns result')
+
+    t.deepEqual(
+      _csv,
+      file,
+      'returns expected csv'
+    )
+  })
+})
+
+test.only('real data + apollo', async t => {
+  // t.plan(304)
+
+  const filepath = path.join(__dirname, 'fixtures', 'nested-whakapapa.csv')
+  fs.readFile(filepath, 'utf8').then((file) => {
+    t.ok(file, 'file read returns result')
+
+    csv.parse(file)
+      .catch((err) => {
+        t.fail('csv parse failed because of an error')
+        console.log('ERROR: ', JSON.stringify(err, null, 2))
+      })
+      .then((rows) => {
+        console.log(rows)
+
+        t.end()
+      })
+  })
 })

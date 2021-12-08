@@ -27,7 +27,7 @@ module.exports = {
     '%RU5a7BTARVvTVnntH2b9Oalc1A5i7f1XmUirvXmSAOI=.cloaked'
   ],
   address: null,
-  email: null,
+  email: 'mum@email.com',
   phone: null,
   avatarImage: {
     blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',
@@ -106,7 +106,7 @@ module.exports = {
             '%RU5a7BTARVvTVnntH2b9Oalc1A5i7f1XmUirvXmSAOI=.cloaked'
           ],
           address: null,
-          email: null,
+          email: 'mum@email.com',
           phone: null,
           avatarImage: {
             blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',
@@ -225,7 +225,7 @@ module.exports = {
                 '%RU5a7BTARVvTVnntH2b9Oalc1A5i7f1XmUirvXmSAOI=.cloaked'
               ],
               address: null,
-              email: null,
+              email: 'mum@email.com',
               phone: null,
               avatarImage: {
                 blob: '&+Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=.sha256',

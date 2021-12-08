@@ -74,7 +74,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
@@ -83,7 +82,6 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
@@ -170,6 +168,20 @@ export default {
       }
       this.showViewForm = !this.showViewForm
     },
+    async processCreateWhakapapaView (input) {
+      const whakapapaId = await this.createWhakapapaView(input)
+      this.goToWhakapapaView(whakapapaId)
+    },
+    goToWhakapapa (whakapapaId) {
+      var type = this.$route.name.split('/whakapapa')[0]
+
+      this.$router.push({
+        name: type + '/whakapapa/:whakapapaId',
+        params: {
+          whakapapaId
+        }
+      }).catch(() => {})
+    },
     async handleStepOne (input) {
       if (this.currentAccess.groupId) input.recps = [this.currentAccess.groupId]
       else throw new Error('Recps field missing from whakapapa input')
@@ -188,39 +200,15 @@ export default {
 
       switch (input.focus) {
         case 'self':
-          return this.createView(this.newView)
+          return this.processCreateWhakapapaView(this.newView)
         case 'new':
           return this.toggleProfileForm()
         case 'file':
-          return this.buildFromFile(input.csv)
+          return this.processCreateFromCsv(input)
         default:
           this.setLoading(false)
           console.error('Something went wrong while creating a new whakapapa', input)
       }
-    },
-    async createView (input) {
-      // TODO cherese 6/11/21 get rid of this code
-      const pruned = {}
-      Object.entries(input).forEach(([key, value]) => {
-        if (!isEmpty(value)) pruned[key] = value
-      })
-
-      if (!input.authors) {
-        input.authors = {
-          add: ['*']
-        }
-      }
-
-      const whakapapaId = await this.saveWhakapapaView(input)
-
-      var type = this.$route.name.split('/whakapapa')[0]
-
-      this.$router.push({
-        name: type + '/whakapapa/:whakapapaId',
-        params: {
-          whakapapaId
-        }
-      }).catch(() => {})
     },
     async handleDoubleStep (input) {
       try {
@@ -244,147 +232,35 @@ export default {
           id = res.data.saveProfile
         }
 
-        this.createView({ ...this.newView, focus: id })
+        this.processCreateWhakapapaView({ ...this.newView, focus: id })
       } catch (err) {
         this.setLoading(false)
         console.error('Something went wrong while creating a person', err)
       }
     },
-    async buildFromFile (csvRows) {
-      this.setLoading(true)
-
-      // create a profile for each row in the csv
-      var res = await this.createProfiles(csvRows)
-      if (!res) return
-
-      const { profiles, links } = res
-
-      // create all the links from the profiles
-      await this.createLinks(links, profiles)
-
-      // get the root persons profileId
-      const rootCsvId = csvRows[0].csvId
-      const rootProfileId = profiles[rootCsvId]
-
-      // create whakapapa with first person in the csv as the focus
-      await this.createView({
-        ...this.newView,
-        focus: rootProfileId
-      })
+    async processCreateFromCsv (rows) {
+      const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaInput: this.newView, rows })
+      this.goToWhakapapaView(whakapapaId)
     },
+    // async createProfile (input) {
+    //   if (input.avatarImage) delete input.avatarImage.uri
+    //   if (input.headerImage) delete input.headerImage.uri
 
-    async createProfiles (csvData) {
-      const profiles = {}
-      const links = csvData
-        .map(row => row.link)
-        .filter(Boolean)
+    //   const res = await this.$apollo.mutate(savePerson({
+    //     type: 'person',
+    //     recps: [this.currentAccess.groupId],
+    //     authors: {
+    //       add: ['*']
+    //     },
+    //     ...input
+    //   }))
 
-      /*
-        NOTE:
-        profiles = {
-          [csvId]: profileId
-        }
-
-        links = [{ childCsvId, parentCsvId, relationshipType }]
-      */
-      const res = await Promise.all(
-        csvData.map(async ({ csvId, profile }) => {
-          if (!profile) return
-
-          var profileId = await this.createProfile(profile)
-          profiles[csvId] = profileId
-        })
-      )
-        .catch((err) => {
-          console.error('failed to create profile with csv bulk create', err)
-          this.setLoading(false)
-        })
-
-      if (!res) return
-
-      return { profiles, links }
-    },
-    async createLinks (links, profiles) {
-      await Promise.all(
-        links.map(link => {
-          const { parentCsvId, childCsvId, relationshipType } = link
-
-          const relationship = {
-            // get the parent and child's actual profileId
-            parent: profiles[parentCsvId],
-            child: profiles[childCsvId]
-          }
-
-          if (relationshipType === 'partner') return this.createPartnerLink(relationship)
-          if (relationshipType !== '' && relationshipType !== null) relationship.relationshipType = relationshipType
-
-          return this.createChildLink(relationship)
-        })
-      )
-    },
-
-    async createProfile (input) {
-      if (input.avatarImage) delete input.avatarImage.uri
-      if (input.headerImage) delete input.headerImage.uri
-
-      const res = await this.$apollo.mutate(savePerson({
-        type: 'person',
-        recps: [this.currentAccess.groupId],
-        authors: {
-          add: ['*']
-        },
-        ...input
-      }))
-
-      if (res.errors) {
-        console.error('failed to createProfile', res.errors)
-      } else {
-        return res.data.saveProfile // a profileId
-      }
-    },
-
-    async createChildLink ({
-      child,
-      parent,
-      relationshipType,
-      legallyAdopted
-    }) {
-      const input = {
-        type: 'link/profile-profile/child',
-        child,
-        parent,
-        relationshipType,
-        legallyAdopted,
-        recps: this.newView.recps
-      }
-
-      await this.createLink(input)
-    },
-    async createPartnerLink ({ child, parent }) {
-      const input = {
-        type: 'link/profile-profile/partner',
-        child,
-        parent,
-        recps: this.newView.recps
-      }
-
-      await this.createLink(input)
-    },
-    // TODO cherese 6/12/21 move this method to vuex
-    async createLink (input) {
-      try {
-        const res = await this.$apollo.mutate(
-          saveLink(input)
-        )
-
-        if (res.errors) throw res.errors
-
-        return res.data.saveLink
-      } catch (err) {
-        console.log('failed to create link', input)
-        console.log(err)
-      }
-    },
+    //   if (res.errors) {
+    //     console.error('failed to createProfile', res.errors)
+    //   } else {
+    //     return res.data.saveProfile // a profileId
+    //   }
+    // },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)
     },

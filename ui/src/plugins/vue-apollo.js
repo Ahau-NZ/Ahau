@@ -17,8 +17,9 @@ const httpEndpoint =
   process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.ahau.graphql.port}/graphql`
 
 // Call this in the Vue app file
-export function createProvider (options = {}) {
-  const apolloClient = new Client(httpEndpoint, { possibleTypes })
+export function createProvider (opts = {}) {
+  console.log(opts)
+  const apolloClient = new Client(httpEndpoint, { possibleTypes, ...opts })
 
   // Create vue apollo provider
   const apolloProvider = new VueApollo({
@@ -42,7 +43,7 @@ export function createProvider (options = {}) {
 }
 
 // currently we just use this so we don't instantiate heaps of providers
-export const apolloProvider = createProvider()
+export const apolloProvider = (opts = {}) => createProvider(opts)
 
 // Manually call this when user log in
 export async function onLogin (apolloClient, token) {
