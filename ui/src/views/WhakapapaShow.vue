@@ -241,6 +241,7 @@ export default {
   ],
   data () {
     return {
+      isDestroyed: false,
       accessOptions: [],
       fab: false,
       overflow: 'false',
@@ -275,8 +276,9 @@ export default {
     window.scrollTo(0, 0)
     await this.reload()
   },
+
   computed: {
-    ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'nestedWhakapapa']),
@@ -322,12 +324,12 @@ export default {
   watch: {
     currentFocus: {
       immediate: true,
-      handler: async function (newFocus) {
+      async handler (newFocus) {
         if (!newFocus) return
 
         this.setLoading(true)
         const nestedWhakapapa = await this.loadDescendants(newFocus)
-        this.setNestedWhakapapa(nestedWhakapapa)
+        if (!this.isDestroyed) this.setNestedWhakapapa(nestedWhakapapa)
         this.setLoading(false)
       }
     },
@@ -491,12 +493,14 @@ export default {
 
     async loadDescendants (profileId, seen = new Set([])) {
       // TODO if seen isn't provided, maybe try and build based on parents above in graph?
+      if (this.isDestroyed) return
+
       seen.add(profileId)
       // get the persons profile + links
-
       this.nodeIds.push(profileId)
 
       var person = await this.getRelatives(profileId)
+      if (this.isDestroyed) return
 
       // filter out ignored profiles
       if (this.whakapapaView.ignoredProfiles) {
@@ -510,6 +514,7 @@ export default {
 
       // map all links
       person.children = await this.mapChildren(person, seen)
+      if (this.isDestroyed) return
 
       if (this.showPartners) {
         let otherChildren = []
@@ -518,6 +523,7 @@ export default {
 
         // get all step/whangai parents of the children
         if (person.children.length) otherParents = await this.getOtherParents(person, seen)
+        if (this.isDestroyed) return
 
         otherParents = this.removeDuplicateNodes(otherParents, person.id)
 
@@ -532,6 +538,7 @@ export default {
 
         // get all other children from current partner
         if (person.partners.length) partnersOtherChildren = await this.getOtherChildren(person, seen)
+        if (this.isDestroyed) return
         if (partnersOtherChildren.length) {
           let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
@@ -539,6 +546,7 @@ export default {
 
         // add all children's whakapapa to this view
         otherChildren = await this.mapChildren({ children: otherChildren }, seen)
+        if (this.isDestroyed) return
 
         person.partners = uniqby([...person.partners, ...otherParents], 'id')
         person.children = uniqby([...person.children, ...otherChildren], 'id')
@@ -671,6 +679,8 @@ export default {
     async mapChildren (person, seen) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id, seen)
+        if (!childProfile) return
+
         if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
@@ -782,12 +792,18 @@ export default {
     }
   },
   async beforeDestroy () {
+    this.isDestroyed = true
+
     if (!this.whakapapaView) return
     if (this.whakapapaView.name === 'Loading') return
     if (!this.whakapapaView.id) {
       console.error('Trying to save the record count without a whakapapa id', this.whakapapaView)
       return
     }
+
+    // Test if the whakapapa is loaded or not yet
+    // NOTE ideally we would use this.loadingState but that is returning false
+    if (Object.keys(this.nestedWhakapapa).length === 0) return
 
     if (!this.whakapapaView.canEdit) return
     if (this.whakapapaView.recordCount === 0) return

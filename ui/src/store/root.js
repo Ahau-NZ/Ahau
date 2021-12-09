@@ -51,7 +51,9 @@ export default function rootModule (apollo) {
         if (
           state.indexingSince &&
           (Date.now() - state.indexingSince > 2 * SECOND)
-        ) return state.percentageIndexedSinceStartup
+        ) {
+          return state.percentageIndexedSinceStartup
+        }
 
         return state.loading
       },
