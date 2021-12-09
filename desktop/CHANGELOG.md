@@ -1,11 +1,62 @@
 # Changelog | Ahau desktop
 
+## v2.7.1
+
+### Features
+
+- csv import/export fields
+    - partners
+    - images
+    - email,phone,address (NOTE: kaitiaki-only whakapapa dont handle these well yet)
+
+### Bug fixes
+
+- windows code signing: expand publisherName to include two different Ahau spellings
+- cancel loading when closing a whakapapa tree
+- stop infinite looping on a whakapapa tree when loading other parents
+
+## v2.7.0
+
+### Features
+
+- allow improved editing/deleting relationships
+- allow kaitiaki-only whakapapa
+- added CI testing
+
+### Bug Fixes
+
+- fixed creating important relationships and filtering for duplicate partners
+- fix loading spinner, more relaxed polling
+
+## v2.6.2
+### Features
+
+- set AppBar to be visble over the loading spinner
+- improve whakapapa loading times
+- update important relationships to handle different types
+- change UI so whakapapaViews only loaded for current tribe
+- new translations
+- hide less important links when their parent is collapsed
+
+### Bug Fixes
+
+- fix bug where it was classing partner children as duplicates
+- fix bug where when a whakapapa was closed it tried saving the record count when you werent a kaitiaki
+- better protection against infinite whangai loops
+- fix bug where navigating to the archive of a person was broken
+- fix tribal registry to use adminProfile correctly
+
+## v2.6.1
+
+- various bug fixes and ui improvements
 ## v2.6.0
 
 ### Features
+
 - Added options to whakapapa view to hide avatars and show extended family
 
 ### Fixes
+
 - Can add duplicate profiles to whakapapa
 - Fixed other parent whakapapa links
 - Updated parent links and nodes for better alignment and less crossover
