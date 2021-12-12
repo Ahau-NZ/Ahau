@@ -126,7 +126,7 @@ const methods = {
 
   // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
   async createPerson (input) {
-    this.$store.dispatch('person/createPerson', input)
+    return this.$store.dispatch('person/createPerson', input)
   },
   async updatePerson (input) {
     try {
