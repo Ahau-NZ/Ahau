@@ -91,15 +91,16 @@ export default {
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
-      },
-      profile: {} // to be loaded
+      }
     }
   },
   computed: {
-    ...mapGetters('person', ['personMinimal']),
+    ...mapGetters('person', ['personMimimal']),
     ...mapGetters('whakapapa', ['whakapapaView']),
     profile () {
-      return this.profile // WIP HERE TODO
+      if (!get(this.node, 'data.id')) return {}
+
+      return this.personMimimal(this.node.data.id) || {}
     },
     isDuplicate () {
       return this.whakapapaView.importantRelationships
@@ -186,29 +187,16 @@ export default {
   watch: {
     node: {
       immediate: true,
-      async handler (newVal) {
-        newVal.radius = this.radius
+      async handler (node) {
+        node.radius = this.radius
         // NOTE may need to consider watch: { deep: true }
 
-        if (!newVal) return
-        this.addNode(newVal)
+        if (!node) return
+        this.addNode(node)
 
-        const { id } = newVal.data
-
-        /* put the cached profile in if it exists */
-        const cached = await this.$apollo.query(getPersonLite(id, 'cache-only'))
-          .catch(err => {
-            console.log('error hitting the cache!', err)
-            return { errors: err }
-          })
-        if (!cached.errors && cached.data.person) {
-          this.profile = cached.data.person
-        }
-
-        /* then load the latest over the top */
-        // NOTE 'network-only' ensures the result is added to the cache
-        const fresh = await this.$apollo.query(getPersonLite(id, 'network-only'))
-        this.profile = fresh.data.person
+        // TODO: this will need to be moved to where it handles loading the nestedWhakapapa
+        if (!get(node, 'data.id')) return
+        this.loadPersonMinimal(node.data.id)
       }
     }
   }

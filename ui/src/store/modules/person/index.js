@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { getRelatives, getPerson, savePerson } from '@/lib/person-helpers'
-import { getPersonMinimal } from '../apollo-helpers'
+import { getPersonMinimal } from './apollo-helpers'
+import { clone } from 'lodash'
 
 export default function (apollo) {
   const state = {
@@ -12,10 +13,8 @@ export default function (apollo) {
     selectedProfile (state) {
       return state.selectedProfile
     },
-    personMinimal (state) {
-      return function (profileId) {
-        return state.profileMinimal[profileId]
-      }
+    personMimimal: state => (profileId) => {
+      return clone(state.profileMinimal[profileId])
     }
   }
 
