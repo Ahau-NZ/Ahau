@@ -1,19 +1,30 @@
+import Vue from 'vue'
 import { getRelatives, getPerson, savePerson } from '@/lib/person-helpers'
+import { getPersonMinimal } from '../apollo-helpers'
 
 export default function (apollo) {
   const state = {
-    selectedProfile: {}
+    selectedProfile: {}, // TODO change to selectedProfileId ??
+    profileMinimal: {}
   }
 
   const getters = {
-    selectedProfile: state => {
+    selectedProfile (state) {
       return state.selectedProfile
+    },
+    personMinimal (state) {
+      return function (profileId) {
+        return state.profileMinimal[profileId]
+      }
     }
   }
 
   const mutations = {
     updateSelectedProfile (state, profile) {
       state.selectedProfile = profile
+    },
+    setPersonMinimal (state, { profileId, profile }) {
+      Vue.set(state.profileMinimal, profileId, profile)
     }
   }
 
@@ -54,6 +65,16 @@ export default function (apollo) {
         if (res.errors) throw res.errors
 
         return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a person', err)
+      }
+    },
+    async loadPersonMinimal ({ commit }, profileId) {
+      try {
+        const res = await apollo.query(getPersonMinimal(profileId))
+        if (res.errors) throw res.errors
+
+        commit('setPersonMinimal', { profileId, profile: res.data.person })
       } catch (err) {
         console.error('Something went wrong while trying to get a person', err)
       }

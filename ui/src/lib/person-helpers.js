@@ -212,32 +212,6 @@ export const WHAKAPAPA_LINK_FRAGMENT = gql`
   }
 `
 
-const GET_PERSON_LITE = gql`
-  query($id: String!) {
-    person(id: $id){
-      id
-      preferredName
-      gender
-      avatarImage { uri }
-
-      aliveInterval
-      deceased
-
-      parents { id }
-      adminProfile {
-        id
-        preferredName
-        aliveInterval
-      }
-    }
-  }
-`
-export const getPersonLite = (id, fetchPolicy = 'no-cache') => ({
-  query: GET_PERSON_LITE,
-  variables: { id },
-  fetchPolicy
-})
-
 const GET_PERSON = gql`
   ${PublicProfileFieldsFragment}
   ${PERSON_FRAGMENT}

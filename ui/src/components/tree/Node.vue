@@ -61,13 +61,12 @@
 
 <script>
 import get from 'lodash.get'
-import { getPersonLite } from '@/lib/person-helpers'
+import { mapGetters, mapActions } from 'vuex'
+
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import NodeMenuButton from './NodeMenuButton.vue'
-
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Node',
@@ -97,7 +96,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('person', ['personMinimal']),
     ...mapGetters('whakapapa', ['whakapapaView']),
+    profile () {
+      return this.profile // WIP HERE TODO
+    },
     isDuplicate () {
       return this.whakapapaView.importantRelationships
         .some(rel => rel.profileId === this.node.data.id && rel.other.length > 1)
@@ -159,6 +162,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('person', ['loadPersonMinimal']),
     ...mapActions('whakapapa', ['addNode']),
     openMenu (event) {
       this.$emit('open-menu', {
