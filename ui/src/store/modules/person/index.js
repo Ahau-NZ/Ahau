@@ -27,7 +27,14 @@ export default function (apollo) {
     }
   }
 
+  //
+  // createPerson
+  // readPerson
+  // updatePerson
+  // destroyPerson/ tombstonePerson
+  //
   const actions = {
+    // TODO remove this in the long run
     async savePerson (context, input) {
       try {
         const res = await apollo.mutate(
