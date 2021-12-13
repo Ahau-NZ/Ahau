@@ -17,14 +17,16 @@
           <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
         </g>
       </g>
-      <Node
-        v-if="partner.link"
-        :node="partner"
+      <Node v-if="partner.link"
+        :profileId="partner.data.id"
         :radius="partnerRadius"
+        :x="partner.x"
+        :y="partner.y"
+        :isCollapsed="partner.data.isCollapsed"
         isPartner
-        @focus="focus"
         :showAvatars="showAvatars"
         :showPartners="showPartners"
+        @focus="focus"
       />
     </g>
 
@@ -42,7 +44,16 @@
     </g>
 
     <!-- this subtree root node -->
-    <Node :node="root" @open-menu="openContextMenu($event)" @center="center" :showAvatars="showAvatars" :showPartners="showPartners"/>
+    <Node v-if="root.data && root.data.id"
+      :profileId="root.data.id"
+      :x="root.x"
+      :y="root.y"
+      :isCollapsed="root.data.isCollapsed"
+      :showAvatars="showAvatars"
+      :showPartners="showPartners"
+      @center="centerNode(root)"
+      @open-menu="openContextMenu($event)"
+      />
   </g>
 </template>
 
@@ -256,9 +267,6 @@ export default {
     },
     focus ($event) {
       this.changeFocus($event)
-    },
-    center ($event) {
-      this.centerNode($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // map to their node from the root parent

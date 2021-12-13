@@ -186,9 +186,9 @@ export default {
         this.checkNonFocusedPartner(this.nestedWhakapapa)
       }
       if (this.changeFocusId !== null) {
-        this.nodes.find(d => {
-          if (d.data.id === this.changeFocusId) {
-            this.centerNode(d)
+        this.nodes.find(node => {
+          if (node.data.id === this.changeFocusId) {
+            this.centerNode(node)
             this.changeFocusId = null
           }
         })
@@ -196,9 +196,9 @@ export default {
     },
     searchNodeId (newVal) {
       if (newVal === '') return null
-      this.root.descendants().find(d => {
-        if (d.data.id === newVal) {
-          this.centerNode(d)
+      this.root.descendants().find(node => {
+        if (node.data.id === newVal) {
+          this.centerNode(node)
         }
       })
     }

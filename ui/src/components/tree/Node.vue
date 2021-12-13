@@ -15,7 +15,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="{fill: profile.deceased ? colours.deceased : colours.alive }"
+        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius"
@@ -33,7 +33,7 @@
         @click="openMenu($event)"
       />
     </g>
-    <g v-if="node.data.isCollapsed" :style="collapsedStyle">
+    <g v-if="isCollapsed" :style="collapsedStyle">
       <text> ... </text>
     </g>
     <g v-if="!showAvatars" :style="nameTextStyle">
@@ -71,14 +71,11 @@ import NodeMenuButton from './NodeMenuButton.vue'
 export default {
   name: 'Node',
   props: {
-    node: {
-      type: Object,
-      required: true
-    },
-    radius: {
-      type: Number,
-      default: 50
-    },
+    profileId: { type: String, required: true },
+    radius: { type: Number, default: 50 },
+    x: { type: Number, default: 0 },
+    y: { type: Number, default: 0 },
+    isCollapsed: Boolean, // TODO change this to be a getter from vuex
     isPartner: Boolean,
     showAvatars: Boolean
   },
@@ -94,23 +91,23 @@ export default {
       }
     }
   },
+  mounted () {
+    this.loadPersonMinimal(this.profileId)
+  },
   computed: {
-    ...mapGetters('person', ['personMimimal']),
+    ...mapGetters('person', ['personMinimal']),
     ...mapGetters('whakapapa', ['whakapapaView']),
     profile () {
-      if (!get(this.node, 'data.id')) return {}
-
-      return this.personMimimal(this.node.data.id) || {}
+      return this.personMinimal(this.profileId) || {}
     },
     isDuplicate () {
       return this.whakapapaView.importantRelationships
-        .some(rel => rel.profileId === this.node.data.id && rel.other.length > 1)
+        .some(rel => rel.profileId === this.profileId && rel.other.length > 1)
     },
     showMenuButton () {
       if (this.isPartner) return false
-      if (!this.node.data.isCollapsed) {
+      if (!this.isCollapsed) {
         if (this.hover) return true
-        if (this.nodeCentered === this.node.data.id) return true
       }
       return false
     },
@@ -131,7 +128,7 @@ export default {
     },
     position () {
       return {
-        transform: `translate(${this.node.x}px, ${this.node.y}px)`
+        transform: `translate(${this.x}px, ${this.y}px)`
       }
     },
     textWidth () {
@@ -174,30 +171,8 @@ export default {
     },
     click () {
       // only change focus when the partner nodes are clicked
-      if (this.isPartner) this.focus()
-      else this.center()
-    },
-    focus () {
-      this.$emit('focus', this.profile.id)
-    },
-    center () {
-      this.$emit('center', this.node)
-    }
-  },
-  watch: {
-    node: {
-      immediate: true,
-      async handler (node) {
-        node.radius = this.radius
-        // NOTE may need to consider watch: { deep: true }
-
-        if (!node) return
-        this.addNode(node)
-
-        // TODO: this will need to be moved to where it handles loading the nestedWhakapapa
-        if (!get(node, 'data.id')) return
-        this.loadPersonMinimal(node.data.id)
-      }
+      if (this.isPartner) this.$emit('focus', this.profileId)
+      else this.$emit('center')
     }
   }
 }

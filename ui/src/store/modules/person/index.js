@@ -13,7 +13,7 @@ export default function (apollo) {
     selectedProfile (state) {
       return state.selectedProfile
     },
-    personMimimal: state => (profileId) => {
+    personMinimal: state => (profileId) => {
       return clone(state.profileMinimal[profileId])
     }
   }
