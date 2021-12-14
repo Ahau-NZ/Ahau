@@ -596,13 +596,19 @@ export default {
       this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
     },
-    submit () {
+    async submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         if (this.profile.adminProfile) output.id = this.profile.adminProfile.id
 
         this.$emit('submit', output)
+
+        // update the dialog
+        // NOTE: this will change when updating the tree isnt done in the DialogHandler
+        setTimeout(async () => {
+          this.profile = await this.getPerson(this.profileId)
+        }, 1000)
       }
 
       this.formData = defaultData(this.scopedProfile)

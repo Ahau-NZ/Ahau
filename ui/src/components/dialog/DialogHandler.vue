@@ -27,6 +27,7 @@
       @create="addPerson($event)"
       @close="close"
     />
+    <!-- TODO: this doesnt appear to be used by anything here! -->
     <EditNodeDialog
       v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
@@ -98,7 +99,6 @@
 
 <script>
 import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -114,7 +114,7 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 
 import findSuccessor from '@/lib/find-successor'
@@ -494,55 +494,17 @@ export default {
       await this.saveLink(input)
     },
     async processUpdate (input) {
-      if (!input) return
-      if (Object.keys(input).length === 0) return
+      if (input.recps) delete input.recps
 
-      if (input.recps) { // cant have recps on an update
-        delete input.recps
-      }
-
-      const profileId = this.selectedProfile.id
-
-      // update their profile
-      await this.updatePerson({ id: profileId, ...input })
-
-      // update the relationship
-      const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
-
-      var { relationshipType, legallyAdopted } = this.selectedProfile
-
+      await this.updatePerson({ id: this.selectedProfile.id, ...input })
       const parent = this.getSelectedProfilesParent()
 
-      // TEMP: skips saving relationship if there is no relationship on the selectedProfile
-      if (!isEmpty(relationshipAttrs) && profileId !== this.view.focus && parent) {
-        // get the link between the parent and child
-        var oldLink = await this.getWhakapapaLink(parent.id, profileId)
+      const profileIdToLoad = (parent)
+        ? parent.id
+        : this.selectedProfile.id
 
-        let input = {
-          type: 'link/profile-profile/child',
-          linkId: oldLink.linkId,
-          child: profileId,
-          parent: parent.id,
-          ...relationshipAttrs
-        }
-
-        await this.saveLink(input)
-
-        relationshipType = relationshipAttrs.relationshipType
-        legallyAdopted = relationshipAttrs.legallyAdopted
-      }
-
-      if (parent) {
-        var node = await this.loadDescendants(parent.id)
-
-        this.selectedProfile.relationshipType = relationshipType
-        this.selectedProfile.legallyAdopted = legallyAdopted
-
-        this.updateNodeInNestedWhakapapa(node)
-      } else {
-        var rootNode = await this.loadDescendants(profileId)
-        this.updateNodeInNestedWhakapapa(rootNode)
-      }
+      var node = await this.loadDescendants(profileIdToLoad)
+      this.updateNodeInNestedWhakapapa(node)
     },
     async removeProfile (deleteOrIgnore) {
       await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
