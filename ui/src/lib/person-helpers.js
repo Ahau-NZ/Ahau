@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import clone from 'lodash.clonedeep'
-import { PublicProfileFieldsFragment } from './profile-helpers'
+import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
 
 export function setPersonProfile (input) {
   var profile = clone(input)
