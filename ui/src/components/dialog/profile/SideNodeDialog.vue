@@ -531,8 +531,6 @@ export default {
       let input = {
         type: 'link/profile-profile/child',
         linkId,
-        child,
-        parent,
         relationshipType
       }
 
