@@ -1,6 +1,3 @@
-import gql from 'graphql-tag'
-import isEmpty from 'lodash.isempty'
-
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '../store/modules/tribe/apollo-helpers'
 import { whakapapaLink } from '@/lib/person-helpers.js'
@@ -90,60 +87,6 @@ const methods = {
       console.error('Something went wrong while fetching the profile: ', id)
       console.error(err)
     }
-  },
-  // method to save a profile (community or person) using apollo
-  async saveProfile (input) {
-    if (input.avatarImage) delete input.avatarImage.uri // not valid to transmit / persist
-    if (input.headerImage) delete input.headerImage.uri
-
-    if (input.altNames) {
-      if (input.altNames.add && !input.altNames.add.length) delete input.altNames.add
-      if (input.altNames.remove && !input.altNames.remove.length) delete input.altNames.remove
-
-      if (isEmpty(input.altNames)) delete input.altNames
-    }
-
-    try {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input
-        }
-      })
-
-      if (res.errors) throw new Error(res.errors)
-
-      return res.data.saveProfile // profileId
-    } catch (err) {
-      console.error('Something went wrong while saving the profile: ', input)
-      console.error(err)
-    }
-  },
-
-  // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
-  async createPerson (input) {
-    return this.$store.dispatch('person/createPerson', input)
-  },
-  async updatePerson (input) {
-    try {
-      if (!input.id) throw new Error('profile.id is required on updatePerson()')
-      if (input.recps) throw new Error('profile.recps is not allowed on updatePerson()')
-      if (input.authors) throw new Error('cannot update authors field')
-      if (input.type) throw new Error('profile.type is not allowed on updatePerson()')
-
-      return this.savePerson(input) // profileId
-    } catch (err) {
-      console.error('Something went wrong while trying to update a person', input)
-      console.error(err)
-    }
-  },
-  // TODO: move these methods out of profile-mixins and use the store/modules/person/index action for this instead
-  async savePerson (input) {
-    this.$store.dispatch('person/savePerson', input)
   },
   async saveLink (input) {
     try {

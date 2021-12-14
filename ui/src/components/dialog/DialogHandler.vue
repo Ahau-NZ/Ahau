@@ -173,7 +173,7 @@ export default {
   mixins: [
     mapProfileMixins({
       mapApollo: ['profile', 'tribe'],
-      mapMethods: ['createPerson', 'updatePerson', 'saveLink', 'getProfile', 'savePerson', 'getWhakapapaLink']
+      mapMethods: ['saveLink', 'getProfile', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -221,6 +221,7 @@ export default {
   },
   methods: {
     getDisplayName,
+    ...mapActions('person', ['createPerson', 'updatePerson', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
@@ -546,7 +547,7 @@ export default {
     async removeProfile (deleteOrIgnore) {
       await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
       if (deleteOrIgnore === 'delete') {
-        await this.deletePerson()
+        await this.processDeletePerson()
       } else {
         await this.ignoreProfile()
       }
@@ -737,15 +738,10 @@ export default {
 
       this.setSelectedProfile(null)
     },
-    async deletePerson () {
+    async processDeletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
 
-      var input = {
-        id: this.selectedProfile.id,
-        tombstone: { date: new Date() }
-      }
-
-      await this.savePerson(input)
+      await this.deletePerson({ id: this.selectedProfile.id })
 
       // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
       if (this.selectedProfile.id === this.view.focus) {
