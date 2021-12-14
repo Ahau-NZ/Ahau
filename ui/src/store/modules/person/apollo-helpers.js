@@ -1,4 +1,9 @@
 import gql from 'graphql-tag'
+import pick from 'lodash.pick'
+
+import { PERMITTED_PERSON_ATTRS } from '../../../lib/person-helpers'
+import { pruneEmptyValues } from '../../../lib/profile-helpers'
+import { saveProfile } from '../profile/apollo-helpers'
 
 const GET_PERSON_MINIMAL = gql`
   query($id: String!) {
@@ -22,3 +27,21 @@ export const getPersonMinimal = (id, fetchPolicy = 'no-cache') => ({
   variables: { id },
   fetchPolicy
 })
+
+export const savePerson = input => {
+  input = pick(input, PERMITTED_PERSON_ATTRS)
+  input = pruneEmptyValues(input)
+
+  return saveProfile(input)
+}
+
+export const deletePerson = (id, allowPublic = false) => {
+  const input = {
+    id,
+    tombstone: { reason: 'user deleted profile' }
+  }
+
+  if (allowPublic) input.allowPublic = true
+
+  return saveProfile(input)
+}

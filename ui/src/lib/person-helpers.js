@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { PublicProfileFieldsFragment, saveProfile } from './profile-helpers'
+import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
 
 export function setPersonProfile (input) {
   var profile = clone(input)
@@ -289,23 +288,6 @@ export async function getRelatives (profileId, apollo) {
     console.error('WARNING, something went wrong, caught it')
     console.error(e)
   }
-}
-
-export const savePerson = input => {
-  input = pick(input, PERMITTED_PERSON_ATTRS)
-  input = pruneEmptyValues(input)
-
-  return saveProfile(input)
-}
-
-export function pruneEmptyValues (input) {
-  const pruned = {}
-  Object.entries(input).forEach(([key, value]) => {
-    if (Array.isArray(value) && !value.length) return
-    if (typeof value === 'object' && value === {}) return
-    if (value !== null) pruned[key] = value
-  })
-  return pruned
 }
 
 export function getDisplayName (profile) {

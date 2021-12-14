@@ -3,7 +3,8 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
 import { COMMUNITY_FRAGMENT } from './community-helpers'
-import { PERSON_FRAGMENT, pruneEmptyValues } from './person-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
+import { pruneEmptyValues } from './profile-helpers'
 
 export const createGroupApplication = ({ groupId, answers, comment }) => {
   return {

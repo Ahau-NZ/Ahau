@@ -8,8 +8,8 @@ import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 
 // /* namespaced */
+import tree from './modules/tree'
 import whakapapa from './modules/whakapapa'
-import person from './modules/person'
 
 import alerts from './modules/alerts'
 import analytics from './modules/analytics'
@@ -17,7 +17,9 @@ import analytics from './modules/analytics'
 // new
 import tribe from './modules/tribe'
 import subtribe from './modules/subtribe'
+import profile from './modules/profile'
 import community from './modules/community'
+import person from './modules/person'
 import collection from './modules/collection/'
 import settings from './modules/settings/'
 import story from './modules/story/'
@@ -46,15 +48,17 @@ export default new Vuex.Store({
     notifications,
     alerts,
     analytics,
+    tree: tree(),
 
     // new
     tribe: tribe(apollo),
     subtribe: subtribe(apollo),
+    profile: profile(apollo),
     community: community(apollo),
+    person: person(apollo),
     collection: collection(apollo),
     story: story(apollo),
 
-    person: person(apollo),
     whakapapa: whakapapa(apollo),
 
     table: table(apollo),

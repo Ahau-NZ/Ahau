@@ -7,7 +7,6 @@
       >
         <SubTree
           :root="treeLayout(root)"
-          :openMenu="openMenu"
           :changeFocus="changeFocus"
           :centerNode="centerNode"
           :showAvatars="showAvatars"
@@ -53,7 +52,6 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
-    openMenu: Function,
     view: {
       type: Object,
       required: true

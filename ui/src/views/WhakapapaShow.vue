@@ -124,7 +124,6 @@
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
-        :openMenu="openContextMenu"
         :view="whakapapaView"
         :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
@@ -151,7 +150,7 @@
       </div>
     </v-container>
 
-    <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
+    <NodeMenu :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <FilterMenu
       :show="searchFilter"
@@ -381,7 +380,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('person', ['updateSelectedProfile']),
+    ...mapActions('person', ['setSelectedProfileById', 'updateSelectedProfile']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
     ...mapActions('table', ['resetTableFilters']),
     ...mapActions('tribe', ['getTribe']),
@@ -700,15 +699,6 @@ export default {
 
         return childProfile
       }))
-    },
-
-    async openContextMenu ({ event, profile }) {
-      var fullProfile = await this.getRelatives(profile.id)
-      this.setSelectedProfile(fullProfile)
-      if (this.dialog.active === 'view-edit-node') {
-        this.updateDialog(null, null)
-      }
-      this.$refs.menu.open(event)
     },
     openTableContextMenu (event) {
       this.setSelectedProfile(event.profile)

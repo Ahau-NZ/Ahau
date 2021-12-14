@@ -35,7 +35,6 @@
       <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
       <SubTree
         :root="child"
-        :openMenu="openMenu"
         :changeFocus="changeFocus"
         :centerNode="centerNode"
         :showAvatars="showAvatars"
@@ -52,7 +51,7 @@
       :showAvatars="showAvatars"
       :showPartners="showPartners"
       @center="centerNode(root)"
-      @open-menu="openContextMenu($event)"
+      @open-menu="openContextMenu"
       />
   </g>
 </template>
@@ -65,7 +64,6 @@ import Link from './Link.vue'
 // TODO: better name
 import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { mapGetters } from 'vuex'
 
@@ -76,18 +74,11 @@ export default {
   name: 'SubTree',
   props: {
     root: Object,
-    openMenu: Function,
     changeFocus: Function,
     centerNode: Function,
     showPartners: Boolean,
     showAvatars: Boolean
   },
-
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   components: {
     Node,
     Link
@@ -178,9 +169,6 @@ export default {
     }
   },
   methods: {
-    openContextMenu ({ event, profile }) {
-      this.openMenu({ event, profile })
-    },
     mapPartnerNodes (nodes, midway) {
       var leftPartners = 0
       var rightPartners = 0

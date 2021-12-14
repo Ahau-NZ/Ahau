@@ -64,7 +64,7 @@
       @submit="handleStepOne($event)" />
     <!-- TODO: add suggestions in here as well? -->
     <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
-      @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
+      @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep"
       :withRelationships="false" @close="close"
     />
     <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
@@ -82,7 +82,6 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { savePerson } from '@/lib/person-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
 
@@ -128,6 +127,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
+    ...mapActions('person', ['createPerson']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
     async getSuggestions (name) {
       if (!name) {
@@ -214,6 +214,7 @@ export default {
       try {
         var { id } = input
 
+        // if theres no id, that means we're creating the whakapapa from a new person
         if (!id) {
           input.type = 'person'
           input.authors = {
@@ -223,19 +224,14 @@ export default {
                 : '*'
             ]
           }
-          const res = await this.$apollo.mutate(
-            savePerson(input)
-          )
 
-          if (res.errors) throw res.errors
-
-          id = res.data.saveProfile
+          id = await this.createPerson(input)
         }
 
-        this.processCreateWhakapapaView({ ...this.newView, focus: id })
+        await this.processCreateWhakapapaView({ ...this.newView, focus: id })
       } catch (err) {
         this.setLoading(false)
-        console.error('Something went wrong while creating a person', err)
+        console.error('Something went wrong while creating a whakapapa from a person', err)
       }
     },
     async processCreateFromCsv (rows) {
