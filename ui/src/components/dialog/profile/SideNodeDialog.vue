@@ -1,5 +1,5 @@
 <template>
-  <transition appear :name="mobile ? 'up' : 'left'">
+  <transition v-if="profile" appear :name="mobile ? 'up' : 'left'">
     <v-navigation-drawer
       :style="mobile ? preview ? 'top: -7px ' : 'top: -64px;' : 'top: 64px;'"
       v-model="drawer"
@@ -364,7 +364,10 @@ export default {
     EditRelationships
   },
   props: {
-    profile: { type: Object, default: () => {} },
+    profileId: {
+      type: String,
+      required: true
+    },
     deleteable: { type: Boolean, default: false },
     view: { type: Object },
     show: { type: Boolean, required: true },
@@ -376,6 +379,7 @@ export default {
   ],
   data () {
     return {
+      profile: null,
       isEditing: false,
       formData: {},
       showDescription: false,
@@ -383,6 +387,9 @@ export default {
       authors: [],
       allowRemoveChildren: false
     }
+  },
+  async mounted () {
+    this.profile = await this.getPerson(this.profileId)
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess']),
@@ -489,7 +496,7 @@ export default {
     ...mapActions(['setDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['setProfileById']),
+    ...mapActions('person', ['setProfileById', 'getPerson']),
     getDisplayName,
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
@@ -590,13 +597,19 @@ export default {
       this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
     },
-    submit () {
+    async submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         if (this.profile.adminProfile) output.id = this.profile.adminProfile.id
 
         this.$emit('submit', output)
+
+        // update the dialog
+        // NOTE: this will change when updating the tree isnt done in the DialogHandler
+        setTimeout(async () => {
+          this.profile = await this.getPerson(this.profileId)
+        }, 1000)
       }
 
       this.formData = defaultData(this.scopedProfile)
