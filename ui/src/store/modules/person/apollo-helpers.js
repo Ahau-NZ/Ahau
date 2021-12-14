@@ -1,7 +1,8 @@
 import pick from 'lodash.pick'
 
 import { PERMITTED_PERSON_ATTRS } from '../../../lib/person-helpers'
-import { pruneEmptyValues, saveProfile } from '../../../lib/profile-helpers'
+import { pruneEmptyValues } from '../../../lib/profile-helpers'
+import { saveProfile } from '../profile/apollo-helpers'
 
 export const savePersonMutation = input => {
   input = pick(input, PERMITTED_PERSON_ATTRS)

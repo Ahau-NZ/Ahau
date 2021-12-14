@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { PublicProfileFieldsFragment } from '../../../lib/profile-helpers.js'
+import { PublicProfileFieldsFragment } from '../profile/apollo-helpers'
 
 export const WhakapapaFragment = gql`
   fragment WhakapapaFragment on WhakapapaView {

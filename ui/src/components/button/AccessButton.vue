@@ -95,7 +95,6 @@ import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { ACCESS_TYPES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
@@ -172,6 +171,7 @@ export default {
 
   methods: {
     ...mapActions(['setCurrentAccess']),
+    ...mapActions('profile', ['getProfile']),
     getDisplayName,
     setPermission (permission) {
       // TODO update record backend to hold permission
@@ -183,11 +183,6 @@ export default {
       return this.$t('accessButton.' + key, vars)
     }
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   watch: {
     'currentAccess.profileId': {
       immediate: true,

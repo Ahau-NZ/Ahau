@@ -4,7 +4,7 @@ import clone from 'lodash.clonedeep'
 
 // disabled until returning empty authors is fixed
 // import { AUTHOR_FRAGMENT } from './person-helpers'
-import { PublicProfileFieldsFragment } from './profile-helpers.js'
+import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
 
 export const EMPTY_COMMUNITY = {
   type: 'community',

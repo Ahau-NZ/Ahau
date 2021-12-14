@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
 import { COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
-import { PublicProfileFieldsFragment } from '../../../lib/profile-helpers.js'
+import { PublicProfileFieldsFragment } from '../profile/apollo-helpers'
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'id',
