@@ -1,4 +1,5 @@
-import { getRelatives, getPerson, savePerson } from '@/lib/person-helpers'
+import { savePersonMutation, deletePersonMutation } from './apollo-helpers'
+import { getRelatives, getPerson } from '@/lib/person-helpers'
 
 export default function (apollo) {
   const state = {
@@ -17,35 +18,30 @@ export default function (apollo) {
     }
   }
 
+  async function savePerson (input) {
+    const res = await apollo.mutate(
+      savePersonMutation(input)
+    )
+
+    if (res.errors) throw res.errors
+
+    return res.data.saveProfile // profileId
+  }
+
   const actions = {
-    async savePerson (context, input) {
+    async createPerson (_, input) {
       try {
-        const res = await apollo.mutate(
-          savePerson(input)
-        )
+        if (!input.type) throw new Error('a profile type is required to create a person')
+        if (!input.authors) throw new Error('profile authors is required to create a person')
 
-        if (res.errors) throw res.errors
-
-        return res.data.saveProfile // profileId
-      } catch (err) {
-        console.error('Something went wrong while trying to save a person', input)
-        console.error(err)
-      }
-    },
-    async createPerson ({ dispatch }, input) {
-      try {
-        if (!input.type) throw new Error('profile.type is required on createPerson()')
-        if (!input.recps) throw new Error('profile.recps is required on createPerson()')
-        if (!input.authors) throw new Error('profile.authors is required on createPerson()')
-        if (input.id) throw new Error('profile.id is not allowed on createPerson()')
-
-        return dispatch('savePerson', input) // profileId
+        return savePerson(input)
       } catch (err) {
         console.error('Something went wrong while trying to create a person', input)
         console.error(err)
+        throw err
       }
     },
-    async getPerson (context, profileId) {
+    async getPerson (_, profileId) {
       try {
         const res = await apollo.query(
           getPerson(profileId)
@@ -58,10 +54,35 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a person', err)
       }
     },
+    async updatePerson (_, input) {
+      try {
+        if (!input.id) throw new Error('a profile id is required to update a person')
+
+        return savePerson(input) // profileId
+      } catch (err) {
+        console.error('Something went wrong while trying to update a person', input)
+        console.error(err)
+      }
+    },
+    async deletePerson (_, { id, allowPublic }) {
+      try {
+        if (!id) throw new Error('a profile id is required to delete a person')
+
+        const res = await apollo.mutate(
+          deletePersonMutation(id, allowPublic)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.saveProfile
+      } catch (err) {
+        console.error('Something went wrong while trying to delete a person', id)
+        console.error(err)
+      }
+    },
     updateSelectedProfile ({ commit }, profile) {
       commit('updateSelectedProfile', profile)
     },
-
     async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
       // NOTE to dispatch outide this namespace, we use:
       //   dispatch(actionName, data, { root: true })

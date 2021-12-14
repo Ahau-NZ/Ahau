@@ -54,7 +54,7 @@
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
       :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
-      @submit="updatePerson"
+      @submit="processUpdatePerson"
       @close="dialog = null"
       :nodeProfile="profile"
     />
@@ -98,8 +98,7 @@ export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe'],
-      mapMethods: ['saveProfile']
+      mapApollo: ['profile', 'tribe']
     })
   ],
   components: {
@@ -250,6 +249,7 @@ export default {
     ...mapActions(['setWhoami', 'setCurrentAccess']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
+    ...mapActions('person', ['updatePerson']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
@@ -278,10 +278,11 @@ export default {
       this.closeDialog()
       await this.refresh()
     },
-    async updatePerson ($event) {
+    async processUpdatePerson ($event) {
       // attach the id to the input
       const input = { id: this.profile.id, ...$event }
-      await this.saveProfile(input)
+      await this.updatePerson(input)
+
       this.closeDialog()
       this.refresh()
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })

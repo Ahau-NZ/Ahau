@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import { pruneEmptyValues } from '../lib/person-helpers.js'
+import { pruneEmptyValues } from '../lib/profile-helpers.js'
 
 export const TYPES = {
   STORY_ARTEFACT: 'link/story-artefact',

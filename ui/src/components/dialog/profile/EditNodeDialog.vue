@@ -50,7 +50,7 @@
             :show="showDeleteProfile"
             @close="showDeleteProfile = false"
             @cancel="showDeleteProfile = false"
-            @submit="deleteProfile"
+            @submit="processDeleteProfile"
           />
         </v-tab-item>
       </v-tabs-items>
@@ -64,8 +64,8 @@
 
 import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers.js'
 import { parseInterval } from '@/lib/date-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 import Dialog from '@/components/dialog/Dialog.vue'
 import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import SettingsForm from '@/components/settings/SettingsForm.vue'
@@ -79,12 +79,6 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'EditNodeDialog',
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile'],
-      mapMethods: ['saveProfile']
-    })
-  ],
   components: {
     Dialog,
     DeleteProfileDialog,
@@ -98,6 +92,11 @@ export default {
     nodeProfile: { type: Object, default: () => {} },
     readOnly: { type: Boolean, default: false }
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
       formData: {},
@@ -156,6 +155,7 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('person', ['updatePerson', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('settings', ['deleteAhau']),
     updateAvatar (avatarImage) {
@@ -168,7 +168,7 @@ export default {
     close () {
       this.$emit('close')
     },
-    async deleteProfile () {
+    async processDeleteProfile () {
       this.setLoading(true)
       this.showDeleteProfile = false
       this.close()
@@ -181,19 +181,15 @@ export default {
         }
       }
 
-      await this.saveProfile(input)
+      await this.updatePerson(input)
 
       // tombstone our public profile
       const tombstoneInput = {
         id: this.whoami.public.profile.id,
-        tombstone: {
-          date: Date.now(),
-          reason: 'User deleted Ahau'
-        },
         allowPublic: true // to update the public profile
       }
 
-      await this.saveProfile(tombstoneInput)
+      await this.deletePerson(tombstoneInput)
 
       // now delete the ahau folder where the db sits
       await this.deleteAhau()
