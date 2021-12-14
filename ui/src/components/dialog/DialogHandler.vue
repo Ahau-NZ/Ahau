@@ -38,7 +38,7 @@
     <SideNodeDialog
       v-if="isActive('view-edit-node')"
       :show="isActive('view-edit-node')"
-      :profile="selectedProfile"
+      :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
       @close="close"
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
