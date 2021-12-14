@@ -122,7 +122,6 @@ import ProfileList from '@/components/profile/ProfileList.vue'
 import Avatar from '@/components/Avatar.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import { parseInterval } from '@/lib/date-helpers.js'
@@ -136,11 +135,6 @@ export default {
     AccessButton,
     ProfileList
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
@@ -276,6 +270,7 @@ export default {
   },
   methods: {
     ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
+    ...mapActions('profile', ['getProfile']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]

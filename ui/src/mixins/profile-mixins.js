@@ -1,4 +1,4 @@
-import { getProfile } from '@/lib/profile-helpers.js'
+import { getProfile } from '../store/modules/profile/apollo-helpers'
 import { getTribe } from '../store/modules/tribe/apollo-helpers'
 import { whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
@@ -25,6 +25,8 @@ export default function mapProfileMixins ({ mapMethods, mapApollo }) {
 }
 
 const apollo = {
+  // TODO cherese 14/12/2021 when this is removed from here, update getProfile to be a method instead
+  // and change how it is used in store/modules/profile/index
   profile () {
     return {
       ...getProfile,
@@ -73,21 +75,6 @@ const apollo = {
 }
 
 const methods = {
-  async getProfile (id) {
-    try {
-      const res = await this.$apollo.query({
-        ...getProfile,
-        variables: { id }
-      })
-
-      if (res.errors) throw res.errors
-
-      return res.data.profile
-    } catch (err) {
-      console.error('Something went wrong while fetching the profile: ', id)
-      console.error(err)
-    }
-  },
   async saveLink (input) {
     try {
       const res = await this.$apollo.mutate(

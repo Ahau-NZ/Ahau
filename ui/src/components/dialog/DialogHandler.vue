@@ -173,7 +173,7 @@ export default {
   mixins: [
     mapProfileMixins({
       mapApollo: ['profile', 'tribe'],
-      mapMethods: ['saveLink', 'getProfile', 'getWhakapapaLink']
+      mapMethods: ['saveLink', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -221,6 +221,7 @@ export default {
   },
   methods: {
     getDisplayName,
+    ...mapActions('profile', ['getProfile']),
     ...mapActions('person', ['createPerson', 'updatePerson', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),

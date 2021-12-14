@@ -73,7 +73,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
@@ -98,11 +97,6 @@ export default {
       currentAccessProfile: {}
     }
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   watch: {
     'currentAccess.profileId': {
       immediate: true,
@@ -153,6 +147,7 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog']),
+    ...mapActions('profile', ['getProfile']),
     ...mapActions('person', ['setProfileById']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })

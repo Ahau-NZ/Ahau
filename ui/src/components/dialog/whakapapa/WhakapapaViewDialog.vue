@@ -44,13 +44,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
@@ -80,11 +79,6 @@ export default {
       currentAccessProfile: {}
     }
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   computed: {
     ...mapGetters(['currentAccess']),
     mobile () {
@@ -92,6 +86,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('profile', ['getProfile']),
     cordovaBackButton () {
       this.close()
     },

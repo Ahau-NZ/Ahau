@@ -63,8 +63,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe'],
-      mapMethods: ['getProfile']
+      mapApollo: ['profile', 'tribe']
     })
   ],
   mounted () {
@@ -139,6 +138,7 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
+    ...mapActions('profile', ['getProfile']),
     close () {
       this.formData = setDefaultStory(this.story)
       this.$emit('close')

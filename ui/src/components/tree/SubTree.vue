@@ -53,7 +53,6 @@ import Link from './Link.vue'
 // TODO: better name
 import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { mapGetters } from 'vuex'
 
@@ -69,12 +68,6 @@ export default {
     showPartners: Boolean,
     showAvatars: Boolean
   },
-
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
-  ],
   components: {
     Node,
     Link

@@ -375,7 +375,7 @@ export default {
     preview: { type: Boolean, default: false }
   },
   mixins: [
-    mapProfileMixins({ mapMethods: ['getProfile', 'getWhakapapaLink', 'saveLink'] })
+    mapProfileMixins({ mapMethods: ['getWhakapapaLink', 'saveLink'] })
   ],
   data () {
     return {
@@ -495,6 +495,7 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
+    ...mapActions('profile', ['getProfile']),
     ...mapActions('person', ['setProfileById', 'getPerson']),
     getDisplayName,
     async getOriginalAuthor () {

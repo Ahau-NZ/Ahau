@@ -26,14 +26,16 @@
         :myProfile="myProfile"
         :profile="profile"
         @setupProfile="setupProfile($event)"
-        style="max-width: 1200px"
+        style="max-width: 1175px"
       />
 
       <template v-if="myProfile">
         <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
           {{ $t('viewPerson.skillsEducationTitle') }}
         </v-col>
-        <ProfileCard>
+        <ProfileCard
+          style="max-width: 1200px"
+        >
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
               <ProfileInfoItem class="bb" smCols="12" mdCols="12"  :title="$t('viewPerson.profession')" :value="profile.profession"/>

@@ -73,7 +73,6 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { VueContext } from 'vue-context'
 
@@ -87,10 +86,7 @@ export default {
   },
   mixins: [
     saveStoryMixin,
-    storiesApolloMixin,
-    mapProfileMixins({
-      mapMethods: ['getProfile']
-    })
+    storiesApolloMixin
   ],
   components: {
     NewRecordDialog,
@@ -172,6 +168,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('profile', ['getProfile']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('archive', ['toggleShowStory', 'setShowArtefact']),
     ...mapActions('collection', ['createCollection', 'getCollectionsByGroup']),
