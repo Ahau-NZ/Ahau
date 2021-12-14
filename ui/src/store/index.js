@@ -8,6 +8,7 @@ import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 
 // /* namespaced */
+import tree from './modules/tree'
 import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 
@@ -46,6 +47,7 @@ export default new Vuex.Store({
     notifications,
     alerts,
     analytics,
+    tree: tree(),
 
     // new
     tribe: tribe(apollo),

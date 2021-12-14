@@ -31,6 +31,7 @@ export default {
     VueContext
   },
   computed: {
+    ...mapGetters('tree', ['mouseEvent']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami']),
     canEdit () {
@@ -99,6 +100,12 @@ export default {
           icon: 'mdi-delete'
         }
       ]
+    }
+  },
+  watch: {
+    mouseEvent (e) {
+      this.updateDialog(null, null)
+      this.open(e)
     }
   },
   methods: {
