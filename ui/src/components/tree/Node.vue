@@ -5,7 +5,7 @@
     @mouseover="hover = true"
     @mouseleave="hover = false"
     @click="click"
-    @mousedown.right="openMenu($event, profile)"
+    @mousedown.right="openMenu"
     @contextmenu.prevent
   >
     <g v-if="showAvatars" class="avatar">
@@ -30,7 +30,7 @@
       <NodeMenuButton
         v-if="showMenuButton"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
-        @click="openMenu($event, profile)"
+        @click="openMenu"
       />
     </g>
     <g v-if="profile.isCollapsed" :style="collapsedStyle">
@@ -160,10 +160,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tree', ['setMouseEvent']),
+    ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', ['addNode']),
-    openMenu (event, profile) {
-      profile.isPartner = this.isPartner
-      this.$emit('open-menu', { event, profile })
+    openMenu (e) {
+      this.setMouseEvent(e)
+      this.setSelectedProfileById(this.profile.id)
     },
     click () {
       // only change focus when the partner nodes are clicked

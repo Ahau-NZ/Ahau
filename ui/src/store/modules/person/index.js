@@ -83,6 +83,11 @@ export default function (apollo) {
     updateSelectedProfile ({ commit }, profile) {
       commit('updateSelectedProfile', profile)
     },
+    // NOTE: this is similar to the method below
+    async setSelectedProfileById ({ dispatch, commit }, profileId) {
+      var person = await dispatch('getPerson', profileId)
+      commit('updateSelectedProfile', person)
+    },
     async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
       // NOTE to dispatch outide this namespace, we use:
       //   dispatch(actionName, data, { root: true })

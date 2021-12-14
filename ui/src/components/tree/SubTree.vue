@@ -33,7 +33,6 @@
       <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
       <SubTree
         :root="child"
-        :openMenu="openMenu"
         :changeFocus="changeFocus"
         :centerNode="centerNode"
         :showAvatars="showAvatars"
@@ -42,7 +41,7 @@
     </g>
 
     <!-- this subtree root node -->
-    <Node :node="root" @open-menu="openContextMenu($event)" @center="center" :showAvatars="showAvatars" :showPartners="showPartners"/>
+    <Node :node="root" @center="center" :showAvatars="showAvatars" :showPartners="showPartners"/>
   </g>
 </template>
 
@@ -65,7 +64,6 @@ export default {
   name: 'SubTree',
   props: {
     root: Object,
-    openMenu: Function,
     changeFocus: Function,
     centerNode: Function,
     showPartners: Boolean,
@@ -167,9 +165,6 @@ export default {
     }
   },
   methods: {
-    openContextMenu ({ event, profile }) {
-      this.openMenu({ event, profile })
-    },
     mapPartnerNodes (nodes, midway) {
       var leftPartners = 0
       var rightPartners = 0
