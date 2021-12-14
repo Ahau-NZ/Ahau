@@ -75,7 +75,6 @@ import { mapGetters, mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
-import mapProfileMixins from '@/mixins/profile-mixins'
 
 const karakia = `
 ---------------------------------
@@ -109,9 +108,6 @@ export default {
       pataka: false
     }
   },
-  mixins: [
-    mapProfileMixins({ mapMethods: ['savePerson'] })
-  ],
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
@@ -135,6 +131,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setSyncing']),
+    ...mapActions('person', ['updatePerson']),
     ...mapActions('alerts', ['showAlert']),
     async getCurrentIdentity () {
       await this.setWhoami()
@@ -201,7 +198,7 @@ export default {
     },
 
     async save (input) {
-      await this.savePerson({
+      await this.updatePerson({
         id: this.whoami.personal.profile.id,
         ...input
       })
