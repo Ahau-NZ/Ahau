@@ -76,6 +76,10 @@ const communityProfileAttrs = [
 
 export const initGroup = (_input) => {
   const input = pick(_input, communityProfileAttrs)
+
+  if (input.avatarImage) delete input.avatarImage.uri
+  if (input.headerImage) delete input.headerImage.uri
+
   return {
     mutation: gql`
       mutation ($communityProfile: CommunityProfileInput) {
