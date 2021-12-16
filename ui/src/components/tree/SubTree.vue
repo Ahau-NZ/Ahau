@@ -22,7 +22,6 @@
         :radius="partnerRadius"
         :x="partner.x"
         :y="partner.y"
-        :isCollapsed="partner.data.isCollapsed"
         isPartner
         :showAvatars="showAvatars"
         :showPartners="showPartners"
@@ -47,7 +46,6 @@
       :profileId="root.data.id"
       :x="root.x"
       :y="root.y"
-      :isCollapsed="root.data.isCollapsed"
       :showAvatars="showAvatars"
       :showPartners="showPartners"
       @center="centerNode(root)"
@@ -88,7 +86,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('whakapapa', ['whakapapaView', 'lessImportantLinks']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'lessImportantLinks', 'isCollapsedNode']),
     allPartners () {
       return [
         ...this.partners,
@@ -104,16 +102,17 @@ export default {
     profile () {
       return this.root.data
     },
+    isCollapsed () {
+      return this.isCollapsedNode(this.profile.id)
+    },
     children () {
-      if (this.profile.isCollapsed) return []
-      if (this.root.children) {
-        return this.root.children
-      }
-      return []
+      if (this.isCollapsed) return []
+
+      return this.root.children || []
     },
     partners () {
       // check that component has loaded with data, the profile has partners and the profile is not collapsed
-      if (isEmpty(this.root.data) || isEmpty(this.profile.partners) || this.profile.isCollapsed) return []
+      if (isEmpty(this.root.data) || isEmpty(this.profile.partners) || this.isCollapsed) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2

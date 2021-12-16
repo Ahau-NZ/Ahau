@@ -1,4 +1,3 @@
-import get from 'lodash.get'
 import { linkColours } from '../lib/colours'
 
 /*
@@ -58,12 +57,6 @@ function randomColor () {
   return '#' + Math.random().toString(16).substr(2, 6)
 }
 
-function visiblePartners (node) {
-  return get(node, 'data.isCollapsed')
-    ? 0
-    : get(node, 'data.partners.length', 0)
-}
-
 // TODO (later): move these settings into vuex where the tree style can be manipulated there
 export default {
   path,
@@ -84,8 +77,5 @@ export default {
   opacity: 1,
   thickness: 1.5,
   branch: 110,
-  radius: 50,
-  separation: {
-    visiblePartners
-  }
+  radius: 50
 }

@@ -75,7 +75,6 @@ export default {
     radius: { type: Number, default: 50 },
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
-    isCollapsed: Boolean, // TODO change this to be a getter from vuex
     isPartner: Boolean,
     showAvatars: Boolean
   },
@@ -96,9 +95,12 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['personMinimal']),
-    ...mapGetters('whakapapa', ['whakapapaView']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'isCollapsedNode']),
     profile () {
       return this.personMinimal(this.profileId) || {}
+    },
+    isCollapsed () {
+      return this.isCollapsedNode(this.profileId)
     },
     isDuplicate () {
       return this.whakapapaView.importantRelationships

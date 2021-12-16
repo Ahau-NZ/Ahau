@@ -41,14 +41,13 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
-import SubTree from './SubTree'
-
-import isEqual from 'lodash.isequal'
-
-import settings from '@/lib/link.js'
-
 import { mapGetters, mapActions } from 'vuex'
+import * as d3 from 'd3'
+import isEqual from 'lodash.isequal'
+import get from 'lodash.get'
+
+import SubTree from './SubTree'
+import settings from '@/lib/link.js'
 
 export default {
   props: {
@@ -85,7 +84,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa', 'isCollapsedNode']),
     radius () {
       return settings.radius
     },
@@ -165,7 +164,7 @@ export default {
     },
 
     // returns an array of nodes associated with the root node created from the treeData object
-    nodes () {
+    descendants () {
       return this.treeLayout(this.root)
         .descendants()
         // returns the array of descendants starting with the root node, then followed by each child in topological order
@@ -177,10 +176,16 @@ export default {
     }
   },
   watch: {
-    nodes: {
+    descendants: {
       immediate: true,
-      handler (newVal = {}) {
-        this.setNodeParentMap(newVal)
+      handler (newVal = []) {
+        const map = newVal.reduce((acc, node) => {
+          if (node.data && node.data.id) {
+            acc[node.data.id] = node.parent && node.parent.data.id
+          }
+          return acc
+        }, {})
+        this.setParentNodeMap(map)
       }
     },
     nestedWhakapapa (newValue) {
@@ -190,7 +195,7 @@ export default {
         this.checkNonFocusedPartner(this.nestedWhakapapa)
       }
       if (this.changeFocusId !== null) {
-        this.nodes.find(node => {
+        this.descendants.find(node => {
           if (node.data.id === this.changeFocusId) {
             this.centerNode(node)
             this.changeFocusId = null
@@ -210,21 +215,23 @@ export default {
 
   methods: {
     ...mapActions(['setLoading']),
-    ...mapActions('whakapapa', ['setNodeParentMap']),
+    ...mapActions('whakapapa', ['setParentNodeMap', 'toggleNodeCollapse']),
     distanceBetweenNodes (leftNode, rightNode, cousins) {
-      const leftNodesRightPartners = settings.separation.visiblePartners(leftNode)
-      const rightNodesLeftPartners = settings.separation.visiblePartners(rightNode)
-
-      var combinedPartners = leftNodesRightPartners + rightNodesLeftPartners
+      var combinedPartners = this.countVisiblePartners(leftNode) + this.countVisiblePartners(rightNode)
 
       if (cousins) {
         // depends on the parents partners
-        const leftNodesParentPartners = settings.separation.visiblePartners(leftNode.parent)
-        const rightNodesParentPartners = settings.separation.visiblePartners(rightNode.parent)
-        combinedPartners += 0.5 * (leftNodesParentPartners + rightNodesParentPartners)
+        combinedPartners += 0.5 * (
+          this.countVisiblePartners(leftNode.parent) +
+          this.countVisiblePartners(rightNode.parent)
+        )
       }
 
       return 1 + (0.5 * combinedPartners)
+    },
+    countVisiblePartners (node) {
+      if (this.isCollapsedNode(node.data.id)) return 0
+      return get(node, 'data.partners.length', 0)
     },
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
@@ -261,41 +268,6 @@ export default {
       }
     },
 
-    collapse (node) {
-      const profile = node.data
-      const { children, _children = [] } = profile
-
-      if (children.length === 0 && _children.length === 0) return
-
-      Object.assign(profile, {
-        isCollapsed: !profile.isCollapsed,
-        _children: children,
-        children: _children
-      })
-
-      // find the node position now
-      var _node = this.root.descendants().find(d => {
-        return d.data.id === node.data.id
-      })
-
-      // setTimeout needed to get new node position after it has finished collapsing/expanding
-      setTimeout(() => {
-        var svg = d3.select('#baseSvg')
-        var g = d3.select('#baseGroup')
-
-        var width = this.$refs.tree.clientWidth
-        var height = this.$refs.tree.clientHeight
-
-        var x = width / 2 - _node.x
-        var y = height / 2 - _node.y + 150
-
-        g.transition()
-          .duration(700)
-          .attr('transform', `translate(${x}, ${y})`)
-          .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
-      }, 100)
-    },
-
     changeFocus (profileId) {
       this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
@@ -323,14 +295,14 @@ export default {
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 
-    centerNode (source) {
+    centerNode (node) {
       // if source node is already centered than collapse
-      if (this.nodeCentered === source.data.id) {
-        this.collapse(source)
+      if (this.nodeCentered === node.data.id) {
+        this.toggleCollapse(node)
         return
       }
 
-      this.nodeCentered = source.data.id
+      this.nodeCentered = node.data.id
 
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -338,13 +310,48 @@ export default {
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
 
-      var x = width / 2 - source.x
-      var y = height / 2 - source.y + 150
+      var x = width / 2 - node.x
+      var y = height / 2 - node.y + 150
 
       g.transition()
         .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+    },
+    toggleCollapse (node) {
+      const profile = node.data
+      this.toggleNodeCollapse(profile.id)
+
+      const { children, _children = [] } = profile
+
+      if (children.length === 0 && _children.length === 0) return
+
+      Object.assign(profile, {
+        _children: children,
+        children: _children
+      })
+
+      // find the node position now
+      var _node = this.root.descendants().find(d => {
+        return d.data.id === node.data.id
+      })
+
+      // setTimeout needed to get new node position after it has finished collapsing/expanding
+      setTimeout(() => {
+        var svg = d3.select('#baseSvg')
+        var g = d3.select('#baseGroup')
+
+        var width = this.$refs.tree.clientWidth
+        var height = this.$refs.tree.clientHeight
+
+        var x = width / 2 - _node.x
+        var y = height / 2 - _node.y + 150
+
+        g.transition()
+          .duration(700)
+          .attr('transform', `translate(${x}, ${y})`)
+          .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+      }, 100)
     },
     zoomInOut (scale) {
       var svg = d3.select('#baseSvg')

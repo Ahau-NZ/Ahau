@@ -30,6 +30,13 @@ export default function (apollo) {
 
     nestedWhakapapa: {},
     parentNodeMap: {}, // maps a node.data.id to it's node.parent.data.id
+    collapsed: { // maps node.data.id to Boolean (default false)
+
+    },
+
+    // NOTE we talk about two sorts of nodes:
+    //   - d3 nodes - these each only have one node.parent
+    //   - vue Node - these are nodes drawn with Node.vue, and includes partner nodes which are not in the d3 tree
     nodes: {
       // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
     }
@@ -38,8 +45,6 @@ export default function (apollo) {
     //    - node.x
     //    - node.y
     //    - node.radius
-    //    - node.data.isCollapsed // for hasCollapsedParent. this can be moved out to another state
-    //
   }
 
   const getters = {
@@ -48,6 +53,7 @@ export default function (apollo) {
     // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
     getParentNodeId: state => (id) => state.parentNodeMap[id],
+    isCollapsedNode: state => (id) => state.collapsed[id],
     lessImportantLinks: state => {
       const links = calculateLessImportantLinks(state)
       return links || []
@@ -58,6 +64,9 @@ export default function (apollo) {
     setView (state, view) {
       state.lastView = state.view
       state.view = view
+    },
+    toggleNodeCollapse (state, nodeId) {
+      Vue.set(state.collapsed, nodeId, !state.collapsed[nodeId])
     },
     addNode (state, node) {
       if (!node || !node.data || !node.data.id) return
@@ -74,8 +83,10 @@ export default function (apollo) {
       state.lastView = state.view
       state.view = loadingView()
       state.nestedWhakapapa = {}
+      state.parentNodeMap = {}
       state.nodes = []
       state.lessImportantLinks = []
+      state.collapsed = {}
     },
     setParentNodeMap (state, map) {
       state.parentNodeMap = map
@@ -98,6 +109,9 @@ export default function (apollo) {
   }
 
   const actions = {
+    toggleNodeCollapse ({ commit }, nodeId) {
+      commit('toggleNodeCollapse', nodeId)
+    },
     updateNodeInNestedWhakapapa ({ commit }, node) {
       commit('updateNodeInNestedWhakapapa', node)
     },
@@ -354,7 +368,7 @@ function calculateLessImportantLinks (state) {
     if (!nodes || nodes.length === 0) return
 
     const node = clone(nodes[nodes.length - 1])
-    if (hasCollapsedParent(node)) return
+    if (hasCollapsedParent(node, state.collapsed)) return
 
     // TODO WARNING - handle there being multiple locations for a node
 
@@ -365,7 +379,7 @@ function calculateLessImportantLinks (state) {
       if (!targetNodes || targetNodes.length === 0) return
 
       const targetNode = clone(targetNodes[targetNodes.length - 1])
-      if (hasCollapsedParent(targetNode)) return
+      if (hasCollapsedParent(targetNode, state.collapsed)) return
 
       const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
 
@@ -403,13 +417,13 @@ function calculateLessImportantLinks (state) {
   if (links.length) return links
 }
 
-function hasCollapsedParent (node) {
+function hasCollapsedParent (node, collapsed) {
   let searchNode = node
   let isCollapsed = false
   // search ascendants to see if any are collapsed
   while (searchNode && !isCollapsed) {
     searchNode = searchNode.parent
-    isCollapsed = searchNode && searchNode.data.isCollapsed
+    isCollapsed = searchNode && collapsed[searchNode.data.id]
   }
 
   return isCollapsed
