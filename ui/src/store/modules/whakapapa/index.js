@@ -1,8 +1,8 @@
+import Vue from 'vue'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
-import Vue from 'vue'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
 import { saveLink } from '../../../lib/link-helpers'
@@ -11,26 +11,35 @@ import settings from '../../../lib/link'
 
 const LINK_OFFSET = 10
 
+const loadingView = () => ({
+  name: 'Loading',
+  description: '',
+  focus: '',
+  recps: null,
+  image: { uri: '' },
+  ignoredProfiles: [],
+  importantRelationships: [],
+  recordCount: 0
+})
+
 export default function (apollo) {
-  const loadingView = {
-    name: 'Loading',
-    description: '',
-    focus: '',
-    recps: null,
-    image: { uri: '' },
-    ignoredProfiles: [],
-    importantRelationships: [],
-    recordCount: 0
-  }
   const state = {
     // loading, // TODO
-    view: loadingView,
-    lastView: loadingView,
+    view: loadingView(),
+    lastView: loadingView(),
+
     nestedWhakapapa: {},
-    whakapapa: {},
+    parentNodeMap: {}, // maps a node.data.id to it's node.parent.data.id
     nodes: {
       // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
     }
+    // NOTES
+    // node currently requires:
+    //    - node.x
+    //    - node.y
+    //    - node.radius
+    //    - node.data.isCollapsed // for hasCollapsedParent. this can be moved out to another state
+    //
   }
 
   const getters = {
@@ -38,16 +47,7 @@ export default function (apollo) {
     lastWhakapapaView: state => state.lastView,
     // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
-    nodes: state => {
-      return state.nodes
-    },
-    getNode: state => (id) => {
-      const nodeStates = state.nodes[id]
-
-      if (!nodeStates || nodeStates.length === 0) return null
-
-      return clone(nodeStates[nodeStates.length - 1])
-    },
+    getParentNodeId: state => (id) => state.parentNodeMap[id],
     lessImportantLinks: state => {
       const links = calculateLessImportantLinks(state)
       return links || []
@@ -72,10 +72,13 @@ export default function (apollo) {
     },
     resetWhakapapaView (state) {
       state.lastView = state.view
-      state.view = loadingView
+      state.view = loadingView()
       state.nestedWhakapapa = {}
       state.nodes = []
       state.lessImportantLinks = []
+    },
+    setParentNodeMap (state, map) {
+      state.parentNodeMap = map
     },
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
@@ -92,78 +95,6 @@ export default function (apollo) {
       }
       state.nestedWhakapapa = whakapapa
     }
-  }
-
-  function hasCollapsedParent (node) {
-    let searchNode = node
-    let isCollapsed = false
-    // search ascendants to see if any are collapsed
-    while (searchNode && !isCollapsed) {
-      searchNode = searchNode.parent
-      isCollapsed = searchNode && searchNode.data.isCollapsed
-    }
-
-    return isCollapsed
-  }
-
-  function calculateLessImportantLinks (state) {
-    // TODO - call this when loading graph is done?
-    if (!Object.keys(state.nodes).length || isEmpty(state.view.importantRelationships)) return
-
-    const links = []
-    // // for each importantRelationship find the x,y coords on the graph and create set the link
-    state.view.importantRelationships.forEach(rule => {
-      const nodes = state.nodes[rule.profileId]
-      if (!nodes || nodes.length === 0) return
-
-      const node = clone(nodes[nodes.length - 1])
-      if (hasCollapsedParent(node)) return
-
-      // TODO WARNING - handle there being multiple locations for a node
-
-      // skip the 0th relationship as that was "most important" and already drawn
-      rule.other.forEach(({ profileId, relationshipType }) => {
-        const targetNodes = state.nodes[profileId]
-
-        if (!targetNodes || targetNodes.length === 0) return
-
-        const targetNode = clone(targetNodes[targetNodes.length - 1])
-        if (hasCollapsedParent(targetNode)) return
-
-        const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
-
-        const coords = {
-          startX: targetNode.x + targetNode.radius,
-          startY: targetNode.y + targetNode.radius,
-          endX: node.x + node.radius,
-          endY: node.y + node.radius
-        }
-
-        if (relationshipType === 'partner') {
-          coords.directed = false
-        }
-
-        const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
-        coords.startX += offset
-        coords.endX -= offset
-
-        links.push({
-          id: [node.data.id, targetNode.data.id].join('--'),
-          style: {
-            fill: 'none',
-            // stroke: settings.color.getColor(0),
-            stroke: '#f0f',
-            opacity: settings.opacity,
-            strokeWidth: settings.thickness,
-            strokeLinejoin: 'round',
-            strokeDasharray: isDashed ? 2.5 : 0
-          },
-          d: settings.path(coords)
-        })
-      })
-    })
-
-    if (links.length) return links
   }
 
   const actions = {
@@ -237,6 +168,9 @@ export default function (apollo) {
     },
     addNode ({ commit }, node) {
       commit('addNode', node)
+    },
+    setParentNodeMap ({ commit }, map) {
+      commit('setParentNodeMap', map)
     },
     setNestedWhakapapa ({ commit }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
@@ -407,4 +341,76 @@ function flattenToNestedArray (obj, array, nestedArray) {
     .map(m => m[nestedArray])
     .flat() // flattens from [[A, B], [C]] to [A, B, C]
     .filter(A => !obj[nestedArray].some(B => B.id === A.id))
+}
+
+function calculateLessImportantLinks (state) {
+  // TODO - call this when loading graph is done?
+  if (!Object.keys(state.nodes).length || isEmpty(state.view.importantRelationships)) return
+
+  const links = []
+  // // for each importantRelationship find the x,y coords on the graph and create set the link
+  state.view.importantRelationships.forEach(rule => {
+    const nodes = state.nodes[rule.profileId]
+    if (!nodes || nodes.length === 0) return
+
+    const node = clone(nodes[nodes.length - 1])
+    if (hasCollapsedParent(node)) return
+
+    // TODO WARNING - handle there being multiple locations for a node
+
+    // skip the 0th relationship as that was "most important" and already drawn
+    rule.other.forEach(({ profileId, relationshipType }) => {
+      const targetNodes = state.nodes[profileId]
+
+      if (!targetNodes || targetNodes.length === 0) return
+
+      const targetNode = clone(targetNodes[targetNodes.length - 1])
+      if (hasCollapsedParent(targetNode)) return
+
+      const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
+
+      const coords = {
+        startX: targetNode.x + targetNode.radius,
+        startY: targetNode.y + targetNode.radius,
+        endX: node.x + node.radius,
+        endY: node.y + node.radius
+      }
+
+      if (relationshipType === 'partner') {
+        coords.directed = false
+      }
+
+      const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
+      coords.startX += offset
+      coords.endX -= offset
+
+      links.push({
+        id: [node.data.id, targetNode.data.id].join('--'),
+        style: {
+          fill: 'none',
+          // stroke: settings.color.getColor(0),
+          stroke: '#f0f',
+          opacity: settings.opacity,
+          strokeWidth: settings.thickness,
+          strokeLinejoin: 'round',
+          strokeDasharray: isDashed ? 2.5 : 0
+        },
+        d: settings.path(coords)
+      })
+    })
+  })
+
+  if (links.length) return links
+}
+
+function hasCollapsedParent (node) {
+  let searchNode = node
+  let isCollapsed = false
+  // search ascendants to see if any are collapsed
+  while (searchNode && !isCollapsed) {
+    searchNode = searchNode.parent
+    isCollapsed = searchNode && searchNode.data.isCollapsed
+  }
+
+  return isCollapsed
 }

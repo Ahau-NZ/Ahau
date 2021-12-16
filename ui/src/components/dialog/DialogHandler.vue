@@ -192,7 +192,7 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['getNode', 'nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['getNodeParentNodeId', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -234,13 +234,6 @@ export default {
       'setNestedWhakapapa',
       'setView'
     ]),
-    getSelectedProfilesParent () {
-      const node = this.getNode(this.selectedProfile.id)
-
-      if (node && node.parent && node.parent.data) return node.parent.data
-
-      return null
-    },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -325,12 +318,12 @@ export default {
       switch (this.dialogType) {
         case 'child':
         case 'sibling':
-          var child = id
-          var parentProfile = this.dialogType === 'child'
-            ? this.selectedProfile
-            : this.getSelectedProfilesParent()
+          let child = id
+          const parentProfileId = this.dialogType === 'child'
+            ? this.selectedProfile.id
+            : this.getParentNodeId(this.selectedProfile.id)
 
-          if (!parentProfile) {
+          if (!parentProfileId) {
             console.error(`Missing the parent profile when add a ${this.dialogType}`)
             return
           }
@@ -339,7 +332,7 @@ export default {
             // create the link
             await this.createChildLink({
               child,
-              parent: parentProfile.id,
+              parent: parentProfileId,
               relationshipAttrs
             })
           }
@@ -348,7 +341,8 @@ export default {
           if (parents) await this.quickAddParents(id, parents)
 
           // load the childs profile
-          parentProfile = await this.loadDescendants(parentProfile.id)
+          const parentProfile = await this.loadDescendants(parentProfileId)
+          // NOTE this is a profile decorated with children etc!
 
           // add the child to the parent in the nested whakapapa
           this.updateNodeInNestedWhakapapa(parentProfile)
@@ -385,7 +379,7 @@ export default {
           } else {
             const hasParentNode = this.getSelectedProfilesParent()
             if (hasParentNode) { // when a node already has a parent node above them, this will be called
-              parentProfile = await this.loadDescendants(hasParentNode.id)
+              const parentProfile = await this.loadDescendants(hasParentNode.id)
               // NOTE we're not passing in a "seen" variable, so this call might result in infinite loops
               this.updateNodeInNestedWhakapapa(parentProfile)
 
@@ -393,7 +387,7 @@ export default {
             } else {
               // when the child doesnt have a parent above them, this will be called
               // load the new parents profile
-              parentProfile = await this.loadDescendants(parent)
+              const parentProfile = await this.loadDescendants(parent)
               this.$emit('change-focus', parentProfile.id)
             }
           }

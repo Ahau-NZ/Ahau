@@ -51,7 +51,6 @@
       :showAvatars="showAvatars"
       :showPartners="showPartners"
       @center="centerNode(root)"
-      @open-menu="openContextMenu"
       />
   </g>
 </template>

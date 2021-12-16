@@ -143,7 +143,7 @@ export default {
       creates a new tree layout and sets the size depending on the separation
       between nodes
     */
-    treeLayout () {
+    treeLayout () { // returns a function!
       return d3
         .tree()
         .nodeSize([
@@ -177,6 +177,12 @@ export default {
     }
   },
   watch: {
+    nodes: {
+      immediate: true,
+      handler (newVal = {}) {
+        this.setNodeParentMap(newVal)
+      }
+    },
     nestedWhakapapa (newValue) {
       // Check for partners parents dots
       if (newValue.preferredName !== 'Loading') {
@@ -204,6 +210,7 @@ export default {
 
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('whakapapa', ['setNodeParentMap']),
     distanceBetweenNodes (leftNode, rightNode, cousins) {
       const leftNodesRightPartners = settings.separation.visiblePartners(leftNode)
       const rightNodesLeftPartners = settings.separation.visiblePartners(rightNode)
