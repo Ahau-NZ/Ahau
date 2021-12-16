@@ -216,7 +216,7 @@ export default {
 
         // if theres no id, that means we're creating the whakapapa from a new person
         if (!id) {
-          input.type = 'person'
+          input.type = this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
           input.authors = {
             add: [
               input.recps.includes(this.whoami.personal.groupId)

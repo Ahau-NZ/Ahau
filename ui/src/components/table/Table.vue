@@ -112,12 +112,12 @@
                 {{ dataField(node, 'placeOfDeath') }}
               </text>
             </svg>
-            <svg v-if="node.data && node.data.adminProfile">
+            <svg v-if="dataField(node, 'email')">
               <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ dataField(node, 'email') }}
               </text>
             </svg>
-            <svg v-if="node.data && node.data.adminProfile">
+            <svg v-if="dataField(node, 'phone')">
               <text :transform="`translate(${columns[15].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ dataField(node, 'phone') }}
               </text>
@@ -380,7 +380,7 @@ export default {
       const adminValue = node.data.adminProfile && node.data.adminProfile[field]
 
       if (
-        adminValue === null ||
+        adminValue == null ||
         (Array.isArray(adminValue) && adminValue.length === 0)
       ) return node.data[field]
 
