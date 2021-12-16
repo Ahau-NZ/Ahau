@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import { clone } from 'lodash'
+import clone from 'lodash.clonedeep'
 
-import { getRelatives, getPerson } from '@/lib/person-helpers' // TODO change this to be stored in apollo-helpers
+import { getRelatives, getPerson } from '@/lib/person-helpers'
 import { getPersonMinimal, savePerson as savePersonMutation, deletePerson } from './apollo-helpers'
 
 export default function (apollo) {
@@ -23,8 +23,8 @@ export default function (apollo) {
     updateSelectedProfile (state, profile) {
       state.selectedProfile = profile
     },
-    setPersonMinimal (state, { profileId, profile }) {
-      Vue.set(state.profileMinimal, profileId, profile)
+    setPersonMinimal (state, profile) {
+      Vue.set(state.profileMinimal, profile.id, profile)
     }
   }
 
@@ -64,6 +64,21 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a person', err)
       }
     },
+    // same as getPerson but gets a person with minimal fields rather then all fields
+    async getPersonMinimal (_, profileId) {
+      try {
+        const res = await apollo.query(
+          getPersonMinimal(profileId)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a person (minimal)', profileId)
+        console.error(err)
+      }
+    },
     async updatePerson (_, input) {
       try {
         if (!input.id) throw new Error('a profile id is required to update a person')
@@ -90,18 +105,13 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonMinimal ({ commit }, profileId) {
-      try {
-        const res = await apollo.query(getPersonMinimal(profileId))
-        if (res.errors) throw res.errors
 
-        commit('setPersonMinimal', { profileId, profile: res.data.person })
-      } catch (err) {
-        console.error('Something went wrong while trying to get a person', err)
-      }
-    },
     updateSelectedProfile ({ commit }, profile) {
       commit('updateSelectedProfile', profile)
+    },
+    async loadPersonMinimal ({ dispatch, commit }, profileId) {
+      const profile = await dispatch('getPersonMinimal', profileId)
+      commit('setPersonMinimal', profile)
     },
     // NOTE: this is similar to the method below
     async setSelectedProfileById ({ dispatch, commit }, profileId) {
