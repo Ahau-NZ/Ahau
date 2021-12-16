@@ -95,6 +95,7 @@ function parse (fileContent) {
             aliveInterval = null
           }
         }
+        if (aliveInterval === '/') aliveInterval = null
 
         if (d.birthOrder) {
           d.birthOrder = parseInt(d.birthOrder)
@@ -240,7 +241,7 @@ function mapNodeToCsvRow (d) {
     preferredName: d.preferredName,
     legalName: d.legalName,
     altNames: altNames,
-    gender: d.gender || 'unknown',
+    gender: d.gender,
     relationshipType: d.relationshipType,
     birthOrder: d.birthOrder,
     deceased: d.deceased ? 'yes' : null,

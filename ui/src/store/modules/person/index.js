@@ -34,7 +34,7 @@ export default function (apollo) {
         if (!input.type) throw new Error('a profile type is required to create a person')
         if (!input.authors) throw new Error('profile authors is required to create a person')
 
-        return savePerson(input)
+        return savePerson(pruneInput(input))
       } catch (err) {
         console.error('Something went wrong while trying to create a person', input)
         console.error(err)
@@ -118,4 +118,22 @@ export default function (apollo) {
     getters,
     namespaced: true
   }
+}
+
+function pruneInput (input) {
+  for (const [field, value] of Object.entries(input)) {
+    if (value === null) continue
+    else if (typeof value === 'string' && value === '') delete input[field]
+    else if (Array.isArray(value)) {
+      if (
+        value.length === 0 ||
+        (value.length === 1 && value[0] === '')
+      ) delete input[field]
+    } // eslint-disable-line
+    else if (typeof value === 'object' && value.add) {
+      if (value.add.length === 0) delete input[field]
+    }
+  }
+
+  return input
 }

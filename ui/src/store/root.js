@@ -1,5 +1,5 @@
 import { whoami } from '../lib/person-helpers.js'
-import { ACCESS_TYPES } from '../lib/constants.js'
+import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants.js'
 
 const SECOND = 1000
 
@@ -40,8 +40,10 @@ export default function rootModule (apollo) {
 
       syncing: false, // when you're joing a pataka
       goBack: '', // TODO deprecate?
-      currentAccess: null,
       allowSubmissions: true, // TODO extract to specific domain,
+
+      // TODO mix 2021-12-09 move these to the tribe module (?) :
+      currentAccess: null,
       isKaitiaki: false
     },
 
@@ -59,7 +61,12 @@ export default function rootModule (apollo) {
       },
       syncing: state => state.syncing,
       whoami: state => state.whoami,
-      isKaitiaki: state => state.isKaitiaki,
+      isKaitiaki: state => {
+        return (
+          state.isKaitiaki ||
+          (state.currentAccess && state.currentAccess.type === ACCESS_KAITIAKI)
+        )
+      },
 
       // TODO-implement goBack to previous profile &| component
       goBack: state => state.goBack,
