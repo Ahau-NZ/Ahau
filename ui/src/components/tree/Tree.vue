@@ -195,7 +195,7 @@ export default {
         this.checkNonFocusedPartner(this.nestedWhakapapa)
       }
       if (this.changeFocusId !== null) {
-        this.descendants.find(node => {
+        this.descendants.find(node => { // mix: this should probably be using forEach?
           if (node.data.id === this.changeFocusId) {
             this.centerNode(node)
             this.changeFocusId = null
@@ -296,7 +296,7 @@ export default {
     },
 
     centerNode (node) {
-      // if source node is already centered than collapse
+      // if node is already centered than collapse
       if (this.nodeCentered === node.data.id) {
         this.toggleCollapse(node)
         return

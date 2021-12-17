@@ -37,11 +37,11 @@ export default function (apollo) {
     // NOTE we talk about two sorts of nodes:
     //   - d3 nodes - these each only have one node.parent
     //   - vue Node - these are nodes drawn with Node.vue, and includes partner nodes which are not in the d3 tree
-    nodes: {
+    profileLocations: {
       // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
     }
-    // NOTES
     // node currently requires:
+    //    - node.id
     //    - node.x
     //    - node.y
     //    - node.radius
@@ -68,13 +68,12 @@ export default function (apollo) {
     toggleNodeCollapse (state, nodeId) {
       Vue.set(state.collapsed, nodeId, !state.collapsed[nodeId])
     },
-    addNode (state, node) {
-      if (!node || !node.data || !node.data.id) return
+    addProfileLocation (state, { profileId, ...data } = {}) {
+      if (!profileId) return
 
-      const nodeId = node.data.id
-      const change = [...(state.nodes[nodeId] || []), node]
+      const change = [...(state.profileLocations[profileId] || []), data]
 
-      Vue.set(state.nodes, nodeId, change)
+      Vue.set(state.profileLocations, profileId, change)
     },
     setLessImportantLinks (state, links) {
       state.lessImportantLinks = links
@@ -84,7 +83,7 @@ export default function (apollo) {
       state.view = loadingView()
       state.nestedWhakapapa = {}
       state.parentNodeMap = {}
-      state.nodes = []
+      state.profileLocations = []
       state.lessImportantLinks = []
       state.collapsed = {}
     },
@@ -180,8 +179,8 @@ export default function (apollo) {
     resetWhakapapaView ({ commit }) {
       commit('resetWhakapapaView')
     },
-    addNode ({ commit }, node) {
-      commit('addNode', node)
+    addProfileLocation ({ commit }, node) {
+      commit('addProfileLocation', node)
     },
     setParentNodeMap ({ commit }, map) {
       commit('setParentNodeMap', map)
@@ -359,36 +358,38 @@ function flattenToNestedArray (obj, array, nestedArray) {
 
 function calculateLessImportantLinks (state) {
   // TODO - call this when loading graph is done?
-  if (!Object.keys(state.nodes).length || isEmpty(state.view.importantRelationships)) return
+  if (!Object.keys(state.profileLocations).length || isEmpty(state.view.importantRelationships)) return
 
   const links = []
   // // for each importantRelationship find the x,y coords on the graph and create set the link
   state.view.importantRelationships.forEach(rule => {
-    const nodes = state.nodes[rule.profileId]
-    if (!nodes || nodes.length === 0) return
+    if (hasCollapsedParent(rule.profileId, state)) return
 
-    const node = clone(nodes[nodes.length - 1])
-    if (hasCollapsedParent(node, state.collapsed)) return
+    const locations = state.profileLocations[rule.profileId]
+    if (!locations || locations.length === 0) return
+
+    const location = clone(locations[locations.length - 1])
 
     // TODO WARNING - handle there being multiple locations for a node
 
     // skip the 0th relationship as that was "most important" and already drawn
     rule.other.forEach(({ profileId, relationshipType }) => {
-      const targetNodes = state.nodes[profileId]
+      if (hasCollapsedParent(profileId, state)) return
 
-      if (!targetNodes || targetNodes.length === 0) return
+      const targetLocations = state.profileLocations[profileId]
+      if (!targetLocations || targetLocations.length === 0) return
 
-      const targetNode = clone(targetNodes[targetNodes.length - 1])
-      if (hasCollapsedParent(targetNode, state.collapsed)) return
+      const targetLocation = clone(targetLocations[targetLocations.length - 1])
 
       const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
 
       const coords = {
-        startX: targetNode.x + targetNode.radius,
-        startY: targetNode.y + targetNode.radius,
-        endX: node.x + node.radius,
-        endY: node.y + node.radius
+        startX: targetLocation.x + targetLocation.radius,
+        startY: targetLocation.y + targetLocation.radius,
+        endX: location.x + location.radius,
+        endY: location.y + location.radius
       }
+      // NOTE we wouldn't need radius if all avatars were drawn centered
 
       if (relationshipType === 'partner') {
         coords.directed = false
@@ -399,7 +400,7 @@ function calculateLessImportantLinks (state) {
       coords.endX -= offset
 
       links.push({
-        id: [node.data.id, targetNode.data.id].join('--'),
+        id: [rule.profileId, profileId].join('--'),
         style: {
           fill: 'none',
           // stroke: settings.color.getColor(0),
@@ -417,13 +418,13 @@ function calculateLessImportantLinks (state) {
   if (links.length) return links
 }
 
-function hasCollapsedParent (node, collapsed) {
-  let searchNode = node
+function hasCollapsedParent (nodeId, state) {
+  let currentId = nodeId
   let isCollapsed = false
   // search ascendants to see if any are collapsed
-  while (searchNode && !isCollapsed) {
-    searchNode = searchNode.parent
-    isCollapsed = searchNode && collapsed[searchNode.data.id]
+  while (currentId && !isCollapsed) {
+    currentId = state.parentNodeMap[currentId] // get parent node
+    isCollapsed = currentId && state.collapsed[currentId] // check if that's collapsed
   }
 
   return isCollapsed

@@ -72,9 +72,9 @@ export default {
   name: 'Node',
   props: {
     profileId: { type: String, required: true },
-    radius: { type: Number, default: 50 },
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
+    radius: { type: Number, default: 50 },
     isPartner: Boolean,
     showAvatars: Boolean
   },
@@ -92,6 +92,13 @@ export default {
   },
   mounted () {
     this.loadPersonMinimal(this.profileId)
+
+    this.addProfileLocation({
+      profileId: this.profileId,
+      x: this.x,
+      y: this.y,
+      radius: this.radius
+    })
   },
   computed: {
     ...mapGetters('person', ['personMinimal']),
@@ -164,7 +171,7 @@ export default {
   methods: {
     ...mapActions('tree', ['setMouseEvent']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
-    ...mapActions('whakapapa', ['addNode']),
+    ...mapActions('whakapapa', ['addProfileLocation']),
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)
