@@ -8,6 +8,7 @@ import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo
 import { saveLink } from '../../../lib/link-helpers'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
+import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
 const LINK_OFFSET = 10
 
@@ -241,7 +242,7 @@ export default function (apollo) {
       // create whakapapa with first person in the csv as the focus
       return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
     },
-    async bulkCreateProfiles ({ dispatch }, { rows, recps }) {
+    async bulkCreateProfiles ({ dispatch, rootGetters }, { rows, recps }) {
       const profiles = {}
       const links = rows
         .map(row => row.link)
@@ -259,9 +260,8 @@ export default function (apollo) {
         rows.map(async ({ csvId, profile }) => {
           if (!profile) return
 
-          // TODO: check profiles have recps!
           profile.recps = recps
-          profile.type = 'person'
+          profile.type = rootGetters.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
           profile.authors = {
             add: ['*']
           }

@@ -154,6 +154,8 @@ export default {
           const isKaitiaki = tribe.public.length
             ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
             : false
+          // NOTE this isn't perfect, as kaitiaki only subgroups have no public/private community
+          // in the isKaitiaki getter we check the combination of isKaitiaki + currentAccess.type
 
           this.setIsKaitiaki(isKaitiaki)
 

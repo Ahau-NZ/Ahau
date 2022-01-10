@@ -186,12 +186,12 @@
                   <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki && isAdminProfile" class="d-flex flex-column justify-center align-center">
+                <v-row v-if="isKaitiaki" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
                     {{ t('contactInfoText') }}
                   </v-card-subtitle>
                 </v-row>
-                <v-row v-if="isKaitiaki && isAdminProfile" cols="12" class="rounded-border">
+                <v-row v-if="isKaitiaki" cols="12" class="rounded-border">
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
