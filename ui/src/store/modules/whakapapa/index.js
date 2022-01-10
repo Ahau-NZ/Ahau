@@ -54,10 +54,7 @@ export default function (apollo) {
     nestedWhakapapa: state => state.nestedWhakapapa,
     getParentNodeId: state => (id) => state.parentNodeMap[id],
     isCollapsedNode: state => (id) => state.collapsed[id],
-    lessImportantLinks: state => {
-      const links = calculateLessImportantLinks(state)
-      return links || []
-    }
+    lessImportantLinks: calculateLessImportantLinks
   }
 
   const mutations = {
@@ -358,27 +355,28 @@ function flattenToNestedArray (obj, array, nestedArray) {
 
 function calculateLessImportantLinks (state) {
   // TODO - call this when loading graph is done?
-  if (!Object.keys(state.profileLocations).length || isEmpty(state.view.importantRelationships)) return
+  if (!Object.keys(state.profileLocations).length || isEmpty(state.view.importantRelationships)) return []
 
   const links = []
   // // for each importantRelationship find the x,y coords on the graph and create set the link
   state.view.importantRelationships.forEach(rule => {
+    if (state.collapsed[rule.profileId]) return
     if (hasCollapsedParent(rule.profileId, state)) return
 
+    // find the location of the profile the rule is about
     const locations = state.profileLocations[rule.profileId]
     if (!locations || locations.length === 0) return
-
     const location = clone(locations[locations.length - 1])
 
     // TODO WARNING - handle there being multiple locations for a node
 
-    // skip the 0th relationship as that was "most important" and already drawn
-    rule.other.forEach(({ profileId, relationshipType }) => {
-      if (hasCollapsedParent(profileId, state)) return
+    rule.other.forEach(({ profileId: otherProfileId, relationshipType }) => {
+      if (state.collapsed[otherProfileId]) return
+      if (hasCollapsedParent(otherProfileId, state)) return
 
-      const targetLocations = state.profileLocations[profileId]
+      // find the location of the other profiles a rule mentions
+      const targetLocations = state.profileLocations[otherProfileId]
       if (!targetLocations || targetLocations.length === 0) return
-
       const targetLocation = clone(targetLocations[targetLocations.length - 1])
 
       const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
@@ -400,7 +398,7 @@ function calculateLessImportantLinks (state) {
       coords.endX -= offset
 
       links.push({
-        id: [rule.profileId, profileId].join('--'),
+        id: [rule.profileId, otherProfileId].join('--'),
         style: {
           fill: 'none',
           // stroke: settings.color.getColor(0),
@@ -415,7 +413,7 @@ function calculateLessImportantLinks (state) {
     })
   })
 
-  if (links.length) return links
+  return links
 }
 
 function hasCollapsedParent (nodeId, state) {
@@ -423,8 +421,12 @@ function hasCollapsedParent (nodeId, state) {
   let isCollapsed = false
   // search ascendants to see if any are collapsed
   while (currentId && !isCollapsed) {
-    currentId = state.parentNodeMap[currentId] // get parent node
-    isCollapsed = currentId && state.collapsed[currentId] // check if that's collapsed
+    if (currentId in state.parentNodeMap) {
+      currentId = state.parentNodeMap[currentId] // get parent node
+      isCollapsed = currentId && state.collapsed[currentId] // check if that's collapsed
+    } // eslint-disable-line
+    else isCollapsed = true
+    // NOTE - currently when you collapse a node, all descendants disappear from the parentNodeMap
   }
 
   return isCollapsed
