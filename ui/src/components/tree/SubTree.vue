@@ -1,10 +1,12 @@
 <template>
   <g>
+    <!-- only draw this for top node -->
     <g v-if="root.data.id === whakapapaView.focus">
       <g v-for="link in lessImportantLinks" :key="`l-i-${link.id}`">
         <Link :link="link"/>
       </g>
     </g>
+
     <!-- links between root node and partners -->
     <g v-for="partner in allPartners.filter(p => p.link) " :key="`partner-link-${partner.data.id}`">
       <Link v-if="partner.link" :link="partner.link" />
