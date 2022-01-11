@@ -213,7 +213,7 @@
                     :group-title="t('parents')"
                     size="50px"
                     :show-labels="true"
-                    @profile-click="openProfile($event)"
+                    @profile-click="openProfile"
                   >
                     <template v-slot:action>
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('parent')" class="pb-4" justify="start"/>
@@ -230,7 +230,7 @@
                     :group-title="t('partners')"
                     size="50px"
                     :show-labels="true"
-                    @profile-click="openProfile($event)"
+                    @profile-click="openProfile"
                   >
                     <template v-slot:action >
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('partner')" class="pb-4" justify="start"/>
@@ -247,7 +247,7 @@
                     :group-title="t('siblings')"
                     size="60px"
                     :show-labels="true"
-                    @profile-click="openProfile($event)"
+                    @profile-click="openProfile"
                   >
                   <template v-slot:action v-if="!preview && view && view.focus !== profile.id">
                     <AddButton @click="toggleNew('sibling')" class="pb-4" justify="start"/>
@@ -264,7 +264,7 @@
                     :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
-                    @profile-click="openProfile($event)"
+                    @profile-click="openProfile"
                     @delete="removeLink(profile.children[$event])"
                   >
                     <template v-slot:action>
@@ -281,7 +281,7 @@
                     :group-title="t('contributedBy')"
                     size="60px"
                     :show-labels="true"
-                    @profile-click="openProfile($event)"
+                    @profile-click="openProfile"
                   />
                 </v-col>
               </v-row>
@@ -294,7 +294,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
@@ -493,10 +493,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog']),
+    ...mapMutations(['updateDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['setProfileById', 'getPerson']),
+    ...mapActions('person', ['setSelectedProfileById', 'getPerson']),
     getDisplayName,
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
@@ -582,9 +582,10 @@ export default {
       }
       return age
     },
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id })
-      this.setDialog({ active: 'view-edit-node' })
+    async openProfile (profile) {
+      this.updateDialog(null, null)
+      await this.setSelectedProfileById(profile.id)
+      this.updateDialog('view-edit-node', null)
     },
     cordovaBackButton () {
       this.close()

@@ -380,7 +380,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('person', ['setSelectedProfileById', 'updateSelectedProfile']),
+    ...mapActions('person', ['updateSelectedProfile']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
     ...mapActions('table', ['resetTableFilters']),
     ...mapActions('tribe', ['getTribe']),
