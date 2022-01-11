@@ -192,7 +192,7 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['getNodeParentNodeId', 'nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['getParentNodeId', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -222,7 +222,7 @@ export default {
   methods: {
     getDisplayName,
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['createPerson', 'updatePerson', 'deletePerson']),
+    ...mapActions('person', ['createPerson', 'loadPersonMinimal', 'updatePerson', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
@@ -377,9 +377,9 @@ export default {
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
           } else {
-            const hasParentNode = this.getSelectedProfilesParent()
-            if (hasParentNode) { // when a node already has a parent node above them, this will be called
-              const parentProfile = await this.loadDescendants(hasParentNode.id)
+            const hasParentNodeId = this.getParentNodeId(child)
+            if (hasParentNodeId) { // when a node already has a parent node above them, this will be called
+              const parentProfile = await this.loadDescendants(hasParentNodeId)
               // NOTE we're not passing in a "seen" variable, so this call might result in infinite loops
               this.updateNodeInNestedWhakapapa(parentProfile)
 
@@ -491,15 +491,12 @@ export default {
     async processUpdate (input) {
       if (input.recps) delete input.recps
 
-      await this.updatePerson({ id: this.selectedProfile.id, ...input })
-      const parent = this.getSelectedProfilesParent()
+      const profileId = this.selectedProfile.id
+      // update their profile in the db
+      await this.updatePerson({ id: profileId, ...input })
 
-      const profileIdToLoad = (parent)
-        ? parent.id
-        : this.selectedProfile.id
-
-      var node = await this.loadDescendants(profileIdToLoad)
-      this.updateNodeInNestedWhakapapa(node)
+      // loads their minimal profile for changes in the tree
+      await this.loadPersonMinimal(profileId)
     },
     async removeProfile (deleteOrIgnore) {
       await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
