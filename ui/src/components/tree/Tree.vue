@@ -6,11 +6,11 @@
         ref="tree"
       >
         <SubTree
-          :root="treeLayout(root)"
+          v-if="tree"
+          :root="tree"
           :changeFocus="changeFocus"
           :centerNode="centerNode"
           :showAvatars="showAvatars"
-          :showPartners="showPartners"
         />
       </g>
     </g>
@@ -44,23 +44,15 @@
 import { mapGetters, mapActions } from 'vuex'
 import * as d3 from 'd3'
 import isEqual from 'lodash.isequal'
-import get from 'lodash.get'
 
 import SubTree from './SubTree'
 import settings from '@/lib/link.js'
 
 export default {
   props: {
-    view: {
-      type: Object,
-      required: true
-    },
-    searchNodeId: {
-      type: String
-    },
+    searchNodeId: String,
     getRelatives: Function,
-    showAvatars: Boolean,
-    showPartners: Boolean
+    showAvatars: Boolean
   },
   components: {
     SubTree
@@ -84,27 +76,17 @@ export default {
   },
 
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa', 'isCollapsedNode']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('tree', ['tree', 'descendants']),
     radius () {
       return settings.radius
-    },
-    nodeSeparationX () {
-      return this.radius * 3
-    },
-    nodeSeparationY () {
-      return this.radius * 4
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     pathNode () {
       if (this.searchNodeId === '') return null
-      return this.root.descendants().find(d => {
-        return d.data.id === this.searchNodeId
-      })
-    },
-    branch () {
-      return this.nodeSeparationY / 2 + this.radius
+      return this.descendants.find(d => d.data.id === this.searchNodeId)
     },
     /*
       gets the X position of the tree based on the svg size
@@ -124,50 +106,11 @@ export default {
       if (!this.componentLoaded) return 0
       return this.$refs.baseSvg.clientHeight / 4
     },
-    treeWidth () {
-      if (!this.componentLoaded) return null
-      return this.$refs.tree.clientWidth
-    },
-    treeHeight () {
-      if (!this.componentLoaded) return null
-      return this.$refs.tree.clientHeight
-    },
     width () {
       return screen.width
     },
     height () {
       return screen.height
-    },
-    /*
-      creates a new tree layout and sets the size depending on the separation
-      between nodes
-    */
-    treeLayout () { // returns a function!
-      return d3
-        .tree()
-        .nodeSize([
-          this.nodeSeparationX,
-          this.nodeSeparationY
-        ])
-        .separation((a, b) => {
-          const separation = (a.parent === b.parent)
-            ? this.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
-            : this.distanceBetweenNodes(a, b, true) // cousins (left=A, right=B)
-
-          return separation
-        })
-    },
-
-    //  returns a nested data structure representing a tree based on the treeData object
-    root () {
-      return d3.hierarchy(this.nestedWhakapapa)
-    },
-
-    // returns an array of nodes associated with the root node created from the treeData object
-    descendants () {
-      return this.treeLayout(this.root)
-        .descendants()
-        // returns the array of descendants starting with the root node, then followed by each child in topological order
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
@@ -176,63 +119,17 @@ export default {
     }
   },
   watch: {
-    descendants: {
-      immediate: true,
-      handler (newVal = []) {
-        const map = newVal.reduce((acc, node) => {
-          if (node.data && node.data.id) {
-            acc[node.data.id] = node.parent && node.parent.data.id
-          }
-          return acc
-        }, {})
-        this.setParentNodeMap(map)
-      }
-    },
-    nestedWhakapapa (newValue) {
-      // Check for partners parents dots
-      if (newValue.preferredName !== 'Loading') {
-        this.nonFocusedPartners = []
-        this.checkNonFocusedPartner(this.nestedWhakapapa)
-      }
-      if (this.changeFocusId !== null) {
-        this.descendants.find(node => { // mix: this should probably be using forEach?
-          if (node.data.id === this.changeFocusId) {
-            this.centerNode(node)
-            this.changeFocusId = null
-          }
-        })
-      }
-    },
     searchNodeId (newVal) {
       if (newVal === '') return null
-      this.root.descendants().find(node => {
-        if (node.data.id === newVal) {
-          this.centerNode(node)
-        }
-      })
+
+      const node = this.descendants.find(node => node.data.id === newVal)
+      if (node) this.centerNode(node)
     }
   },
 
   methods: {
     ...mapActions(['setLoading']),
-    ...mapActions('whakapapa', ['setParentNodeMap', 'toggleNodeCollapse']),
-    distanceBetweenNodes (leftNode, rightNode, cousins) {
-      var combinedPartners = this.countVisiblePartners(leftNode) + this.countVisiblePartners(rightNode)
-
-      if (cousins) {
-        // depends on the parents partners
-        combinedPartners += 0.5 * (
-          this.countVisiblePartners(leftNode.parent) +
-          this.countVisiblePartners(rightNode.parent)
-        )
-      }
-
-      return 1 + (0.5 * combinedPartners)
-    },
-    countVisiblePartners (node) {
-      if (this.isCollapsedNode(node.data.id)) return 0
-      return get(node, 'data.partners.length', 0)
-    },
+    ...mapActions('whakapapa', ['toggleNodeCollapse']),
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
 
@@ -332,9 +229,7 @@ export default {
       })
 
       // find the node position now
-      var _node = this.root.descendants().find(d => {
-        return d.data.id === node.data.id
-      })
+      var _node = this.descendants.find(d => d.data.id === node.data.id)
 
       // setTimeout needed to get new node position after it has finished collapsing/expanding
       setTimeout(() => {

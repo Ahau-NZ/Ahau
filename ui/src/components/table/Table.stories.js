@@ -13,8 +13,6 @@ export default {
 export const TableWithChildren = () => ({
   template: `
     <Table :nestedWhakapapa="nestedWhakapapa" :view="whakapapaView"
-      @open-context-menu="menuClick"
-      @load-descendants="loadDescendents"
       @collapse-node="collapseNode"
     />
   `,
@@ -26,8 +24,6 @@ export const TableWithChildren = () => ({
     }
   }),
   methods: {
-    menuClick: action('open-context-menu'),
-    loadDescendents: action('load-descendants'),
     collapseNode: action('collapse-node')
   },
   components: { Table }

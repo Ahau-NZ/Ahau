@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { PublicProfileFieldsFragment } from '../profile/apollo-helpers'
+import { PublicProfileFieldsFragment } from '../../profile/apollo-helpers'
 
 export const WhakapapaFragment = gql`
   fragment WhakapapaFragment on WhakapapaView {
@@ -73,3 +73,28 @@ export const saveWhakapapaView = input => {
     variables: { input }
   }
 }
+
+const GET_FAMILY_LINKS_QUERY = gql`
+  query ($profileId: String!, $extended: Boolean) {
+    loadFamilyOfPerson(id: $profileId, extended: $extended) {
+      childLinks {
+        parent
+        child
+        relationshipType
+      }
+      partnerLinks {
+        parent
+        child
+        relationshipType
+      }
+    }
+  }
+`
+export const getFamilyLinks = (profileId, extended = false) => ({
+  query: GET_FAMILY_LINKS_QUERY,
+  variables: {
+    profileId,
+    extended
+  },
+  fetchPolicy: 'no-cache'
+})

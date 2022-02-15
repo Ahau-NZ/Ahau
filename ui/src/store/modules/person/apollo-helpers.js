@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PERSON_ATTRS } from '../../../lib/person-helpers'
+import { PERMITTED_PERSON_ATTRS, PERSON_FRAGMENT } from '../../../lib/person-helpers'
 import { pruneEmptyValues } from '../../../lib/profile-helpers'
 import { saveProfile } from '../profile/apollo-helpers'
 
@@ -16,15 +16,41 @@ const GET_PERSON_MINIMAL = gql`
 
       aliveInterval
       deceased
+      
+      tombstone {
+        date
+      }
     }
   }
 `
+
 // NOTE this doesn't load the kaitiaki adminProfile
 // which may have profile details which should over-ride the group-profile
 
 export const getPersonMinimal = (id, fetchPolicy = 'no-cache') => ({
   query: GET_PERSON_MINIMAL,
   variables: { id },
+  fetchPolicy
+})
+
+export const getPersonFull = (id, fetchPolicy = 'no-cache') => ({
+  query: gql`
+    ${PERSON_FRAGMENT}
+    query($id: String!) {
+      person(id: $id){
+        ...ProfileFragment
+        adminProfile {
+          ...ProfileFragment
+        }
+        tombstone {
+          date
+        }
+      }
+    }
+  `,
+  variables: {
+    id
+  },
   fetchPolicy
 })
 

@@ -2,20 +2,27 @@ import Vue from 'vue'
 import clone from 'lodash.clonedeep'
 
 import { getRelatives, getPerson } from '@/lib/person-helpers'
-import { getPersonMinimal, savePerson as savePersonMutation, deletePerson } from './apollo-helpers'
+import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
     selectedProfile: {}, // TODO change to selectedProfileId ??
-    profileMinimal: {}
+    profiles: {
+      // ...minimalProfile || ...fullProfile,
+      // isMinimal: true   || false
+    },
+    tombstoned: new Set()
   }
 
   const getters = {
     selectedProfile (state) {
       return state.selectedProfile
     },
-    personMinimal: state => (profileId) => {
-      return clone(state.profileMinimal[profileId])
+    person: state => (profileId) => {
+      return clone(state.profiles[profileId])
+    },
+    isTombstoned: state => (profileId) => {
+      return state.tombstoned.has(profileId)
     }
   }
 
@@ -23,8 +30,11 @@ export default function (apollo) {
     updateSelectedProfile (state, profile) {
       state.selectedProfile = profile
     },
-    setPersonMinimal (state, profile) {
-      Vue.set(state.profileMinimal, profile.id, profile)
+    setPerson (state, profile) {
+      Vue.set(state.profiles, profile.id, profile)
+    },
+    tombstoneId (state, profileId) {
+      state.tombstoned.add(profileId)
     }
   }
 
@@ -62,6 +72,19 @@ export default function (apollo) {
         return res.data.person
       } catch (err) {
         console.error('Something went wrong while trying to get a person', err)
+      }
+    },
+    async getPersonFull (_, profileId) {
+      try {
+        const res = await apollo.query(
+          getPersonFull(profileId)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a persons details')
       }
     },
     // same as getPerson but gets a person with minimal fields rather then all fields
@@ -109,9 +132,25 @@ export default function (apollo) {
     updateSelectedProfile ({ commit }, profile) {
       commit('updateSelectedProfile', profile)
     },
-    async loadPersonMinimal ({ dispatch, commit }, profileId) {
+    async loadPersonMinimal ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+
       const profile = await dispatch('getPersonMinimal', profileId)
-      commit('setPersonMinimal', profile)
+      if (profile.tombstone) {
+        commit('tombstoneId', profileId)
+        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+      } // eslint-disable-line
+      else commit('setPerson', profile)
+    },
+    async loadPersonFull ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+
+      const profile = await dispatch('getPersonFull', profileId)
+      if (profile.tombstone) {
+        commit('tombstoneId', profileId)
+        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+      } // eslint-disable-line
+      else commit('setPerson', profile)
     },
     // NOTE: this is similar to the method below
     async setSelectedProfileById ({ dispatch, commit }, profileId) {

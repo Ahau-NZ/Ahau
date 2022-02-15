@@ -26,20 +26,18 @@
         :y="partner.y"
         isPartner
         :showAvatars="showAvatars"
-        :showPartners="showPartners"
         @focus="focus"
       />
     </g>
 
     <!-- draw all children last to overvoid link overlapping -->
-    <g v-for="child in children" :key="`child-${child.data.id}`">
+    <g v-for="child in childNodes" :key="`child-${child.data.id}`">
       <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
       <SubTree
         :root="child"
         :changeFocus="changeFocus"
         :centerNode="centerNode"
         :showAvatars="showAvatars"
-        :showPartners="showPartners"
       />
     </g>
 
@@ -49,7 +47,6 @@
       :x="root.x"
       :y="root.y"
       :showAvatars="showAvatars"
-      :showPartners="showPartners"
       @center="centerNode(root)"
       />
   </g>
@@ -62,12 +59,18 @@ import Link from './Link.vue'
 
 // TODO: better name
 import settings from '@/lib/link.js'
-import pileSort from 'pile-sort'
 
 import { mapGetters } from 'vuex'
 
 const PARTNER_SHRINK = 0.7
 const X_PADDING = 10
+const DEFAULT_STYLE = {
+  fill: 'none',
+  stroke: settings.color.default,
+  opacity: settings.opacity,
+  strokeWidth: settings.thickness,
+  strokeLinejoin: 'round'
+}
 
 export default {
   name: 'SubTree',
@@ -75,7 +78,6 @@ export default {
     root: Object,
     changeFocus: Function,
     centerNode: Function,
-    showPartners: Boolean,
     showAvatars: Boolean
   },
   components: {
@@ -88,11 +90,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('whakapapa', ['whakapapaView', 'lessImportantLinks', 'isCollapsedNode']),
+    ...mapGetters('whakapapa', [
+      'whakapapaView', 'lessImportantLinks', 'isCollapsedNode', 'showExtendedFamily',
+      'getChildIds', 'getParentIds', 'getPartnerIds', 'getPartnerRelationshipType', 'getChildRelationshipType'
+    ]),
     allPartners () {
       return [
-        ...this.partners,
-        this.ghostPartner
+        ...this.partnerNodes,
+        ...this.ghostPartner
       ]
     },
     partnerRadius () {
@@ -101,91 +106,79 @@ export default {
     diameter () {
       return this.radius * 2
     },
-    profile () {
-      return this.root.data
+    profileId () {
+      return this.root.data.id
     },
     isCollapsed () {
-      return this.isCollapsedNode(this.profile.id)
+      return this.isCollapsedNode(this.profileId)
     },
-    children () {
+    childNodes () {
       if (this.isCollapsed) return []
 
       return this.root.children || []
     },
-    partners () {
-      // check that component has loaded with data, the profile has partners and the profile is not collapsed
-      if (isEmpty(this.root.data) || isEmpty(this.profile.partners) || this.isCollapsed) return []
+    partnerNodes () {
+      if (this.isCollapsed) return []
 
-      var len = this.profile.partners.length
+      const partnerIds = this.getPartnerIds(this.profileId)
+      if (isEmpty(partnerIds)) return []
+
+      let len = partnerIds.length
       if (len === 1) len = 2
 
       const midway = len % 2 === 0
         ? len / 2
         : Math.round(len / 2) - 1
 
-      return this.mapPartnerNodes(this.profile.partners, midway)
+      return this.mapPartnerNodes(partnerIds, midway)
     },
-    // Needed to draw links between parents and children outside of a partnership
+    // Needed to draw links between parents and children where the root node is the only parent of that child node
     ghostPartner () {
-      let partners = this.partners
-        .filter(partner => !partner.data.isNonPartner)
-        .map(partner => partner.data.id)
+      // find the children of this node that only parents who are solo
+      // (could have multiple parents but not in relationship with node)
+      const children = this.childNodes.filter(childNode => {
+        const parentIds = this.getParentIds(childNode.data.id)
+        if (parentIds.length === 1) return parentIds[0] === this.profileId
 
-      const [children, otherChildren] = pileSort(
-        this.children,
-        [
-          (child) => (child.data.parents && child.data.parents.length === 1) || this.partners.length === 0, // all children that this node is the only parent of
-          (child) => {
-            let parentIds = child.data.parents.map(parent => parent.id)
-            return (
-              parentIds.length > 1 && // the child has two or more parents
-              //  none of their other parents are a partner of the root node
-              !partners.some(id => parentIds.includes(id))
-            )
-          }
-        ]
-      )
+        return parentIds.filter(parentId => parentId !== this.profileId)
+          .every(parentId => this.getPartnerRelationshipType(parentId, this.profileId) === undefined)
+      })
+      if (children.length === 0) return [] // don't render if not needed
 
-      const style = {
-        fill: 'none',
-        stroke: settings.color.default,
-        opacity: settings.opacity,
-        strokeWidth: settings.thickness,
-        strokeLinejoin: 'round'
-      }
+      const yOffset = this.root.y + (this.partnerNodes.length * settings.partner.spacing.y)
 
-      var totalPartners = this.partners.length
-      const allChildren = [...children, ...otherChildren].filter(child => !child.data.isNonChild)
-
-      const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
-
-      return {
+      return [{
         data: {
           id: 'GHOST'
         },
         ghost: true,
-        children: allChildren.map(({ data }) => this.mapChild({ y: yOffset }, data, style, null, true))
-      }
+        children: children.map(({ data }) => this.mapChild({ y: yOffset }, data.id, DEFAULT_STYLE, this.profileId, true))
+      }]
     }
   },
   methods: {
-    mapPartnerNodes (nodes, midway) {
+    mapPartnerNodes (partnerIds, midway) {
       var leftPartners = 0
       var rightPartners = 0
 
-      return nodes.map((partner, i) => {
+      return partnerIds.map((partnerId, i) => {
         // set partners to alternate sides
-        let sign = i >= midway ? 1 : -1
+        let sign = (i >= midway) ? 1 : -1
 
-        // If the partner has children find where they are positioned and place the partner on the correct side
-        if (partner.children.length) {
-          const childrenX = []
-          partner.children.forEach(child => {
-            let node = this.children && this.children.find(rootChild => child.id === rootChild.data.id)
-            if (node) childrenX.push(node.x)
-          })
-          var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
-          if (average) sign = average > this.root.x ? 1 : -1
+        let partnerChildIds = this.getChildIds(partnerId)
+
+        // If the partnerId has children find where they are positioned and place the partnerId on the correct side
+        if (partnerChildIds.length) {
+          const partnersChildNodes = partnerChildIds
+            .map(partnerChildId => this.childNodes.find(node => node.data.id === partnerChildId))
+            .filter(Boolean) // filters out empty entries
+
+          const averageX = (
+            partnersChildNodes.reduce((acc, childNode) => acc + childNode.x, 0) /
+            partnersChildNodes.length
+          )
+
+          if (averageX) sign = (averageX > this.root.x) ? 1 : -1
         }
 
         // keep a count of the partners on each side
@@ -209,46 +202,48 @@ export default {
         // partner style
         // NOTE: children of this partner will inherit this style
         const style = {
-          fill: 'none',
-          stroke: settings.color.getColor(i),
-          opacity: settings.opacity,
-          strokeWidth: settings.thickness,
-          strokeLinejoin: 'round'
+          ...DEFAULT_STYLE,
+          stroke: settings.color.getColor(i)
         }
 
         // start point of the partner node links on the Y axist
         const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
-
         const xOffset = xMultiplier * X_PADDING
 
-        const link = partner.isNonPartner ? {} : {
-          style,
-          // for drawing the link from the root partner to this partner/partner
-          d: `
-            M ${this.root.x + this.radius}, ${yOffset}
-            H ${x + this.partnerRadius}`
+        let link = {}
+        const rel = this.getPartnerRelationshipType(this.profileId, partnerId)
+        const isPartnersPlus = ['partners', 'inferred'].includes(rel)
+        // "plus" because includes inferred
+        if (isPartnersPlus) {
+          link = {
+            style: {
+              ...DEFAULT_STYLE,
+              stroke: settings.color.getColor(i),
+              strokeDasharray: rel === 'inferred' ? 4 : 0 // for drawing a isDashed link
+            },
+            // for drawing the link from the root partner to this partner/partner
+            d: `
+              M ${this.root.x + this.radius}, ${yOffset}
+              H ${x + this.partnerRadius}
+            `
+          }
         }
 
-        if (!this.showPartners) {
-          partner.children = partner.children
-            .filter(partnerChild => {
-              return (
-                this.children &&
-                this.children.some(rootChild => {
-                  if (!rootChild || !partnerChild) return false
-                  return (rootChild.data.id === partnerChild.id)
-                })
-              )
-            }) // filter out children who arent this nodes
+        if (!this.showExtendedFamily) {
+          partnerChildIds = partnerChildIds.filter(childId => {
+            return this.childNodes.some(childNode => {
+              return (childNode.data.id === childId)
+            })
+          }) // filter out children who arent this nodes
         }
 
         return {
           x,
           y,
-          children: partner.children
-            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false))
+          children: partnerChildIds
+            .map(childId => this.mapChild({ x, y, sign, center: isPartnersPlus, yOffset, xOffset }, childId, style, partnerId))
             .filter(Boolean),
-          data: partner,
+          data: { id: partnerId },
           link
         }
       })
@@ -256,15 +251,18 @@ export default {
     focus ($event) {
       this.changeFocus($event)
     },
-    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, childId, style, parentId, isGhost = false) {
       // map to their node from the root parent
-      const node = this.children.find(rootChild => child.id === rootChild.data.id)
-
+      const node = this.childNodes.find(childNode => childId === childNode.data.id)
       if (!node || !node.data) return
-      if (node.data.isNonChild) center = false
 
-      // change the link if they are not related by birth
-      const dashed = parent && parent.relationshipType ? ['adopted', 'whangai'].includes(parent.relationshipType) : ['adopted', 'whangai'].includes(node.data.relationshipType)
+      const isNonChild = this.getChildRelationshipType(this.profileId, childId) === undefined
+      if (isNonChild) center = false
+      // TODO 2022-02-15 mix - I think I've replaced this correctly, but not sure
+
+      const relationshipType = this.getChildRelationshipType(parentId, childId)
+      // dash link if they are not related by adopted/whangai
+      const isDashed = ['adopted', 'whangai'].includes(relationshipType)
 
       // center the link between the parents
       if (center) {
@@ -273,14 +271,14 @@ export default {
       }
 
       // offcenter links to avoid overlapping with partner or main parent node links
-      let offCenter = !ghostParent && !center
+      let offCenter = !isGhost && !center
 
       return {
         ...node,
         link: {
           style: {
             ...style, // inherits the style from the parent so the links are the same color
-            strokeDasharray: dashed ? 2.5 : 0 // for drawing a dashed link to represent adopted/whangai
+            strokeDasharray: isDashed ? 2.5 : 0 // for drawing a isDashed link to represent adopted/whangai
           },
           d: settings.path( // for drawing a link from the parent to child
             {

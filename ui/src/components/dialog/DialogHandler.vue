@@ -192,7 +192,8 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['getParentNodeId', 'nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('tree', ['getParentNodeId']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -228,11 +229,7 @@ export default {
     ...mapActions(['loading', 'setDialog']),
     ...mapActions('whakapapa', [
       'saveWhakapapaView',
-      'getWhakapapaView',
-      'updateNodeInNestedWhakapapa',
-      'deleteNodeInNestedWhakapapa',
-      'setNestedWhakapapa',
-      'setView'
+      'removeLinksToProfile'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -340,12 +337,8 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          // load the childs profile
-          const parentProfile = await this.loadDescendants(parentProfileId)
-          // NOTE this is a profile decorated with children etc!
-
-          // add the child to the parent in the nested whakapapa
-          this.updateNodeInNestedWhakapapa(parentProfile)
+          // TODO: this adds the child to the tree, but do we need to do this much?
+          await this.loadDescendants(parentProfileId)
 
           break
 
@@ -379,9 +372,8 @@ export default {
           } else {
             const hasParentNodeId = this.getParentNodeId(child)
             if (hasParentNodeId) { // when a node already has a parent node above them, this will be called
-              const parentProfile = await this.loadDescendants(hasParentNodeId)
-              // NOTE we're not passing in a "seen" variable, so this call might result in infinite loops
-              this.updateNodeInNestedWhakapapa(parentProfile)
+              // TODO: this adds the child to the tree, but do we need to do this much?
+              await this.loadDescendants(hasParentNodeId)
 
               // so you wont see the extra parent update
             } else {
@@ -407,8 +399,8 @@ export default {
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
 
+          // TODO: this adds the partner to the tree, but do we need to do this much?
           await this.loadDescendants(this.selectedProfile.id)
-          this.updateNodeInNestedWhakapapa(this.selectedProfile)
           break
         default:
           console.error('wrong type for add person')
@@ -512,7 +504,7 @@ export default {
       // we want to remove the person from the selectedProfile in the tree
       if (removedImportantRelationship) await this.reloadWhakapapa() // WARNING: this can get expensive for a larger tree
       else {
-        if (mainProfileId) this.deleteNodeInNestedWhakapapa({ id: mainProfileId })
+        if (mainProfileId) this.removeLinksToProfile(mainProfileId)
         else await this.reloadWhakapapa()
       }
 
@@ -522,7 +514,7 @@ export default {
     // TODO 25-11-2021 cherese move these methods to ssb-graphql-whakapapa
     async removeProfileFromImportantRelationships (profileId) {
       // find rule for profileId
-      const rule = this.view.importantRelationships.find(rule => rule.profileId === profileId)
+      const rule = this.view.importantRelationships[profileId]
       if (rule) {
         await this.saveWhakapapaView({
           id: this.$route.params.whakapapaId,
@@ -535,7 +527,7 @@ export default {
 
       // find rules which mention profileId
       await Promise.all(
-        this.view.importantRelationships.map(async rule => {
+        Object.values(this.view.importantRelationships).map(async rule => {
           const important = [rule.primary.profileId, ...rule.other.map(r => r.profileId)]
           if (important.includes(profileId)) {
             return this.saveWhakapapaView({
@@ -567,15 +559,13 @@ export default {
       */
 
       const findImportantRelationship = (profileId, otherProfileId) => {
-        return this.view.importantRelationships.find(rule => {
-          return (
-            (rule.profileId === profileId) && // A
-            (
-              rule.primary.profileId === otherProfileId || // B
-              rule.other.some(r => r.profileId === otherProfileId) // C
-            )
-          )
-        })
+        const rule = this.view.importantRelationships[profileId]
+        if (!rule) return
+
+        if (
+          rule.primary.profileId === otherProfileId ||
+          rule.other.some(r => r.profileId === otherProfileId)
+        ) return rule
       }
 
       let didUpdate = false
@@ -618,7 +608,7 @@ export default {
       var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
 
       // check if there is already an existing important relationship
-      const exsistingDupe = this.view.importantRelationships.find(dupe => dupe.profileId === profile.id)
+      const exsistingDupe = this.view.importantRelationships[profile.id]
       var lessRelationship
 
       if (exsistingDupe) {
@@ -682,7 +672,7 @@ export default {
       } else {
         if (this.view.focus === this.focus) {
           // if we are on the main tree now
-          this.deleteNodeInNestedWhakapapa(this.selectedProfile)
+          this.removeLinksToProfile(this.selectedProfile.id)
         } else {
           // if we are on a partners tree
           // change focus back
@@ -707,7 +697,7 @@ export default {
         const successor = findSuccessor(this.selectedProfile)
         this.$emit('setFocus', successor.id)
       } else {
-        this.deleteNodeInNestedWhakapapa(this.selectedProfile)
+        this.removeLinksToProfile(this.selectedProfile.id)
       }
       this.setSelectedProfile(null)
     },
@@ -836,17 +826,7 @@ export default {
       return this.$t('dialogHandler.' + key, vars)
     },
     async reloadWhakapapa () {
-      // this current resets the graph to ensure relationships are rendered right. This needs to be improved
-      const newWhakapapa = await this.loadDescendants(this.view.focus)
-      this.setNestedWhakapapa(newWhakapapa)
-
-      // // reload the view as well (for important relationships)
-      // NOTE: we could do this: await this.$parent.reload() but that is an expensive operation
-
-      // this is a hacky way, but its less expensive and ensures the changes
-      // made to important relationships are shown
-      const whakapapaView = await this.getWhakapapaView(this.view.id)
-      this.setView(whakapapaView)
+      this.loadWhakapapaView(this.view.id)
     }
   }
 }
