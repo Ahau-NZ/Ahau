@@ -93,6 +93,7 @@ export default {
   mounted () {
     this.loadPersonMinimal(this.profileId)
 
+    // NOTE this needs to change...
     this.addProfileLocation({
       profileId: this.profileId,
       x: this.x,
@@ -101,17 +102,19 @@ export default {
     })
   },
   computed: {
-    ...mapGetters('person', ['personMinimal']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'isCollapsedNode']),
+    ...mapGetters('person', ['person']),
+    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode']),
     profile () {
-      return this.personMinimal(this.profileId) || {}
+      return this.person(this.profileId) || {}
     },
     isCollapsed () {
       return this.isCollapsedNode(this.profileId)
     },
     isDuplicate () {
-      return this.whakapapaView.importantRelationships
-        .some(rel => rel.profileId === this.profileId && rel.other.length > 1)
+      const rule = this.getImportantRelationship(this.profileId)
+      if (!rule) return false
+      return rule.other.length > 1
+      // TODO 2022-02-11 mix - ideally we won't lean on "other". Is there another way to do this?
     },
     showMenuButton () {
       if (this.isPartner) return false

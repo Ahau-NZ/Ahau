@@ -29,10 +29,10 @@
           <!-- Hide Deceased -->
           <v-list-item class="py-4">
             <v-list-item-content>
-              <v-list-item-title align="start" v-text="'Hide descendants'" />
+              <v-list-item-title align="start" v-text="'Hide deceased'" />
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="descendants"/>
+              <v-switch v-model="hideDeceased"/>
             </v-list-item-action>
           </v-list-item>
 
@@ -42,7 +42,7 @@
               <v-list-item-title align="start" v-text="'Show whakapapa'"/>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="whakapapa" />
+              <v-switch v-model="showWhakapapa" />
             </v-list-item-action>
           </v-list-item>
 
@@ -82,7 +82,7 @@
               <v-list-item-title align="start" v-text=" t('parents')"/>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="showPartners" />
+              <v-switch v-model="extendedFamily" />
             </v-list-item-action>
           </v-list-item>
 
@@ -100,12 +100,10 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import FilterInput from '@/components/dialog/whakapapa/FilterInput.vue'
 import SortInput from './SortInput.vue'
 import OptionsInput from './OptionsInput.vue'
-
-const { mapActions: mapTableActions } = createNamespacedHelpers('table')
 
 export default {
   name: 'FilterMenu',
@@ -116,36 +114,41 @@ export default {
   },
   props: {
     show: { type: Boolean, default: false },
-    flatten: Boolean,
     isTable: { type: Boolean, default: false }
   },
   data () {
     return {
       resetData: false,
-      descendants: false,
-      whakapapa: !this.flatten,
+      hideDeceased: false, // hides all deceased nodes
+      showWhakapapa: false,
       showAvatars: true,
-      showPartners: true
+      extendedFamily: false
     }
   },
   watch: {
     show (newVal) {
       if (newVal) this.resetData = false
     },
-    descendants () {
-      this.$emit('descendants')
+    hideDeceased (value) {
+      this.updateTableFilter({ type: 'deceased', value })
     },
-    whakapapa () {
-      this.$emit('whakapapa')
+    showWhakapapa () {
+      this.hideDeceased = false
+      this.toggleTableFlatten()
     },
     showAvatars () {
       this.$emit('toggleAvatars')
     },
-    showPartners () {
-      this.$emit('togglePartners')
+    extendedFamily (val) {
+      this.setExtendedFamily(val)
+    },
+    showExtendedFamily (val) {
+      this.extendedFamily = val
     }
   },
   computed: {
+    ...mapGetters('table', ['tableFlatten', 'tableFilter']),
+    ...mapGetters('whakapapa', ['showExtendedFamily']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -156,7 +159,8 @@ export default {
     }
   },
   methods: {
-    ...mapTableActions(['resetTableFilters']),
+    ...mapActions('whakapapa', ['setExtendedFamily']),
+    ...mapActions('table', ['toggleTableFlatten', 'resetTableFilters', 'updateTableFilter']),
     toggleWhakapapa () {
       if (this.whakapapa) this.whakapapa = false
     },
@@ -170,7 +174,7 @@ export default {
     },
     resetTree () {
       this.showAvatars = true
-      this.showPartners = true
+      this.setExtendedFamily(true)
       this.close()
     },
     t (key, vars) {
@@ -179,6 +183,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

@@ -30,6 +30,7 @@ export default function rootModule (apollo) {
         }
       },
       loading: false, // boolean
+      loadingTimeout: 2 * SECOND,
 
       /* indexing data */
       indexingSince: null,
@@ -52,7 +53,7 @@ export default function rootModule (apollo) {
         // if it's been indexing longer than 2 seconds
         if (
           state.indexingSince &&
-          (Date.now() - state.indexingSince > 2 * SECOND)
+          (Date.now() - state.indexingSince > state.loadingTimeout)
         ) {
           return state.percentageIndexedSinceStartup
         }
