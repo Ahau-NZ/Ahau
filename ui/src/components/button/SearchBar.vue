@@ -104,10 +104,10 @@ export default {
         .filter(d => { // d = minimalProfile here
           if (!d) return false
           const preferredName = normalizeString(d.preferredName)
+          const legalName = normalizeString(d.legalName)
 
           // TODO 2022-02-11 mix this is disabled for the moment
           // because nodes do not load all this data at the moment
-          // const legalName = normalizeString(d.legalName)
 
           // var altNameMatch = false
           // const altNames = d.altNames
@@ -120,10 +120,8 @@ export default {
           //   }
           // }
           return (
-            isEqual(preferredName, search) ||
-            preferredName.includes(search) // ||
-            // isEqual(legalName, search) ||
-            // legalName.includes(search) ||
+            isEqual(preferredName, search) || preferredName.includes(search) ||
+            isEqual(legalName, search) || legalName.includes(search) // ||
             // altNameMatch
           )
         })

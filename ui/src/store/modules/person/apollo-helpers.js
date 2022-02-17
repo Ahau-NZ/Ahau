@@ -23,34 +23,31 @@ const GET_PERSON_MINIMAL = gql`
     }
   }
 `
-
 // NOTE this doesn't load the kaitiaki adminProfile
 // which may have profile details which should over-ride the group-profile
-
 export const getPersonMinimal = (id, fetchPolicy = 'no-cache') => ({
   query: GET_PERSON_MINIMAL,
   variables: { id },
   fetchPolicy
 })
 
-export const getPersonFull = (id, fetchPolicy = 'no-cache') => ({
-  query: gql`
-    ${PERSON_FRAGMENT}
-    query($id: String!) {
-      person(id: $id){
+const GET_PERSON_FULL = gql`
+  ${PERSON_FRAGMENT}
+  query($id: String!) {
+    person(id: $id){
+      ...ProfileFragment
+      adminProfile {
         ...ProfileFragment
-        adminProfile {
-          ...ProfileFragment
-        }
-        tombstone {
-          date
-        }
+      }
+      tombstone {
+        date
       }
     }
-  `,
-  variables: {
-    id
-  },
+  }
+`
+export const getPersonFull = (id, fetchPolicy = 'no-cache') => ({
+  query: GET_PERSON_FULL,
+  variables: { id },
   fetchPolicy
 })
 
@@ -61,13 +58,19 @@ export const savePerson = input => {
   return saveProfile(input)
 }
 
-export const deletePerson = (id, allowPublic = false) => {
-  const input = {
-    id,
-    tombstone: { reason: 'user deleted profile' }
+const DELETE_PERSON = gql`
+  mutation($id: String!, $details: TombstoneInput, $allowPublic: Boolean) {
+    tombstoneProfileAndLinks(id: $id, details: $details, allowPublic: $allowPublic)
   }
-
-  if (allowPublic) input.allowPublic = true
-
-  return saveProfile(input)
+`
+export const deletePerson = (id, details = {}, allowPublic = false) => {
+  // TODO support allowPublic? this method will likely error on public person profiles
+  return {
+    mutation: DELETE_PERSON,
+    variables: {
+      id,
+      details,
+      allowPublic
+    }
+  }
 }
