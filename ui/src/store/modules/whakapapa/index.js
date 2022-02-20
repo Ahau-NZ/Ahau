@@ -8,15 +8,10 @@ import getExtendedFamily from './lib/get-extended-family'
 import { saveLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
-// import isEmpty from 'lodash.isempty'
-// import clone from 'lodash.clonedeep'
-// import settings from '../../../lib/link'
-// const LINK_OFFSET = 10
-
 const loadingView = () => ({
-  name: 'Loading',
+  name: 'Loading...',
   description: '',
-  focus: '',
+  focus: null,
   recps: null,
   image: { uri: '' },
   ignoredProfiles: [],
@@ -59,20 +54,7 @@ export default function (apollo) {
 
     collapsed: { // maps node.data.id to Boolean (default false)
 
-    },
-
-    // NOTE we talk about two sorts of nodes:
-    //   - d3 nodes - these each only have one node.parent
-    //   - vue Node - these are nodes drawn with Node.vue, and includes partner nodes which are not in the d3 tree
-    profileLocations: {
-      // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
     }
-    // node currently requires:
-    //    - node.id
-    //    - node.x
-    //    - node.y
-    //    - node.radius
-    // WARNING: locations should not be here, it's a tree thing
   }
 
   const getters = {
@@ -190,29 +172,25 @@ export default function (apollo) {
       return buildNestedWhakapapa(state, getters, state.view.focus)
     },
     secondaryLinks: (state, getters) => {
-      // look at importantRelationships
-      // - see who the rule is for
-      // - see if that person has and child / partner links which this is nullifying, record those
+      console.log('secondaryLinks')
+      // for each importantRelationship link (which targets a person)
+      // look for parents that rule has disconnected them from.
+      // record those links
 
-      const results = {
-        childLinks: [],
-        partnerLinks: []
-      }
-
-      Object.entries(state.view.importantRelationships).forEach(([profileId, rule]) => {
-        getters.getRawParentIds(profileId)
-          .filter(parentId => !getters.isImportantLink(profileId, parentId))
-          .forEach(parentId => {
-            const link = {
+      return Object.entries(state.view.importantRelationships).reduce(
+        (acc, [ruleTarget, rule]) => {
+          const links = getters.getRawParentIds(ruleTarget)
+            .filter(parentId => !getters.isImportantLink(ruleTarget, parentId))
+            .map(parentId => ({
               parent: parentId,
-              child: profileId,
-              relationshipType: state.childLinks[parentId][profileId]
-            }
-            results.childLinks.push(link)
-          })
-      })
+              child: ruleTarget,
+              relationshipType: state.childLinks[parentId][ruleTarget]
+            }))
 
-      return results
+          return acc.concat(links)
+        },
+        []
+      )
     }
   }
 
@@ -251,21 +229,9 @@ export default function (apollo) {
     toggleNodeCollapse (state, nodeId) {
       Vue.set(state.collapsed, nodeId, !state.collapsed[nodeId])
     },
-    addProfileLocation (state, { profileId, ...data } = {}) {
-      if (!profileId) return
-
-      const change = [...(state.profileLocations[profileId] || []), data]
-
-      Vue.set(state.profileLocations, profileId, change)
-    },
-    setLessImportantLinks (state, links) {
-      state.lessImportantLinks = links
-    },
     resetWhakapapaView (state) {
       state.lastView = state.view
       state.view = loadingView()
-      state.profileLocations = []
-      state.lessImportantLinks = []
       state.collapsed = {}
     },
 
@@ -394,10 +360,11 @@ export default function (apollo) {
       }
     },
     async loadDescendants ({ state, dispatch, commit, getters, rootGetters }, opts) {
+      if (!opts) return
       if (typeof opts === 'string') return dispatch('loadDescendants', { profileId: opts })
 
       const { profileId, loaded = new Set() } = opts
-      if (loaded.has(profileId)) return
+      if (!profileId || loaded.has(profileId)) return
 
       loaded.add(profileId)
 

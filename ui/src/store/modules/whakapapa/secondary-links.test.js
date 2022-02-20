@@ -20,26 +20,16 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
 
   t.deepEqual(
     secondaryLinks(),
-    {
-      childLinks: [
-        { parent: 'Daughter', child: 'Grandaughter', relationshipType: 'birth' },
-        { parent: 'Husband', child: 'Grandaughter', relationshipType: 'birth' }
-      ],
-      partnerLinks: []
-    },
+    [
+      { parent: 'Daughter', child: 'Grandaughter', relationshipType: 'birth' },
+      { parent: 'Husband', child: 'Grandaughter', relationshipType: 'birth' }
+    ],
     'finds birth parent links'
   )
 
   console.log('wipe importantRelationships')
   state.view.importantRelationships = {}
-  t.deepEqual(
-    secondaryLinks(),
-    {
-      childLinks: [],
-      partnerLinks: []
-    },
-    'no secondaryLinks'
-  )
+  t.deepEqual(secondaryLinks(), [], 'no secondaryLinks')
 
   console.log('set importantRelationship to be with Daughter')
   state.view.importantRelationships = {
@@ -50,13 +40,10 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
   }
   t.deepEqual(
     secondaryLinks(),
-    {
-      childLinks: [
-        { parent: 'Grandma', child: 'Grandaughter', relationshipType: 'whangai' },
-        { parent: 'Grandad', child: 'Grandaughter', relationshipType: 'whangai' }
-      ],
-      partnerLinks: []
-    },
+    [
+      { parent: 'Grandma', child: 'Grandaughter', relationshipType: 'whangai' },
+      { parent: 'Grandad', child: 'Grandaughter', relationshipType: 'whangai' }
+    ],
     'finds whangai parent links'
   )
 
@@ -79,22 +66,16 @@ test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
 
   t.deepEqual(
     secondaryLinks(),
-    {
-      childLinks: [
-        { parent: 'Grandma', child: 'Son', relationshipType: 'whangai' },
-        { parent: 'Grandad', child: 'Son', relationshipType: 'whangai' }
-      ],
-      partnerLinks: []
-    },
+    [
+      { parent: 'Grandma', child: 'Son', relationshipType: 'whangai' },
+      { parent: 'Grandad', child: 'Son', relationshipType: 'whangai' }
+    ],
     'finds whangai parent links'
   )
 
   console.log('remove importantRelationship')
   state.view.importantRelationships = {}
-  t.deepEqual(
-    secondaryLinks(),
-    { childLinks: [], partnerLinks: [] }
-  )
+  t.deepEqual(secondaryLinks(), [])
 
   t.end()
 })

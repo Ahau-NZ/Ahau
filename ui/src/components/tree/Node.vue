@@ -68,13 +68,15 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import NodeMenuButton from './NodeMenuButton.vue'
 
+const RADIUS = 50
+const PARTNER_SHRINK = 0.7
+
 export default {
   name: 'Node',
   props: {
     profileId: { type: String, required: true },
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
-    radius: { type: Number, default: 50 },
     isPartner: Boolean,
     showAvatars: Boolean
   },
@@ -87,19 +89,12 @@ export default {
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
-      }
+      },
+      radius: this.isPartner ? PARTNER_SHRINK * RADIUS : RADIUS
     }
   },
   mounted () {
     this.loadPersonMinimal(this.profileId)
-
-    // NOTE this needs to change...
-    this.addProfileLocation({
-      profileId: this.profileId,
-      x: this.x,
-      y: this.y,
-      radius: this.radius
-    })
   },
   computed: {
     ...mapGetters('person', ['person']),
@@ -174,7 +169,6 @@ export default {
   methods: {
     ...mapActions('tree', ['setMouseEvent']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
-    ...mapActions('whakapapa', ['addProfileLocation']),
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)

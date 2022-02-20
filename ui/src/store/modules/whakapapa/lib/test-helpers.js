@@ -7,7 +7,6 @@ export function Getters (state) {
   const activeGetters = {}
 
   const getterNames = Object.keys(getters)
-    .filter(name => name !== 'lessImportantLinks')
 
   while (getterNames.length) {
     const getterName = getterNames.shift()

@@ -2,7 +2,7 @@
   <g>
     <!-- only draw this for top node -->
     <g v-if="root.data.id === whakapapaView.focus">
-      <g v-for="link in lessImportantLinks" :key="`l-i-${link.id}`">
+      <g v-for="link in secondaryLinks" :key="`l-i-${link.id}`">
         <Link :link="link"/>
       </g>
     </g>
@@ -21,7 +21,6 @@
       </g>
       <Node v-if="partner.link"
         :profileId="partner.data.id"
-        :radius="partnerRadius"
         :x="partner.x"
         :y="partner.y"
         isPartner
@@ -62,7 +61,7 @@ import settings from '@/lib/link.js'
 
 import { mapGetters } from 'vuex'
 
-const PARTNER_SHRINK = 0.7
+const PARTNER_RADIUS = 0.7 * 50 // NOTE primary definition is in Node.vue
 const X_PADDING = 10
 const DEFAULT_STYLE = {
   fill: 'none',
@@ -91,17 +90,15 @@ export default {
   },
   computed: {
     ...mapGetters('whakapapa', [
-      'whakapapaView', 'lessImportantLinks', 'isCollapsedNode', 'showExtendedFamily',
+      'whakapapaView', 'isCollapsedNode', 'showExtendedFamily',
       'getChildIds', 'getParentIds', 'getPartnerIds', 'getPartnerRelationshipType', 'getChildRelationshipType'
     ]),
+    ...mapGetters('tree', ['secondaryLinks']),
     allPartners () {
       return [
         ...this.partnerNodes,
         ...this.ghostPartner
       ]
-    },
-    partnerRadius () {
-      return PARTNER_SHRINK * this.radius // ensures the partner node will always be smaller then the main node
     },
     diameter () {
       return this.radius * 2
@@ -186,7 +183,7 @@ export default {
         else leftPartners++
 
         const offset = sign === 1
-          ? this.diameter - 2 * this.partnerRadius // right
+          ? this.diameter - 2 * PARTNER_RADIUS // right
           : 0 // left
 
         const xMultiplier = sign === 1
@@ -197,7 +194,7 @@ export default {
         const x = this.root.x + offset + xMultiplier * (this.diameter - 10)
 
         // how far down the partner sits from the root node at 0
-        const y = this.root.y + this.radius - this.partnerRadius
+        const y = this.root.y + this.radius - PARTNER_RADIUS
 
         // partner style
         // NOTE: children of this partner will inherit this style
@@ -224,7 +221,7 @@ export default {
             // for drawing the link from the root partner to this partner/partner
             d: `
               M ${this.root.x + this.radius}, ${yOffset}
-              H ${x + this.partnerRadius}
+              H ${x + PARTNER_RADIUS}
             `
           }
         }
@@ -266,7 +263,7 @@ export default {
 
       // center the link between the parents
       if (center) {
-        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 10)// end constant is dependant on radius, partnerRadius, X_PADDING
+        x = x - this.radius + PARTNER_RADIUS - sign * (PARTNER_RADIUS + 10)// end constant is dependant on radius, PARTNER_RADIUS, X_PADDING
         y = yOffset - this.radius
       }
 
@@ -282,7 +279,7 @@ export default {
           },
           d: settings.path( // for drawing a link from the parent to child
             {
-              startX: offCenter ? x + this.partnerRadius : x + this.radius,
+              startX: offCenter ? x + PARTNER_RADIUS : x + this.radius,
               startY: offCenter ? yOffset + 10 : y + this.radius,
               endX: offCenter ? node.x + this.radius + xOffset : node.x + this.radius,
               endY: node.y + this.radius
