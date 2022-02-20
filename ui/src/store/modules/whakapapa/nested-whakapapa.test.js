@@ -1,5 +1,5 @@
 import { State, Getters } from './lib/test-helpers'
-import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex } from './fixtures'
+import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
 const { getters } = require('./').default()
@@ -362,6 +362,62 @@ test('vuex/whakapapa getters.nestedWhakapapa (with importantRelationships - part
 
   // CASE : this scenario with Parent as primary link
   // unclear how that would be rendered...
+
+  t.end()
+})
+
+test('vuex/whakapapa getters.nestedWhakapapa (marriage within tree)', t => {
+  /* marriage within tree
+
+                Grandad─┬─Grandma
+                   ┌────┴╌╌╌╌╌┐
+                   │          ┆
+               Daughter─┬───(Son)
+                        │
+                   Grandaughter
+
+  */
+  const state = MarriageWithinTree()
+  const nestedWhakapapa = NestedWhakapapa(state)
+
+  t.deepEqual(
+    nestedWhakapapa(),
+    {
+      id: 'Grandma',
+      children: [
+        {
+          id: 'Daughter',
+          children: [
+            { id: 'Grandaughter', children: [] }
+          ]
+        }
+      ]
+    }
+  )
+
+  console.log('remove importantRelationship')
+  state.view.importantRelationships = {}
+
+  t.deepEqual(
+    nestedWhakapapa(),
+    {
+      id: 'Grandma',
+      children: [
+        {
+          id: 'Daughter',
+          children: [
+            { id: 'Grandaughter', children: [] }
+          ]
+        },
+        {
+          id: 'Son',
+          children: [
+            { id: 'Grandaughter', children: [] }
+          ]
+        }
+      ]
+    }
+  )
 
   t.end()
 })
