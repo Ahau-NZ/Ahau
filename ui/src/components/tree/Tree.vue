@@ -215,15 +215,6 @@ export default {
       const profile = node.data
       this.toggleNodeCollapse(profile.id)
 
-      const { children, _children = [] } = profile
-
-      if (children.length === 0 && _children.length === 0) return
-
-      Object.assign(profile, {
-        _children: children,
-        children: _children
-      })
-
       // find the node position now
       var _node = this.descendants.find(d => d.data.id === node.data.id)
 

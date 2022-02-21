@@ -153,7 +153,7 @@ export default function () {
       return []
 
       // TEMP
-      const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child')
+      const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child') // eslint-disable-line
 
       return Object.entries(linksByChild).reduce(
         (acc, [childId, childLinks]) => {

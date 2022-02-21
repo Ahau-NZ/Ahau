@@ -109,9 +109,10 @@ export default function (apollo) {
     /* higher order getters */
     getChildIds: (state, getters) => (parentId) => {
       // NOTE this gets the ids of childrenNodes in the graph
-      if (state.collapsed[parentId]) return []
+      if (getters.isCollapsedNode(parentId)) return []
 
       return getters.getRawChildIds(parentId)
+        .filter(childId => !state.view.ignoredProfiles.includes(childId))
         // NOTE may need to filter out ignoredProfiles here
         .filter(childId => getters.isImportantLink(childId, parentId))
     },
@@ -155,7 +156,7 @@ export default function (apollo) {
       return result
     },
     getPartnerIds: (state, getters) => (id) => {
-      if (state.collapsed[id]) return []
+      if (getters.isCollapsedNode(id)) return []
 
       if (!state.view.extendedFamily) {
         return getters.getRawPartnerIds(id).filter(getters.isNotIgnored)
@@ -169,10 +170,38 @@ export default function (apollo) {
       if (!state.view || !state.view.focus) return {}
       // starts at the focus and builds the tree as the data comes in
 
-      return buildNestedWhakapapa(state, getters, state.view.focus)
+      return getters.buildNestedWhakapapa(state.view.focus)
+    },
+    buildNestedWhakapapa: (state, getters) => (parentId, opts = {}) => {
+      const {
+        lineage = new Set()
+      } = opts
+      lineage.add(parentId)
+
+      let childIds
+      if (!state.view.extendedFamily) {
+        childIds = getters.getChildIds(parentId)
+      } // eslint-disable-line
+      else {
+        const extendedFamily = getExtendedFamily(state, getters, [parentId])
+        childIds = extendedFamily.children
+      }
+
+      return {
+        id: parentId,
+        children: childIds
+          .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
+          .filter(childId => getters.isImportantLink(childId, parentId))
+          .map(childId => {
+            // console.log('recursing', childId)
+            return getters.buildNestedWhakapapa(childId, { lineage: new Set(lineage) })
+            // we create a new "lineage", so that each branching of the tree can record
+            // it's own lineage of people, allowing duplicate profiles across branches
+            // (this behaves like a "path" except we use a set because we don't care about author)
+          })
+      }
     },
     secondaryLinks: (state, getters) => {
-      console.log('secondaryLinks')
       // for each importantRelationship link (which targets a person)
       // look for parents that rule has disconnected them from.
       // record those links
@@ -676,34 +705,3 @@ function hasCollapsedParent (nodeId, getters, rootGetters) {
   return hasCollapsedParent(parentNodeId, getters, rootGetters)
 }
 */
-
-function buildNestedWhakapapa (state, getters, parentId, opts = {}) {
-  const {
-    lineage = new Set()
-  } = opts
-  lineage.add(parentId)
-
-  let childIds
-  if (!state.view.extendedFamily) {
-    childIds = getters.getRawChildIds(parentId)
-      .filter(childId => !state.view.ignoredProfiles.includes(childId))
-  } // eslint-disable-line
-  else {
-    const extendedFamily = getExtendedFamily(state, getters, [parentId])
-    childIds = extendedFamily.children
-  }
-
-  return {
-    id: parentId,
-    children: childIds
-      .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
-      .filter(childId => getters.isImportantLink(childId, parentId))
-      .map(childId => {
-        // console.log('recursing', childId)
-        return buildNestedWhakapapa(state, getters, childId, { lineage: new Set(lineage) })
-        // we create a new "lineage", so that each branching of the tree can record
-        // it's own lineage of people, allowing duplicate profiles across branches
-        // (this behaves like a "path" except we use a set because we don't care about author)
-      })
-  }
-}

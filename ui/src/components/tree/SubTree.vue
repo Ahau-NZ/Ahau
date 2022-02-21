@@ -92,10 +92,11 @@ export default {
       return this.isCollapsedNode(this.profileId)
     },
     childNodes () {
-      if (this.isCollapsed) return []
+      // if (this.isCollapsed) return []
+      // WIP - this shouldn't be needed is we're fully reactive?
 
       return this.root.children || []
-    },
+    }
   },
   methods: {
     focus ($event) {
