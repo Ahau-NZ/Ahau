@@ -1,4 +1,4 @@
-import { RADIUS, PARTNER_RADIUS } from '../constants'
+import { RADIUS, PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 
 function findMidway (length) {
   if (length === 1) return 1
@@ -11,6 +11,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
   const partnerIds = rootGetters['whakapapa/getPartnerIds'](rootNode.data.id)
   if (!partnerIds.length) return []
 
+  const childNodes = rootNode.children || []
   const midway = findMidway(partnerIds.length)
   var leftPartners = 0
   var rightPartners = 0
@@ -19,13 +20,13 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     // set partners to alternate sides
     let sign = (i >= midway) ? 1 : -1
 
-    let partnerChildIds = rootGetters['whakapapa/getChildIds'](partnerId)
+    const partnerChildIds = rootGetters['whakapapa/getChildIds'](partnerId)
 
     if (partnerChildIds.length) {
       // find the position of partnerId's children below the the rootNode
       // and place the partnerId on the correct side (adjust the sign)
       const partnersChildNodes = partnerChildIds
-        .map(partnerChildId => rootNode.children.find(node => node.data.id === partnerChildId))
+        .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
         .filter(Boolean) // filters out empty entries
 
       const averageX = (
@@ -39,25 +40,26 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     // keep a count of the partners on each side
     (sign > 0) ? rightPartners++ : leftPartners++
 
-    if (!rootGetters['whakapapa/showExtendedFamily']) {
-      partnerChildIds = partnerChildIds.filter(childId => {
-        return rootNode.children.some(childNode => childNode.data.id === childId)
-      }) // filter out children who arent this nodes
-    }
+    // VESIGAL CODE??!
+    // if (!rootGetters['whakapapa/showExtendedFamily']) {
+    //   partnerChildIds = partnerChildIds.filter(childId => {
+    //     return childNodes.some(childNode => childNode.data.id === childId)
+    //   }) // filter out children who arent this nodes
+    // }
 
-    const offset = (sign > 0) ? (2 * RADIUS - 2 * PARTNER_RADIUS) : 0
-    // NOTE this offset asymmetry is because avatars aren't centered
-    const xMultiplier = (sign > 0) ? rightPartners : -leftPartners
+    const hops = (sign > 0) ? rightPartners : leftPartners
+    let hopsDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
+    if (hops > 1) hopsDistance += (hops - 1) * PARTNER_RADIUS + PARTNER_SPACE + PARTNER_RADIUS
 
     // how far sideways the partner sits from the root node at 0
-    const x = rootNode.x + offset + xMultiplier * (2 * RADIUS - 10)
-
-    // how far down the partner sits from the root node at 0
-    const y = rootNode.y + RADIUS - PARTNER_RADIUS
+    const x = (
+      rootNode.x + // avatar center
+      sign * hopsDistance
+    )
 
     return {
       x,
-      y,
+      y: rootNode.y,
       data: { id: partnerId }
     }
   })

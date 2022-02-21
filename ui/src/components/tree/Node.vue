@@ -135,7 +135,7 @@ export default {
     },
     position () {
       return {
-        transform: `translate(${this.x}px, ${this.y}px)`
+        transform: `translate(${this.x - this.radius}px, ${this.y - this.radius}px)`
       }
     },
     textWidth () {

@@ -1,5 +1,5 @@
 import linkStyle from './link-style'
-import { RADIUS, PARTNER_RADIUS } from '../constants'
+import linkKey from './link-key'
 import settings from '../../../../lib/link'
 
 export default function layoutPartnerLinks (rootNode, rootGetters) {
@@ -10,11 +10,11 @@ export default function layoutPartnerLinks (rootNode, rootGetters) {
     if (!['partners', 'inferred'].includes(type)) return acc
 
     acc.push({
-      key: `partner-link-${shortId(rootNode)}-${shortId(partnerNode)}`,
+      key: linkKey('partner', rootNode, partnerNode),
       // draws horizontal link from root --- partner
       d: `
-        M ${rootNode.x + RADIUS}, ${rootNode.y + RADIUS}
-        H ${partnerNode.x + PARTNER_RADIUS}
+        M ${rootNode.x}, ${rootNode.y}
+        H ${partnerNode.x}
       `,
       style: linkStyle({
         stroke: settings.color.getColor(i),
@@ -24,8 +24,4 @@ export default function layoutPartnerLinks (rootNode, rootGetters) {
 
     return acc
   }, [])
-}
-
-function shortId (node) {
-  return node.data.id.slice(1, 9)
 }

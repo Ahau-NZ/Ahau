@@ -4,12 +4,13 @@ import groupBy from 'lodash.groupby'
 
 import {
   layoutPartnerNodes,
-  layoutPartnerLinks
+  layoutPartnerLinks,
+  layoutChildLinks
 } from './lib'
 
 import settings from '../../../lib/link'
 
-// const X_PADDING = 10
+// const X_PADDING = 10 // ....
 const NODE_SIZE_X = 150
 const NODE_SIZE_Y = 200
 
@@ -53,17 +54,19 @@ export default function () {
         })
     },
 
-    tree (state, getters, rootState, rootGetters) {
+    root (state, getters, rootState, rootGetters) {
       const nestedWhakapapa = rootGetters['whakapapa/nestedWhakapapa']
-      const root = d3.hierarchy(nestedWhakapapa)
+      return d3.hierarchy(nestedWhakapapa)
         .sort((a, b) => (
           getBirthOrder(rootGetters['person/person'](a.id)) -
           getBirthOrder(rootGetters['person/person'](b.id))
         ))
         // TODO smoke test this
         // sort the children by birthOrder! - see https://github.com/d3/d3-hierarchy#node_sort
+    },
 
-      const treeLayout = getters.layout(root)
+    tree (state, getters, rootState, rootGetters) {
+      const treeLayout = getters.layout(getters.root)
 
       // WIP HERE !!!
       // for each node in the tree:
@@ -76,10 +79,13 @@ export default function () {
         //    - rootNode --> child (when solo parent)
         //    - partner --> child (when solo parent)
         //    - rootNode + partner --> child
+
         node.links = [
+          ...layoutChildLinks(node, rootGetters),
           ...layoutPartnerLinks(node, rootGetters)
         ]
       })
+      // WIP HERE
 
       // for each secondaryLink add links (done after above round as partners are added there)
       return treeLayout
@@ -144,6 +150,9 @@ export default function () {
 
     // linkNodes
     secondaryLinks (state, getters, rootState, rootGetters) {
+      return []
+
+      // TEMP
       const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child')
 
       return Object.entries(linksByChild).reduce(
