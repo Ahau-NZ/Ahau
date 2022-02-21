@@ -19,6 +19,7 @@ export default function (apollo) {
       return state.selectedProfile
     },
     person: state => (profileId) => {
+      // TODO why are we cloning here?
       return clone(state.profiles[profileId])
     },
     isTombstoned: state => (profileId) => {

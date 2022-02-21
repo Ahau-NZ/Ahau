@@ -145,7 +145,7 @@ export default {
     textStyle () {
       return {
         transform: `translate(${this.radius - this.textWidth / 2}px, ${this
-          .diameter + 15}px)`
+          .diameter + 16}px)`
       }
     },
     nameTextStyle () {

@@ -165,8 +165,8 @@ export default function (apollo) {
       return partners
     },
     nestedWhakapapa: (state, getters) => {
-      // TODO rename "getDescendantsTree" or something
-      if (!state.view || !state.view.focus) return null
+      // TODO rename descendantsTree
+      if (!state.view || !state.view.focus) return {}
       // starts at the focus and builds the tree as the data comes in
 
       return buildNestedWhakapapa(state, getters, state.view.focus)

@@ -1,12 +1,8 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
     <g id="baseGroup">
-      <g
-        :transform="`translate(${treeX - radius} ${treeY - radius})`"
-        ref="tree"
-      >
-        <SubTree
-          v-if="tree"
+      <g :transform="`translate(${treeX - radius} ${treeY - radius})`" ref="tree" >
+        <SubTree v-if="tree"
           :root="tree"
           :changeFocus="changeFocus"
           :centerNode="centerNode"
