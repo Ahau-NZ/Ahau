@@ -30,16 +30,16 @@ export default function layoutChildLinks (rootNode, rootGetters) {
     }]
   )
 
-  const links = []
-
+  const soloLinks = []
   soloLinkChildren.forEach(childNode => {
     adults.forEach(parentNode => {
       const relType = getChildType(parentNode, childNode)
       if (!relType) return
-      links.push(soloLink(rootNode, parentNode, childNode, relType))
+      soloLinks.push(soloLink(rootNode, parentNode, childNode, relType))
     })
   })
 
+  const multiLinks = {}
   multiLinkChildren.forEach(childNode => {
     adults.forEach(A => {
       adults.forEach(B => {
@@ -47,12 +47,17 @@ export default function layoutChildLinks (rootNode, rootGetters) {
         const relType = getChildType(A, childNode)
         if (!relType) return
         if (getChildType(B, childNode) !== relType) return
-        links.push(multiLink(rootNode, [A, B], childNode, relType))
+
+        const link = multiLink(rootNode, [A, B], childNode, relType)
+        multiLinks[link.key] = link
       })
     })
   })
 
-  return links
+  return [
+    ...soloLinks,
+    ...Object.values(multiLinks)
+  ]
 }
 
 function soloLink (rootNode, parentNode, childNode, relType) {
@@ -64,8 +69,8 @@ function soloLink (rootNode, parentNode, childNode, relType) {
         startY: parentNode.y,
         endX: childNode.x,
         endY: childNode.y
-      },
-      settings.branch
+      }
+      // settings.branch
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
@@ -85,15 +90,15 @@ function multiLink (rootNode, [A, B], childNode, relType) {
     : (B.x + radius(B) - A.x - radius(A)) / 2
 
   return {
-    key: linkKey('child', A, B, childNode),
+    key: linkKey('child', [A, B], childNode),
     d: settings.path( // for drawing a link from the parent to child
       {
         startX,
         startY: A.y,
         endX: childNode.x,
         endY: childNode.y
-      },
-      settings.branch
+      }
+      // settings.branch
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color

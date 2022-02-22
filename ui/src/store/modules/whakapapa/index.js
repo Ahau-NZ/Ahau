@@ -172,6 +172,7 @@ export default function (apollo) {
 
       return getters.buildNestedWhakapapa(state.view.focus)
     },
+    // TODO see if can extract this function
     buildNestedWhakapapa: (state, getters) => (parentId, opts = {}) => {
       const {
         lineage = new Set()

@@ -10,7 +10,7 @@ import {
 
 import settings from '../../../lib/link'
 
-// const X_PADDING = 10 // ....
+// const X_PADDING = 10 // .....
 const NODE_SIZE_X = 150
 const NODE_SIZE_Y = 200
 

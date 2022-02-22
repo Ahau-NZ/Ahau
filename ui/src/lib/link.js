@@ -5,24 +5,11 @@ import { linkColours } from '../lib/colours'
   use with <path></path> d attribute
   M = moveto
   v = vertical lineto (relative)
-  H = horizontal lineto
   V = vertical lineto (absolute)
-
-  example:
-
-          (startX, startY)
-                  |
-                  |
-    (branch) _____|
-            |
-            |
-            |
-      (endX, endY)
+  H = horizontal lineto
 
 */
 function path ({ startX, startY, endX, endY, directed = true }, branch) {
-  branch = branch || (endY - startY) / 2
-
   // special case for when startY and endY are the same
   /*
                ____________________
@@ -32,25 +19,23 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
          |_____|
 
   */
-
   if (directed && startY === endY) {
-    const offset = 80
-    return `
-      M ${startX}, ${startY}
-      v ${offset}
-      H ${startX + (startX < endX ? offset : -offset)}
-      v ${-2 * offset}
-      H ${endX}
-      V ${endY}  
-    `
+    const offset = 80 // TODO derive this from RADIUS?
+    return `M ${startX}, ${startY} v ${offset} H ${startX + (startX < endX ? offset : -offset)} v ${-2 * offset} H ${endX} V ${endY}`
   }
 
-  return `
-    M ${startX}, ${startY}
-    v ${branch}
-    H ${endX}
-    V ${endY}
-  `
+  // general case
+  /*      (startX, startY)
+                  |
+                  |
+    (branch) _____|
+            |
+            |
+            |
+      (endX, endY)
+  */
+  branch = branch || (endY - startY) / 2
+  return `M ${startX}, ${startY} v ${branch} H ${endX} V ${endY}`
 }
 
 function randomColor () {
