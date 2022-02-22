@@ -20,8 +20,10 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
 
   */
   if (directed && startY === endY) {
-    const offset = 85 // TODO derive this from RADIUS?
-    return `M ${startX}, ${startY} v ${offset} H ${startX + (startX < endX ? offset : -offset)} v ${-2 * offset} H ${endX} V ${endY}`
+    const offsetY = 85
+    const offsetX = 75
+    // these a semi-magic numbers which depened on other RADIUS + SPACING + OFFSET consts
+    return `M ${startX}, ${startY} v ${offsetY} H ${startX + (startX < endX ? offsetX : -offsetX)} v ${-2 * offsetY} H ${endX} V ${endY}`
   }
 
   // general case

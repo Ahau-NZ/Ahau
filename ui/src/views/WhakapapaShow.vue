@@ -778,7 +778,7 @@ export default {
     if (!this.whakapapaView) return
     if (this.whakapapaView.name === 'Loading') return
     if (!this.whakapapaView.id) {
-      console.error('Trying to save the record count without a whakapapa id', this.whakapapaView)
+      console.warn('Trying to save the record count without a whakapapa id', this.whakapapaView)
       return
     }
 

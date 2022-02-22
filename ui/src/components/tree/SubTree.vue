@@ -1,16 +1,20 @@
 <template>
   <g>
     <!-- only draw this for top node -->
-    <g v-if="root.data.id === whakapapaView.focus">
-      <Link v-for="link in secondaryLinks" :key="`l-i-${link.id}`"
+    <g v-if="root.parent === null">
+      <Link v-for="link in secondaryLinks" :key="link.key"
         :link="link"
       />
     </g>
 
-    <!-- links between root node and partners -->
+    <!--
+      links between root node and:
+        - partners
+        - children
+    -->
     <Link v-for="link in root.links" :link="link" :key="link.key"/>
 
-    <!-- all partners and links to their children -->
+    <!-- partners -->
     <Node v-for="partner in root.partners" :key="`partner-${partner.data.id}`"
       :profileId="partner.data.id"
       :x="partner.x"
@@ -20,15 +24,15 @@
       @focus="focus"
     />
 
-    <!-- draw all children last to overvoid link overlapping -->
-    <SubTree v-for="child in childNodes" :key="`child-${child.data.id}`"
+    <!-- children -->
+    <SubTree v-for="child in root.children" :key="`child-${child.data.id}`"
       :root="child"
       :changeFocus="changeFocus"
       :centerNode="centerNode"
       :showAvatars="showAvatars"
     />
 
-    <!-- this subtree root node -->
+    <!-- rootNode of this subtree -->
     <Node v-if="root.data && root.data.id" :key="`root-${root.data.id}`"
       :profileId="root.data.id"
       :x="root.x"
@@ -57,32 +61,8 @@ export default {
     Node,
     Link
   },
-  data () {
-    return {
-      radius: 50
-    }
-  },
   computed: {
-    ...mapGetters('whakapapa', [
-      'whakapapaView', 'isCollapsedNode', 'showExtendedFamily',
-      'getChildIds', 'getParentIds', 'getPartnerIds', 'getPartnerRelationshipType', 'getChildRelationshipType'
-    ]),
-    ...mapGetters('tree', ['secondaryLinks']),
-    diameter () {
-      return this.radius * 2
-    },
-    profileId () {
-      return this.root.data.id
-    },
-    isCollapsed () {
-      return this.isCollapsedNode(this.profileId)
-    },
-    childNodes () {
-      // if (this.isCollapsed) return []
-      // WIP - this shouldn't be needed is we're fully reactive?
-
-      return this.root.children || []
-    }
+    ...mapGetters('tree', ['secondaryLinks'])
   },
   methods: {
     focus ($event) {
