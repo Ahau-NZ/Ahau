@@ -680,7 +680,7 @@ function calculateLessImportantLinks (state, getters, rootState, rootGetters) {
           strokeLinejoin: 'round',
           strokeDasharray: isDashed ? 2.5 : 0
         },
-        d: settings.path(coords)
+        d: settings.path(coords) // << commented out
       })
     })
   })

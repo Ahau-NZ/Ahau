@@ -1,49 +1,35 @@
 <template>
   <g>
     <!-- only draw this for top node -->
-    <!--
     <g v-if="root.data.id === whakapapaView.focus">
-      <g v-for="link in secondaryLinks" :key="`l-i-${link.id}`">
-        <Link :link="link"/>
-      </g>
+      <Link v-for="link in secondaryLinks" :key="`l-i-${link.id}`"
+        :link="link"
+      />
     </g>
-    -->
 
     <!-- links between root node and partners -->
     <Link v-for="link in root.links" :link="link" :key="link.key"/>
 
     <!-- all partners and links to their children -->
-    <g v-for="partner in root.partners" :key="`partner-${partner.data.id}`">
-      <!--
-      <g class="child-group">
-        <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
-          <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
-        </g>
-      </g>
-      -->
-      <Node
-        :profileId="partner.data.id"
-        :x="partner.x"
-        :y="partner.y"
-        isPartner
-        :showAvatars="showAvatars"
-        @focus="focus"
-      />
-    </g>
+    <Node v-for="partner in root.partners" :key="`partner-${partner.data.id}`"
+      :profileId="partner.data.id"
+      :x="partner.x"
+      :y="partner.y"
+      isPartner
+      :showAvatars="showAvatars"
+      @focus="focus"
+    />
 
     <!-- draw all children last to overvoid link overlapping -->
-    <g v-for="child in childNodes" :key="`child-${child.data.id}`">
-      <!-- [<Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/> -->
-      <SubTree
-        :root="child"
-        :changeFocus="changeFocus"
-        :centerNode="centerNode"
-        :showAvatars="showAvatars"
-      />
-    </g>
+    <SubTree v-for="child in childNodes" :key="`child-${child.data.id}`"
+      :root="child"
+      :changeFocus="changeFocus"
+      :centerNode="centerNode"
+      :showAvatars="showAvatars"
+    />
 
     <!-- this subtree root node -->
-    <Node v-if="root.data && root.data.id"
+    <Node v-if="root.data && root.data.id" :key="`root-${root.data.id}`"
       :profileId="root.data.id"
       :x="root.x"
       :y="root.y"

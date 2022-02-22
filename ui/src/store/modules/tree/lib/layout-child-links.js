@@ -60,6 +60,14 @@ export default function layoutChildLinks (rootNode, rootGetters) {
   ]
 }
 
+const Y_OFF = 5
+
+// tracks
+//
+//          5 -- soloLinks
+// midpoint 0
+//         -5 -- multiLinks
+
 function soloLink (rootNode, parentNode, childNode, relType) {
   return {
     key: linkKey('child', parentNode, childNode),
@@ -69,12 +77,13 @@ function soloLink (rootNode, parentNode, childNode, relType) {
         startY: parentNode.y,
         endX: childNode.x,
         endY: childNode.y
-      }
-      // settings.branch
+      },
+      (parentNode.y + childNode.y) / 2 - Y_OFF
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
       // TODO no longer true?
+      opacity: 0.5,
       strokeDasharray: (relType === 'birth')
         ? 0
         : 2.5 // for drawing a isDashed link to represent adopted/whangai
@@ -86,8 +95,8 @@ function multiLink (rootNode, [A, B], childNode, relType) {
   const radius = (node) => (node === rootNode) ? RADIUS : PARTNER_RADIUS
 
   const startX = A.x < B.x
-    ? (A.x + radius(A) - B.x - radius(B)) / 2
-    : (B.x + radius(B) - A.x - radius(A)) / 2
+    ? (A.x + radius(A) + B.x - radius(B)) / 2
+    : (B.x + radius(B) + A.x - radius(A)) / 2
 
   return {
     key: linkKey('child', [A, B], childNode),
@@ -97,8 +106,8 @@ function multiLink (rootNode, [A, B], childNode, relType) {
         startY: A.y,
         endX: childNode.x,
         endY: childNode.y
-      }
-      // settings.branch
+      },
+      (A.y + childNode.y) / 2 + Y_OFF
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color

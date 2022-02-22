@@ -20,7 +20,7 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
 
   */
   if (directed && startY === endY) {
-    const offset = 80 // TODO derive this from RADIUS?
+    const offset = 85 // TODO derive this from RADIUS?
     return `M ${startX}, ${startY} v ${offset} H ${startX + (startX < endX ? offset : -offset)} v ${-2 * offset} H ${endX} V ${endY}`
   }
 
@@ -34,8 +34,26 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
             |
       (endX, endY)
   */
-  branch = branch || (endY - startY) / 2
-  return `M ${startX}, ${startY} v ${branch} H ${endX} V ${endY}`
+  branch = branch == null ? (endY + startY) / 2 : branch // absolute height
+
+  /* square */
+  return `M ${startX}, ${startY} V ${branch} H ${endX} V ${endY}`
+
+  /* straight down to branch, bezier curve down to child */
+  // return `M ${startX}, ${startY} V ${branch} C ${endX} ${branch} ${endX} ${branch} ${endX} ${endY}`
+
+  /* better curve */
+  // const radius = Math.min(
+  //   endY - 50 - branch, // 50 is RADIUS of rootNode
+  //   Math.abs(endX - startX)
+  // )
+  // return `
+  //   M ${startX}, ${startY}
+  //   V ${branch}
+  //   H ${endX + (startX > endX ? +1 : -1) * radius}
+  //   A ${radius} ${radius} 0 0 ${startX > endX ? 0 : 1} ${endX} ${endY - 50}
+  //   V ${endY}
+  // `
 }
 
 function randomColor () {

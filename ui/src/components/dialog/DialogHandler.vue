@@ -228,6 +228,7 @@ export default {
     ...mapActions('tribe', ['initGroup']),
     ...mapActions(['loading', 'setDialog']),
     ...mapActions('whakapapa', [
+      'loadWhakapapaView',
       'saveWhakapapaView',
       'removeLinksToProfile'
     ]),

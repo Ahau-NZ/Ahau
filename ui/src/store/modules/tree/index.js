@@ -68,7 +68,6 @@ export default function () {
     tree (state, getters, rootState, rootGetters) {
       const treeLayout = getters.layout(getters.root)
 
-      // WIP HERE !!!
       // for each node in the tree:
       treeLayout.each(node => {
         // add partners (sorted by children)
@@ -93,12 +92,15 @@ export default function () {
     descendants (state, getters) {
       return getters.tree.descendants()
       // returns the array of descendants starting with the root node, then followed by each child in topological order
-      // TODO maybe drop descendants for specific tools like tree.find, tree.map
     },
 
     // nodes
     getNode: (state, getters) => (id) => {
-      return getters.descendants.find(node => node && node.data.id === id)
+      const node = getters.descendants.find(node => node && node.data.id === id)
+      if (node) return node
+
+      const rootNode = getters.descendants.find(node => node.partners.some(partner => partner.data.id === id))
+      if (rootNode) return rootNode.partners.find(partner => partner.data.id === id)
     },
     getParentNodeId: (state, getters) => (id) => {
       const node = getters.getNode(id)
@@ -150,10 +152,8 @@ export default function () {
 
     // linkNodes
     secondaryLinks (state, getters, rootState, rootGetters) {
-      return []
-
       // TEMP
-      const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child') // eslint-disable-line
+      const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child')
 
       return Object.entries(linksByChild).reduce(
         (acc, [childId, childLinks]) => {
@@ -173,7 +173,7 @@ export default function () {
               return
             }
 
-            acc.push(buildLink(parentNode, childNode, childLink.relationshipType))
+            acc.push(secondaryLink(parentNode, childNode, childLink.relationshipType))
           })
 
           return acc
@@ -208,16 +208,15 @@ export default function () {
 }
 
 const LINK_OFFSET = 10
-function buildLink (fromNode, toNode, relationshipType) {
+function secondaryLink (fromNode, toNode, relationshipType) {
   const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
 
   const coords = {
-    startX: fromNode.x + (fromNode.radius || 50),
-    startY: fromNode.y + (fromNode.radius || 50),
-    endX: toNode.x + (toNode.radius || 50),
-    endY: toNode.y + (toNode.radius || 50)
+    startX: fromNode.x,
+    startY: fromNode.y,
+    endX: toNode.x,
+    endY: toNode.y
   }
-  // NOTE we wouldn't need radius if all avatars were drawn centered
 
   if (relationshipType === 'partner') {
     coords.directed = false
@@ -241,45 +240,6 @@ function buildLink (fromNode, toNode, relationshipType) {
     d: settings.path(coords)
   }
 }
-
-// function mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, childId, style, parentId, isGhost = false) {
-// function mapChild (rootNode, childNode, parentId) {
-//   const isNonChild = this.getChildRelationshipType(focusNode.data.id, focusNode.data.id) === undefined
-//   if (isNonChild) center = false
-//   // TODO 2022-02-15 mix - I think I've replaced this correctly, but not sure
-
-//   const relationshipType = this.getChildRelationshipType(parentId, childNode.data.id)
-//   // dash link if they are not related by adopted/whangai
-//   const isDashed = ['adopted', 'whangai'].includes(relationshipType)
-
-//   // center the link between the parents
-//   if (center) {
-//     x = x - RADIUS + PARTNER_RADIUS - sign * (PARTNER_RADIUS + 10) // end constant is dependant on radius, PARTNER_RADIUS, X_PADDING
-//     y = yOffset - RADIUS
-//   }
-
-//   // offcenter links to avoid overlapping with partner or main parent node links
-//   const offCenter = !isGhost && !center
-
-//   return {
-//     ...childNode,
-//     link: {
-//       style: {
-//         ...style, // inherits the style from the parent so the links are the same color
-//         strokeDasharray: isDashed ? 2.5 : 0 // for drawing a isDashed link to represent adopted/whangai
-//       },
-//       d: settings.path( // for drawing a link from the parent to child
-//         {
-//           startX: offCenter ? x + PARTNER_RADIUS : x + RADIUS,
-//           startY: offCenter ? yOffset + 10 : y + RADIUS,
-//           endX: offCenter ? childNode.x + this.radius + xOffset : childNode.x + this.radius,
-//           endY: childNode.y + this.radius
-//         },
-//         settings.branch
-//       )
-//     }
-//   }
-// }
 
 function getBirthOrder (profile) {
   if (!profile || profile.birthOrder == null) return undefined // sorts to end
