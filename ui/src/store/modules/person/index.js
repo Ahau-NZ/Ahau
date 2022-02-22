@@ -39,10 +39,7 @@ export default function (apollo) {
   }
 
   async function savePerson (input) {
-    const res = await apollo.mutate(
-      savePersonMutation(input)
-    )
-
+    const res = await apollo.mutate(savePersonMutation(input))
     if (res.errors) throw res.errors
 
     return res.data.saveProfile // profileId
@@ -112,16 +109,16 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async deletePerson (_, { id, allowPublic }) {
+    async deletePerson ({ commit, dispatch }, { id, details, allowPublic }) {
       try {
         if (!id) throw new Error('a profile id is required to delete a person')
 
-        const res = await apollo.mutate(
-          deletePerson(id, allowPublic)
-        )
+        const res = await apollo.mutate(deletePerson(id, details, allowPublic))
 
         if (res.errors) throw res.errors
 
+        commit('tombstoneId', id)
+        dispatch('whakapapa/removeLinksToProfile', id, { root: true })
         return res.data.saveProfile
       } catch (err) {
         console.error('Something went wrong while trying to delete a person', id)
