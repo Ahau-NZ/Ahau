@@ -16,6 +16,7 @@ const GET_PERSON_MINIMAL = gql`
 
       aliveInterval
       deceased
+      birthOrder
       
       tombstone {
         date

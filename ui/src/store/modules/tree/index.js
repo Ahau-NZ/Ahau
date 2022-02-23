@@ -11,6 +11,7 @@ import {
 } from './lib'
 
 import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE } from './constants'
+import calculateAge from '../../../lib/calculate-age'
 
 export default function () {
   const state = {
@@ -63,16 +64,29 @@ export default function () {
     root (state, getters, rootState, rootGetters) {
       const nestedWhakapapa = rootGetters['whakapapa/nestedWhakapapa']
       return d3Hierarchy(nestedWhakapapa)
-        // sort the children by birthOrder! - see https://github.com/d3/d3-hierarchy#node_sort
-        .sort((a, b) => (
-          getBirthOrder(rootGetters['person/person'](a.id)) -
-          getBirthOrder(rootGetters['person/person'](b.id))
-          // NOTE we could also sort by birthDate...
-          // TODO smoke test this
-        ))
-        // calculate the total number of nodes in each SubTree (cummulatively)
-        // so looking at the top SubTree node tells you how many nodes in the graph
-        // stored in rootNode.data.value
+        /* sort the children by age */
+        // https://github.com/d3/d3-hierarchy#node_sort
+        .sort((a, b) => {
+          const A = getOrderData(rootGetters, a)
+          if (!A) return 0
+          const B = getOrderData(rootGetters, b)
+          if (!B) return 0
+
+          // try to compare age!
+          if (A.age > B.age) return 1
+          if (A.age < B.age) return -1
+
+          // fallback to birthOrder
+          if (A.birthOrder > B.birthOrder) return 1
+          if (A.birthOrder < B.birthOrder) return -1
+
+          if (!A.birthOrder) return 1
+          if (!B.birthOrder) return -1
+
+          return 0
+        })
+        /* calculate the total number of nodes in each SubTree (cummulatively) */
+        // see rootNode.value to see how many nodes are in the graph below rootNode
         .sum(nodeData => {
           return 1 + rootGetters['whakapapa/getPartnerIds'](nodeData.id).length
         })
@@ -152,7 +166,12 @@ export default function () {
   }
 }
 
-function getBirthOrder (profile) {
-  if (!profile || profile.birthOrder == null) return undefined // sorts to end
-  return profile.birthOrder
+function getOrderData (rootGetters, node) {
+  const profile = rootGetters['person/person'](node.data.id)
+  if (!profile) return
+  return {
+    age: profile.aliveInterval && calculateAge(profile.aliveInterval),
+    birthOrder: profile.birthOrder || undefined
+    // NOTE cannot leave null, as e.g. null < 4 === true
+  }
 }
