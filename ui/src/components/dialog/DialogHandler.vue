@@ -165,7 +165,6 @@ export default {
         'parent', 'child', 'sibling', 'partner'
       ].includes(val)
     },
-    loadDescendants: Function,
     loadKnownFamily: Function,
     setSelectedProfile: Function,
     getRelatives: Function
@@ -229,6 +228,7 @@ export default {
     ...mapActions(['loading', 'setDialog']),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
+      'loadDescendants',
       'saveWhakapapaView',
       'removeLinksToProfile'
     ]),
@@ -391,10 +391,7 @@ export default {
 
           // create the link
           if (!ignored) {
-            await this.createPartnerLink({
-              parent,
-              child
-            })
+            await this.createPartnerLink({ parent, child })
           }
 
           // Add children if children quick add links

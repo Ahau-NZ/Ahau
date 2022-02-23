@@ -19,7 +19,7 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
       // TODO come back to find midpoints of parents who are partners
       // (see multiLink in layout-child-links ?)
       childLinks.forEach(childLink => {
-        const parentNode = getters.getNode(childLink.parent)
+        const parentNode = getters.getNode(childLink.parent) || getters.getPartnerNode(childLink.parent)
         if (!parentNode) {
           console.log('cannot find parentNode', childLink.parent)
           return

@@ -7,9 +7,7 @@ import {
   layoutSecondaryLinks
 } from './lib'
 
-// const X_PADDING = 10 // .....
-const NODE_SIZE_X = 150
-const NODE_SIZE_Y = 200
+import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE } from './constants'
 
 export default function () {
   const state = {
@@ -26,19 +24,27 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
-    distanceBetweenNodes: (state, getters) => (nodeA, nodeB, areCousins) => {
+    distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
+      // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
       const { countPartners } = getters
 
-      let combinedPartners = countPartners(nodeA) + countPartners(nodeB)
+      const combinedPartners = countPartners(nodeA) + countPartners(nodeB)
 
-      if (areCousins) {
-        combinedPartners += 0.5 * (
-          countPartners(nodeA.parent) +
-          countPartners(nodeB.parent)
-        )
+      if (nodeA.parent === nodeB.parent) { // nodes are siblings
+        return (
+          RADIUS +
+          (Math.ceil(combinedPartners / 2) * (PARTNER_SPACE + 2 * PARTNER_RADIUS)) +
+          SIBLING_SPACE +
+          RADIUS
+        ) / NODE_SIZE_X
+        // a cheaper approximation:
+        // return 1 + combinedPartners / 2
       }
 
-      return 1 + (0.5 * combinedPartners)
+      // NOTE - could be cousins
+      // (i.e. nodeA.parent.parent === nodeB.parent.parent), but not necessarily
+      const parentsCombinedPartners = countPartners(nodeA.parent) + countPartners(nodeB.parent)
+      return 1 + combinedPartners / 2 + parentsCombinedPartners / 4
     },
 
     layout (state, getters) {
@@ -54,12 +60,19 @@ export default function () {
     root (state, getters, rootState, rootGetters) {
       const nestedWhakapapa = rootGetters['whakapapa/nestedWhakapapa']
       return d3.hierarchy(nestedWhakapapa)
+        // sort the children by birthOrder! - see https://github.com/d3/d3-hierarchy#node_sort
         .sort((a, b) => (
           getBirthOrder(rootGetters['person/person'](a.id)) -
           getBirthOrder(rootGetters['person/person'](b.id))
+          // NOTE we could also sort by birthDate...
+          // TODO smoke test this
         ))
-        // TODO smoke test this
-        // sort the children by birthOrder! - see https://github.com/d3/d3-hierarchy#node_sort
+        // calculate the total number of nodes in each SubTree (cummulatively)
+        // so looking at the top SubTree node tells you how many nodes in the graph
+        // stored in rootNode.data.value
+        .sum(nodeData => {
+          return 1 + rootGetters['whakapapa/getPartnerIds'](nodeData.id).length
+        })
     },
 
     tree (state, getters, rootState, rootGetters) {
@@ -95,11 +108,13 @@ export default function () {
 
     // nodes
     getNode: (state, getters) => (id) => {
-      const node = getters.descendants.find(node => node && node.data.id === id)
-      if (node) return node
+      return getters.descendants.find(node => node && node.data.id === id)
+    },
+    getPartnerNode: (state, getters) => (id) => {
+      const rootNode = getters.descendants.find(node => node.partners.some(partner => partner.data.id === id))
+      if (!rootNode) return
 
-      // const rootNode = getters.descendants.find(node => node.partners.some(partner => partner.data.id === id))
-      // if (rootNode) return rootNode.partners.find(partner => partner.data.id === id)
+      return rootNode.partners.find(partner => partner.data.id === id)
     },
     getParentNodeId: (state, getters) => (id) => {
       const node = getters.getNode(id)
