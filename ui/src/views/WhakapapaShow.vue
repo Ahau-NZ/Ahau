@@ -223,7 +223,6 @@ export default {
   ],
   data () {
     return {
-      isDestroyed: false,
       accessOptions: [],
       fab: false,
       overflow: 'false',
@@ -243,7 +242,6 @@ export default {
 
       download: false,
       searchNodeName: '',
-      nodeIds: [],
       showAvatars: true
     }
   },
@@ -291,9 +289,6 @@ export default {
           value: 'country'
         }
       ]
-    },
-    recordCount () {
-      return [...new Set(this.nodeIds)].length
     }
   },
   watch: {
@@ -343,14 +338,6 @@ export default {
         this.setCurrentAccess(this.accessOptions[0])
       }
     }
-    // TODO need to update the nestedWhakapapa when extendedFamily is changed
-    // showPartners: async function () {
-    //   this.setLoading(true)
-    //   this.setNestedWhakapapa({})
-    //   const nestedWhakapapa = await this.loadDescendants(this.currentFocus)
-    //   this.setNestedWhakapapa(nestedWhakapapa)
-    //   this.setLoading(false)
-    // }
   },
 
   methods: {
@@ -531,32 +518,6 @@ export default {
     setSearchNode (event) {
       this.searchNodeEvent = event
     }
-  },
-  async beforeDestroy () {
-    this.isDestroyed = true
-
-    if (!this.whakapapaView) return
-    if (this.whakapapaView.name === 'Loading') return
-    if (!this.whakapapaView.id) {
-      console.warn('Trying to save the record count without a whakapapa id', this.whakapapaView)
-      return
-    }
-
-    // Test if the whakapapa is loaded or not yet
-    // NOTE ideally we would use this.loadingState but that is returning false
-    if (Object.keys(this.nestedWhakapapa).length === 0) return
-
-    if (!this.whakapapaView.canEdit) return
-    if (this.whakapapaView.recordCount === 0) return
-    if (this.whakapapaView.recordCount === this.recordCount) return
-
-    // if there are more records here than are recorded, update the whakapapa-view
-    const input = {
-      id: this.whakapapaView.id,
-      recordCount: this.recordCount
-    }
-
-    await this.saveWhakapapaView(input)
   },
   destroyed () {
     this.resetWhakapapaView()

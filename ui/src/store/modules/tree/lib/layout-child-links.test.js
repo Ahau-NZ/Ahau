@@ -12,7 +12,7 @@ function node (id, x, y) {
   }
 }
 
-test.only('layoutChildLinks', t => {
+test('layoutChildLinks', t => {
   /*
        Mum---Dad
            |  |
@@ -72,7 +72,7 @@ test.only('layoutChildLinks', t => {
 
   t.deepEqual(
     findLink('_Dad', '_Later').d,
-    'M 0, 0 V -210 H 200 V -400',
+    'M 0, 0 V -205 H 200 V -400',
     'Dad-Later link correct'
   )
 
@@ -86,7 +86,7 @@ test.only('layoutChildLinks', t => {
 
   t.deepEqual(
     findLink(['_Dad', '_Mum'], '_Daughter').d,
-    `M ${dadMumMidpoint}, 0 V -200 H 0 V -400`,
+    `M ${dadMumMidpoint}, 0 V -195 H 0 V -400`,
     'Dad+Mum-Daughter link correct'
   )
 

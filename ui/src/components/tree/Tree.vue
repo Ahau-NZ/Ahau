@@ -70,9 +70,29 @@ export default {
     this.zoom()
     this.scale()
   },
+  beforeDestroy () {
+    if (!this.whakapapaView) return
+    if (this.whakapapaView.name === 'Loading') return
+    if (!this.whakapapaView.canEdit) return
+
+    if (!this.whakapapaView.id) {
+      console.warn('Trying to save the record count without a whakapapa id', this.whakapapaView)
+      return
+    }
+
+    const profileCount = this.tree.value
+    if (!profileCount) return
+    if (this.whakapapaView.recordCount === profileCount) return
+
+    // if there are more records here than are recorded, update the whakapapa-view
+    this.saveWhakapapaView({
+      id: this.whakapapaView.id,
+      recordCount: profileCount
+    })
+  },
 
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     ...mapGetters('tree', ['tree', 'descendants']),
     radius () {
       return settings.radius
@@ -125,7 +145,7 @@ export default {
 
   methods: {
     ...mapActions(['setLoading']),
-    ...mapActions('whakapapa', ['toggleNodeCollapse']),
+    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
 
