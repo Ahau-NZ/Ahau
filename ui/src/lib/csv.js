@@ -1,4 +1,7 @@
-import * as d3 from 'd3'
+import {
+  csvParse as d3CsvParse,
+  csvFormat as d3CsvFormat
+} from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
 import { intervalToDayMonthYear } from './date-helpers'
 import edtf from 'edtf'
@@ -61,7 +64,7 @@ function parse (fileContent) {
   return new Promise((resolve, reject) => {
     const seen = new Set()
 
-    const csv = d3.csvParse(fileContent, (d, i) => {
+    const csv = d3CsvParse(fileContent, (d, i) => {
       var row = i + 1
 
       if (i === 0 && !isEmpty(d.parentNumber)) {
@@ -204,7 +207,7 @@ function mapNodesToCsv (nodes) {
   })
 
   // NOTE: this method doesnt currently support exporting children having multiple parents
-  return d3.csvFormat(rows)
+  return d3CsvFormat(rows)
 }
 
 function nodeToParent (node, parentId) {

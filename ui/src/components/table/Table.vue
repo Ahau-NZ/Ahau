@@ -129,8 +129,7 @@
 </template>
 
 <script>
-
-import * as d3 from 'd3'
+import { pairs as d3Pairs } from 'd3'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 
@@ -361,20 +360,12 @@ export default {
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
-      var currentPath = [
-        sourceId,
-        targetId
-      ]
+      const currentPath = [sourceId, targetId]
 
-      var pairs = d3.pairs(this.paths)
-        .filter(d => {
-          return isEqual(d, currentPath)
-        })
+      const pairs = d3Pairs(this.paths)
+        .filter(d => isEqual(d, currentPath))
 
-      if (pairs.length > 0) {
-        return '#b02425'
-      }
-      return 'lightgrey'
+      return (pairs.length > 0) ? '#b02425' : 'lightgrey'
     },
 
     // changes row colour

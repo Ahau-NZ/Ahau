@@ -1,4 +1,7 @@
-import * as d3 from 'd3'
+import {
+  tree as d3Tree,
+  hierarchy as d3Hierarchy
+} from 'd3'
 
 import {
   layoutPartnerNodes,
@@ -48,7 +51,7 @@ export default function () {
     },
 
     layout (state, getters) {
-      return d3.tree()
+      return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
         .separation((a, b) => {
           return (a.parent === b.parent)
@@ -59,7 +62,7 @@ export default function () {
 
     root (state, getters, rootState, rootGetters) {
       const nestedWhakapapa = rootGetters['whakapapa/nestedWhakapapa']
-      return d3.hierarchy(nestedWhakapapa)
+      return d3Hierarchy(nestedWhakapapa)
         // sort the children by birthOrder! - see https://github.com/d3/d3-hierarchy#node_sort
         .sort((a, b) => (
           getBirthOrder(rootGetters['person/person'](a.id)) -

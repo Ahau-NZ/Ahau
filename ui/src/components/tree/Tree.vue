@@ -38,7 +38,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import * as d3 from 'd3'
+import {
+  select as d3Select,
+  pairs as d3Pairs,
+  zoom as d3Zoom,
+  zoomIdentity as d3ZoomIdentity,
+  event as d3Event
+} from 'd3'
 import isEqual from 'lodash.isequal'
 
 import SubTree from './SubTree'
@@ -154,7 +160,7 @@ export default {
         targetId
       ]
 
-      var pairs = d3.pairs(this.paths)
+      var pairs = d3Pairs(this.paths)
         .filter(d => {
           return isEqual(d, currentPath)
         })
@@ -186,24 +192,24 @@ export default {
       this.$emit('change-focus', profileId)
     },
     zoom () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
       svg.call(
-        d3.zoom()
+        d3Zoom()
           .scaleExtent([0.05, 2])
           .on('zoom', function () {
-            g.attr('transform', d3.event.transform)
+            g.attr('transform', d3Event.transform)
           })
       )
         .on('dblclick.zoom', null)
     },
     scale () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
-      var zoom = d3.zoom()
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
+      var zoom = d3Zoom()
         .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
+          g.attr('transform', d3Event.transform)
         })
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
@@ -217,8 +223,8 @@ export default {
 
       this.nodeCentered = node.data.id
 
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
@@ -229,7 +235,7 @@ export default {
       g.transition()
         .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
-        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+        .on('end', function () { svg.call(d3Zoom().transform, d3ZoomIdentity.translate((x), (y))) })
     },
     toggleCollapse (node) {
       const profile = node.data
@@ -240,8 +246,8 @@ export default {
 
       // setTimeout needed to get new node position after it has finished collapsing/expanding
       setTimeout(() => {
-        var svg = d3.select('#baseSvg')
-        var g = d3.select('#baseGroup')
+        var svg = d3Select('#baseSvg')
+        var g = d3Select('#baseGroup')
 
         var width = this.$refs.tree.clientWidth
         var height = this.$refs.tree.clientHeight
@@ -252,24 +258,24 @@ export default {
         g.transition()
           .duration(700)
           .attr('transform', `translate(${x}, ${y})`)
-          .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+          .on('end', function () { svg.call(d3Zoom().transform, d3ZoomIdentity.translate((x), (y))) })
       }, 100)
     },
     zoomInOut (scale) {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
-      var zoom = d3.zoom()
+      var zoom = d3Zoom()
         .scaleExtent([0.05, 2])
         .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
+          g.attr('transform', d3Event.transform)
         })
 
       zoom.scaleBy(svg.transition().duration(150), scale)
     },
     zoomReset () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
@@ -278,8 +284,8 @@ export default {
         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
         .on('end', function () {
           svg.call(
-            d3.zoom().transform,
-            d3.zoomIdentity.translate((width / 2), (height / 2))
+            d3Zoom().transform,
+            d3ZoomIdentity.translate((width / 2), (height / 2))
               .scale(1)
           )
         })

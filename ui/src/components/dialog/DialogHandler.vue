@@ -99,7 +99,6 @@
 
 <script>
 import pick from 'lodash.pick'
-import * as d3 from 'd3'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -192,7 +191,7 @@ export default {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapGetters('whakapapa', ['nestedWhakapapa']),
-    ...mapGetters('tree', ['getParentNodeId']),
+    ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -751,6 +750,7 @@ export default {
         i only needed the nodes in this tree to be able to check if i can add them or not
       */
     findInTree (profileId) {
+      // TODO rename isInTree
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
 
       // if they are a sibling
@@ -762,28 +762,15 @@ export default {
           return id === profileId
         })
       })
-
       if (isParentsPartner) return true
 
-      var root = d3.hierarchy(this.nestedWhakapapa)
+      // TODO replace with vuex/tree descendants.find
+      const rootNode = this.getNode(profileId)
+      if (rootNode) return true
 
-      var partners = []
+      const partnerNode = this.getPartnerNode(profileId)
+      if (partnerNode) return true
 
-      var family = [...root.ancestors(), ...root.descendants()].map(node => {
-        if (node.data.partners) {
-          node.data.partners.forEach(partner => {
-            partners.push(partner)
-          })
-        }
-
-        return node.data
-      }).filter(obj => obj.id !== this.selectedProfile.id) // take this out
-
-      family = [...family, ...partners] // combine them
-
-      if (family.find(obj => obj.id === profileId)) {
-        return true // was found
-      }
       return false // wasnt found
     },
     async getNodePredecessors (currentId) {
