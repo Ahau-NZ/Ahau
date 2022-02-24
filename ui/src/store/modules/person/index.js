@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import clone from 'lodash.clonedeep'
 
-import { getRelatives, getPerson } from '@/lib/person-helpers'
+import { getRelatives, getPerson as getPersonAndWhanau } from '@/lib/person-helpers'
 import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
 
 export default function (apollo) {
@@ -60,10 +60,10 @@ export default function (apollo) {
       }
     },
     async getPerson (_, profileId) {
+      // loads all profile fields + siblings, partners, ....
+      // TODO look into deprecating this - should use getPersonFull + loadDescendants
       try {
-        const res = await apollo.query(
-          getPerson(profileId)
-        )
+        const res = await apollo.query(getPersonAndWhanau(profileId))
 
         if (res.errors) throw res.errors
 
@@ -73,10 +73,9 @@ export default function (apollo) {
       }
     },
     async getPersonFull (_, profileId) {
+      // loads all profile fields AND any associated admin profile
       try {
-        const res = await apollo.query(
-          getPersonFull(profileId)
-        )
+        const res = await apollo.query(getPersonFull(profileId))
 
         if (res.errors) throw res.errors
 
@@ -85,12 +84,10 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a persons details')
       }
     },
-    // same as getPerson but gets a person with minimal fields rather then all fields
     async getPersonMinimal (_, profileId) {
+      // loads a profile with only what's needed for the tree (avatar / things needed for fallback, name, ordering info)
       try {
-        const res = await apollo.query(
-          getPersonMinimal(profileId)
-        )
+        const res = await apollo.query(getPersonMinimal(profileId))
 
         if (res.errors) throw res.errors
 

@@ -130,17 +130,19 @@
 
 <script>
 import { pairs as d3Pairs } from 'd3'
+import { mapGetters, mapActions } from 'vuex'
+
+import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 
 import calculateAge from '../../lib/calculate-age.js'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+
 import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
-
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -170,9 +172,32 @@ export default {
       scrollTop: ''
     }
   },
-  mounted () {
+  async mounted () {
     this.componentLoaded = true
     this.tableOverflow()
+    const { loadPersonFull } = this
+
+    // NOTE we use an async iterator here because with something like Promise.all
+    // it would try to ram all descendants through graphql query and crash the app
+    // with a big tree.
+    // This is loke pull-streams but with async-await (ugly aye)
+
+    async function * generateLoader (nodes) {
+      for (let i = 0; i < nodes.length; i++) {
+        await loadPersonFull(nodes[i].data.id)
+        await Promise.all(
+          nodes[i].partners
+            .map(node => loadPersonFull(node.data.id))
+        )
+        yield i
+      }
+    }
+
+    const generator = generateLoader(this.descendants)
+    for await (let i of generator) { // eslint-disable-line
+      // could update a progres
+    }
+    // could update 'done loading' here
   },
 
   computed: {
@@ -330,6 +355,7 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('person', ['loadPersonFull']),
     // sets the width of the table
     onscroll (e) {
       this.scrollTop = e.target.scrollTop
