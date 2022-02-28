@@ -21,6 +21,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     let sign = (i >= midway) ? 1 : -1
 
     const partnerChildIds = rootGetters['whakapapa/getChildIds'](partnerId)
+      .filter(childId => rootGetters['whakapapa/getChildRelationshipType'](partnerId, childId) === 'birth')
 
     if (partnerChildIds.length) {
       // find the position of partnerId's children below the the rootNode

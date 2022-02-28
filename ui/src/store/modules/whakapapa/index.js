@@ -8,6 +8,8 @@ import getExtendedFamily from './lib/get-extended-family'
 import { saveLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
+const UNKNOWN_REL_TYPE = 'unknown'
+
 const loadingView = () => ({
   name: 'Loading...',
   description: '',
@@ -270,7 +272,7 @@ export default function (apollo) {
       childLinks.forEach(({ parent, child, relationshipType }) => {
         const newChildren = {
           ...(state.childLinks[parent] || {}),
-          [child]: relationshipType
+          [child]: relationshipType || UNKNOWN_REL_TYPE
         }
 
         Vue.set(state.childLinks, parent, newChildren)
@@ -280,7 +282,7 @@ export default function (apollo) {
         const [partnerA, partnerB] = [parent, child].sort()
         const newPartners = {
           ...(state.partnerLinks[partnerA] || {}),
-          [partnerB]: relationshipType
+          [partnerB]: relationshipType || UNKNOWN_REL_TYPE
         }
 
         Vue.set(state.partnerLinks, partnerA, newPartners)
