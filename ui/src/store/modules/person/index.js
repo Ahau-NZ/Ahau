@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import clone from 'lodash.clonedeep'
 
 import { getRelatives, getPerson } from '@/lib/person-helpers'
 import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
@@ -15,16 +14,9 @@ export default function (apollo) {
   }
 
   const getters = {
-    selectedProfile (state) {
-      return state.selectedProfile
-    },
-    person: state => (profileId) => {
-      // TODO why are we cloning here?
-      return clone(state.profiles[profileId])
-    },
-    isTombstoned: state => (profileId) => {
-      return state.tombstoned.has(profileId)
-    }
+    selectedProfile: (state) => state.selectedProfile,
+    person: state => (profileId) => state.profiles[profileId],
+    isTombstoned: state => (profileId) => state.tombstoned.has(profileId)
   }
 
   const mutations = {

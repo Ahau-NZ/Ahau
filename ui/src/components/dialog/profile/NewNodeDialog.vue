@@ -149,7 +149,7 @@ export default {
         'child', 'parent', 'sibling', 'partner'
       ].includes(val)
     },
-    findInTree: Function
+    isInTree: Function
   },
   data () {
     return {
@@ -456,7 +456,7 @@ export default {
         if (isNewPartnerExistingChildsParent) return false
       }
 
-      if (this.findInTree(profile.id)) return true
+      if (this.isInTree(profile.id)) return true
 
       return false
     },

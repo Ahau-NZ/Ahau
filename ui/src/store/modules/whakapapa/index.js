@@ -37,7 +37,6 @@ const loadingView = () => ({
 
 export default function (apollo) {
   const state = {
-    // loading, // TODO
     view: loadingView(),
     lastView: loadingView(),
 
@@ -65,7 +64,6 @@ export default function (apollo) {
     showExtendedFamily: state => state.view.extendedFamily,
 
     lastWhakapapaView: state => state.lastView,
-    // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
 
     /* getter methods */
     isCollapsedNode: state => (id) => Boolean(state.collapsed[id]),
@@ -165,15 +163,15 @@ export default function (apollo) {
       const { partners } = getExtendedFamily(state, getters, [id])
       return partners
     },
-    nestedWhakapapa: (state, getters) => {
+    nestedDescendants: (state, getters) => {
       // TODO rename descendantsTree
       if (!state.view || !state.view.focus) return {}
       // starts at the focus and builds the tree as the data comes in
 
-      return getters.buildNestedWhakapapa(state.view.focus)
+      return getters.buildNestedDescendants(state.view.focus)
     },
     // TODO see if can extract this function
-    buildNestedWhakapapa: (state, getters) => (parentId, opts = {}) => {
+    buildNestedDescendants: (state, getters) => (parentId, opts = {}) => {
       const {
         lineage = new Set()
       } = opts
@@ -195,7 +193,7 @@ export default function (apollo) {
           .filter(childId => getters.isImportantLink(childId, parentId))
           .map(childId => {
             // console.log('recursing', childId)
-            return getters.buildNestedWhakapapa(childId, { lineage: new Set(lineage) })
+            return getters.buildNestedDescendants(childId, { lineage: new Set(lineage) })
             // we create a new "lineage", so that each branching of the tree can record
             // it's own lineage of people, allowing duplicate profiles across branches
             // (this behaves like a "path" except we use a set because we don't care about author)

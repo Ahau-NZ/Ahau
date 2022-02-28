@@ -14,14 +14,14 @@
           <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
       </defs>
-      <circle
+      <circle v-if="!imageSrc"
         :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius"
       />
       <image
-        :xlink:href="imageSrc"
+        :xlink:href="imageSrc || defaultImage()"
         :width="diameter"
         :height="diameter"
         :clip-path="`url(#${clipPathId})`"
@@ -33,9 +33,11 @@
         @click="openMenu"
       />
     </g>
+
     <g v-if="isCollapsed" :style="collapsedStyle">
       <text> ... </text>
     </g>
+
     <g v-if="!showAvatars" :style="nameTextStyle">
       <rect :width="textWidth*2" y="-25" height="30"></rect>
       <text style="font-size: 30px;">{{ displayName }}</text>
@@ -44,8 +46,8 @@
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ displayName }}</text>
     </g>
-    <g
-      v-if="isPartner && hasAncestors && !isDuplicate"
+
+    <g v-if="isPartner && hasAncestors && !isDuplicate"
       :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
     >
       <text
@@ -63,13 +65,12 @@
 import get from 'lodash.get'
 import { mapGetters, mapActions } from 'vuex'
 
+import NodeMenuButton from './NodeMenuButton.vue'
+
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import NodeMenuButton from './NodeMenuButton.vue'
-
-const RADIUS = 50
-const PARTNER_SHRINK = 0.7
+import { RADIUS, PARTNER_RADIUS } from '@/store/modules/tree/constants'
 
 export default {
   name: 'Node',
@@ -90,7 +91,7 @@ export default {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
       },
-      radius: this.isPartner ? PARTNER_SHRINK * RADIUS : RADIUS
+      radius: this.isPartner ? PARTNER_RADIUS : RADIUS
     }
   },
   mounted () {
@@ -98,7 +99,7 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['person']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode']),
+    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds']),
     profile () {
       return this.person(this.profileId) || {}
     },
@@ -119,7 +120,10 @@ export default {
       return false
     },
     hasAncestors () {
-      return this.profile.parents && this.profile.parents.length > 0
+      return (
+        this.getParentIds(this.profileId) > 0 ||
+        (this.profile.parents && this.profile.parents.length > 0)
+      )
     },
     clipPathId () {
       return this.isPartner ? 'partnerCirlce' : 'myCircle'
@@ -128,10 +132,7 @@ export default {
       return this.radius * 2
     },
     imageSrc () {
-      const uri = get(this.profile, 'avatarImage.uri')
-      if (uri) return uri
-
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+      return get(this.profile, 'avatarImage.uri')
     },
     position () {
       return {
@@ -169,6 +170,9 @@ export default {
   methods: {
     ...mapActions('tree', ['setMouseEvent']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
+    defaultImage () {
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+    },
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)

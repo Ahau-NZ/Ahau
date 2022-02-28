@@ -62,8 +62,8 @@ export default function () {
     },
 
     root (state, getters, rootState, rootGetters) {
-      const nestedWhakapapa = rootGetters['whakapapa/nestedWhakapapa']
-      return d3Hierarchy(nestedWhakapapa)
+      const nestedDescendants = rootGetters['whakapapa/nestedDescendants']
+      return d3Hierarchy(nestedDescendants)
         /* sort the children by age */
         // https://github.com/d3/d3-hierarchy#node_sort
         .sort((a, b) => {
@@ -95,6 +95,13 @@ export default function () {
     tree (state, getters, rootState, rootGetters) {
       const treeLayout = getters.layout(getters.root)
 
+      const getChildType = (parentNode, childNode) => {
+        return rootGetters['whakapapa/getChildRelationshipType'](parentNode.data.id, childNode.data.id)
+      }
+      const getPartnerType = (A, B) => {
+        return rootGetters['whakapapa/getPartnerRelationshipType'](A.data.id, B.data.id)
+      }
+
       // for each node in the tree:
       treeLayout.each(node => {
         // add partners (sorted by children)
@@ -107,8 +114,8 @@ export default function () {
         //    - rootNode + partner --> child
 
         node.links = [
-          ...layoutChildLinks(node, rootGetters),
-          ...layoutPartnerLinks(node, rootGetters)
+          ...layoutChildLinks(node, { getChildType, getPartnerType }),
+          ...layoutPartnerLinks(node, { getPartnerType })
         ]
       })
 

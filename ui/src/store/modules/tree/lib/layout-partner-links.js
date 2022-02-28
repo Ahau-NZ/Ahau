@@ -2,11 +2,11 @@ import linkStyle from './link-style'
 import linkKey from './link-key'
 import settings from '../../../../lib/link'
 
-export default function layoutPartnerLinks (rootNode, rootGetters) {
+export default function layoutPartnerLinks (rootNode, { getPartnerType }) {
   if (!rootNode.partners) throw new Error('missing partners')
 
   return rootNode.partners.reduce((acc, partnerNode, i) => {
-    const type = rootGetters['whakapapa/getPartnerRelationshipType'](rootNode.data.id, partnerNode.data.id)
+    const type = getPartnerType(rootNode, partnerNode)
     if (!['partners', 'inferred'].includes(type)) return acc
 
     acc.push({

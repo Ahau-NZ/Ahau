@@ -52,17 +52,19 @@ test('layoutChildLinks', t => {
     }
   }
 
-  const rootGetters = {
-    'whakapapa/getChildRelationshipType': (parentId, childId) => {
+  const getters = {
+    getChildType: (parent, child) => {
+      const parentId = parent.data.id
+      const childId = child.data.id
       return childLinks[parentId] && childLinks[parentId][childId]
     },
-    'whakapapa/getPartnerRelationshipType': (partnerA, partnerB) => {
-      const [A, B] = [partnerA, partnerB].sort()
+    getPartnerType: (partnerA, partnerB) => {
+      const [A, B] = [partnerA.data.id, partnerB.data.id].sort()
       return partnerLinks[A] && partnerLinks[A][B]
     }
   }
 
-  const links = layoutChildLinks(rootNode, rootGetters)
+  const links = layoutChildLinks(rootNode, getters)
   t.equal(links.length, 3, 'correct number of links')
 
   const findLink = (parents, child) => {

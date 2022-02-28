@@ -5,16 +5,10 @@ import settings from '../../../../lib/link'
 
 const pileSort = require('pile-sort')
 
-export default function layoutChildLinks (rootNode, rootGetters) {
+export default function layoutChildLinks (rootNode, { getChildType, getPartnerType }) {
   if (!rootNode.children || !rootNode.children.length) return []
 
   const adults = [rootNode, ...rootNode.partners]
-  const getChildType = (parentNode, childNode) => {
-    return rootGetters['whakapapa/getChildRelationshipType'](parentNode.data.id, childNode.data.id)
-  }
-  const getPartnerType = (A, B) => {
-    return rootGetters['whakapapa/getPartnerRelationshipType'](A.data.id, B.data.id)
-  }
 
   // find all the children with only one parentLink (of each type) among the adults
   const [soloLinkChildren, multiLinkChildren] = pileSort(
