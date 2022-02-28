@@ -100,7 +100,10 @@ export default {
       const search = normalizeString(this.searchString)
 
       return this.descendants
-        .map(node => this.person(node.data.id))
+        .flatMap(node => [
+          this.person(node.data.id),
+          ...node.partners.map(node => this.person(node.data.id))
+        ])
         .filter(d => { // d = minimalProfile here
           if (!d) return false
           const preferredName = normalizeString(d.preferredName)

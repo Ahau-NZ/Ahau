@@ -40,12 +40,10 @@
 import { mapGetters, mapActions } from 'vuex'
 import {
   select as d3Select,
-  pairs as d3Pairs,
   zoom as d3Zoom,
   zoomIdentity as d3ZoomIdentity,
   event as d3Event
 } from 'd3'
-import isEqual from 'lodash.isequal'
 
 import SubTree from './SubTree'
 import settings from '@/lib/link.js'
@@ -99,16 +97,12 @@ export default {
 
   computed: {
     ...mapGetters('whakapapa', ['whakapapaView']),
-    ...mapGetters('tree', ['tree', 'descendants']),
+    ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode']),
     radius () {
       return settings.radius
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    pathNode () {
-      if (this.searchNodeId === '') return null
-      return this.descendants.find(d => d.data.id === this.searchNodeId)
     },
     /*
       gets the X position of the tree based on the svg size
@@ -133,18 +127,13 @@ export default {
     },
     height () {
       return screen.height
-    },
-    paths () {
-      if (!this.componentLoaded || !this.pathNode) return null
-      return this.root.path(this.pathNode)
-        .map(d => d.data.id)
     }
   },
   watch: {
-    searchNodeId (newVal) {
-      if (newVal === '') return null
+    searchNodeId (id) {
+      if (id === '') return null
 
-      const node = this.descendants.find(node => node.data.id === newVal)
+      const node = this.getNode(id) || this.getPartnerNode(id)
       if (node) this.centerNode(node)
     }
   },
@@ -152,24 +141,6 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
-    pathStroke (sourceId, targetId) {
-      if (!this.paths) return 'darkgrey'
-
-      var currentPath = [
-        sourceId,
-        targetId
-      ]
-
-      var pairs = d3Pairs(this.paths)
-        .filter(d => {
-          return isEqual(d, currentPath)
-        })
-
-      if (pairs.length > 0) {
-        return '#b02425'
-      }
-      return 'darkgrey'
-    },
 
     async checkNonFocusedPartner (profile) {
       if (profile.partners && profile.partners.length > 0) {
