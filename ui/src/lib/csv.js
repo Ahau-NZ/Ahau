@@ -2,9 +2,11 @@ import {
   csvParse as d3CsvParse,
   csvFormat as d3CsvFormat
 } from 'd3'
+
+import edtf from 'edtf'
+
 import { GENDERS, RELATIONSHIPS } from './constants'
 import { intervalToDayMonthYear } from './date-helpers'
-import edtf from 'edtf'
 
 const ssbUri = require('ssb-uri2')
 
@@ -233,17 +235,19 @@ function nodeToPartner (node, partnerId) {
   }
 }
 
+function stringifyArray (arr) {
+  if (!arr || !arr.length) return null
+  return arr.join(', ')
+}
+
 function mapNodeToCsvRow (d) {
-  var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
-  var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
-  var school = d.school.length > 0 ? d.school.join(', ') : null
-  var education = d.education.length > 0 ? d.education.join(', ') : null
+  const aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
 
   const row = {
     number: d.id,
     preferredName: d.preferredName,
     legalName: d.legalName,
-    altNames: altNames,
+    altNames: stringifyArray(d.altNames),
     gender: d.gender,
     relationshipType: d.relationshipType,
     birthOrder: d.birthOrder,
@@ -257,8 +261,8 @@ function mapNodeToCsvRow (d) {
     postCode: d.postCode,
     country: d.country,
     profession: d.profession,
-    education: education,
-    school: school,
+    education: stringifyArray(d.education),
+    school: stringifyArray(d.school),
     avatarImage: exportImage(d.avatarImage),
     headerImage: exportImage(d.headerImage)
   }
