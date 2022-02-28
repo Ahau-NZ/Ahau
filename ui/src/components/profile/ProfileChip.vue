@@ -11,7 +11,7 @@
             :aliveInterval="item.aliveInterval"
             :addable="!addableProfile"
             :clickable="!addSibling"
-            @click="$emit('profile-click', item)"
+            @click="emitWithKey('profile-click')"
           />
         </v-col>
         <v-col :cols="mobile ? '5':'3'" class="py-0" justify="center">
@@ -29,14 +29,14 @@
       </v-row>
     </v-col>
     <v-col cols="3" class="py-0 px-0">
-      <v-select
-        v-if="showRelatedBy"
-        v-model="relatedBy"
+      <v-select v-if="showRelatedBy"
         label="Related by"
+        v-model="relatedBy"
         :items="relationshipTypes"
         :menu-props="{ light: true }"
         hide-details
         style="width: 110px;"
+        change="emitWithKey('related-by')"
       />
     </v-col>
   </v-row>
@@ -67,13 +67,6 @@ export default {
       relatedBy: 'birth'
     }
   },
-  watch: {
-    relatedBy (newVal) {
-      let profile = this.item
-      profile.relationshipType = newVal
-      this.$emit('related-by', profile)
-    }
-  },
   computed: {
     showRelatedBy () {
       return this.addableProfile && this.label !== 'Add partners'
@@ -86,6 +79,12 @@ export default {
     getDisplayName,
     age (aliveInterval) {
       return getBirthYear(aliveInterval)
+    },
+    emitWithKey (key) {
+      this.$emit(key, {
+        id: this.item.id,
+        relationshipType: this.relatedBy
+      })
     }
   }
 }

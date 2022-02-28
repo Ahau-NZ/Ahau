@@ -8,8 +8,8 @@
         :mobile="mobile"
         :index="index"
         :groupType="groupType"
-        :addableProfile="addedProfile(profile)"
-        @profile-click="$emit('profile-click', profile)"
+        :addableProfile="isAdded(profile)"
+        @profile-click="$emit('profile-click', $event)"
         @related-by="$emit('related-by', $event)"
       />
     </v-row>
@@ -36,8 +36,9 @@ export default {
     }
   },
   methods: {
-    addedProfile (profile) {
+    isAdded (profile) {
       if (!this.addedProfiles || !this.addedProfiles.length) return null
+
       let added = this.addedProfiles.some(person => {
         return person.id === profile.id
       })
