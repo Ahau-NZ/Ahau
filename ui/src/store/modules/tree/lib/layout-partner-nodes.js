@@ -21,6 +21,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     let sign = (i >= midway) ? 1 : -1
 
     const partnerChildIds = rootGetters['whakapapa/getChildIds'](partnerId)
+      .filter(childId => rootGetters['whakapapa/getChildRelationshipType'](partnerId, childId) === 'birth')
 
     if (partnerChildIds.length) {
       // find the position of partnerId's children below the the rootNode
@@ -40,13 +41,6 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     // keep a count of the partners on each side
     (sign > 0) ? rightPartners++ : leftPartners++
 
-    // VESIGAL CODE??!
-    // if (!rootGetters['whakapapa/showExtendedFamily']) {
-    //   partnerChildIds = partnerChildIds.filter(childId => {
-    //     return childNodes.some(childNode => childNode.data.id === childId)
-    //   }) // filter out children who arent this nodes
-    // }
-
     const hops = (sign > 0) ? rightPartners : leftPartners
     let hopsDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
     if (hops > 1) hopsDistance += (hops - 1) * PARTNER_RADIUS + PARTNER_SPACE + PARTNER_RADIUS
@@ -64,45 +58,3 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     }
   })
 }
-
-// LEFTOVERS
-//
-// partner style
-// NOTE: children of this partner will inherit this style
-// const style = {
-//   ...DEFAULT_STYLE,
-//   stroke: settings.color.getColor(i)
-// }
-
-// // start point of the partner node links on the Y axist
-// const xOffset = xMultiplier * X_PADDING
-// const yOffset = rootNode.y + (i * settings.partner.spacing.y) + RADIUS
-
-// let link = {}
-// const rel = rootGetters['whakapapa/getPartnerRelationshipType'](rootNode.data.id, partnerId)
-// const isPartnersPlus = ['partners', 'inferred'].includes(rel)
-// // "plus" because includes inferred
-// if (isPartnersPlus) {
-//   link = {
-//     style: {
-//       ...DEFAULT_STYLE,
-//       stroke: settings.color.getColor(i),
-//       strokeDasharray: rel === 'inferred' ? 4 : 0 // for drawing a isDashed link
-//     },
-//     // for drawing the link from the root partner to this partner/partner
-//     d: `
-//       M ${rootNode.x + RADIUS}, ${yOffset}
-//       H ${x + PARTNER_RADIUS}
-//     `
-//   }
-// }
-
-// return {
-//   x,
-//   y,
-//   data: { id: partnerId },
-//   children: partnerChildIds
-//     .map(childId => mapChild({ x, y, sign, center: isPartnersPlus, yOffset, xOffset }, childId, style, partnerId))
-//     .filter(Boolean),
-//   link
-// }
