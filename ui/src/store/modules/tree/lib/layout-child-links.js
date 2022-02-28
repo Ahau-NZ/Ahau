@@ -9,7 +9,6 @@ export default function layoutChildLinks (rootNode, { getChildType, getPartnerTy
   if (!rootNode.children || !rootNode.children.length) return []
 
   const adults = [rootNode, ...rootNode.partners]
-
   // find all the children with only one parentLink (of each type) among the adults
   const [soloLinkChildren, multiLinkChildren] = pileSort(
     rootNode.children,
@@ -63,8 +62,13 @@ const Y_OFF = 5
 //         -5 -- multiLinks
 
 function soloLink (rootNode, parentNode, childNode, relType) {
+  const isDashed = relType !== 'birth'
+  // for drawing a isDashed link to represent adopted/whangai
+
   return {
     key: linkKey('child', parentNode, childNode),
+    parent: parentNode.data.id,
+    child: childNode.data.id,
     d: settings.path( // for drawing a link from the parent to child
       {
         startX: parentNode.x,
@@ -77,15 +81,15 @@ function soloLink (rootNode, parentNode, childNode, relType) {
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
       // TODO no longer true?
-      opacity: 0.5,
-      strokeDasharray: (relType === 'birth')
-        ? 0
-        : 2.5 // for drawing a isDashed link to represent adopted/whangai
+      stroke: isDashed ? '#333' : settings.color.default, // darker than default if dashed
+      strokeDasharray: isDashed ? 2.5 : 0
     })
   }
 }
 
 function multiLink (rootNode, [A, B], childNode, relType) {
+  const isDashed = relType !== 'birth'
+  // for drawing a isDashed link to represent adopted/whangai
   const radius = (node) => (node === rootNode) ? RADIUS : PARTNER_RADIUS
 
   const startX = A.x < B.x
@@ -94,6 +98,8 @@ function multiLink (rootNode, [A, B], childNode, relType) {
 
   return {
     key: linkKey('child', [A, B], childNode),
+    parents: [A.data.id, B.data.id],
+    child: childNode.data.id,
     d: settings.path( // for drawing a link from the parent to child
       {
         startX,
@@ -106,9 +112,8 @@ function multiLink (rootNode, [A, B], childNode, relType) {
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
       // TODO no longer true?
-      strokeDasharray: (relType === 'birth')
-        ? 0
-        : 2.5 // for drawing a isDashed link to represent adopted/whangai
+      stroke: isDashed ? '#333' : settings.color.default, // darker than default if dashed
+      strokeDasharray: isDashed ? 2.5 : 0
     })
   }
 }

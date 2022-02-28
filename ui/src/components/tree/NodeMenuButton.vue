@@ -1,9 +1,6 @@
 <template>
   <g @click.stop="click">
-    <g
-      class="menu-button"
-      :transform="transform"
-    >
+    <g class="menu-button" :transform="transform" >
       <circle
         v-if="mobile"
         opacity="0"
@@ -29,7 +26,10 @@ export default {
   name: 'NodeMenuButton',
   props: {
     show: Boolean,
-    transform: String
+    transform: {
+      type: String,
+      default: 'translate(-10, -10)'
+    }
   },
   computed: {
     mobile () {

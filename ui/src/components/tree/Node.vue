@@ -2,8 +2,8 @@
   <g
     class="node"
     :style="position"
-    @mouseover="hover = true"
-    @mouseleave="hover = false"
+    @mouseover="setHover(true)"
+    @mouseleave="setHover(false)"
     @click="click"
     @mousedown.right="openMenu"
     @contextmenu.prevent
@@ -29,7 +29,7 @@
       />
       <NodeMenuButton
         v-if="showMenuButton"
-        :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
+        :transform="`translate(${1.44 * radius}, ${1.44 * radius})`"
         @click="openMenu"
       />
     </g>
@@ -86,7 +86,6 @@ export default {
   },
   data () {
     return {
-      hover: false,
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
@@ -100,6 +99,7 @@ export default {
   computed: {
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds']),
+    ...mapGetters('tree', ['hoveredProfileId']),
     profile () {
       return this.person(this.profileId) || {}
     },
@@ -113,11 +113,10 @@ export default {
       // TODO 2022-02-11 mix - ideally we won't lean on "other". Is there another way to do this?
     },
     showMenuButton () {
-      if (this.isPartner) return false
-      if (!this.isCollapsed) {
-        if (this.hover) return true
-      }
-      return false
+      // if (this.isPartner) return false
+      if (this.isCollapsed) return false
+
+      return this.hoveredProfileId === this.profileId
     },
     hasAncestors () {
       return (
@@ -168,7 +167,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('tree', ['setMouseEvent']),
+    ...mapActions('tree', ['setMouseEvent', 'setHoveredProfileId']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
     defaultImage () {
       return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
@@ -181,6 +180,10 @@ export default {
       // only change focus when the partner nodes are clicked
       if (this.isPartner) this.$emit('focus', this.profileId)
       else this.$emit('center')
+    },
+    setHover (bool = false) {
+      if (bool) this.setHoveredProfileId(this.profileId)
+      else this.setHoveredProfileId(null)
     }
   }
 }

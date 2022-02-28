@@ -66,7 +66,7 @@ function randomColor () {
 export default {
   path,
   color: {
-    default: 'grey',
+    default: '#666',
     getRandomColor: randomColor,
     getColor (i) {
       if (i < 7) return linkColours[i]

@@ -15,7 +15,8 @@ import calculateAge from '../../../lib/calculate-age'
 
 export default function () {
   const state = {
-    mouseEvent: null
+    mouseEvent: null,
+    hoveredProfileId: null
   }
 
   // we need to know the x/y of each drawn profile (d3 nodes + partners),
@@ -24,6 +25,7 @@ export default function () {
 
   const getters = {
     mouseEvent: state => state.mouseEvent,
+    hoveredProfileId: state => state.hoveredProfileId,
 
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
@@ -155,12 +157,18 @@ export default function () {
   const mutations = {
     setMouseEvent (state, e) {
       state.mouseEvent = e
+    },
+    setHoveredProfileId (state, id) {
+      state.hoveredProfileId = id
     }
   }
 
   const actions = {
     setMouseEvent ({ commit }, e) {
       commit('setMouseEvent', e)
+    },
+    setHoveredProfileId ({ commit }, id) {
+      commit('setHoveredProfileId', id)
     }
   }
 
