@@ -46,6 +46,7 @@ function link (fromNode, toNode, relType) {
 
     directed: relType !== 'partner'
   }
+  if (relType === 'partner') console.error('surprise! I did not think partner links were possible here')
 
   const offsetX = (coords.startX < coords.endX) ? LINK_OFFSET : -LINK_OFFSET
   if (fromNode.children && fromNode.children.length) coords.startX += offsetX
@@ -53,6 +54,8 @@ function link (fromNode, toNode, relType) {
 
   return {
     key: linkKey('secondary', fromNode, toNode),
+    parent: fromNode.data.id,
+    child: toNode.data.id,
     d: settings.path(coords),
     style: linkStyle({
       stroke: '#b22526',
