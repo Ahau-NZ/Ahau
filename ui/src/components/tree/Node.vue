@@ -14,14 +14,14 @@
           <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
       </defs>
-      <circle
+      <circle v-if="!imageSrc"
         :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius"
       />
       <image
-        :xlink:href="imageSrc"
+        :xlink:href="imageSrc || defaultImage()"
         :width="diameter"
         :height="diameter"
         :clip-path="`url(#${clipPathId})`"
@@ -132,10 +132,7 @@ export default {
       return this.radius * 2
     },
     imageSrc () {
-      const uri = get(this.profile, 'avatarImage.uri')
-      if (uri) return uri
-
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+      return get(this.profile, 'avatarImage.uri')
     },
     position () {
       return {
@@ -173,6 +170,9 @@ export default {
   methods: {
     ...mapActions('tree', ['setMouseEvent']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
+    defaultImage () {
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+    },
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)
