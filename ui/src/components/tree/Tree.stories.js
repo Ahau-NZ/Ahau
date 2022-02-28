@@ -100,12 +100,12 @@ export const OnePartner = () => ({
   components: { Tree },
   store: {
     getters: {
-      nestedWhakapapa: onePartner,
+      nestedDescendants: onePartner,
       relationshipLinks
     },
     state: {
       whakapapa: {
-        nestedWhakapapa: onePartner,
+        nestedDescendants: onePartner,
         relationshipLinks
       }
     }
@@ -117,12 +117,12 @@ export const TwoPartners = () => ({
   components: { Tree },
   store: {
     getters: {
-      nestedWhakapapa: twoPartners,
+      nestedDescendants: twoPartners,
       relationshipLinks
     },
     state: {
       whakapapa: {
-        nestedWhakapapa: twoPartners,
+        nestedDescendants: twoPartners,
         relationshipLinks
       }
     }

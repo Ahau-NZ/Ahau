@@ -6,7 +6,7 @@ export default {
 }
 
 export const NoProps = () => ({
-  template: '<SearchBar :nestedWhakapapa="profile"/>',
+  template: '<SearchBar :nestedDescendants="profile"/>',
   data () {
     return {
       profile: personComplete

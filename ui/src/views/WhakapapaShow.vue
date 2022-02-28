@@ -191,7 +191,6 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import NodeMenu from '@/components/menu/NodeMenu.vue'
 
-import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -254,7 +253,7 @@ export default {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -341,11 +340,12 @@ export default {
   },
 
   methods: {
-    ...mapActions('person', ['updateSelectedProfile']),
+    ...mapActions('person', ['setSelectedProfileId']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
     ...mapActions('table', ['resetTableFilters']),
     ...mapActions('tribe', ['getTribe']),
     ...mapActions('whakapapa', ['loadWhakapapaView', 'resetWhakapapaView', 'saveWhakapapaView', 'loadDescendants', 'setExtendedFamily', 'toggleViewMode']),
+    ...mapActions('tree', ['getNode', 'getPartnerNode']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
     },
@@ -468,22 +468,16 @@ export default {
       await this.processSaveWhakapapa({ focus })
     },
     async setSelectedProfile (profile) {
-      if (profile === null) {
-        this.updateSelectedProfile({})
-        return
-      }
+      if (!profile) return this.setSelectedProfileId()
 
       if (typeof profile === 'object') {
+        // TODO look this up
         var loadedProfile = await this.loadKnownFamily(true, profile)
-        this.updateSelectedProfile(loadedProfile)
+        this.setSelectedProfileId(loadedProfile) // ERROR
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
-        var profileInNestedWhakapapa = tree.find(this.nestedWhakapapa, profile)
-        if (profileInNestedWhakapapa) this.updateSelectedProfile(profileInNestedWhakapapa)
-        // NOTE - tree.find no longer needed when we change to updateSelectedProfileById
-        // TODO - delete tree-helpers
-      } else {
-        this.updateSelectedProfile({})
+        const profileInTree = this.getNode(profile) || this.getPartnerNode(profile)
+        if (profileInTree) this.setSelectedProfileId(profile)
       }
     },
     async processSaveWhakapapa (input) {

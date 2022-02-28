@@ -21,7 +21,7 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
-      :findInTree="findInTree"
+      :isInTree="isInTree"
       withView
       @getSuggestions="getSuggestions($event)"
       @create="addPerson($event)"
@@ -55,7 +55,7 @@
       v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedDescendants.id"
       @submit="removeProfile"
       @close="close"
     />
@@ -190,7 +190,7 @@ export default {
   computed: {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('whakapapa', ['nestedDescendants']),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -613,7 +613,7 @@ export default {
         lessRelationship = exsistingDupe.primary.profileId
       } else {
         // NO - there isnt an important relationship so we find the parent which takes "presidence"
-        lessRelationship = (profile.parents && profile.parents.length && this.findInTree(profile.parents[0].id))
+        lessRelationship = (profile.parents && profile.parents.length && this.isInTree(profile.parents[0].id))
           ? profile.parents[0].id // take the first parent
           : profile.partners && profile.partners.length
             ? profile.partners[0].id // otherwise take the first partner? TODO: is this logic right @ben? Need to check!
@@ -710,22 +710,6 @@ export default {
       })
 
       if (this.source !== 'new-registration') {
-      //  DOES THIS DO ANYTHING? 4/11/21
-      // TODO: If nothing is broken after awhile remove
-        // var profiles = {} // flatStore for these suggestions
-
-        // records.forEach(record => {
-        //   record.children = record.children.map(child => {
-        //     profiles[child.id] = child // add this records children to the flatStore
-        //     return child.id // only want the childs ID
-        //   })
-        //   record.parents = record.parents.map(parent => {
-        //     profiles[parent.id] = parent // add this records parents to the flatStore
-        //     return parent.id // only want the parents ID
-        //   })
-        //   profiles[record.id] = record // add this record to the flatStore
-        // })
-
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
@@ -746,32 +730,14 @@ export default {
       this.suggestions = records
     },
     /*
-        needed this function because this.profiles keeps track of more than just the nodes in this tree,
-        i only needed the nodes in this tree to be able to check if i can add them or not
-      */
-    findInTree (profileId) {
-      // TODO rename isInTree
-      if (this.selectedProfile.id === profileId) return true // this is always in the tree
-
-      // if they are a sibling
-      if (this.selectedProfile.siblings.some(s => s.id === profileId)) return true
-
-      var isParentsPartner = this.selectedProfile.parents.some(p => {
-        if (!p.partners) return false // this parent doesnt have partners
-        return p.partners.some(id => {
-          return id === profileId
-        })
-      })
-      if (isParentsPartner) return true
-
-      // TODO replace with vuex/tree descendants.find
-      const rootNode = this.getNode(profileId)
-      if (rootNode) return true
-
-      const partnerNode = this.getPartnerNode(profileId)
-      if (partnerNode) return true
-
-      return false // wasnt found
+      needed this function because this.profiles keeps track of more than just the nodes in this tree,
+      i only needed the nodes in this tree to be able to check if i can add them or not
+    */
+    isInTree (profileId) {
+      return Boolean(
+        this.getNode(profileId) ||
+        this.getPartnerNode(profileId)
+      )
     },
     async getNodePredecessors (currentId) {
       this.predecessorArray.push(currentId) // Push the current person into predecessors array
