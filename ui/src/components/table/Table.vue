@@ -10,7 +10,7 @@
         <line v-if="i !== 0" :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
       <svg id="baseGroup" :width="tableWidth">
-        <g v-if="!flatten" :transform="`translate(${60} ${80})`">
+        <g v-if="!tableFlatten" :transform="`translate(${60} ${80})`">
           <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :class="link.class"/>
           </g>
@@ -19,21 +19,19 @@
           :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
           ref="tree"
         >
-          <g v-for="node in nodes" :key="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" :id="node.data.id" />
+          <g v-for="(node, i) in nodes" :key="`table-${node.data.id}-${i}`" class="node">
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="nodeColor(node.data)" :id="node.data.id" />
             <Node
               :width="colWidth"
               :node="node"
               :radius="nodeRadius"
-              :nodeCentered="nodeCentered"
-              @click="collapse(node)"
-              @open-menu="openContextMenu($event)"
+              @center="centerNode(node)"
               :showLabel="true"
             />
-            <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+            <g v-if="tableFlatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> + </text>
             </g>
-            <g v-if="flatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+            <g v-if="tableFlatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> - </text>
             </g>
             <svg :width="columns[2].x - 45" >
@@ -43,17 +41,18 @@
             </svg>
             <svg :width="columns[3].x - 40" >
               <g v-if="node.data.partners && node.data.partners.length > 0">
-                <Node
-                  v-for="(partner, i) in node.data.partners"
-                  :key="partner.id"
-                  :id="partner.id"
-                  :width="columns[4].x"
-                  :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
-                  :radius="nodeRadius * 0.9"
-                  isPartner
-                  :hideLabel="node.data.partners.length > 1"
-                  @open="updateDialog($event)"
-                />
+                <g v-for="(partner, i) in node.data.partners" :key="`${node.data.id}-partner-${partner && partner.id ? partner.id : ''}-${i}`">
+                  <Node
+                    v-if="partner && partner.id"
+                    :id="partner.id"
+                    :width="columns[4].x"
+                    :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
+                    :radius="nodeRadius * 0.9"
+                    isPartner
+                    :hideLabel="node.data.partners.length > 1"
+                    @open="updateDialog($event)"
+                  />
+                </g>
               </g>
             </svg>
             <svg :width="columns[4].x - 45" >
@@ -63,7 +62,6 @@
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
                 {{ dataField(node, 'age') }}
               </text>
             </svg>
@@ -131,49 +129,28 @@
 </template>
 
 <script>
+import { pairs as d3Pairs } from 'd3'
+import { mapGetters, mapActions } from 'vuex'
 
-import * as d3 from 'd3'
+import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 
 import calculateAge from '../../lib/calculate-age.js'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+
 import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
 
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
-
 export default {
   props: {
-    view: {
-      type: Object,
-      required: true
-    },
-    flatten: {
-      type: Boolean,
-      default: false
-    },
-    filter: {
-      type: Boolean,
-      default: false
-    },
-    searchNodeId: {
-      type: String
-    },
+    searchNodeId: String,
     searchNodeEvent: {
       required: false
     },
-    pan: {
-      type: Number,
-      default: 0
-    },
-    download: {
-      type: Boolean,
-      default: false
-    }
+    download: Boolean
   },
   data () {
     return {
@@ -191,47 +168,55 @@ export default {
         profession: SORT.default,
         country: SORT.default
       },
-      nodeCentered: '',
       sortActive: false,
       scrollTop: ''
     }
   },
-  mounted () {
+  async mounted () {
     this.componentLoaded = true
     this.tableOverflow()
+    const { loadPersonFull } = this
+
+    // NOTE we use an async iterator here because with something like Promise.all
+    // it would try to ram all descendants through graphql query and crash the app
+    // with a big tree.
+    // This is loke pull-streams but with async-await (ugly aye)
+
+    async function * generateLoader (nodes) {
+      for (let i = 0; i < nodes.length; i++) {
+        await loadPersonFull(nodes[i].data.id)
+        await Promise.all(
+          nodes[i].partners
+            .map(node => loadPersonFull(node.data.id))
+        )
+        yield i
+      }
+    }
+
+    const generator = generateLoader(this.descendants)
+    for await (let i of generator) { // eslint-disable-line
+      // could update a progres
+    }
+    // could update 'done loading' here
   },
 
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
-    ...mapTableGetters(['tableFilter', 'tableSort']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getPartnerIds']),
+    ...mapGetters('table', ['descendants', 'descendantLinks', 'tableFilter', 'tableSort', 'tableFlatten']),
+    ...mapGetters('person', ['person']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     colWidth () {
-      if (this.flatten) return 300
+      if (this.tableFlatten) return 300
       return 350
     },
     pathNode () {
       if (this.searchNodeId === '') return null
-      return this.root.descendants().find(d => {
-        return d.data.id === this.searchNodeId
-      })
-    },
-
-    // returns a nested data structure representing a tree based on the treeData object
-    root () {
-      return d3.hierarchy(this.nestedWhakapapa)
-    },
-
-    // creates a new table layout and sets the size depending on number of nodes
-    tableLayout () {
-      var flatten = this.flatten
-      var index = -1
-      var layout = this.root.eachBefore(function (n) {
-        n.y = ++index * 30
-        n.x = flatten ? 0.1 : n.depth * 15
-      })
-      return layout
+      return this.descendants
+        .find(d => {
+          return d.data.id === this.searchNodeId
+        })
     },
     // table height based on number of nodes on table
     tableHeight () {
@@ -241,37 +226,37 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      var nodes = this.tableLayout
-        // returns the array of descendants starting with the root node, then followed by each child in topological order
-        .descendants()
-        .filter(d => {
-          return this.applyFilter(d)
+      var nodes = this.descendants
+        .map(node => {
+          const profileId = node.data.id
+          const profile = this.person(profileId)
+          const partners = this.getPartnerIds(profileId)
+            .map(partnerId => this.person(partnerId))
+
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              ...profile,
+              partners
+            }
+          }
         })
+        .filter(d => this.determineFilter(d))
 
       if (this.sortActive) {
         nodes
-          // sort by preferred name
-          .sort((a, b) => {
-            return this.determineSort(a, b)
-          })
+          .sort((a, b) => this.determineSort(a, b))
       }
 
       return nodes
         // returns a new custom object for each node
-        .map((d, i) => {
+        .map((node, i) => {
           // set width of first column
-          this.setWidth(d.depth)
+          this.setWidth(node.depth)
           return {
-            nodeId: `table-node-${i}-${d.data.id}`,
-            children: d.children,
-            data: d.data,
-            depth: d.depth,
-            height: d.height,
-            parent: d.parent,
-            x: d.x,
-            y: this.flatten ? i * 45 : d.y * 1.5,
-            age: calculateAge(d.data.aliveInterval),
-            color: this.nodeColor(d.data)
+            ...node,
+            y: this.tableFlatten ? i * 45 : node.y * 1.5
           }
         })
     },
@@ -280,8 +265,7 @@ export default {
       returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
     */
     links () {
-      return this.tableLayout
-        .links() // returns the array of links
+      return this.descendantLinks
         .map((d, i) => { // returns a new custom object for each link
           return {
             id: `table-link-${i}-${d.target.data.id}`,
@@ -348,13 +332,12 @@ export default {
       }
     },
     searchNodeEvent () {
-      if (this.searchNodeId !== null) {
-        this.root.descendants().find(d => {
-          if (d.data.id === this.searchNodeId) {
-            this.centerNode(d)
-          }
-        })
-      }
+      if (!this.searchNodeId) return
+
+      const node = this.descendants
+        .some(d => d.data.id === this.searchNodeId)
+
+      if (node) this.centerNode(node)
     },
     download (newVal) {
       if (newVal) {
@@ -365,13 +348,14 @@ export default {
         var hiddenElement = document.createElement('a')
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
         hiddenElement.target = '_blank'
-        hiddenElement.download = this.view.name + '.csv'
+        hiddenElement.download = this.whakapapaView.name + '.csv'
         hiddenElement.click()
       }
     }
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('person', ['loadPersonFull']),
     // sets the width of the table
     onscroll (e) {
       this.scrollTop = e.target.scrollTop
@@ -394,7 +378,7 @@ export default {
 
     // set the width for the first column which needs to be dynamic when showing whakapapa links
     setWidth (depth) {
-      if (!this.flatten && depth > 10) {
+      if (!this.tableFlatten && depth > 10) {
         this.colWidth = depth * 45 - 100
       }
     },
@@ -402,20 +386,12 @@ export default {
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
-      var currentPath = [
-        sourceId,
-        targetId
-      ]
+      const currentPath = [sourceId, targetId]
 
-      var pairs = d3.pairs(this.paths)
-        .filter(d => {
-          return isEqual(d, currentPath)
-        })
+      const pairs = d3Pairs(this.paths)
+        .filter(d => isEqual(d, currentPath))
 
-      if (pairs.length > 0) {
-        return '#b02425'
-      }
-      return 'lightgrey'
+      return (pairs.length > 0) ? '#b02425' : 'lightgrey'
     },
 
     // changes row colour
@@ -531,6 +507,7 @@ export default {
         }
       }
     },
+    // TODO: move these sorts to vuex
     // Determines the sort to be performed depending on the field to be sorted
     determineSort (a, b) {
       const field = this.tableSort.value
@@ -609,14 +586,16 @@ export default {
         behavior: 'smooth'
       })
     },
-    applyFilter (node) {
-      const nameFilter = this.nameMatchesFilter(node)
-      const locationFilter = this.locationMatchesFilter(node)
-      const skillsFilter = this.skillsMatchesFilter(node)
-      const ageFilter = this.filterByAge(node)
-      var nodeDeceased = this.filter && node.data.deceased
+    // TODO: move these filters into table vuex
+    determineFilter (node) {
+      if (this.tableFilter.deceased && node.data.deceased) return false
 
-      return nameFilter && locationFilter && skillsFilter && ageFilter && !nodeDeceased
+      return (
+        this.nameMatchesFilter(node) &&
+        this.locationMatchesFilter(node) &&
+        this.skillsMatchesFilter(node) &&
+        this.filterByAge(node)
+      )
     },
     nameMatchesFilter (node) {
       if (!this.tableFilter.name) return true
@@ -681,9 +660,6 @@ export default {
       if (!nodeAge) return false
       if (nodeAge >= min && nodeAge <= max) return true
       else return false
-    },
-    openContextMenu (event) {
-      this.$emit('open-context-menu', event)
     },
     updateDialog ($event) {
       this.$emit('open', $event)

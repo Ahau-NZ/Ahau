@@ -3,8 +3,10 @@
   <g :id="node.id" :style="groupStyle">
     <g
       class="avatar -main"
+      @mouseover="hover = true"
+      @mouseleave="hover = false"
       @click.prevent="click"
-      @mousedown.right="openMenu($event, profile)"
+      @mousedown.right="openMenu"
       @contextmenu.prevent
     >
       <!-- Avatar -->
@@ -26,30 +28,11 @@
         clip-path="url(#myCircle)"
         :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
-      <!-- nodeMenu -->
-      <g
-        v-if="!isPartner"
-        class="menu-button"
-        @click.prevent.stop="openMenu($event, profile)"
+      <NodeMenuButton
+        v-if="showMenuButton"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
-      >
-        <circle
-          v-if="mobile"
-          opacity="0"
-          cx="20"
-          cy="1"
-          r="22"
-        />
-        <circle
-          stroke="white"
-          fill="white"
-          filter="url(#shadow)"
-          cx="20"
-          cy="1"
-          r="10"
-        />
-        <polygon points="15,0  25,0  20,6" style="fill:#000;" />
-      </g>
+        @click="openMenu"
+      />
     </g>
     <!-- Names -->
     <g v-if="!isPartner" id="node-label" :style="textStyle">
@@ -70,10 +53,12 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import NodeMenuButton from '../tree/NodeMenuButton.vue'
 // import flower.svg from '@/src/assets'
 
 export default {
@@ -85,8 +70,12 @@ export default {
     hideLabel: { type: Boolean, default: false },
     width: { type: Number, required: true }
   },
+  components: {
+    NodeMenuButton
+  },
   data () {
     return {
+      hover: false,
       offsetSize: 15,
       colours: {
         alive: ALIVE_COLOUR,
@@ -95,12 +84,22 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('whakapapa', ['isCollapsedNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    profileId () {
+      return this.profile.id
     },
     profile () {
       if (this.isPartner) return this.node
       return this.node.data
+    },
+    isCollapsed () {
+      return this.isCollapsedNode(this.profileId)
+    },
+    showMenuButton () {
+      return (!this.isCollapsed && this.hover)
     },
     diameter () {
       return this.radius * 2
@@ -134,17 +133,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tree', ['setMouseEvent']),
+    ...mapActions('person', ['setSelectedProfileById']),
     getDisplayName,
     click () {
-      if (this.isPartner) {
-        const dialog = 'view-edit-node'
-        const type = null
-        const profile = this.node
-        this.$emit('open', { dialog, type, profile })
-      } else this.$emit('click')
+      if (!this.isPartner) this.$emit('center')
     },
-    openMenu ($event, profile) {
-      this.$emit('open-menu', { $event, profile })
+    openMenu (e) {
+      this.setMouseEvent(e)
+      this.setSelectedProfileById(this.profileId)
     }
   }
 }

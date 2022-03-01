@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
 import Avatar from '@/components/Avatar.vue'
 
 import isEmpty from 'lodash.isempty'
@@ -41,6 +40,11 @@ import isEqual from 'lodash.isequal'
 import calculateAge from '../../lib/calculate-age'
 import { mapGetters, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
+
+function normalizeString (name) {
+  if (isEmpty(name)) return ''
+  return name.toLowerCase().trim()
+}
 
 export default {
   name: 'SearchBar',
@@ -61,7 +65,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
+    ...mapGetters('tree', ['descendants']),
+    ...mapGetters('person', ['person']),
     ...mapTableGetters(['tableFilter']),
 
     customProps () {
@@ -92,30 +97,35 @@ export default {
       }
     },
     nodes () {
-      return d3.hierarchy(this.nestedWhakapapa)
-        .descendants()
-        .map(d => d.data)
-        .filter(d => {
-          const search = this.setString(this.searchString)
-          const preferredName = this.setString(d.preferredName)
-          const legalName = this.setString(d.legalName)
+      const search = normalizeString(this.searchString)
 
-          var altNameMatch = false
-          const altNames = d.altNames
-          if (altNames && altNames.length > 0) {
-            for (var i = 0; i < altNames.length; i++) {
-              const currAltName = this.setString(altNames[i])
-              if (isEqual(currAltName, search) || currAltName.includes(search)) {
-                altNameMatch = true
-              }
-            }
-          }
+      return this.descendants
+        .flatMap(node => [
+          this.person(node.data.id),
+          ...node.partners.map(node => this.person(node.data.id))
+        ])
+        .filter(d => { // d = minimalProfile here
+          if (!d) return false
+          const preferredName = normalizeString(d.preferredName)
+          const legalName = normalizeString(d.legalName)
+
+          // TODO 2022-02-11 mix this is disabled for the moment
+          // because nodes do not load all this data at the moment
+
+          // var altNameMatch = false
+          // const altNames = d.altNames
+          // if (altNames && altNames.length > 0) {
+          //   for (var i = 0; i < altNames.length; i++) {
+          //     const currAltName = normalizeString(altNames[i])
+          //     if (isEqual(currAltName, search) || currAltName.includes(search)) {
+          //       altNameMatch = true
+          //     }
+          //   }
+          // }
           return (
-            isEqual(preferredName, search) ||
-            preferredName.includes(search) ||
-            isEqual(legalName, search) ||
-            legalName.includes(search) ||
-            altNameMatch
+            isEqual(preferredName, search) || preferredName.includes(search) ||
+            isEqual(legalName, search) || legalName.includes(search) // ||
+            // altNameMatch
           )
         })
     },
@@ -137,10 +147,6 @@ export default {
     }
   },
   methods: {
-    setString (name) {
-      if (isEmpty(name)) return ''
-      return name.toLowerCase().trim()
-    },
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },

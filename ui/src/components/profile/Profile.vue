@@ -198,7 +198,7 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     ...mapActions('tribe', ['getTribes']),
-    ...mapActions('person', ['setProfileById']),
+    ...mapActions('person', ['setSelectedProfileById']),
 
     goTribe (tribe) {
       var profile = tribe.private.length > 0
@@ -211,7 +211,7 @@ export default {
       }
     },
     openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setSelectedProfileById(profile.id)
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     getDisplayName

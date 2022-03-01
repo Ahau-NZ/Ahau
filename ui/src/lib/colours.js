@@ -3,5 +3,5 @@ export const colours = [
 ]
 
 export const linkColours = [
-  'darkgrey', '#006400', '#9728e3', 'cadetblue', '#3377aa', 'darkgoldenrod', 'darkslategray', 'lightskyblue'
+  '#666', '#006400', '#9728e3', 'cadetblue', '#3377aa', 'darkgoldenrod', 'darkslategray', 'lightskyblue'
 ]

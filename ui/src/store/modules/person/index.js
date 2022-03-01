@@ -1,28 +1,62 @@
-import { savePersonMutation, deletePersonMutation } from './apollo-helpers'
-import { getRelatives, getPerson } from '@/lib/person-helpers'
+import Vue from 'vue'
+
+import { getPerson as getPersonAndWhanau } from '@/lib/person-helpers'
+import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
-    selectedProfile: {}
+    selectedProfileId: null,
+    profiles: {
+      // ...minimalProfile || ...fullProfile,
+      // isMinimal: true   || false
+    },
+    tombstoned: new Set()
   }
 
   const getters = {
-    selectedProfile: state => {
-      return state.selectedProfile
-    }
+    person: state => (profileId) => state.profiles[profileId],
+    personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
+      // this method provides a person profile and extends it with getters for parents/ children/ partners
+      // NOTE this recursive, so you go e.g. profile.parents[0].partners
+      // NOTE this only builds on links already in the whakapapa store
+      const profile = getters.person(id)
+      if (!profile) return
+
+      return {
+        ...profile,
+        get parents () {
+          return rootGetters['whakapapa/getParentIds'](id).map(getters.personPlusFamily)
+        },
+        get children () {
+          return rootGetters['whakapapa/getChildIds'](id).map(getters.personPlusFamily)
+        },
+        get partners () {
+          return rootGetters['whakapapa/getPartnerIds'](id).map(getters.personPlusFamily)
+        }
+      }
+    },
+    selectedProfile: (state, getters, rootState, rootGetters) => {
+      if (!state.selectedProfileId) return
+
+      return getters.personPlusFamily(state.selectedProfileId)
+    },
+    isTombstoned: state => (profileId) => state.tombstoned.has(profileId)
   }
 
   const mutations = {
-    updateSelectedProfile (state, profile) {
-      state.selectedProfile = profile
+    setSelectedProfileById (state, id) {
+      state.selectedProfileId = id
+    },
+    setPerson (state, profile) {
+      Vue.set(state.profiles, profile.id, profile)
+    },
+    tombstoneId (state, profileId) {
+      state.tombstoned.add(profileId)
     }
   }
 
   async function savePerson (input) {
-    const res = await apollo.mutate(
-      savePersonMutation(input)
-    )
-
+    const res = await apollo.mutate(savePersonMutation(input))
     if (res.errors) throw res.errors
 
     return res.data.saveProfile // profileId
@@ -42,16 +76,41 @@ export default function (apollo) {
       }
     },
     async getPerson (_, profileId) {
+      // loads all profile fields + siblings, partners, ....
+      // TODO look into deprecating this - should use getPersonFull + loadDescendants
       try {
-        const res = await apollo.query(
-          getPerson(profileId)
-        )
+        const res = await apollo.query(getPersonAndWhanau(profileId))
 
         if (res.errors) throw res.errors
 
         return res.data.person
       } catch (err) {
         console.error('Something went wrong while trying to get a person', err)
+      }
+    },
+    async getPersonFull (_, profileId) {
+      // loads all profile fields AND any associated admin profile
+      try {
+        const res = await apollo.query(getPersonFull(profileId))
+
+        if (res.errors) throw res.errors
+
+        return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a persons details')
+      }
+    },
+    async getPersonMinimal (_, profileId) {
+      // loads a profile with only what's needed for the tree (avatar / things needed for fallback, name, ordering info)
+      try {
+        const res = await apollo.query(getPersonMinimal(profileId))
+
+        if (res.errors) throw res.errors
+
+        return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a person (minimal)', profileId)
+        console.error(err)
       }
     },
     async updatePerson (_, input) {
@@ -64,35 +123,47 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async deletePerson (_, { id, allowPublic }) {
+    async deletePerson ({ commit, dispatch }, { id, details, allowPublic }) {
       try {
         if (!id) throw new Error('a profile id is required to delete a person')
 
-        const res = await apollo.mutate(
-          deletePersonMutation(id, allowPublic)
-        )
+        const res = await apollo.mutate(deletePerson(id, details, allowPublic))
 
         if (res.errors) throw res.errors
 
+        commit('tombstoneId', id)
+        dispatch('whakapapa/removeLinksToProfile', id, { root: true })
         return res.data.saveProfile
       } catch (err) {
         console.error('Something went wrong while trying to delete a person', id)
         console.error(err)
       }
     },
-    updateSelectedProfile ({ commit }, profile) {
-      commit('updateSelectedProfile', profile)
+
+    async loadPersonMinimal ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+
+      const profile = await dispatch('getPersonMinimal', profileId)
+      if (profile.tombstone) {
+        commit('tombstoneId', profileId)
+        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+      } // eslint-disable-line
+      else commit('setPerson', profile)
     },
-    // NOTE: this is similar to the method below
-    async setSelectedProfileById ({ dispatch, commit }, profileId) {
-      var person = await dispatch('getPerson', profileId)
-      commit('updateSelectedProfile', person)
+    async loadPersonFull ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+
+      const profile = await dispatch('getPersonFull', profileId)
+      if (profile.tombstone) {
+        commit('tombstoneId', profileId)
+        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+      } // eslint-disable-line
+      else commit('setPerson', profile)
     },
-    async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
-      // NOTE to dispatch outide this namespace, we use:
-      //   dispatch(actionName, data, { root: true })
-      //
-      // ref: https://vuex.vuejs.org/guide/modules.html#namespacing
+    async setSelectedProfileById ({ dispatch, commit, rootState }, id) {
+      commit('setSelectedProfileById', id)
+      dispatch('loadPersonFull', id)
+
       if (id === rootState.whoami.public.profile.id) {
         dispatch('setWhoami', id, { root: null })
       }
@@ -103,11 +174,9 @@ export default function (apollo) {
       if (rootState.archive.showStory && rootState.dialog.preview) {
         dispatch('archive/toggleShowStory', null, { root: true })
       }
-      if (type !== 'setWhanau' && rootState.dialog.dialog) {
+      if (rootState.dialog.dialog) {
         dispatch('setDialog', null, { root: true })
       }
-      var person = await getRelatives(id, apollo)
-      commit('updateSelectedProfile', person)
     }
   }
 

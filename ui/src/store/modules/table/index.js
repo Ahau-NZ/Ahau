@@ -1,53 +1,94 @@
 export default function () {
   const state = {
-    tableFilter: {
-      name: '',
-      location: '',
-      skills: '',
-      age: {
-        min: 0,
-        max: 150 // filter is disabled when max is this
+    settings: {
+      flatten: true,
+      filter: {
+        name: '',
+        location: '',
+        skills: '',
+        age: {
+          min: 0,
+          max: 150 // filter is disabled when max is this
+        },
+        deceased: false
+      },
+      sortBy: {
+        value: null,
+        event: null
       }
-    },
-    tableSort: {
-      value: null,
-      event: null
     }
   }
 
   const getters = {
-    tableFilter: state => state.tableFilter,
-    tableSort: state => state.tableSort
+    tableFilter: state => state.settings.filter,
+    tableSort: state => state.settings.sortBy,
+    tableFlatten: state => state.settings.flatten,
+
+    table: (state, getters, rootState, rootGetters) => {
+      const root = rootGetters['tree/root']
+      if (!root) return
+
+      var index = -1
+      return rootGetters['tree/root'].eachBefore((n) => {
+        n.x = state.settings.flatten ? 0.1 : n.depth * 15
+        n.y = ++index * 30
+      })
+    },
+    descendants: (state, getters) => {
+      const table = getters.table
+
+      if (!table) return []
+
+      return table.descendants()
+    },
+    descendantLinks: (state, getters) => {
+      const table = getters.table
+
+      if (!table) return []
+
+      return table.links()
+    }
+    // TODO: move table nodes, filtering and sorting to vuex
   }
 
   const mutations = {
+    toggleTableFlatten (state) {
+      state.settings.flatten = !state.settings.flatten
+    },
     updateNameFilter (state, name) {
-      state.tableFilter.name = name
+      state.settings.filter.name = name
     },
     updateLocationFilter (state, location) {
-      state.tableFilter.location = location
+      state.settings.filter.location = location
     },
     updateSkillsFilter (state, skills) {
-      state.tableFilter.skills = skills
+      state.settings.filter.skills = skills
     },
     updateAgeFilter (state, age) {
-      state.tableFilter.age = age
+      state.settings.filter.age = age
     },
-    updateFilter (state, tableFilter) {
-      state.tableFilter = tableFilter
+    updateDeceasedFilter (state, deceased) {
+      state.settings.filter.deceased = deceased
     },
-    updateSort (state, tableSort) {
-      state.tableSort = tableSort
+    updateFilter (state, filter) {
+      state.settings.filter = filter
+    },
+    updateSort (state, sortBy) {
+      state.settings.sortBy = sortBy
     }
   }
 
   const actions = {
     updateTableFilter ({ commit }, { type, value }) {
-      if (type === 'name') commit('updateNameFilter', value)
-      else if (type === 'location') commit('updateLocationFilter', value)
-      else if (type === 'skills') commit('updateSkillsFilter', value)
-      else if (type === 'age') commit('updateAgeFilter', value)
-      else console.error('Unknown table filter')
+      switch (type) {
+        case 'name': return commit('updateNameFilter', value)
+        case 'location': return commit('updateLocationFilter', value)
+        case 'skills': return commit('updateSkillsFilter', value)
+        case 'age': return commit('updateAgeFilter', value)
+        case 'deceased': return commit('updateDeceasedFilter', value)
+        default:
+          console.error('Unknown table filter')
+      }
     },
     resetTableFilters ({ commit }) {
       const resetFilter = {
@@ -57,10 +98,14 @@ export default function () {
         age: {
           min: 0,
           max: 150 // filter is disabled when max is this
-        }
+        },
+        deceased: false
       }
 
       commit('updateFilter', resetFilter)
+    },
+    toggleTableFlatten ({ commit }) {
+      commit('toggleTableFlatten')
     },
     updateTableSort ({ commit }, { value, event }) {
       commit('updateSort', { value, event })

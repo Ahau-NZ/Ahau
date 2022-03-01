@@ -88,7 +88,6 @@ export default {
       var grandparents = []
       if (this.profile.parents) {
         this.profile.parents.map(grandparent => {
-          console.log(grandparent)
           var profile = {
             ...grandparent.profile,
             relationshipType: grandparent.relationshipType

@@ -101,9 +101,9 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog']),
-    ...mapActions('person', ['setProfileById']),
+    ...mapActions('person', ['setSelectedProfileById']),
     openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setSelectedProfileById(profile.id)
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     toggleNew (type) {

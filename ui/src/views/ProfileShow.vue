@@ -176,7 +176,8 @@ export default {
             })
           } else {
             // no parent group means we are already on a parent group
-            const profileId = (tribe.private.length ? tribe.private[0] : tribe.public[0]).id
+            const profile = tribe.private.length ? tribe.private[0] : tribe.public[0]
+            if (!profile) return console.warn('cannot find community profile (probably just a reload issue)')
 
             this.profile.joiningQuestions = (tribe.public.length)
               ? tribe.public[0].joiningQuestions
@@ -185,7 +186,7 @@ export default {
             this.setCurrentAccess({
               type: ACCESS_ALL_MEMBERS,
               groupId,
-              profileId // community profileId
+              profileId: profile.id // community profileId
             })
           }
         }

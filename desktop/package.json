@@ -45,7 +45,7 @@
     "ssb-tribes": "^2.7.3",
     "ssb-tribes-registration": "^0.1.0",
     "ssb-unix-socket": "^1.0.0",
-    "ssb-whakapapa": "^3.1.0"
+    "ssb-whakapapa": "^3.1.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
