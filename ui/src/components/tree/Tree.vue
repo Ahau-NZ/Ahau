@@ -141,22 +141,6 @@ export default {
     ...mapActions(['setLoading']),
     ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
 
-    async checkNonFocusedPartner (profile) {
-      if (profile.partners && profile.partners.length > 0) {
-        for await (const partner of profile.partners) {
-          const relatives = await this.getRelatives(partner.id)
-          if (relatives.parents && relatives.parents.length > 0) {
-            this.nonFocusedPartners = [...this.nonFocusedPartners, partner.id]
-          }
-        }
-      }
-      if (profile.children) {
-        for await (const child of profile.children) {
-          await this.checkNonFocusedPartner(child)
-        }
-      }
-    },
-
     zoom () {
       var svg = d3Select('#baseSvg')
       var g = d3Select('#baseGroup')
