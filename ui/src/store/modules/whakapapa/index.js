@@ -113,6 +113,7 @@ export default function (apollo) {
     /* higher order getters */
     getChildIds: (state, getters) => (parentId) => {
       // NOTE this gets the ids of childrenNodes in the graph
+      // WARNING this may include children who are not rendered in the graph because they are extendedFamily
       if (getters.isCollapsedNode(parentId)) return []
 
       return getters.getRawChildIds(parentId)

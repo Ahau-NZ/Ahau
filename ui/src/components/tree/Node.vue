@@ -34,7 +34,10 @@
       />
     </g>
 
-    <g v-if="isCollapsed" :style="collapsedStyle">
+    <g v-if="hasUndrawnAscendants" :style="dotsAboveNode">
+      <text> ... </text>
+    </g>
+    <g v-if="isCollapsed || hasUndrawnDescendants" :style="dotsUnderNode">
       <text> ... </text>
     </g>
 
@@ -98,8 +101,8 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['person']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds']),
-    ...mapGetters('tree', ['hoveredProfileId']),
+    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getChildIds']),
+    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode']),
     profile () {
       return this.person(this.profileId) || {}
     },
@@ -111,6 +114,16 @@ export default {
       if (!rule) return false
       return rule.other.length > 1
       // TODO 2022-02-11 mix - ideally we won't lean on "other". Is there another way to do this?
+    },
+    hasUndrawnDescendants () {
+      return this.getChildIds(this.profileId)
+        .filter(id => !this.getNode(id))
+        .length > 0
+    },
+    hasUndrawnAscendants () {
+      return this.getParentIds(this.profileId)
+        .filter(id => !this.getNode(id) && !this.getPartnerNode(id))
+        .length > 0
     },
     showMenuButton () {
       // if (this.isPartner) return false
@@ -153,13 +166,20 @@ export default {
         transform: `translate(${this.radius - this.textWidth}px, ${this.radius + 10}px)`
       }
     },
-    collapsedStyle () {
-      // centers the text element under name
+    dotsUnderNode () {
+      // centers the three dots underneath a nodes name
       return {
-        fontSize: '30px',
+        fontSize: '22px',
         fontWeight: 600,
-        transform: `translate(${this.radius - 3}px, ${this.diameter +
-          25}px) rotate(90deg)`
+        transform: `translate(${this.radius - 2}px, ${this.radius + (this.isPartner ? 55 : 70)}px) rotate(90deg)`
+      }
+    },
+    dotsAboveNode () {
+      // centers the three dots above a node
+      return {
+        fontSize: '22px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 2}px, ${this.radius - (this.isPartner ? 57 : 72)}px) rotate(90deg)`
       }
     },
     displayName () {
