@@ -183,6 +183,7 @@ export default {
   },
   computed: {
     ...mapGetters(['currentAccess']),
+    ...mapGetters('whakapapa', ['getParentIds']),
     allowRelationships () {
       return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },
@@ -343,10 +344,6 @@ export default {
       return profile.siblings || []
     },
 
-    find (array, item) {
-      return array.some(i => i.id === item.id)
-    },
-
     // suggests other parents of children
     async findPartners () {
       var currentPartners = this.selectedProfile.partners || []
@@ -356,12 +353,14 @@ export default {
       this.selectedProfile.children.map(child => {
         if (!child.parents) return child
 
-        child.parents.forEach(parent => {
-          if (this.selectedProfile.id === parent.id) return
-          if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
-            suggestedPartners.push(parent)
-          }
+        this.getParentIds(child.id).forEach(parentId => {
+          if (this.selectedProfile.id === parentId) return
+          if (currentPartners.some(partner => partner.id === parentId)) return
+          if (suggestedPartners.some(partner => partner.id === parentId)) return
+
+          suggestedPartners.push(parent)
         })
+
         return child
       })
 
@@ -369,9 +368,10 @@ export default {
       const profile = await this.getProfile(this.selectedProfile.id)
       profile.partners.forEach(partner => {
         if (this.selectedProfile.id === partner.id) return
-        if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
-          suggestedPartners.push(partner)
-        }
+        if (currentPartners.some(_partner => _partner.id === partner.id)) return
+        if (suggestedPartners.some(_partner => _partner.id === partner.id)) return
+
+        suggestedPartners.push(partner)
       })
 
       return suggestedPartners
@@ -522,12 +522,12 @@ export default {
         this.existingProfile = await this.getProfile(this.profile.id)
 
         // if hasSelection and quickAdd Section, show exsisting links
-        if (this.generateChildren && this.existingProfile.children) this.updateQuickAdd(this.existingProfile.children, 'newChildren')
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
         if (this.generatePartners && this.existingProfile.partners) {
           this.quickAdd.partners = [...this.existingProfile.partners]
           this.quickAdd.newPartners = [...this.existingProfile.partners]
         }
-        if (this.generateParents && this.existingProfile.parents) this.updateQuickAdd(this.existingProfile.parents, 'newParents')
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show

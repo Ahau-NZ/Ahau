@@ -204,14 +204,16 @@ test('vuex/whakapapa getters.getPartnerIds (with collapsed)', t => {
       focus: 'B',
       extendedFamily: false
     },
+    viewChanges: {
+      collapsed: {
+        B: true
+      }
+    },
     childLinks: {},
     partnerLinks: {
       A: {
         B: 'partners'
       }
-    },
-    collapsed: {
-      B: true
     }
   })
   const getPartnerIds = getters.getPartnerIds(state, Getters(state))

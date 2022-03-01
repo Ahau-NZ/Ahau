@@ -4,7 +4,7 @@
     :style="position"
     @mouseover="setHover(true)"
     @mouseleave="setHover(false)"
-    @click="click"
+    @click="$emit('click')"
     @mousedown.right="openMenu"
     @contextmenu.prevent
   >
@@ -175,11 +175,6 @@ export default {
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)
-    },
-    click () {
-      // only change focus when the partner nodes are clicked
-      if (this.isPartner) this.$emit('focus', this.profileId)
-      else this.$emit('center')
     },
     setHover (bool = false) {
       if (bool) this.setHoveredProfileId(this.profileId)

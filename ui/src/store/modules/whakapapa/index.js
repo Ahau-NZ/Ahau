@@ -10,7 +10,7 @@ import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
 const UNKNOWN_REL_TYPE = 'unknown'
 
-const loadingView = () => ({
+const defaultView = () => ({
   name: 'Loading...',
   description: '',
   focus: null,
@@ -26,6 +26,12 @@ const loadingView = () => ({
   table: false
 })
 
+const defaultViewChanges = () => ({
+  focus: null, // can temporarily over-ride the saved view.focus
+  collapsed: { // maps node.data.id to Boolean (default false)
+  }
+})
+
 // vuex/whakapapa is about creating a whakapapa graph and what should be in it.
 // This takes into account:
 //    - ignoredProfiles,
@@ -39,8 +45,9 @@ const loadingView = () => ({
 
 export default function (apollo) {
   const state = {
-    view: loadingView(),
-    lastView: loadingView(),
+    view: defaultView(),
+    viewChanges: defaultViewChanges(),
+    lastView: defaultView(),
 
     childLinks: {
       // [parentId]: {
@@ -51,15 +58,12 @@ export default function (apollo) {
       // [partnerA]: {
       //   [partnerB]: relationshipType
       // }
-    },
-
-    collapsed: { // maps node.data.id to Boolean (default false)
-
     }
   }
 
   const getters = {
     whakapapaView: state => state.view,
+    focus: state => state.viewChanges.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     importantRelationships: state => state.view.importantRelationships,
     // TODO search app for this term - we see that this.view.importantRelationships is being used a lot?
@@ -68,7 +72,7 @@ export default function (apollo) {
     lastWhakapapaView: state => state.lastView,
 
     /* getter methods */
-    isCollapsedNode: state => (id) => Boolean(state.collapsed[id]),
+    isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: state => (id) => state.view.importantRelationships[id],
     isRawImportantLink: state => (targetId, otherId) => {
@@ -129,7 +133,7 @@ export default function (apollo) {
             return (
               (
                 (getters.getPartnerRelationshipType(state.view.focus, parentId) !== undefined) ||
-                getters.isDescendant(state.view.focus, parentId)
+                getters.isDescendant(getters.focus, parentId)
               ) && // connection from focus -> parentId
               getters.isDescendant(parentId, childId) // connection from parentId -> childId
             )
@@ -167,12 +171,11 @@ export default function (apollo) {
     },
     nestedDescendants: (state, getters) => {
       // TODO rename descendantsTree
-      if (!state.view || !state.view.focus) return {}
+      if (!getters.focus) return {}
       // starts at the focus and builds the tree as the data comes in
 
-      return getters.buildNestedDescendants(state.view.focus)
+      return getters.buildNestedDescendants(getters.focus)
     },
-    // TODO see if can extract this function
     buildNestedDescendants: (state, getters) => (parentId, opts = {}) => {
       const {
         lineage = new Set()
@@ -249,6 +252,9 @@ export default function (apollo) {
 
       state.view = view
     },
+    setViewFocus (state, profileId) {
+      state.viewChanges.focus = profileId
+    },
     toggleViewMode (state) {
       state.view.tree = !state.view.tree
       state.view.table = !state.view.tree
@@ -257,12 +263,12 @@ export default function (apollo) {
       state.view.extendedFamily = extended
     },
     toggleNodeCollapse (state, nodeId) {
-      Vue.set(state.collapsed, nodeId, !state.collapsed[nodeId])
+      Vue.set(state.viewChanges.collapsed, nodeId, !state.viewChanges.collapsed[nodeId])
     },
     resetWhakapapaView (state) {
       state.lastView = state.view
-      state.view = loadingView()
-      state.collapsed = {}
+      state.view = defaultView()
+      state.viewChanges = defaultViewChanges()
     },
 
     // methods for manipulating whakapapa links
@@ -318,16 +324,23 @@ export default function (apollo) {
   }
 
   const actions = {
+    setViewFocus ({ commit, dispatch, getters }, id) {
+      commit('setViewFocus', id)
+      dispatch('loadDescendants', getters.focus)
+    },
     toggleViewMode ({ commit, dispatch }) {
       commit('toggleViewMode')
       dispatch('setExtendedFamily', false)
     },
-    setExtendedFamily ({ state, commit, dispatch }, extended) {
+    setExtendedFamily ({ state, commit, dispatch, getters }, extended) {
       commit('setExtendedFamily', extended)
-      dispatch('loadDescendants', state.view.focus)
+      dispatch('loadDescendants', getters.focus)
     },
     toggleNodeCollapse ({ commit }, nodeId) {
       commit('toggleNodeCollapse', nodeId)
+    },
+    addLinks ({ commit }, links) {
+      commit('addLinks', links)
     },
     removeLinksToProfile ({ commit }, profileId) {
       commit('removeLinksToProfile', profileId)
@@ -373,7 +386,6 @@ export default function (apollo) {
         const res = await apollo.query(getFamilyLinks(profileId, extended))
         if (res.errors) throw new Error(res.errors)
 
-        // TODO success alert message
         return res.data.loadFamilyOfPerson
       } catch (err) {
         console.error('error getting family links', err)

@@ -23,17 +23,15 @@ import findSuccessor from '@/lib/find-successor'
 
 export default {
   name: 'NodeMenu',
-  props: {
-    view: Object,
-    currentFocus: String
-  },
+  props: {},
   components: {
     VueContext
   },
   computed: {
-    ...mapGetters('tree', ['mouseEvent']),
-    ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami']),
+    ...mapGetters('person', ['person', 'selectedProfile']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'focus']),
+    ...mapGetters('tree', ['mouseEvent']),
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
     },
@@ -45,7 +43,7 @@ export default {
       if (this.selectedProfile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
-      if (this.selectedProfile.id === this.view.focus) {
+      if (this.selectedProfile.id === this.whakapapaView.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(this.selectedProfile))
       }
@@ -56,9 +54,8 @@ export default {
       if (!this.selectedProfile) return false
 
       return (
-        this.selectedProfile.id !== this.view.focus &&
-        this.selectedProfile.id !== this.currentFocus &&
-        this.selectedProfile.parents &&
+        this.selectedProfile.id !== this.whakapapaView.focus &&
+        this.selectedProfile.id !== this.focus &&
         this.selectedProfile.parents.length > 0
       )
     },

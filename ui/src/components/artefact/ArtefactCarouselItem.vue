@@ -117,7 +117,8 @@ export default {
   },
   mounted () {
     if (this.useRenderMedia) this.renderHyperBlob()
-    // WIP extract and fix this up mix
+    // TODO extract and fix this up
+    // TODO 2021-03-02 mix - unclear what exactly this means, leave better comments next time...
 
     if (this.artefact && this.artefact.type === 'video' && (this.showPreview || this.editing)) {
       getVideoPoster(this.artefact.blob.uri)

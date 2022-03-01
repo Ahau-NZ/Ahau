@@ -4,12 +4,14 @@
       <g :transform="`translate(${treeX - radius} ${treeY - radius})`" ref="tree" >
         <SubTree v-if="tree"
           :root="tree"
-          :changeFocus="changeFocus"
-          :centerNode="centerNode"
           :showAvatars="showAvatars"
+
+          @root-node-click="handleRootNodeClick"
+          @partner-node-click="handlePartnerNodeClick"
         />
       </g>
     </g>
+
     <!-- zoom in, zoom out buttons -->
     <g class="zoomControl">
       <g>
@@ -19,12 +21,12 @@
           </filter>
         </defs>
       </g>
-      <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
+      <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.7 - 150})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
         <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
       </g>
-      <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.4})`">
+      <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.7 - 60})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
       </g>
@@ -62,10 +64,7 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
 
-      nonFocusedPartners: [],
-      changeFocusId: null,
-      nodeId: '',
-      lastNode: null
+      nonFocusedPartners: []
     }
   },
   mounted () {
@@ -158,10 +157,6 @@ export default {
       }
     },
 
-    changeFocus (profileId) {
-      this.changeFocusId = profileId
-      this.$emit('change-focus', profileId)
-    },
     zoom () {
       var svg = d3Select('#baseSvg')
       var g = d3Select('#baseGroup')
@@ -185,17 +180,41 @@ export default {
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 
+    handleRootNodeClick (id) {
+      // if node is not already centered, center it
+      if (this.nodeCentered !== id) return this.centerNode(id)
+
+      // if it is already centered, collapse the node
+      this.toggleNodeCollapse(id)
+
+      // setTimeout needed to get new node position after it has finished collapsing/expanding
+      setTimeout(() => this.centerNode(id), 100)
+    },
+
+    handlePartnerNodeClick (id) {
+      this.$emit('change-focus', id)
+
+      setTimeout(() => this.centerNode(id), 1000)
+    },
+
+    moveTo (x, y, duration = 700) {
+      const svg = d3Select('#baseSvg')
+
+      d3Select('#baseGroup')
+        .transition()
+        .duration(duration)
+        .attr('transform', `translate(${x}, ${y})`)
+        .on('end', () => {
+          svg.call(d3Zoom().transform, d3ZoomIdentity.translate(x, y))
+        })
+    },
+
     centerNode (node) {
-      // if node is already centered than collapse
-      if (this.nodeCentered === node.data.id) {
-        this.toggleCollapse(node)
-        return
+      if (typeof node === 'string') {
+        node = this.getNode(node) || this.getPartnerNode(node)
       }
 
       this.nodeCentered = node.data.id
-
-      var svg = d3Select('#baseSvg')
-      var g = d3Select('#baseGroup')
 
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
@@ -203,35 +222,9 @@ export default {
       var x = width / 2 - node.x
       var y = height / 2 - node.y + 150
 
-      g.transition()
-        .duration(700)
-        .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
-        .on('end', function () { svg.call(d3Zoom().transform, d3ZoomIdentity.translate((x), (y))) })
+      this.moveTo(x, y)
     },
-    toggleCollapse (node) {
-      const profile = node.data
-      this.toggleNodeCollapse(profile.id)
 
-      // find the node position now
-      var _node = this.descendants.find(d => d.data.id === node.data.id)
-
-      // setTimeout needed to get new node position after it has finished collapsing/expanding
-      setTimeout(() => {
-        var svg = d3Select('#baseSvg')
-        var g = d3Select('#baseGroup')
-
-        var width = this.$refs.tree.clientWidth
-        var height = this.$refs.tree.clientHeight
-
-        var x = width / 2 - _node.x
-        var y = height / 2 - _node.y + 150
-
-        g.transition()
-          .duration(700)
-          .attr('transform', `translate(${x}, ${y})`)
-          .on('end', function () { svg.call(d3Zoom().transform, d3ZoomIdentity.translate((x), (y))) })
-      }, 100)
-    },
     zoomInOut (scale) {
       var svg = d3Select('#baseSvg')
       var g = d3Select('#baseGroup')

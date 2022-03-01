@@ -127,8 +127,7 @@
         :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
-
-        @change-focus="changeFocus($event)"
+        @change-focus="setFocusToAncestorOf($event)"
       />
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -141,7 +140,7 @@
       </div>
     </v-container>
 
-    <NodeMenu :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
+    <NodeMenu :view="whakapapaView" :currentFocus="focus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <FilterMenu
       :show="searchFilter"
@@ -156,14 +155,14 @@
       :view="whakapapaView"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      @updateFocus="updateFocus($event)"
-      :setSelectedProfile="setSelectedProfile"
-      @change-focus="changeFocus($event)"
-      @newAncestor="setFocus($event)"
       :focus="focus"
+
+      @persist-focus="processSaveWhakapapa({ focus: $event })"
       @update-whakapapa="processSaveWhakapapa"
       @delete-whakapapa="deleteWhakapapa"
-      @setFocus="setFocus($event)"
+
+      @set-focus="setViewFocus($event)"
+      @set-focus-to-ancestor-of="setFocusToAncestorOf($event)"
       @toggleFilterMenu="clickedOffSearchFilter()"
     />
   </div>
@@ -231,7 +230,6 @@ export default {
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
-      focus: null,
       // the record which defines the starting point for a tree (the 'focus')
 
       dialog: {
@@ -253,17 +251,10 @@ export default {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapGetters('whakapapa', ['whakapapaView']),
+    ...mapGetters('whakapapa', ['focus', 'whakapapaView']),
+    ...mapGetters('tree', ['getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    currentFocus: {
-      get () {
-        return this.focus || (this.whakapapaView && this.whakapapaView.focus)
-      },
-      set (newValue) {
-        this.focus = newValue
-      }
     },
     sortFields () {
       return [
@@ -291,14 +282,6 @@ export default {
     }
   },
   watch: {
-    currentFocus: {
-      immediate: true,
-      async handler (newFocus) {
-        if (!newFocus) return
-
-        this.loadDescendants(newFocus)
-      }
-    },
     async whakapapaView (view) {
       if (view && view.recps) {
         // get the tribe this record is encrypted to
@@ -340,12 +323,15 @@ export default {
   },
 
   methods: {
-    ...mapActions('person', ['setSelectedProfileId']),
     ...mapActions(['setLoading', 'setCurrentAccess']),
-    ...mapActions('table', ['resetTableFilters']),
+    ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('tribe', ['getTribe']),
-    ...mapActions('whakapapa', ['loadWhakapapaView', 'resetWhakapapaView', 'saveWhakapapaView', 'loadDescendants', 'setExtendedFamily', 'toggleViewMode']),
-    ...mapActions('tree', ['getNode', 'getPartnerNode']),
+    ...mapActions('whakapapa', [
+      'loadWhakapapaView', 'resetWhakapapaView',
+      'saveWhakapapaView',
+      'setViewFocus', 'setExtendedFamily', 'toggleViewMode'
+    ]),
+    ...mapActions('table', ['resetTableFilters']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
     },
@@ -366,7 +352,7 @@ export default {
     //   return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1
     // },
     openPartnerSideNode (dialog, type, profile) {
-      this.setSelectedProfile(profile)
+      this.setSelectedProfileById(profile)
       if (this.dialog.active === 'view-edit-node') {
         this.updateDialog(null, null)
       }
@@ -376,29 +362,28 @@ export default {
       this.dialog.type = type
       this.dialog.active = dialog
     },
-    // Used when ignoring/deleting top ancestor on a partner line
-    // AND when adding a partner ancestor update the tree to load
-    setFocus (profileId) {
-      this.currentFocus = profileId
-    },
     // Used when adding top ancestor on a partner line & swapping between partner lines
-    async changeFocus (profileId) {
+    async setFocusToAncestorOf (profileId) {
+      // TODO extract to vuex?
       this.updateDialog(null)
-      const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
+      const newFocus = await this.getWhakapapaHead(profileId)
 
-      this.setSelectedProfile(profileId)
-      this.setFocus(newFocus)
+      this.setSelectedProfileById(profileId)
+      this.setViewFocus(newFocus)
     },
-    async getWhakapapaHead (profileId, type = 'temp') {
+    async getWhakapapaHead (profileId, depth = 3) {
+      if (depth === 0) return profileId
       if (this.whakapapaView.focus === profileId) return profileId
 
       const record = await this.getRelatives(profileId)
-      if (
-        !record || !record.parents || !record.parents.length ||
-        this.whakapapaView.ignoredProfiles.includes(record.parents[0].id)
-      ) return profileId
+      if (!record || !record.parents) return profileId
 
-      return this.getWhakapapaHead(record.parents[0].id, type)
+      const parent = record.parents.find(parent => !this.whakapapaView.ignoredProfiles.includes(parent.id))
+      if (!parent) return profileId
+      // NOTE - currently totally arbitrary which ancestors it follows
+      // perhaps we let the user expand upwards in the direction they want?
+
+      return this.getWhakapapaHead(parent.id, depth - 1)
     },
     /*
       makes changes of a person to all their decendants
@@ -441,7 +426,6 @@ export default {
 
       return profile
     },
-
     async getRelatives (id) {
       const result = await getRelatives(id, this.$apollo)
       if (!result) return
@@ -449,7 +433,7 @@ export default {
       return result
     },
     openTableContextMenu (event) {
-      this.setSelectedProfile(event.profile)
+      this.setSelectedProfileById(event.profile)
       if (this.dialog.active === 'view-edit-node') {
         this.updateDialog(null, null)
       }
@@ -463,22 +447,6 @@ export default {
     },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
-    },
-    async updateFocus (focus) {
-      await this.processSaveWhakapapa({ focus })
-    },
-    async setSelectedProfile (profile) {
-      if (!profile) return this.setSelectedProfileId()
-
-      if (typeof profile === 'object') {
-        // TODO look this up
-        var loadedProfile = await this.loadKnownFamily(true, profile)
-        this.setSelectedProfileId(loadedProfile) // ERROR
-      } else if (typeof profile === 'string') {
-        // need to find the profile in this whakapapa
-        const profileInTree = this.getNode(profile) || this.getPartnerNode(profile)
-        if (profileInTree) this.setSelectedProfileId(profile)
-      }
     },
     async processSaveWhakapapa (input) {
       input = {

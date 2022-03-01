@@ -16,7 +16,8 @@ export function Getters (state) {
       // if it explodes, it was probably dependant on some other getters
       // so if it doesn't add it to the activeGetters
       activeGetters[getterName] = getters[getterName](state, activeGetters)
-    } catch {
+    } catch (err) {
+      // console.log(err)
       // not ready yet!
       getterNames.push(getterName)
     }
@@ -42,9 +43,12 @@ export function State (state) {
       importantRelationships: {},
       ignoredProfiles: []
     },
+    viewChanges: {
+      focus: null,
+      collapsed: {}
+    },
     childLinks: {},
-    partnerLinks: {},
-    collapsed: {}
+    partnerLinks: {}
   }
 
   return merge(base, state)

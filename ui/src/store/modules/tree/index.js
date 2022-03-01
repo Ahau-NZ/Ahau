@@ -75,8 +75,8 @@ export default function () {
           if (!B) return 0
 
           // try to compare age!
-          if (A.age > B.age) return 1
-          if (A.age < B.age) return -1
+          if (A.age > B.age) return -1
+          if (A.age < B.age) return 1
 
           // fallback to birthOrder
           if (A.birthOrder > B.birthOrder) return 1
