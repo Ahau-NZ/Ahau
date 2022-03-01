@@ -5,24 +5,11 @@ import { linkColours } from '../lib/colours'
   use with <path></path> d attribute
   M = moveto
   v = vertical lineto (relative)
-  H = horizontal lineto
   V = vertical lineto (absolute)
-
-  example:
-
-          (startX, startY)
-                  |
-                  |
-    (branch) _____|
-            |
-            |
-            |
-      (endX, endY)
+  H = horizontal lineto
 
 */
 function path ({ startX, startY, endX, endY, directed = true }, branch) {
-  branch = branch || (endY - startY) / 2
-
   // special case for when startY and endY are the same
   /*
                ____________________
@@ -32,25 +19,43 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
          |_____|
 
   */
-
   if (directed && startY === endY) {
-    const offset = 80
-    return `
-      M ${startX}, ${startY}
-      v ${offset}
-      H ${startX + (startX < endX ? offset : -offset)}
-      v ${-2 * offset}
-      H ${endX}
-      V ${endY}  
-    `
+    const offsetY = 85
+    const offsetX = 75
+    // these a semi-magic numbers which depened on other RADIUS + SPACING + OFFSET consts
+    return `M ${startX}, ${startY} v ${offsetY} H ${startX + (startX < endX ? offsetX : -offsetX)} v ${-2 * offsetY} H ${endX} V ${endY}`
   }
 
-  return `
-    M ${startX}, ${startY}
-    v ${branch}
-    H ${endX}
-    V ${endY}
-  `
+  // general case
+  /*      (startX, startY)
+                  |
+                  |
+    (branch) _____|
+            |
+            |
+            |
+      (endX, endY)
+  */
+  branch = branch == null ? (endY + startY) / 2 : branch // absolute height
+
+  /* square */
+  return `M ${startX}, ${startY} V ${branch} H ${endX} V ${endY}`
+
+  /* straight down to branch, bezier curve down to child */
+  // return `M ${startX}, ${startY} V ${branch} C ${endX} ${branch} ${endX} ${branch} ${endX} ${endY}`
+
+  /* better curve */
+  // const radius = Math.min(
+  //   endY - 50 - branch, // 50 is RADIUS of rootNode
+  //   Math.abs(endX - startX)
+  // )
+  // return `
+  //   M ${startX}, ${startY}
+  //   V ${branch}
+  //   H ${endX + (startX > endX ? +1 : -1) * radius}
+  //   A ${radius} ${radius} 0 0 ${startX > endX ? 0 : 1} ${endX} ${endY - 50}
+  //   V ${endY}
+  // `
 }
 
 function randomColor () {
@@ -61,7 +66,7 @@ function randomColor () {
 export default {
   path,
   color: {
-    default: 'grey',
+    default: '#666',
     getRandomColor: randomColor,
     getColor (i) {
       if (i < 7) return linkColours[i]

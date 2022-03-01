@@ -5,7 +5,7 @@ const fs = require('fs').promises
 const path = require('path')
 const d3 = require('d3')
 
-const simpleNestedWhakapapa = require('../mocks/nested-whakapapa.js')
+const simpleNestedDescendants = require('../mocks/nested-whakapapa.js')
 
 // NOTE: column names need to be on same line as opening of string literal
 // for columns
@@ -349,8 +349,8 @@ test('csv.convertDate', (t) => {
 test('csv.mapNodesToCsv', t => {
   t.plan(2)
 
-  // use the nestedWhakapapa to generate nodes
-  const nodes = d3.hierarchy(simpleNestedWhakapapa)
+  // use the nestedDescendants to generate nodes
+  const nodes = d3.hierarchy(simpleNestedDescendants)
     .descendants()
 
   // run the nodes through the csv row mapping

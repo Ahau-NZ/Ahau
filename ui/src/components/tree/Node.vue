@@ -2,9 +2,9 @@
   <g
     class="node"
     :style="position"
-    @mouseover="hover = true"
-    @mouseleave="hover = false"
-    @click="click"
+    @mouseover="setHover(true)"
+    @mouseleave="setHover(false)"
+    @click="$emit('click')"
     @mousedown.right="openMenu"
     @contextmenu.prevent
   >
@@ -14,14 +14,14 @@
           <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
       </defs>
-      <circle
+      <circle v-if="!imageSrc"
         :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius"
       />
       <image
-        :xlink:href="imageSrc"
+        :xlink:href="imageSrc || defaultImage()"
         :width="diameter"
         :height="diameter"
         :clip-path="`url(#${clipPathId})`"
@@ -29,13 +29,18 @@
       />
       <NodeMenuButton
         v-if="showMenuButton"
-        :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
+        :transform="`translate(${1.44 * radius}, ${1.44 * radius})`"
         @click="openMenu"
       />
     </g>
-    <g v-if="isCollapsed" :style="collapsedStyle">
+
+    <g v-if="hasUndrawnAscendants" :style="dotsAboveNode">
       <text> ... </text>
     </g>
+    <g v-if="isCollapsed || hasUndrawnDescendants" :style="dotsUnderNode">
+      <text> ... </text>
+    </g>
+
     <g v-if="!showAvatars" :style="nameTextStyle">
       <rect :width="textWidth*2" y="-25" height="30"></rect>
       <text style="font-size: 30px;">{{ displayName }}</text>
@@ -44,8 +49,8 @@
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ displayName }}</text>
     </g>
-    <g
-      v-if="isPartner && hasAncestors && !isDuplicate"
+
+    <g v-if="isPartner && hasAncestors && !isDuplicate"
       :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
     >
       <text
@@ -63,10 +68,12 @@
 import get from 'lodash.get'
 import { mapGetters, mapActions } from 'vuex'
 
+import NodeMenuButton from './NodeMenuButton.vue'
+
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import NodeMenuButton from './NodeMenuButton.vue'
+import { RADIUS, PARTNER_RADIUS } from '@/store/modules/tree/constants'
 
 export default {
   name: 'Node',
@@ -74,7 +81,6 @@ export default {
     profileId: { type: String, required: true },
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
-    radius: { type: Number, default: 50 },
     isPartner: Boolean,
     showAvatars: Boolean
   },
@@ -83,27 +89,20 @@ export default {
   },
   data () {
     return {
-      hover: false,
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
-      }
+      },
+      radius: this.isPartner ? PARTNER_RADIUS : RADIUS
     }
   },
   mounted () {
     this.loadPersonMinimal(this.profileId)
-
-    // NOTE this needs to change...
-    this.addProfileLocation({
-      profileId: this.profileId,
-      x: this.x,
-      y: this.y,
-      radius: this.radius
-    })
   },
   computed: {
     ...mapGetters('person', ['person']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode']),
+    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getChildIds']),
+    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode']),
     profile () {
       return this.person(this.profileId) || {}
     },
@@ -116,15 +115,27 @@ export default {
       return rule.other.length > 1
       // TODO 2022-02-11 mix - ideally we won't lean on "other". Is there another way to do this?
     },
+    hasUndrawnDescendants () {
+      return this.getChildIds(this.profileId)
+        .filter(id => !this.getNode(id))
+        .length > 0
+    },
+    hasUndrawnAscendants () {
+      return this.getParentIds(this.profileId)
+        .filter(id => !this.getNode(id) && !this.getPartnerNode(id))
+        .length > 0
+    },
     showMenuButton () {
-      if (this.isPartner) return false
-      if (!this.isCollapsed) {
-        if (this.hover) return true
-      }
-      return false
+      // if (this.isPartner) return false
+      if (this.isCollapsed) return false
+
+      return this.hoveredProfileId === this.profileId
     },
     hasAncestors () {
-      return this.profile.parents && this.profile.parents.length > 0
+      return (
+        this.getParentIds(this.profileId) > 0 ||
+        (this.profile.parents && this.profile.parents.length > 0)
+      )
     },
     clipPathId () {
       return this.isPartner ? 'partnerCirlce' : 'myCircle'
@@ -133,14 +144,11 @@ export default {
       return this.radius * 2
     },
     imageSrc () {
-      const uri = get(this.profile, 'avatarImage.uri')
-      if (uri) return uri
-
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+      return get(this.profile, 'avatarImage.uri')
     },
     position () {
       return {
-        transform: `translate(${this.x}px, ${this.y}px)`
+        transform: `translate(${this.x - this.radius}px, ${this.y - this.radius}px)`
       }
     },
     textWidth () {
@@ -150,7 +158,7 @@ export default {
     textStyle () {
       return {
         transform: `translate(${this.radius - this.textWidth / 2}px, ${this
-          .diameter + 15}px)`
+          .diameter + 16}px)`
       }
     },
     nameTextStyle () {
@@ -158,13 +166,20 @@ export default {
         transform: `translate(${this.radius - this.textWidth}px, ${this.radius + 10}px)`
       }
     },
-    collapsedStyle () {
-      // centers the text element under name
+    dotsUnderNode () {
+      // centers the three dots underneath a nodes name
       return {
-        fontSize: '30px',
+        fontSize: '22px',
         fontWeight: 600,
-        transform: `translate(${this.radius - 3}px, ${this.diameter +
-          25}px) rotate(90deg)`
+        transform: `translate(${this.radius - 2}px, ${this.radius + (this.isPartner ? 55 : 70)}px) rotate(90deg)`
+      }
+    },
+    dotsAboveNode () {
+      // centers the three dots above a node
+      return {
+        fontSize: '22px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 2}px, ${this.radius - (this.isPartner ? 57 : 72)}px) rotate(90deg)`
       }
     },
     displayName () {
@@ -172,17 +187,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions('tree', ['setMouseEvent']),
+    ...mapActions('tree', ['setMouseEvent', 'setHoveredProfileId']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
-    ...mapActions('whakapapa', ['addProfileLocation']),
+    defaultImage () {
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+    },
     openMenu (e) {
       this.setMouseEvent(e)
       this.setSelectedProfileById(this.profileId)
     },
-    click () {
-      // only change focus when the partner nodes are clicked
-      if (this.isPartner) this.$emit('focus', this.profileId)
-      else this.$emit('center')
+    setHover (bool = false) {
+      if (bool) this.setHoveredProfileId(this.profileId)
+      else this.setHoveredProfileId(null)
     }
   }
 }

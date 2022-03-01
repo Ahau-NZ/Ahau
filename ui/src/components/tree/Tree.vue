@@ -1,19 +1,17 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
     <g id="baseGroup">
-      <g
-        :transform="`translate(${treeX - radius} ${treeY - radius})`"
-        ref="tree"
-      >
-        <SubTree
-          v-if="tree"
+      <g :transform="`translate(${treeX - radius} ${treeY - radius})`" ref="tree" >
+        <SubTree v-if="tree"
           :root="tree"
-          :changeFocus="changeFocus"
-          :centerNode="centerNode"
           :showAvatars="showAvatars"
+
+          @root-node-click="handleRootNodeClick"
+          @partner-node-click="handlePartnerNodeClick"
         />
       </g>
     </g>
+
     <!-- zoom in, zoom out buttons -->
     <g class="zoomControl">
       <g>
@@ -23,12 +21,12 @@
           </filter>
         </defs>
       </g>
-      <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
+      <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.7 - 150})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
         <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
       </g>
-      <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.4})`">
+      <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.7 - 60})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
       </g>
@@ -42,8 +40,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import * as d3 from 'd3'
-import isEqual from 'lodash.isequal'
+import {
+  select as d3Select,
+  zoom as d3Zoom,
+  zoomIdentity as d3ZoomIdentity,
+  event as d3Event
+} from 'd3'
 
 import SubTree from './SubTree'
 import settings from '@/lib/link.js'
@@ -62,10 +64,7 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
 
-      nonFocusedPartners: [],
-      changeFocusId: null,
-      nodeId: '',
-      lastNode: null
+      nonFocusedPartners: []
     }
   },
   mounted () {
@@ -74,19 +73,35 @@ export default {
     this.zoom()
     this.scale()
   },
+  beforeDestroy () {
+    if (!this.whakapapaView) return
+    if (this.whakapapaView.name === 'Loading') return
+    if (!this.whakapapaView.canEdit) return
+
+    if (!this.whakapapaView.id) {
+      console.warn('Trying to save the record count without a whakapapa id', this.whakapapaView)
+      return
+    }
+
+    const profileCount = this.tree.value
+    if (!profileCount) return
+    if (this.whakapapaView.recordCount === profileCount) return
+
+    // if there are more records here than are recorded, update the whakapapa-view
+    this.saveWhakapapaView({
+      id: this.whakapapaView.id,
+      recordCount: profileCount
+    })
+  },
 
   computed: {
-    ...mapGetters('whakapapa', ['nestedWhakapapa']),
-    ...mapGetters('tree', ['tree', 'descendants']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
+    ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode']),
     radius () {
       return settings.radius
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    pathNode () {
-      if (this.searchNodeId === '') return null
-      return this.descendants.find(d => d.data.id === this.searchNodeId)
     },
     /*
       gets the X position of the tree based on the svg size
@@ -111,98 +126,79 @@ export default {
     },
     height () {
       return screen.height
-    },
-    paths () {
-      if (!this.componentLoaded || !this.pathNode) return null
-      return this.root.path(this.pathNode)
-        .map(d => d.data.id)
     }
   },
   watch: {
-    searchNodeId (newVal) {
-      if (newVal === '') return null
+    searchNodeId (id) {
+      if (id === '') return null
 
-      const node = this.descendants.find(node => node.data.id === newVal)
+      const node = this.getNode(id) || this.getPartnerNode(id)
       if (node) this.centerNode(node)
     }
   },
 
   methods: {
     ...mapActions(['setLoading']),
-    ...mapActions('whakapapa', ['toggleNodeCollapse']),
-    pathStroke (sourceId, targetId) {
-      if (!this.paths) return 'darkgrey'
+    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
 
-      var currentPath = [
-        sourceId,
-        targetId
-      ]
-
-      var pairs = d3.pairs(this.paths)
-        .filter(d => {
-          return isEqual(d, currentPath)
-        })
-
-      if (pairs.length > 0) {
-        return '#b02425'
-      }
-      return 'darkgrey'
-    },
-
-    async checkNonFocusedPartner (profile) {
-      if (profile.partners && profile.partners.length > 0) {
-        for await (const partner of profile.partners) {
-          const relatives = await this.getRelatives(partner.id)
-          if (relatives.parents && relatives.parents.length > 0) {
-            this.nonFocusedPartners = [...this.nonFocusedPartners, partner.id]
-          }
-        }
-      }
-      if (profile.children) {
-        for await (const child of profile.children) {
-          await this.checkNonFocusedPartner(child)
-        }
-      }
-    },
-
-    changeFocus (profileId) {
-      this.changeFocusId = profileId
-      this.$emit('change-focus', profileId)
-    },
     zoom () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
       svg.call(
-        d3.zoom()
+        d3Zoom()
           .scaleExtent([0.05, 2])
           .on('zoom', function () {
-            g.attr('transform', d3.event.transform)
+            g.attr('transform', d3Event.transform)
           })
       )
         .on('dblclick.zoom', null)
     },
     scale () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
-      var zoom = d3.zoom()
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
+      var zoom = d3Zoom()
         .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
+          g.attr('transform', d3Event.transform)
         })
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 
+    handleRootNodeClick (id) {
+      // if node is not already centered, center it
+      if (this.nodeCentered !== id) return this.centerNode(id)
+
+      // if it is already centered, collapse the node
+      this.toggleNodeCollapse(id)
+
+      // setTimeout needed to get new node position after it has finished collapsing/expanding
+      setTimeout(() => this.centerNode(id), 100)
+    },
+
+    handlePartnerNodeClick (id) {
+      this.$emit('change-focus', id)
+
+      setTimeout(() => this.centerNode(id), 1000)
+    },
+
+    moveTo (x, y, duration = 700) {
+      const svg = d3Select('#baseSvg')
+
+      d3Select('#baseGroup')
+        .transition()
+        .duration(duration)
+        .attr('transform', `translate(${x}, ${y})`)
+        .on('end', () => {
+          svg.call(d3Zoom().transform, d3ZoomIdentity.translate(x, y))
+        })
+    },
+
     centerNode (node) {
-      // if node is already centered than collapse
-      if (this.nodeCentered === node.data.id) {
-        this.toggleCollapse(node)
-        return
+      if (typeof node === 'string') {
+        node = this.getNode(node) || this.getPartnerNode(node)
       }
 
       this.nodeCentered = node.data.id
-
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
 
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
@@ -210,59 +206,24 @@ export default {
       var x = width / 2 - node.x
       var y = height / 2 - node.y + 150
 
-      g.transition()
-        .duration(700)
-        .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
-        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+      this.moveTo(x, y)
     },
-    toggleCollapse (node) {
-      const profile = node.data
-      this.toggleNodeCollapse(profile.id)
 
-      const { children, _children = [] } = profile
-
-      if (children.length === 0 && _children.length === 0) return
-
-      Object.assign(profile, {
-        _children: children,
-        children: _children
-      })
-
-      // find the node position now
-      var _node = this.descendants.find(d => d.data.id === node.data.id)
-
-      // setTimeout needed to get new node position after it has finished collapsing/expanding
-      setTimeout(() => {
-        var svg = d3.select('#baseSvg')
-        var g = d3.select('#baseGroup')
-
-        var width = this.$refs.tree.clientWidth
-        var height = this.$refs.tree.clientHeight
-
-        var x = width / 2 - _node.x
-        var y = height / 2 - _node.y + 150
-
-        g.transition()
-          .duration(700)
-          .attr('transform', `translate(${x}, ${y})`)
-          .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
-      }, 100)
-    },
     zoomInOut (scale) {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
-      var zoom = d3.zoom()
+      var zoom = d3Zoom()
         .scaleExtent([0.05, 2])
         .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
+          g.attr('transform', d3Event.transform)
         })
 
       zoom.scaleBy(svg.transition().duration(150), scale)
     },
     zoomReset () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
+      var svg = d3Select('#baseSvg')
+      var g = d3Select('#baseGroup')
 
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
@@ -271,8 +232,8 @@ export default {
         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
         .on('end', function () {
           svg.call(
-            d3.zoom().transform,
-            d3.zoomIdentity.translate((width / 2), (height / 2))
+            d3Zoom().transform,
+            d3ZoomIdentity.translate((width / 2), (height / 2))
               .scale(1)
           )
         })

@@ -71,10 +71,10 @@
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
               <ProfileList
                 :label="t('addParent')"
-                :addedProfiles.sync="quickAdd['newParents']"
+                :addedProfiles.sync="quickAdd.newParents"
                 :items="generateParents"
                 :groupType="type === 'sibling' ? 'parents-siblings': ''"
-                @profile-click="addProfile($event, 'newParents')"
+                @profile-click="updateQuickAdd($event, 'newParents')"
                 @related-by="updateRelationships($event, 'newParents')"
               />
             </v-col>
@@ -83,9 +83,9 @@
             <v-col cols="12" v-if="hasProfiles('children')">
               <ProfileList
                 :label="t('addChildren')"
-                :addedProfiles.sync="quickAdd['newChildren']"
+                :addedProfiles.sync="quickAdd.newChildren"
                 :items="generateChildren"
-                @profile-click="addProfile($event, 'newChildren')"
+                @profile-click="updateQuickAdd($event, 'newChildren')"
                 @related-by="updateRelationships($event, 'newChildren')"
               />
             </v-col>
@@ -94,9 +94,9 @@
             <v-col cols="12" v-if="hasProfiles('partners')">
               <ProfileList
                 :label="t('addPartners')"
-                :addedProfiles.sync="quickAdd['newPartners']"
+                :addedProfiles.sync="quickAdd.newPartners"
                 :items="generatePartners"
-                @profile-click="addProfile($event, 'newPartners')"
+                @profile-click="updateQuickAdd($event, 'newPartners')"
               />
             </v-col>
           </template>
@@ -149,23 +149,23 @@ export default {
         'child', 'parent', 'sibling', 'partner'
       ].includes(val)
     },
-    findInTree: Function
+    isInTree: Function
   },
   data () {
     return {
       formData: setDefaultData(this.allowRelationships),
-      hasSelection: false,
+      hasSelection: false, // TODO - describe what this does
       closeSuggestions: [],
-      profile: {},
+      profile: {}, // the profile state in the form
       quickAdd: {
-        newParents: [],
-        newChildren: [],
-        newPartners: [],
         parents: [],
         children: [],
-        partners: []
+        partners: [],
+        newParents: [],
+        newChildren: [],
+        newPartners: []
       },
-      existingProfile: null,
+      existingProfile: null, // the currently profile in database (if it exists)
       isDuplicate: false,
       moveDup: true
     }
@@ -174,14 +174,16 @@ export default {
     this.closeSuggestions = await this.getCloseSuggestions()
 
     if (this.$route.name !== 'login' && this.selectedProfile) {
-      this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
-      if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
-      else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
-      if (this.selectedProfile) this.quickAdd['partners'] = this.selectedProfile.parents
+      this.quickAdd.parents = await this.newChildParents(this.selectedProfile)
+      this.quickAdd.partners = this.selectedProfile.parents
+
+      if (this.type === 'partner') this.quickAdd.children = this.newPartnerChildren(this.selectedProfile)
+      else if (this.type === 'parent') this.quickAdd.children = this.newParentChildren(this.selectedProfile)
     }
   },
   computed: {
     ...mapGetters(['currentAccess']),
+    ...mapGetters('whakapapa', ['getParentIds']),
     allowRelationships () {
       return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },
@@ -273,14 +275,20 @@ export default {
     ...mapActions('profile', ['getProfile']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
-      var arr = this.quickAdd[selectedArray]
-      var foundIndex = arr.findIndex(x => x.id === profile.id)
-      this.quickAdd[selectedArray][foundIndex] = profile
+      const index = this.quickAdd[selectedArray].findIndex(x => x.id === profile.id)
+      this.quickAdd[selectedArray][index].relationshipType = profile.relationshipType
     },
-    addProfile (profile, selectedArray) {
-      if (this.quickAdd[selectedArray].some(d => d.id === profile.id)) {
+    updateQuickAdd (profile, selectedArray) {
+      const isAlreadyQuickAdded = this.quickAdd[selectedArray].some(d => d.id === profile.id)
+      if (isAlreadyQuickAdded) {
+        // remove from selectedArray
         this.quickAdd[selectedArray] = this.quickAdd[selectedArray].filter(d => d.id !== profile.id)
-      } else this.quickAdd[selectedArray].push(profile)
+      } // eslint-disable-line
+      else {
+        // add to selectedArray
+        const details = pick(profile, ['id', 'relationshipType', 'legallyAdopted'])
+        this.quickAdd[selectedArray].push(details)
+      }
     },
     hasProfiles (field) {
       return this.quickAdd[field] && this.quickAdd[field].length > 0
@@ -336,10 +344,6 @@ export default {
       return profile.siblings || []
     },
 
-    find (array, item) {
-      return array.some(i => i.id === item.id)
-    },
-
     // suggests other parents of children
     async findPartners () {
       var currentPartners = this.selectedProfile.partners || []
@@ -349,12 +353,14 @@ export default {
       this.selectedProfile.children.map(child => {
         if (!child.parents) return child
 
-        child.parents.forEach(parent => {
-          if (this.selectedProfile.id === parent.id) return
-          if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
-            suggestedPartners.push(parent)
-          }
+        this.getParentIds(child.id).forEach(parentId => {
+          if (this.selectedProfile.id === parentId) return
+          if (currentPartners.some(partner => partner.id === parentId)) return
+          if (suggestedPartners.some(partner => partner.id === parentId)) return
+
+          suggestedPartners.push(parent)
         })
+
         return child
       })
 
@@ -362,9 +368,10 @@ export default {
       const profile = await this.getProfile(this.selectedProfile.id)
       profile.partners.forEach(partner => {
         if (this.selectedProfile.id === partner.id) return
-        if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
-          suggestedPartners.push(partner)
-        }
+        if (currentPartners.some(_partner => _partner.id === partner.id)) return
+        if (suggestedPartners.some(_partner => _partner.id === partner.id)) return
+
+        suggestedPartners.push(partner)
       })
 
       return suggestedPartners
@@ -386,34 +393,34 @@ export default {
       if (this.hasProfiles('newChildren')) {
         if (this.existingProfile && this.existingProfile.children) {
           // if quick adding children, remove exisiting children from the list
-          let _children = this.quickAdd['newChildren'].filter(child => {
+          let _children = this.quickAdd.newChildren.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_children.length) submission.children = _children
         } else {
-          submission.children = this.quickAdd['newChildren']
+          submission.children = this.quickAdd.newChildren
         }
       }
 
       if (this.hasProfiles('newParents')) {
         if (this.existingProfile && this.existingProfile.parents) {
-          let _parents = this.quickAdd['newParents'].filter(child => {
+          let _parents = this.quickAdd.newParents.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_parents.length) submission.parents = _parents
         } else {
-          submission.parents = this.quickAdd['newParents']
+          submission.parents = this.quickAdd.newParents
         }
       }
 
       if (this.hasProfiles('newPartners')) {
         if (this.existingProfile && this.existingProfile.partners) {
-          let _partners = this.quickAdd['newPartners'].filter(child => {
+          let _partners = this.quickAdd.newPartners.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_partners.length) submission.partners = _partners
         } else {
-          submission.partners = this.quickAdd['newPartners']
+          submission.partners = this.quickAdd.newPartners
         }
       }
 
@@ -456,7 +463,7 @@ export default {
         if (isNewPartnerExistingChildsParent) return false
       }
 
-      if (this.findInTree(profile.id)) return true
+      if (this.isInTree(profile.id)) return true
 
       return false
     },
@@ -515,19 +522,19 @@ export default {
         this.existingProfile = await this.getProfile(this.profile.id)
 
         // if hasSelection and quickAdd Section, show exsisting links
-        if (this.generateChildren && this.existingProfile.children) this.quickAdd['newChildren'] = [...this.existingProfile.children]
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
         if (this.generatePartners && this.existingProfile.partners) {
-          this.quickAdd['partners'] = [...this.existingProfile.partners]
-          this.quickAdd['newPartners'] = [...this.existingProfile.partners]
+          this.quickAdd.partners = [...this.existingProfile.partners]
+          this.quickAdd.newPartners = [...this.existingProfile.partners]
         }
-        if (this.generateParents && this.existingProfile.parents) this.quickAdd['newParents'] = [...this.existingProfile.parents]
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
         if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
       } else {
-        this.quickAdd['newChildren'] = []
-        this.quickAdd['newPartners'] = []
+        this.quickAdd.newChildren = []
+        this.quickAdd.newPartners = []
       }
     }
   }

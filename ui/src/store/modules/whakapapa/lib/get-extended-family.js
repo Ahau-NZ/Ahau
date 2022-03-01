@@ -9,16 +9,8 @@ export default function getExtendedFamily (state, getters, parentIds, opts = {})
   const {
     getRawChildIds, getRawParentIds, getRawPartnerIds,
     getChildRelationshipType,
-    isNotIgnored
+    isImportantLink, isNotIgnored
   } = getters
-
-  const isImportantLink = (childId, parentId) => (
-    // keep that parent if there's:
-    // EITHER an importantRelationship with the child
-    getters.isImportantLink(childId, parentId) ||
-    // OR this parents partner has an importantRelationship with the child
-    getRawPartnerIds(parentId).some(partnerId => getters.isImportantLink(childId, partnerId))
-  )
 
   // parentIds.forEach(parentId => lineage.add(parentId))
 

@@ -1,5 +1,13 @@
 import { State } from '../lib/test-helpers'
 
+/* extended family A
+
+   Y   X∙∙∙A---B   C
+    \ / \ /  |  \ /
+    xy  ax   ab  bc
+
+*/
+
 // A has children:
 //   - ax
 //   - ab
@@ -14,10 +22,6 @@ import { State } from '../lib/test-helpers'
 //     - xy (with parent Y - relationshipType: null)
 //
 // Like so:
-//
-//   Y   X∙∙∙A---B   C
-//    \ / \ /  |  \ /
-//    xy  ax   ab  bc
 
 export default function ExtendedFamilyA () {
   return State({

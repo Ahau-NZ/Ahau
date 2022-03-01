@@ -1,22 +1,19 @@
 import Vue from 'vue'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-import clone from 'lodash.clonedeep'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
 
 import { saveLink } from '../../../lib/link-helpers'
-import settings from '../../../lib/link'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
-const LINK_OFFSET = 10
+const UNKNOWN_REL_TYPE = 'unknown'
 
-const loadingView = () => ({
-  name: 'Loading',
+const defaultView = () => ({
+  name: 'Loading...',
   description: '',
-  focus: '',
+  focus: null,
   recps: null,
   image: { uri: '' },
   ignoredProfiles: [],
@@ -27,6 +24,12 @@ const loadingView = () => ({
   // settings
   tree: true,
   table: false
+})
+
+const defaultViewChanges = () => ({
+  focus: null, // can temporarily over-ride the saved view.focus
+  collapsed: { // maps node.data.id to Boolean (default false)
+  }
 })
 
 // vuex/whakapapa is about creating a whakapapa graph and what should be in it.
@@ -42,9 +45,9 @@ const loadingView = () => ({
 
 export default function (apollo) {
   const state = {
-    // loading, // TODO
-    view: loadingView(),
-    lastView: loadingView(),
+    view: defaultView(),
+    viewChanges: defaultViewChanges(),
+    lastView: defaultView(),
 
     childLinks: {
       // [parentId]: {
@@ -55,45 +58,34 @@ export default function (apollo) {
       // [partnerA]: {
       //   [partnerB]: relationshipType
       // }
-    },
-
-    collapsed: { // maps node.data.id to Boolean (default false)
-
-    },
-
-    // NOTE we talk about two sorts of nodes:
-    //   - d3 nodes - these each only have one node.parent
-    //   - vue Node - these are nodes drawn with Node.vue, and includes partner nodes which are not in the d3 tree
-    profileLocations: {
-      // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
     }
-    // node currently requires:
-    //    - node.id
-    //    - node.x
-    //    - node.y
-    //    - node.radius
-    // WARNING: locations should not be here, it's a tree thing
   }
 
   const getters = {
     whakapapaView: state => state.view,
+    focus: state => state.viewChanges.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     importantRelationships: state => state.view.importantRelationships,
     // TODO search app for this term - we see that this.view.importantRelationships is being used a lot?
     showExtendedFamily: state => state.view.extendedFamily,
 
     lastWhakapapaView: state => state.lastView,
-    // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
 
     /* getter methods */
-    isCollapsedNode: state => (id) => Boolean(state.collapsed[id]),
+    isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: state => (id) => state.view.importantRelationships[id],
-    isImportantLink: state => (targetId, otherId) => {
+    isRawImportantLink: state => (targetId, otherId) => {
       const rule = state.view.importantRelationships[targetId]
       if (!rule) return true
       return rule.primary.profileId === otherId
     },
+    isImportantLink: (state, getters) => (targetId, otherId) => (
+      // EITHER other has importantRelationship with the target
+      getters.isRawImportantLink(targetId, otherId) ||
+      // OR one of others partners has an importantRelationship with the target
+      getters.getRawPartnerIds(otherId).some(partnerId => getters.isRawImportantLink(targetId, partnerId))
+    ),
     getChildRelationshipType: state => (parent, child) => {
       return state.childLinks[parent] && state.childLinks[parent][child]
     },
@@ -121,17 +113,13 @@ export default function (apollo) {
     /* higher order getters */
     getChildIds: (state, getters) => (parentId) => {
       // NOTE this gets the ids of childrenNodes in the graph
-      if (state.collapsed[parentId]) return []
+      // WARNING this may include children who are not rendered in the graph because they are extendedFamily
+      if (getters.isCollapsedNode(parentId)) return []
 
       return getters.getRawChildIds(parentId)
+        .filter(childId => !state.view.ignoredProfiles.includes(childId))
         // NOTE may need to filter out ignoredProfiles here
-        .filter(childId => (
-          // keep this child if there's:
-          // EITHER an importantRelationship with the child
-          getters.isImportantLink(childId, parentId) ||
-          // OR one of our partners has an importantRelationship with the child
-          getters.getRawPartnerIds(parentId).some(partnerId => getters.isImportantLink(childId, partnerId))
-        ))
+        .filter(childId => getters.isImportantLink(childId, parentId))
     },
     getParentIds: (state, getters) => (childId) => {
       let parentIds = getters.getRawParentIds(childId)
@@ -146,7 +134,7 @@ export default function (apollo) {
             return (
               (
                 (getters.getPartnerRelationshipType(state.view.focus, parentId) !== undefined) ||
-                getters.isDescendant(state.view.focus, parentId)
+                getters.isDescendant(getters.focus, parentId)
               ) && // connection from focus -> parentId
               getters.isDescendant(parentId, childId) // connection from parentId -> childId
             )
@@ -154,13 +142,7 @@ export default function (apollo) {
       }
 
       return parentIds
-        .filter(parentId => (
-          // keep that parent if there's:
-          // EITHER an importantRelationship with the child
-          getters.isImportantLink(childId, parentId) ||
-          // OR this parents partner has an importantRelationship with the child
-          getters.getRawPartnerIds(parentId).some(partnerId => getters.isImportantLink(childId, partnerId))
-        ))
+        .filter(parentId => getters.isImportantLink(childId, parentId))
     },
     isDescendant: (state, getters) => (parentId, childId) => {
       // NOTE this checks if there is a descendant line within the rendered graph
@@ -179,7 +161,7 @@ export default function (apollo) {
       return result
     },
     getPartnerIds: (state, getters) => (id) => {
-      if (state.collapsed[id]) return []
+      if (getters.isCollapsedNode(id)) return []
 
       if (!state.view.extendedFamily) {
         return getters.getRawPartnerIds(id).filter(getters.isNotIgnored)
@@ -188,14 +170,62 @@ export default function (apollo) {
       const { partners } = getExtendedFamily(state, getters, [id])
       return partners
     },
-    nestedWhakapapa: (state, getters) => {
-      // TODO rename "getDescendantsTree" or something
-      if (!state.view || !state.view.focus) return null
+    nestedDescendants: (state, getters) => {
+      // TODO rename descendantsTree
+      if (!getters.focus) return {}
       // starts at the focus and builds the tree as the data comes in
 
-      return buildNestedWhakapapa(state, getters, state.view.focus)
+      return getters.buildNestedDescendants(getters.focus)
     },
-    lessImportantLinks: calculateLessImportantLinks
+    buildNestedDescendants: (state, getters) => (parentId, opts = {}) => {
+      const {
+        lineage = new Set()
+      } = opts
+      lineage.add(parentId)
+
+      let childIds
+      if (!state.view.extendedFamily) {
+        childIds = getters.getChildIds(parentId)
+      } // eslint-disable-line
+      else {
+        const extendedFamily = getExtendedFamily(state, getters, [parentId])
+        childIds = extendedFamily.children
+      }
+
+      return {
+        id: parentId,
+        children: childIds
+          .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
+          .filter(childId => getters.isImportantLink(childId, parentId))
+          .map(childId => {
+            // console.log('recursing', childId)
+            return getters.buildNestedDescendants(childId, { lineage: new Set(lineage) })
+            // we create a new "lineage", so that each branching of the tree can record
+            // it's own lineage of people, allowing duplicate profiles across branches
+            // (this behaves like a "path" except we use a set because we don't care about author)
+          })
+      }
+    },
+    secondaryLinks: (state, getters) => {
+      // for each importantRelationship link (which targets a person)
+      // look for parents that rule has disconnected them from.
+      // record those links
+
+      return Object.entries(state.view.importantRelationships).reduce(
+        (acc, [ruleTarget, rule]) => {
+          const links = getters.getRawParentIds(ruleTarget)
+            .filter(parentId => !getters.isImportantLink(ruleTarget, parentId))
+            .map(parentId => ({
+              parent: parentId,
+              child: ruleTarget,
+              relationshipType: state.childLinks[parentId][ruleTarget]
+            }))
+
+          return acc.concat(links)
+        },
+        []
+      )
+    }
   }
 
   const mutations = {
@@ -223,6 +253,9 @@ export default function (apollo) {
 
       state.view = view
     },
+    setViewFocus (state, profileId) {
+      state.viewChanges.focus = profileId
+    },
     toggleViewMode (state) {
       state.view.tree = !state.view.tree
       state.view.table = !state.view.tree
@@ -231,24 +264,12 @@ export default function (apollo) {
       state.view.extendedFamily = extended
     },
     toggleNodeCollapse (state, nodeId) {
-      Vue.set(state.collapsed, nodeId, !state.collapsed[nodeId])
-    },
-    addProfileLocation (state, { profileId, ...data } = {}) {
-      if (!profileId) return
-
-      const change = [...(state.profileLocations[profileId] || []), data]
-
-      Vue.set(state.profileLocations, profileId, change)
-    },
-    setLessImportantLinks (state, links) {
-      state.lessImportantLinks = links
+      Vue.set(state.viewChanges.collapsed, nodeId, !state.viewChanges.collapsed[nodeId])
     },
     resetWhakapapaView (state) {
       state.lastView = state.view
-      state.view = loadingView()
-      state.profileLocations = []
-      state.lessImportantLinks = []
-      state.collapsed = {}
+      state.view = defaultView()
+      state.viewChanges = defaultViewChanges()
     },
 
     // methods for manipulating whakapapa links
@@ -258,7 +279,7 @@ export default function (apollo) {
       childLinks.forEach(({ parent, child, relationshipType }) => {
         const newChildren = {
           ...(state.childLinks[parent] || {}),
-          [child]: relationshipType
+          [child]: relationshipType || UNKNOWN_REL_TYPE
         }
 
         Vue.set(state.childLinks, parent, newChildren)
@@ -268,7 +289,7 @@ export default function (apollo) {
         const [partnerA, partnerB] = [parent, child].sort()
         const newPartners = {
           ...(state.partnerLinks[partnerA] || {}),
-          [partnerB]: relationshipType
+          [partnerB]: relationshipType || UNKNOWN_REL_TYPE
         }
 
         Vue.set(state.partnerLinks, partnerA, newPartners)
@@ -304,16 +325,23 @@ export default function (apollo) {
   }
 
   const actions = {
+    setViewFocus ({ commit, dispatch, getters }, id) {
+      commit('setViewFocus', id)
+      dispatch('loadDescendants', getters.focus)
+    },
     toggleViewMode ({ commit, dispatch }) {
       commit('toggleViewMode')
       dispatch('setExtendedFamily', false)
     },
-    setExtendedFamily ({ state, commit, dispatch }, extended) {
+    setExtendedFamily ({ state, commit, dispatch, getters }, extended) {
       commit('setExtendedFamily', extended)
-      dispatch('loadDescendants', state.view.focus)
+      dispatch('loadDescendants', getters.focus)
     },
     toggleNodeCollapse ({ commit }, nodeId) {
       commit('toggleNodeCollapse', nodeId)
+    },
+    addLinks ({ commit }, links) {
+      commit('addLinks', links)
     },
     removeLinksToProfile ({ commit }, profileId) {
       commit('removeLinksToProfile', profileId)
@@ -359,7 +387,6 @@ export default function (apollo) {
         const res = await apollo.query(getFamilyLinks(profileId, extended))
         if (res.errors) throw new Error(res.errors)
 
-        // TODO success alert message
         return res.data.loadFamilyOfPerson
       } catch (err) {
         console.error('error getting family links', err)
@@ -376,10 +403,11 @@ export default function (apollo) {
       }
     },
     async loadDescendants ({ state, dispatch, commit, getters, rootGetters }, opts) {
+      if (!opts) return
       if (typeof opts === 'string') return dispatch('loadDescendants', { profileId: opts })
 
       const { profileId, loaded = new Set() } = opts
-      if (loaded.has(profileId)) return
+      if (!profileId || loaded.has(profileId)) return
 
       loaded.add(profileId)
 
@@ -609,121 +637,4 @@ function flattenToNestedArray (obj, array, nestedArray) {
     .map(m => m[nestedArray])
     .flat() // flattens from [[A, B], [C]] to [A, B, C]
     .filter(A => !obj[nestedArray].some(B => B.id === A.id))
-}
-
-function calculateLessImportantLinks (state, getters, rootState, rootGetters) {
-  // TODO - call this when loading graph is done?
-  if (!Object.keys(state.profileLocations).length || isEmpty(state.view.importantRelationships)) return []
-
-  const links = []
-  // // for each importantRelationship find the x,y coords on the graph and create set the link
-  Object.values(state.view.importantRelationships).forEach(rule => {
-    if (isCollapsedNode(rule.profileId, getters, rootGetters)) return
-
-    // find the location of the profile the rule is about
-    const locations = state.profileLocations[rule.profileId]
-    if (!locations || locations.length === 0) return
-    const location = clone(locations[locations.length - 1])
-
-    // TODO WARNING - handle there being multiple locations for a node
-
-    rule.other.forEach(({ profileId: otherProfileId, relationshipType }) => {
-      if (isCollapsedNode(otherProfileId, getters, rootGetters)) return
-
-      // find the location of the other profiles a rule mentions
-      const targetLocations = state.profileLocations[otherProfileId]
-      if (!targetLocations || targetLocations.length === 0) return
-      const targetLocation = clone(targetLocations[targetLocations.length - 1])
-
-      const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
-
-      const coords = {
-        startX: targetLocation.x + targetLocation.radius,
-        startY: targetLocation.y + targetLocation.radius,
-        endX: location.x + location.radius,
-        endY: location.y + location.radius
-      }
-      // NOTE we wouldn't need radius if all avatars were drawn centered
-
-      if (relationshipType === 'partner') {
-        coords.directed = false
-      }
-
-      const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
-      coords.startX += offset
-      coords.endX -= offset
-
-      links.push({
-        id: [rule.profileId, otherProfileId].join('--'),
-        style: {
-          fill: 'none',
-          // stroke: settings.color.getColor(0),
-          stroke: '#f0f',
-          opacity: settings.opacity,
-          strokeWidth: settings.thickness,
-          strokeLinejoin: 'round',
-          strokeDasharray: isDashed ? 2.5 : 0
-        },
-        d: settings.path(coords)
-      })
-    })
-  })
-
-  return links
-}
-
-function buildNestedWhakapapa (state, getters, parentId, opts = {}) {
-  const {
-    lineage = new Set()
-  } = opts
-  lineage.add(parentId)
-
-  const isImportantLink = (childId, parentId) => (
-    // EITHER an importantRelationship with the child
-    getters.isImportantLink(childId, parentId) ||
-    // OR one of our partners has an importantRelationship with the child
-    getters.getPartnerIds(parentId).some(partnerId => getters.isImportantLink(childId, partnerId))
-  )
-
-  let childIds
-  if (!state.view.extendedFamily) {
-    childIds = getters.getRawChildIds(parentId)
-      .filter(childId => !state.view.ignoredProfiles.includes(childId))
-  } // eslint-disable-line
-  else {
-    const extendedFamily = getExtendedFamily(state, getters, [parentId])
-    childIds = extendedFamily.children
-  }
-
-  return {
-    id: parentId,
-    children: childIds
-      .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
-      .filter(childId => isImportantLink(childId, parentId))
-      .map(childId => {
-        // console.log('recursing', childId)
-        return buildNestedWhakapapa(state, getters, childId, { lineage: new Set(lineage) })
-        // we create a new "lineage", so that each branching of the tree can record
-        // it's own lineage of people, allowing duplicate profiles across branches
-        // (this behaves like a "path" except we use a set because we don't care about author)
-      })
-  }
-}
-
-function hasCollapsedParent (nodeId, getters, rootGetters) {
-  // search ascendants to see if any are collapsed
-  const parentNodeId = rootGetters['tree/getParentNodeId'](nodeId)
-
-  if (!parentNodeId) return false
-
-  // check if the parent is collapsed
-  if (getters.isCollapsedNode(parentNodeId)) return true
-
-  return hasCollapsedParent(parentNodeId, getters, rootGetters)
-}
-
-function isCollapsedNode (nodeId, getters, rootGetters) {
-  if (getters.isCollapsedNode(nodeId)) return true
-
-  return hasCollapsedParent(nodeId, getters, rootGetters)
 }

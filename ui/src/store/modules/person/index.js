@@ -1,12 +1,11 @@
 import Vue from 'vue'
-import clone from 'lodash.clonedeep'
 
-import { getRelatives, getPerson } from '@/lib/person-helpers'
+import { getPerson as getPersonAndWhanau } from '@/lib/person-helpers'
 import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
-    selectedProfile: {}, // TODO change to selectedProfileId ??
+    selectedProfileId: null,
     profiles: {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
@@ -15,20 +14,38 @@ export default function (apollo) {
   }
 
   const getters = {
-    selectedProfile (state) {
-      return state.selectedProfile
+    person: state => (profileId) => state.profiles[profileId],
+    personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
+      // this method provides a person profile and extends it with getters for parents/ children/ partners
+      // NOTE this recursive, so you go e.g. profile.parents[0].partners
+      // NOTE this only builds on links already in the whakapapa store
+      const profile = getters.person(id)
+      if (!profile) return
+
+      return {
+        ...profile,
+        get parents () {
+          return rootGetters['whakapapa/getParentIds'](id).map(getters.personPlusFamily)
+        },
+        get children () {
+          return rootGetters['whakapapa/getChildIds'](id).map(getters.personPlusFamily)
+        },
+        get partners () {
+          return rootGetters['whakapapa/getPartnerIds'](id).map(getters.personPlusFamily)
+        }
+      }
     },
-    person: state => (profileId) => {
-      return clone(state.profiles[profileId])
+    selectedProfile: (state, getters, rootState, rootGetters) => {
+      if (!state.selectedProfileId) return
+
+      return getters.personPlusFamily(state.selectedProfileId)
     },
-    isTombstoned: state => (profileId) => {
-      return state.tombstoned.has(profileId)
-    }
+    isTombstoned: state => (profileId) => state.tombstoned.has(profileId)
   }
 
   const mutations = {
-    updateSelectedProfile (state, profile) {
-      state.selectedProfile = profile
+    setSelectedProfileById (state, id) {
+      state.selectedProfileId = id
     },
     setPerson (state, profile) {
       Vue.set(state.profiles, profile.id, profile)
@@ -59,10 +76,10 @@ export default function (apollo) {
       }
     },
     async getPerson (_, profileId) {
+      // loads all profile fields + siblings, partners, ....
+      // TODO look into deprecating this - should use getPersonFull + loadDescendants
       try {
-        const res = await apollo.query(
-          getPerson(profileId)
-        )
+        const res = await apollo.query(getPersonAndWhanau(profileId))
 
         if (res.errors) throw res.errors
 
@@ -72,10 +89,9 @@ export default function (apollo) {
       }
     },
     async getPersonFull (_, profileId) {
+      // loads all profile fields AND any associated admin profile
       try {
-        const res = await apollo.query(
-          getPersonFull(profileId)
-        )
+        const res = await apollo.query(getPersonFull(profileId))
 
         if (res.errors) throw res.errors
 
@@ -84,12 +100,10 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a persons details')
       }
     },
-    // same as getPerson but gets a person with minimal fields rather then all fields
     async getPersonMinimal (_, profileId) {
+      // loads a profile with only what's needed for the tree (avatar / things needed for fallback, name, ordering info)
       try {
-        const res = await apollo.query(
-          getPersonMinimal(profileId)
-        )
+        const res = await apollo.query(getPersonMinimal(profileId))
 
         if (res.errors) throw res.errors
 
@@ -126,9 +140,6 @@ export default function (apollo) {
       }
     },
 
-    updateSelectedProfile ({ commit }, profile) {
-      commit('updateSelectedProfile', profile)
-    },
     async loadPersonMinimal ({ state, dispatch, commit }, profileId) {
       if (state.tombstoned.has(profileId)) return
 
@@ -149,16 +160,10 @@ export default function (apollo) {
       } // eslint-disable-line
       else commit('setPerson', profile)
     },
-    // NOTE: this is similar to the method below
-    async setSelectedProfileById ({ dispatch, commit }, profileId) {
-      var person = await dispatch('getPerson', profileId)
-      commit('updateSelectedProfile', person)
-    },
-    async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
-      // NOTE to dispatch outide this namespace, we use:
-      //   dispatch(actionName, data, { root: true })
-      //
-      // ref: https://vuex.vuejs.org/guide/modules.html#namespacing
+    async setSelectedProfileById ({ dispatch, commit, rootState }, id) {
+      commit('setSelectedProfileById', id)
+      dispatch('loadPersonFull', id)
+
       if (id === rootState.whoami.public.profile.id) {
         dispatch('setWhoami', id, { root: null })
       }
@@ -169,11 +174,9 @@ export default function (apollo) {
       if (rootState.archive.showStory && rootState.dialog.preview) {
         dispatch('archive/toggleShowStory', null, { root: true })
       }
-      if (type !== 'setWhanau' && rootState.dialog.dialog) {
+      if (rootState.dialog.dialog) {
         dispatch('setDialog', null, { root: true })
       }
-      var person = await getRelatives(id, apollo)
-      commit('updateSelectedProfile', person)
     }
   }
 

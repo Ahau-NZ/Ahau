@@ -1,5 +1,5 @@
 import { State, Getters } from './lib/test-helpers'
-import { WhangaiGrandparentSimple, WhangaiGrandparentComplex } from './fixtures'
+import { WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
 const { getters } = require('./').default()
@@ -89,14 +89,16 @@ test('vuex/whakapapa getters.getChildIds (with collapsed)', t => {
       focus: 'B',
       extendedFamily: false
     },
+    viewChanges: {
+      collapsed: {
+        B: true
+      }
+    },
     childLinks: {},
     partnerLinks: {
       A: {
         B: 'partners'
       }
-    },
-    collapsed: {
-      B: true
     }
   })
 
@@ -105,7 +107,7 @@ test('vuex/whakapapa getters.getChildIds (with collapsed)', t => {
   t.end()
 })
 
-test('vuex/whakapapa getters.childIds (mixed childLinks)', t => {
+test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
   //  X   Y
   //   ? /
   //   ay
@@ -129,6 +131,35 @@ test('vuex/whakapapa getters.childIds (mixed childLinks)', t => {
   state.view.extendedFamily = true
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
+
+  t.end()
+})
+
+test('vuex/whakapapa getters.getChildIds (marriage within tree)', t => {
+  /* marriage within tree
+
+                Grandad─┬─Grandma
+                   ┌────┴╌╌╌╌╌┐
+                   │          ┆
+               Daughter─┬───(Son)
+                        │
+                   Grandaughter
+
+  */
+  const state = MarriageWithinTree()
+  const getChildIds = getters.getChildIds(state, Getters(state))
+
+  t.deepEqual(getChildIds('Grandma'), ['Daughter'])
+  t.deepEqual(getChildIds('Grandad'), ['Daughter'])
+  t.deepEqual(getChildIds('Daughter'), ['Grandaughter'])
+  t.deepEqual(getChildIds('Son'), ['Grandaughter'])
+
+  console.log('remove importantRelationship')
+  state.view.importantRelationships = {}
+  t.deepEqual(getChildIds('Grandma'), ['Daughter', 'Son'])
+  t.deepEqual(getChildIds('Grandad'), ['Daughter', 'Son'])
+  t.deepEqual(getChildIds('Daughter'), ['Grandaughter'])
+  t.deepEqual(getChildIds('Son'), ['Grandaughter'])
 
   t.end()
 })

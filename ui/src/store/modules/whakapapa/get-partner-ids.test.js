@@ -1,5 +1,5 @@
 import { Getters, State } from './lib/test-helpers'
-import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex } from './fixtures'
+import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
 const { getters } = require('./').default()
@@ -204,19 +204,47 @@ test('vuex/whakapapa getters.getPartnerIds (with collapsed)', t => {
       focus: 'B',
       extendedFamily: false
     },
+    viewChanges: {
+      collapsed: {
+        B: true
+      }
+    },
     childLinks: {},
     partnerLinks: {
       A: {
         B: 'partners'
       }
-    },
-    collapsed: {
-      B: true
     }
   })
   const getPartnerIds = getters.getPartnerIds(state, Getters(state))
 
   t.deepEqual(getPartnerIds('B'), [])
+
+  t.end()
+})
+
+test('vuex/whakapapa getters.getPartnerIds (marriage within tree)', t => {
+  /* marriage within tree
+
+                Grandad─┬─Grandma
+                   ┌────┴╌╌╌╌╌┐
+                   │          ┆
+               Daughter─┬───(Son)
+                        │
+                   Grandaughter
+
+  */
+  const state = MarriageWithinTree()
+  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+
+  t.deepEqual(getPartnerIds('Daughter'), ['Son'])
+
+  console.log('remove importantRelationship')
+  state.view.importantRelationships = {}
+  t.deepEqual(getPartnerIds('Daughter'), ['Son'])
+
+  // NOTE no change, Son is always drawn as a partner, the importantRelatinship here
+  // only changes whether there is a duplicate Son node drawn elsewhere in graph
 
   t.end()
 })

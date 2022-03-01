@@ -12,12 +12,12 @@ export default {
 
 export const TableWithChildren = () => ({
   template: `
-    <Table :nestedWhakapapa="nestedWhakapapa" :view="whakapapaView"
+    <Table :nestedDescendants="nestedDescendants" :view="whakapapaView"
       @collapse-node="collapseNode"
     />
   `,
   data: () => ({
-    nestedWhakapapa: personComplete,
+    nestedDescendants: personComplete,
     whakapapaView: {
       name: 'Table With Children',
       description: 'This is a Table with children'
@@ -30,9 +30,9 @@ export const TableWithChildren = () => ({
 })
 
 export const TableWithoutChildren = () => ({
-  template: '<Table :nestedWhakapapa="nestedWhakapapa" :view="whakapapaView" />',
+  template: '<Table :nestedDescendants="nestedDescendants" :view="whakapapaView" />',
   data: () => ({
-    nestedWhakapapa: personMinimum,
+    nestedDescendants: personMinimum,
     whakapapaView: {
       name: 'Table Without Children',
       description: 'This is a Table without children'
@@ -42,9 +42,9 @@ export const TableWithoutChildren = () => ({
 })
 
 export const TableWithoutImages = () => ({
-  template: '<Table :nestedWhakapapa="nestedWhakapapa" :view="whakapapaView" />',
+  template: '<Table :nestedDescendants="nestedDescendants" :view="whakapapaView" />',
   data: () => ({
-    nestedWhakapapa: personNoImages,
+    nestedDescendants: personNoImages,
     whakapapaView: {
       name: 'Table Without Images',
       description:

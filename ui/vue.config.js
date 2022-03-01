@@ -2,7 +2,6 @@ const dotenv = require('dotenv')
 const { join } = require('path')
 
 const env = dotenv.config({ path: join(__dirname, '.env') })
-// WIP get this working in build
 
 if (env.error) {
   if (env.error.message.match(/no such file or directory/)) {

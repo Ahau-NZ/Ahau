@@ -6,7 +6,7 @@ test('whakapapa (action: suggestedParents)', async t => {
   // Setup Mock Profiles
   // ////
 
-  // NOTE: A and B are not in the nestedWhakapapa
+  // NOTE: A and B are not in the nestedDescendants
   const A = { id: 'A', partners: [] }
   const B = { id: 'B', partners: [A] }
   const C = { id: 'C', parents: [A, B], partners: [], siblings: [] }
