@@ -21,15 +21,15 @@
       :y="partner.y"
       isPartner
       :showAvatars="showAvatars"
-      @focus="focus"
+      @click="$emit('partner-node-click', partner.data.id)"
     />
 
     <!-- children -->
     <SubTree v-for="child in root.children" :key="`child-${child.data.id}`"
       :root="child"
-      :changeFocus="changeFocus"
-      :centerNode="centerNode"
       :showAvatars="showAvatars"
+      @partner-node-click="$emit('partner-node-click', $event)"
+      @root-node-click="$emit('root-node-click', $event)"
     />
 
     <!-- rootNode of this subtree -->
@@ -38,7 +38,7 @@
       :x="root.x"
       :y="root.y"
       :showAvatars="showAvatars"
-      @center="centerNode(root)"
+      @click="$emit('root-node-click', root.data.id)"
       />
   </g>
 </template>
@@ -53,8 +53,6 @@ export default {
   name: 'SubTree',
   props: {
     root: Object,
-    changeFocus: Function,
-    centerNode: Function,
     showAvatars: Boolean
   },
   components: {
@@ -65,9 +63,6 @@ export default {
     ...mapGetters('tree', ['secondaryLinks'])
   },
   methods: {
-    focus ($event) {
-      this.changeFocus($event)
-    }
   }
 }
 

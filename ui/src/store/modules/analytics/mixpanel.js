@@ -6,8 +6,13 @@ const {
   VUE_APP_MIXPANEL_API_HOST = 'https://api-eu.mixpanel.com'
 } = process.env
 
-// WIP
-// - document
+// Mixpanel is a analytics platform.
+// We record anonymised telemetry about the apps usage
+// This only includes:
+//   - is the app open/ in use
+//   - which version are you using
+//   - is it on mobile
+//   - rough country/region location
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND

@@ -45,7 +45,7 @@
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
       @submit="processUpdate($event)"
       @delete="toggleDialog('delete-node', null, null)"
-      @open-profile="setSelectedProfile($event)"
+      @open-profile="setSelectedProfileById($event)"
       @delete-link="removeLinkFromTree"
       @reload-whakapapa="reloadWhakapapa"
       :view="view"
@@ -165,7 +165,6 @@ export default {
       ].includes(val)
     },
     loadKnownFamily: Function,
-    setSelectedProfile: Function,
     getRelatives: Function
   },
   mixins: [
@@ -220,15 +219,16 @@ export default {
   },
   methods: {
     getDisplayName,
+    ...mapActions(['loading', 'setDialog']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['createPerson', 'loadPersonMinimal', 'updatePerson', 'deletePerson']),
+    ...mapActions('person', ['createPerson', 'loadPersonMinimal', 'updatePerson', 'deletePerson', 'setSelectedProfileById']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
-    ...mapActions(['loading', 'setDialog']),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
       'loadDescendants',
       'saveWhakapapaView',
+      'addLinks',
       'removeLinksToProfile'
     ]),
     isActive (type) {
@@ -367,20 +367,18 @@ export default {
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
 
-          if (child === this.view.focus) {
-            this.$emit('updateFocus', parent)
-          } else {
-            const hasParentNodeId = this.getParentNodeId(child)
-            if (hasParentNodeId) { // when a node already has a parent node above them, this will be called
-              // TODO: this adds the child to the tree, but do we need to do this much?
-              await this.loadDescendants(hasParentNodeId)
+          if (child === this.view.focus) this.$emit('persist-focus', parent)
+          else {
+            let parentId = this.getParentNodeId(child)
 
-              // so you wont see the extra parent update
+            // when a node already has a parent node above them, this will be called
+            if (parentId) { // when a node already has a parent node above them, this will be called
+              await this.loadDescendants(parentId)
+              // TODO change to take a second argument "depth", or make loadDescendantsToDepth
             } else {
               // when the child doesnt have a parent above them, this will be called
               // load the new parents profile
-              const parentProfile = await this.loadDescendants(parent)
-              this.$emit('change-focus', parentProfile.id)
+              this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
           break
@@ -463,19 +461,24 @@ export default {
     },
 
     async createChildLink ({ child, parent, relationshipAttrs }) {
-      await this.saveLink({
+      return this.saveLink({
         type: 'link/profile-profile/child',
         child,
         parent,
         recps: this.view.recps,
         ...relationshipAttrs
       })
+        .then(() => {
+          this.addLinks({
+            childLinks: [{ parent, child, ...relationshipAttrs }]
+          })
+        })
     },
     async createPartnerLink (input) {
       input.type = 'link/profile-profile/partner'
       input.recps = this.view.recps
 
-      await this.saveLink(input)
+      return this.saveLink(input)
     },
     async processUpdate (input) {
       if (input.recps) delete input.recps
@@ -505,7 +508,7 @@ export default {
         else await this.reloadWhakapapa()
       }
 
-      this.setSelectedProfile(this.selectedProfile)
+      this.setSelectedProfileById(this.selectedProfile.id)
     },
 
     // TODO 25-11-2021 cherese move these methods to ssb-graphql-whakapapa
@@ -660,12 +663,12 @@ export default {
 
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)
-        this.$emit('updateFocus', successor.id)
+        this.$emit('persist-focus', successor.id)
         return
         // if removing top ancestor on a partner line show the new top ancestor
       } else if (this.selectedProfile.id === this.focus) {
         const successor = findSuccessor(this.selectedProfile)
-        this.$emit('setFocus', successor.id)
+        this.$emit('set-focus', successor.id)
       } else {
         if (this.view.focus === this.focus) {
           // if we are on the main tree now
@@ -673,11 +676,11 @@ export default {
         } else {
           // if we are on a partners tree
           // change focus back
-          this.$emit('change-focus', this.view.focus)
+          this.$emit('set-focus-to-ancestor-of', this.view.focus)
         }
       }
 
-      this.setSelectedProfile(null)
+      this.setSelectedProfileById(null)
     },
     async processDeletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
@@ -687,16 +690,16 @@ export default {
       // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)
-        this.$emit('updateFocus', successor.id)
+        this.$emit('persist-focus', successor.id)
 
         // if removing top ancestor on a partner line show the new top ancestor
       } else if (this.selectedProfile.id === this.focus) {
         const successor = findSuccessor(this.selectedProfile)
-        this.$emit('setFocus', successor.id)
+        this.$emit('set-focus', successor.id)
       } else {
         this.removeLinksToProfile(this.selectedProfile.id)
       }
-      this.setSelectedProfile(null)
+      this.setSelectedProfileById(null)
     },
     async getSuggestions (name) {
       if (!name) {

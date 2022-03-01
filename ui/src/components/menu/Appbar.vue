@@ -237,7 +237,6 @@ export default {
     ...mapActions('tribe', ['updateTribes']),
     ...mapActions(['setWhoami', 'setDialog', 'getAllNotifications']),
     ...mapActions('archive', ['toggleShowStory']),
-    ...mapActions('person', ['setProfileById']),
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
