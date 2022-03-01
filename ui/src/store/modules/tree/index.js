@@ -74,13 +74,13 @@ export default function () {
           const B = getOrderData(rootGetters, b)
           if (!B) return 0
 
-          // try to compare age!
-          if (A.age > B.age) return -1
-          if (A.age < B.age) return 1
-
-          // fallback to birthOrder
+          // try to compare by birth order
           if (A.birthOrder > B.birthOrder) return 1
           if (A.birthOrder < B.birthOrder) return -1
+
+          // fall back to age
+          if (A.age > B.age) return -1
+          if (A.age < B.age) return 1
 
           if (!A.birthOrder) return 1
           if (!B.birthOrder) return -1
