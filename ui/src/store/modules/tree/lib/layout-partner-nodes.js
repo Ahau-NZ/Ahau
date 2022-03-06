@@ -30,7 +30,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
       else sign = -1 // default to the left
     }
 
-    // keep a count of the partners on each side
+    // update the count of the partners on each side
     (sign > 0) ? rightPartners++ : leftPartners++
 
     const hops = (sign > 0) ? rightPartners : leftPartners

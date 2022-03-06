@@ -1,6 +1,8 @@
+/* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
+// see https://eslint.org/docs/rules/brace-style
 import linkStyle from './link-style'
 import linkKey from './link-key'
-import { RADIUS, PARTNER_RADIUS } from '../constants'
+import { RADIUS, PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 import settings from '../../../../lib/link'
 
 const pileSort = require('pile-sort')
@@ -92,9 +94,22 @@ function multiLink (rootNode, [A, B], childNode, relType) {
   // for drawing a isDashed link to represent adopted/whangai
   const radius = (node) => (node === rootNode) ? RADIUS : PARTNER_RADIUS
 
-  const startX = A.x < B.x
-    ? (A.x + radius(A) + B.x - radius(B)) / 2
-    : (B.x + radius(B) + A.x - radius(A)) / 2
+  let startX
+  if (A === rootNode) {
+    startX = (B.x < rootNode.x)
+      ? B.x + PARTNER_RADIUS + PARTNER_SPACE / 2
+      : B.x - PARTNER_RADIUS - PARTNER_SPACE / 2
+  }
+  else if (B === rootNode) {
+    startX = (A.x < rootNode.x)
+      ? A.x + PARTNER_RADIUS + PARTNER_SPACE / 2
+      : A.x - PARTNER_RADIUS - PARTNER_SPACE / 2
+  }
+  else {
+    startX = A.x < B.x
+      ? (A.x + radius(A) + B.x - radius(B)) / 2
+      : (B.x + radius(B) + A.x - radius(A)) / 2
+  }
 
   return {
     key: linkKey('child', [A, B], childNode),
