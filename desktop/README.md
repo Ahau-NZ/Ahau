@@ -45,21 +45,34 @@ This takes icons from `desktop/build` and generates icon files specific for part
          APPLE_ID_PASS=asdl-tyan-osla-ttyb
          ```
         - `APPLE_ID_PASS` is an application specific password created from your `APPLE_ID`
+    - (see "All platforms need")
 
 **Windows needs**
-    - `desktop/build/win/win_csc.pfx` file
-    - an `desktop/electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
+    - currently we're using an EV signing certificate (this is in the form of a USB key)
+    - install software for the USB key signing
+        - followed https://sectigo.com/knowledge-base/detail/SafeNet-Download-for-Certificates-using-an-eToken-Smartcard/kA03l000000o6kL
+        - downloaded attached : https://comodoca.my.salesforce.com/sfc/dist/version/download/?oid=00D1N000002Ljih&ids=0683l00000PzlJ9&d=%2Fa%2F3l000000dZF7%2FNq45bYpIQUcGqviLxxUDq.KusYS5Enj8K_BDIISyGyc&asPdf=false
+            - install, restart, start app (starts in system tray)
+
+        - set `win.certificatesha1` field in `build/electron-builder.config.js`
+            - not sure how to derive this from USB key, but when I put something wrong it gave me a list of possible certificates it it was checking through, and each had a `"Thumbprint"` field, which seems to be the sha1 hash...
+        - you should now be prompted to enter a password when signing
+            - to prevent being asked for every file that's signed, check "enable single login" in SafeNet
+            - followed https://stackoverflow.com/questions/17927895/automate-extended-validation-ev-code-signing
+
+    - (see "All platforms need")
+
+_Notes for former process for windows_
+    - ensure `desktop/build/win/win_csc.pfx` file is in place
+    - add an `desktop/electron-builder.env` with environment variables `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
         ```
         CSC_LINK=build/win/csc.pfx
         CSC_KEY_PASSWORD=anliushfdxbaejhbrsajxhelaser
         ```
-
     - Mix bought the Signing Cerificate [here](https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate?redirectedfrom=MSDN)
         - notes on aquiring + exporting :
             - https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000zFK0#ie_export_certificate
             - this may need to be done from the same browser as you applied for the certificate from
-
-     - TODO - update this removing pfx notes + adding how to handle EV signing key
 
 **Linux needs**
 _nothing!_
