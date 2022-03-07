@@ -1,44 +1,36 @@
 import { RADIUS, PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 
-function findMidway (length) {
-  if (length === 1) return 1
-  if (length % 2 === 0) return length / 2
-
-  return Math.floor(length / 2)
-}
-
 export default function layoutPartnerNodes (rootNode, rootGetters) {
   const partnerIds = rootGetters['whakapapa/getPartnerIds'](rootNode.data.id)
   if (!partnerIds.length) return []
 
   const childNodes = rootNode.children || []
-  const midway = findMidway(partnerIds.length)
-  var leftPartners = 0
-  var rightPartners = 0
+  let leftPartners = 0
+  let rightPartners = 0
 
   return partnerIds.map((partnerId, i) => {
-    // set partners to alternate sides
-    let sign = (i >= midway) ? 1 : -1
+    // set partners to be on side where most of their birth children are
+    // OR fall back to making it evenly placed
 
-    const partnerChildIds = rootGetters['whakapapa/getChildIds'](partnerId)
+    const partnerChildren = rootGetters['whakapapa/getChildIds'](partnerId)
       .filter(childId => rootGetters['whakapapa/getChildRelationshipType'](partnerId, childId) === 'birth')
+      .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
+      // find the position of partnerId's children below the the rootNode (if it exists)
+      .filter(Boolean) // filters out empty entries
 
-    if (partnerChildIds.length) {
-      // find the position of partnerId's children below the the rootNode
-      // and place the partnerId on the correct side (adjust the sign)
-      const partnersChildNodes = partnerChildIds
-        .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
-        .filter(Boolean) // filters out empty entries
-
-      const averageX = (
-        partnersChildNodes.reduce((acc, childNode) => acc + childNode.x, 0) /
-        partnersChildNodes.length
-      )
-
-      if (averageX) sign = (averageX > rootNode.x) ? 1 : -1
+    let sign
+    if (partnerChildren.length) {
+      const mean = meanX(partnerChildren)
+      if (mean > rootNode.x) sign = 1
+      else if (mean < rootNode.x) sign = -1
+    }
+    if (!sign) {
+      if (leftPartners < rightPartners) sign = -1
+      else if (leftPartners > rightPartners) sign = 1
+      else sign = -1 // default to the left
     }
 
-    // keep a count of the partners on each side
+    // update the count of the partners on each side
     (sign > 0) ? rightPartners++ : leftPartners++
 
     const hops = (sign > 0) ? rightPartners : leftPartners
@@ -57,4 +49,11 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
       data: { id: partnerId }
     }
   })
+}
+
+function meanX (nodes) {
+  return (
+    nodes.reduce((acc, node) => acc + node.x, 0) /
+    nodes.length
+  )
 }

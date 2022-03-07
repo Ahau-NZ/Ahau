@@ -1,6 +1,6 @@
 import layoutChildLinks from './layout-child-links'
 import linkKey from './link-key'
-import { RADIUS, PARTNER_RADIUS } from '../constants'
+import { PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 
 const test = require('tape')
 
@@ -78,18 +78,21 @@ test('layoutChildLinks', t => {
     'Dad-Later link correct'
   )
 
-  const DadX = 0
-  const MumX = -200
-
-  const dadMumMidpoint = (
-    MumX + PARTNER_RADIUS +
-    DadX - RADIUS
-  ) / 2
-
+  let dadMumMidpoint = (
+    rootNode.partners[0].x + // Mum.x
+    PARTNER_RADIUS + PARTNER_SPACE / 2 // we add because Mum.x < Dad.x
+  )
   t.deepEqual(
     findLink(['_Dad', '_Mum'], '_Daughter').d,
     `M ${dadMumMidpoint}, 0 V -195 H 0 V -400`,
     'Dad+Mum-Daughter link correct'
+  )
+
+  // we move mum to the other side!
+  rootNode.partners[0].x = 200
+  dadMumMidpoint = (
+    rootNode.partners[0].x - // Mum.x
+    PARTNER_RADIUS - PARTNER_SPACE / 2 // we subtract because Mum.x ? Dad.x
   )
 
   t.end()
