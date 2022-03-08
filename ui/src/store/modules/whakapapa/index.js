@@ -8,7 +8,10 @@ import getExtendedFamily from './lib/get-extended-family'
 import { saveLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
-const UNKNOWN_REL_TYPE = 'unknown'
+// the app assumes that the default childLink relationshipType is birth
+// when some are saved as null, it sets them to birth by default so
+// the graph displays these links correctly
+const UNKNOWN_REL_TYPE = 'birth'
 
 const defaultView = () => ({
   name: 'Loading...',
@@ -131,6 +134,7 @@ export default function (apollo) {
         parentIds = parentIds
           .filter(parentId => {
             if (getters.getChildRelationshipType(parentId, childId) === 'birth') return true
+
             return (
               (
                 (getters.getPartnerRelationshipType(state.view.focus, parentId) !== undefined) ||
