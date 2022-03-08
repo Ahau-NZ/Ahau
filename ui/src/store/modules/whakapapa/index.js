@@ -475,37 +475,41 @@ export default function (apollo) {
     async suggestedChildren ({ dispatch, state }, parentId) {
       // get the persons full profile
       const person = await dispatch('person/getPerson', parentId, { root: true })
+      // TODO 2022-03-08 mix
+      // deprecate getPerson use. Would could probably use the childLinks + partnerLinks to look around
 
       if (!person || !person.children || !person.children.length) return []
 
       // get current children who are ignored
       const ignoredChildren = person.children.filter(A => state.view.ignoredProfiles.includes(A.id))
 
-      return uniqby(
-        [
-          ...flattenToNestedArray(person, 'partners', 'children'), // get all children of partners
-          ...ignoredChildren // get all children who have been ignored from this whakapapa
-        ],
-        'id'
-      )
+      return uniqueId([
+        ...flatMap(person, 'partners', 'children'), // get all children of partners
+        ...ignoredChildren // get all children who have been ignored from this whakapapa
+      ])
+        // don't recommend children who are already this person's children
+        .filter(profile => !person.children.some(child => child.id === profile.id))
     },
     async suggestedParents ({ dispatch, state }, childId) {
       const person = await dispatch('person/getPerson', childId, { root: true })
+      // TODO 2022-03-08 mix
+      // deprecate getPerson use. Would could probably use the childLinks + partnerLinks to look around
       const isRootNode = state.view.focus === person.id
 
       if (!person || !person.parents || !person.parents.length) return []
 
       const ignoredParents = person.parents.filter(A => state.view.ignoredProfiles.includes(A.id))
 
-      return uniqby(
-        [
-          ...flattenToNestedArray(person, 'siblings', 'parents'), // get all parents of siblings
-          ...flattenToNestedArray(person, 'parents', 'partners'), // get all partners of parents
-          ...ignoredParents,
-          ...(isRootNode ? person.parents : []) // handle existing parents if this is the root node
-        ],
-        'id'
-      )
+      return uniqueId([
+        ...flatMap(person, 'siblings', 'parents'), // get all parents of siblings
+        ...flatMap(person, 'parents', 'partners'), // get all partners of parents
+        ...ignoredParents
+      ])
+        // don't recommend parent who are already this person's parents
+        .filter(profile => !person.parents.some(parent => parent.id === profile.id))
+        .concat(isRootNode ? person.parents : []) // handle existing parents if this is the root node
+        // TODO 2022-03-08 mix
+        // remove this concat once we check it's not needed...
     },
 
     // create a whakapapa from rows containing a profile + link
@@ -624,17 +628,19 @@ export default function (apollo) {
 
 /**
  * A helper function to flatten nested arrays within an array of objects.
- * E.g. to get a persons siblings parents use flattenToNestedArray(person, 'siblings', 'parents')
+ * E.g. to get a persons siblings parents use flatMap(person, 'siblings', 'parents')
 
  * @param {object} obj an object which holds the array
  * @param {string} array which field to look at on the given obj
  * @param {string} nestedArray which field to map objects in obj.array to
  */
-function flattenToNestedArray (obj, array, nestedArray) {
+function flatMap (obj, array, nestedArray) {
   if (!obj[array] || !obj[array].length) return []
 
   return obj[array]
-    .map(m => m[nestedArray])
-    .flat() // flattens from [[A, B], [C]] to [A, B, C]
-    .filter(A => !obj[nestedArray].some(B => B.id === A.id))
+    .flatMap(m => m[nestedArray]) // flattens from [[A, B], [C]] to [A, B, C]
+}
+
+function uniqueId (array) {
+  return uniqby(array, 'id')
 }
