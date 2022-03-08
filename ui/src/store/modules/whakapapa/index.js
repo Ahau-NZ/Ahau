@@ -480,15 +480,16 @@ export default function (apollo) {
 
       if (!person || !person.children || !person.children.length) return []
 
-      // get current children who are ignored
-      const ignoredChildren = person.children.filter(A => state.view.ignoredProfiles.includes(A.id))
-
       return uniqueId([
         ...flatMap(person, 'partners', 'children'), // get all children of partners
-        ...ignoredChildren // get all children who have been ignored from this whakapapa
+        ...person.children // for ignored children
       ])
-        // don't recommend children who are already this person's children
-        .filter(profile => !person.children.some(child => child.id === profile.id))
+        .filter(profile => (
+          // keep only children who aren't already a child of this profile
+          !person.children.some(child => child.id === profile.id) ||
+          // unless they're an ignored profile
+          state.view.ignoredProfiles.includes(profile.id)
+        ))
     },
     async suggestedParents ({ dispatch, state }, childId) {
       const person = await dispatch('person/getPerson', childId, { root: true })
@@ -498,15 +499,17 @@ export default function (apollo) {
 
       if (!person || !person.parents || !person.parents.length) return []
 
-      const ignoredParents = person.parents.filter(A => state.view.ignoredProfiles.includes(A.id))
-
       return uniqueId([
         ...flatMap(person, 'siblings', 'parents'), // get all parents of siblings
         ...flatMap(person, 'parents', 'partners'), // get all partners of parents
-        ...ignoredParents
+        ...person.parents // for ignored parents
       ])
-        // don't recommend parent who are already this person's parents
-        .filter(profile => !person.parents.some(parent => parent.id === profile.id))
+        .filter(profile => (
+          // keep only parents who aren't already a parent of this profile
+          !person.parents.some(parent => parent.id === profile.id) ||
+          // unless they're an ignored profile
+          state.view.ignoredProfiles.includes(profile.id)
+        ))
         .concat(isRootNode ? person.parents : []) // handle existing parents if this is the root node
         // TODO 2022-03-08 mix
         // remove this concat once we check it's not needed...
