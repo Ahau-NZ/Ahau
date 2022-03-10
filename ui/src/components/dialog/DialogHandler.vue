@@ -43,10 +43,7 @@
       :deleteable="canDelete(selectedProfile)"
       @close="close"
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
-      @submit="processUpdate($event)"
       @delete="toggleDialog('delete-node', null, null)"
-      @open-profile="setSelectedProfileById($event)"
-      @delete-link="removeLinkFromTree"
       @reload-whakapapa="reloadWhakapapa"
       :view="view"
       :preview="previewProfile"
@@ -221,7 +218,7 @@ export default {
     getDisplayName,
     ...mapActions(['loading', 'setDialog']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['createPerson', 'loadPersonMinimal', 'updatePerson', 'deletePerson', 'setSelectedProfileById']),
+    ...mapActions('person', ['createPerson', 'loadPersonFull', 'updatePerson', 'deletePerson', 'setSelectedProfileById']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
     ...mapActions('whakapapa', [
@@ -375,6 +372,7 @@ export default {
             if (parentId) { // when a node already has a parent node above them, this will be called
               await this.loadDescendants(parentId)
               // TODO change to take a second argument "depth", or make loadDescendantsToDepth
+              // TODO cherese 9-3-22 also replace loadWhakapapa within SideNodeDialog.vue
             } else {
               // when the child doesnt have a parent above them, this will be called
               // load the new parents profile
@@ -480,6 +478,7 @@ export default {
 
       return this.saveLink(input)
     },
+    // TODO: see what is using this and move it into that component instead
     async processUpdate (input) {
       if (input.recps) delete input.recps
 
@@ -487,8 +486,8 @@ export default {
       // update their profile in the db
       await this.updatePerson({ id: profileId, ...input })
 
-      // loads their minimal profile for changes in the tree
-      await this.loadPersonMinimal(profileId)
+      // loads their full profile for changes in the tree as well as the side node dialog
+      await this.loadPersonFull(profileId)
     },
     async removeProfile (deleteOrIgnore) {
       await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
@@ -497,18 +496,6 @@ export default {
       } else {
         await this.ignoreProfile()
       }
-    },
-    async removeLinkFromTree ({ link, mainProfileId }) {
-      const removedImportantRelationship = await this.checkAndUpdateImportantRelationships(link.parent, link.child)
-
-      // we want to remove the person from the selectedProfile in the tree
-      if (removedImportantRelationship) await this.reloadWhakapapa() // WARNING: this can get expensive for a larger tree
-      else {
-        if (mainProfileId) this.removeLinksToProfile(mainProfileId)
-        else await this.reloadWhakapapa()
-      }
-
-      this.setSelectedProfileById(this.selectedProfile.id)
     },
 
     // TODO 25-11-2021 cherese move these methods to ssb-graphql-whakapapa
@@ -540,68 +527,6 @@ export default {
           }
         })
       )
-    },
-    async checkAndUpdateImportantRelationships (profileIdA, profileIdB) {
-      /*
-        rule = {
-          profileId,
-          primary: { profileId, relationshipType },
-          other: [
-            { profileId, relationshipType }
-          ]
-        }
-
-        // find the rules which are about profileA
-        // see if they mention profileB
-        // -> could be a primary
-        // -> could be in other
-        // IF its in either, we need to set a new rule
-      */
-
-      const findImportantRelationship = (profileId, otherProfileId) => {
-        const rule = this.view.importantRelationships[profileId]
-        if (!rule) return
-
-        if (
-          rule.primary.profileId === otherProfileId ||
-          rule.other.some(r => r.profileId === otherProfileId)
-        ) return rule
-      }
-
-      let didUpdate = false
-      const ruleA = findImportantRelationship(profileIdA, profileIdB)
-      if (ruleA) {
-        didUpdate = true
-        await this.saveWhakapapaView({
-          id: this.$route.params.whakapapaId,
-          importantRelationships: {
-            profileId: profileIdA,
-            important: [
-              ruleA.primary.profileId,
-              ...ruleA.other.map(r => r.profileId)
-            ]
-              .filter(profileId => profileId !== profileIdB)
-          }
-        })
-      }
-
-      const ruleB = findImportantRelationship(profileIdB, profileIdA)
-      if (ruleB) {
-        didUpdate = true
-        await this.saveWhakapapaView({
-          id: this.$route.params.whakapapaId,
-          importantRelationships: {
-            profileId: profileIdB,
-            important: [
-              ruleB.primary.profileId,
-              ...ruleB.other.map(r => r.profileId)
-            ]
-              .filter(profileId => profileId !== profileIdA)
-          }
-        })
-      }
-
-      return didUpdate
     },
     async addImportantRelationship (input) {
       // Check if we are moving a partner connection

@@ -75,32 +75,32 @@
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'">
               <v-divider/>
             </v-col>
-            <v-col v-if="profile.parents.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="parents.length" cols="12" :class="mobile ? 'px-0':'py-0'">
               <EditRelationships
+                type="parent"
                 :label="t('parents')"
-                :profiles="profile.parents"
-                sideDialog
-                @edit="updateLink($event, 'parent')"
-                @remove="removeLink($event, 'parent')"
+                :profiles="parents"
+                @updateLink="updateLink"
+                @removeLink="removeChildLink"
               />
               <v-divider/>
             </v-col>
             <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0':'py-0'">
               <EditRelationships
+                type="partner"
                 :label="t('partners')"
                 :profiles="partners"
-                sideDialog
-                @remove="removeLink($event, 'partner')"
+                @removeLink="removePartnerLink"
               />
               <v-divider/>
             </v-col>
-            <v-col v-if="profile.children.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="children.length" cols="12" :class="mobile ? 'px-0':'py-0'">
               <EditRelationships
+                type="child"
                 :label="t('children')"
-                :profiles="profile.children"
-                sideDialog
-                @edit="updateLink($event, 'child')"
-                @remove="removeLink($event, 'child')"
+                :profiles="children"
+                @updateLink="updateLink"
+                @removeLink="removeChildLink"
               />
             </v-col>
           </v-row>
@@ -168,7 +168,7 @@
               <v-col cols="12" :class="profile.description ? 'pt-0':'pt-0'">
                 <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
-                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames.join(', ')"/>
+                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
                   <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
                   <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
@@ -183,8 +183,8 @@
                 </v-row>
                 <v-row cols="12" class="rounded-border">
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
-                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
+                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
+                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.school && formData.education.join('\n')"/>
                 </v-row>
                 <v-row v-if="isKaitiaki" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
@@ -209,7 +209,7 @@
                 <!-- Displays a row of parents -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
-                    :profiles="profile.parents"
+                    :profiles="parents"
                     :group-title="t('parents')"
                     size="50px"
                     :show-labels="true"
@@ -221,10 +221,10 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.parents" class="family-divider"/>
+                <hr v-if="parents" class="family-divider"/>
 
                 <!-- Displays a row of partners -->
-                <v-col v-if="partners" :cols="12" class="pa-0">
+                <v-col v-if="partners.length" :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="partners"
                     :group-title="t('partners')"
@@ -238,10 +238,10 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="partners" class="family-divider"/>
+                <hr v-if="partners.length" class="family-divider"/>
 
                 <!-- Displays a row of siblings -->
-                <v-col :cols="12" v-if="profile.parents && profile.parents.length && profile.siblings" class="pa-0">
+                <v-col :cols="12" v-if="parents.length && profile.siblings" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     :group-title="t('siblings')"
@@ -255,17 +255,16 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.parents && profile.parents.length && profile.siblings" class="family-divider"/>
+                <hr v-if="parents.length && profile.siblings" class="family-divider"/>
 
                 <!-- Displays a row of children -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
-                    :profiles="profile.children && profile.children.length ? profile.children : profile._children"
+                    :profiles="children.filter(Boolean)"
                     :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile"
-                    @delete="removeLink(profile.children[$event])"
                   >
                     <template v-slot:action>
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
@@ -379,7 +378,6 @@ export default {
   ],
   data () {
     return {
-      profile: null,
       isEditing: false,
       formData: {},
       showDescription: false,
@@ -388,11 +386,33 @@ export default {
       allowRemoveChildren: false
     }
   },
-  async mounted () {
-    this.profile = await this.getPerson(this.profileId)
-  },
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess']),
+    ...mapGetters('person', ['person']),
+    ...mapGetters('whakapapa', ['getRawParentIds', 'getRawChildIds', 'getRawPartnerIds', 'getPartnerRelationshipType']),
+    profile () {
+      return this.person(this.profileId)
+    },
+    parents () {
+      return this.getRawParentIds(this.profileId)
+        .map(parentId => this.person(parentId))
+    },
+    children () {
+      return this.getRawChildIds(this.profileId)
+        .map(childId => {
+          const profile = this.person(childId)
+          if (!profile) this.loadPersonMinimal(childId)
+
+          // HACK - make sure they're loaded
+          return profile
+        })
+        .filter(Boolean)
+    },
+    partners () {
+      return this.getRawPartnerIds(this.profileId)
+        .filter(partnerId => this.getPartnerRelationshipType(this.profileId, partnerId) === 'partners')
+        .map(partnerId => this.person(partnerId))
+    },
     scopedProfile () {
       if (this.profile && this.profile.adminProfile) {
         const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
@@ -469,9 +489,6 @@ export default {
         placeholder: ' ',
         class: !this.isEditing ? 'custom' : ''
       }
-    },
-    partners () {
-      return this.profile.partners.filter(partner => !partner.isNonPartner)
     }
   },
   watch: {
@@ -485,10 +502,15 @@ export default {
     scopedProfile: {
       deep: true,
       immediate: true,
-      handler (newVal) {
-        if (!newVal) return
-        this.formData = defaultData(newVal)
-        this.getOriginalAuthor()
+      async handler (profile) {
+        if (!profile) return
+        this.formData = defaultData(profile)
+        if (profile.originalAuthor) {
+          // TODO cherese 8/3/22 move to graphql and change from using getProfile
+          // it doesnt need to whole profile
+          const originalAuthor = await this.getProfile(profile.originalAuthor)
+          this.authors = [originalAuthor]
+        }
       }
     }
   },
@@ -496,41 +518,28 @@ export default {
     ...mapMutations(['updateDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['setSelectedProfileById', 'getPerson']),
+    ...mapActions('whakapapa', ['removeLinkFromTree']),
+    ...mapActions('person', ['setSelectedProfileById', 'getPerson', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
     getDisplayName,
-    async getOriginalAuthor () {
-      // TODO cherese 22-04-21 move to graphql
-      const originalAuthor = await this.getProfile(this.scopedProfile.originalAuthor)
-      this.authors = [originalAuthor]
-    },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
-    async updateLink (person, type) {
-      if (type !== 'parent' && type !== 'child') {
-        console.error('Cannot update a link that isnt a parent or child link')
-        return
-      }
+    async updateLink (link) {
+      await this.updateLinkedPerson(link.parent, link.child, link.relationshipType)
 
-      if (type === 'parent') {
-        await this.updateLinkedPerson(person.id, this.scopedProfile.id, person.relationshipType)
-      } else {
-        await this.updateLinkedPerson(this.scopedProfile.id, person.id, person.relationshipType)
-      }
-
-      // this is needed to reload the whakapapa
-      // TODO: this could be slow for larger whakapapa!
+      // TODO cherese 9-3-22 replace this with a loadDescendantsToDepth method
       this.$emit('reload-whakapapa')
     },
-    async removeLink (person, type) {
-      var isPartner = type === 'partner'
-      let link
-      if (type === 'parent') link = await this.removeLinkedPerson(person.id, this.scopedProfile.id)
-      else link = await this.removeLinkedPerson(this.scopedProfile.id, person.id, isPartner)
+    async removeChildLink (link) {
+      // delete it from the database
+      await this.removeLinkedPerson(link.parent, link.child)
 
-      if (isPartner) person.isPartner = true
-
-      this.$emit('delete-link', { link, mainProfileId: this.scopedProfile.id })
+      // delete it from the graph
+      await this.removeLinkFromTree(link)
+    },
+    async removePartnerLink (link) {
+      await this.removeLinkedPerson(link.parent, link.child, true)
+      await this.removeLinkFromTree(link)
     },
     async updateLinkedPerson (parent, child, relationshipType) {
       const { linkId } = await this.getWhakapapaLink(parent, child)
@@ -558,9 +567,6 @@ export default {
       }
 
       await this.saveLink(input)
-      this.$emit('submit', {}) // needed to reload this dialog
-
-      return link
     },
     goArchive () {
       if (
@@ -604,17 +610,20 @@ export default {
       if (!isEmpty(output)) {
         if (this.profile.adminProfile) output.id = this.profile.adminProfile.id
 
-        this.$emit('submit', output)
-
-        // update the dialog
-        // NOTE: this will change when updating the tree isnt done in the DialogHandler
-        setTimeout(async () => {
-          this.profile = await this.getPerson(this.profileId)
-        }, 1000)
+        await this.processUpdate(output)
       }
 
       this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
+    },
+    async processUpdate (input) {
+      if (input.recps) delete input.recps
+
+      // update their profile in the db
+      await this.updatePerson({ id: this.profileId, ...input })
+
+      // loads their full profile for changes in the tree as well as the side node dialog
+      await this.loadPersonFull(this.profileId)
     },
     toggleNew (type) {
       this.$emit('new', type)

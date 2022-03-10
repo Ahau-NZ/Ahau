@@ -162,6 +162,9 @@ export default function (apollo) {
     },
     async setSelectedProfileById ({ dispatch, commit, rootState }, id) {
       commit('setSelectedProfileById', id)
+
+      if (!id) return
+
       dispatch('loadPersonFull', id)
 
       if (id === rootState.whoami.public.profile.id) {
