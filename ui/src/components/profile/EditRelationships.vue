@@ -13,30 +13,40 @@
       <v-col v-if="showRelatedBy" cols="4" class="pt-4 px-0 mx-3">
         <v-select
           v-if="showRelatedBy"
-          :value="profile.relationshipType"
+          :value="getRelationshipType(profile.id)"
           label="Related by"
           :items="relationshipTypes"
           :menu-props="{ light: true }"
           hide-details
           style="width: 110px;"
-          @input="(relationship) => updateRelationship(profile, relationship)"
+          @input="updateRelationship(profile.id, $event)"
         />
       </v-col>
       <v-col class="pt-8">
-        <v-icon @click="$emit('remove', profile)">mdi-delete</v-icon>
+        <v-icon @click="removeRelationship(profile.id)">mdi-delete</v-icon>
       </v-col>
     </v-row>
   </v-col>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 import avatarHelper from '@/lib/avatar-helpers.js'
-import { RELATIONSHIPS } from '@/lib/constants'
+import { RELATIONSHIPS, LINK_CHILD, LINK_PARENT, LINK_PARTNER } from '@/lib/constants'
 
 export default {
   props: {
     profiles: {
       type: Array,
       required: true
+    },
+    type: {
+      type: String,
+      required: true,
+      default: null,
+      validator: (val) => [
+        LINK_CHILD, LINK_PARENT, LINK_PARTNER
+      ].includes(val)
     },
     label: String
   },
@@ -46,6 +56,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('whakapapa', ['getChildRelationshipType']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -54,17 +66,36 @@ export default {
       return this.deceased ? 'deceased' : 'alive'
     },
     showRelatedBy () {
-      return this.label !== 'partners'
+      return this.type !== LINK_PARTNER
     }
   },
   methods: {
+    getRelationshipType (relativesId) {
+      if (![LINK_PARENT, LINK_CHILD].includes(this.type)) return
+
+      const { parent, child } = this.buildLink(relativesId)
+
+      return this.getChildRelationshipType(parent, child)
+    },
     getImage (profile) {
       if (profile.avatarImage && profile.avatarImage.uri) return profile.avatarImage.uri
       return avatarHelper.defaultImage(false, profile.aliveInterval, profile.gender)
     },
-    updateRelationship (profile, relationship) {
-      profile.relationshipType = relationship
-      this.$emit('edit', profile)
+    updateRelationship (relativesId, newRelationshipType) {
+      const link = this.buildLink(relativesId)
+      link.relationshipType = newRelationshipType
+
+      this.$emit('updateLink', link)
+    },
+    removeRelationship (relativesId) {
+      const link = this.buildLink(relativesId)
+
+      this.$emit('removeLink', link)
+    },
+    buildLink (relativesId) {
+      return (this.type === LINK_PARENT)
+        ? { parent: relativesId, child: this.selectedProfile.id }
+        : { parent: this.selectedProfile.id, child: relativesId }
     }
   }
 }

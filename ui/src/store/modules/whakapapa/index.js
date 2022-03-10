@@ -310,7 +310,6 @@ export default function (apollo) {
         if (state.childLinks[parentId] && state.childLinks[parentId][profileId] !== undefined) {
           const newLinks = { ...state.childLinks[parentId] }
           delete newLinks[profileId]
-
           state.childLinks[parentId] = newLinks
         }
       })
@@ -325,6 +324,29 @@ export default function (apollo) {
           state.partnerLinks[parentId] = newLinks
         }
       })
+    },
+    removeLinkBetweenProfiles (state, link) {
+      const { parent, child } = link
+
+      const childLinks = state.childLinks[parent]
+
+      // remove the child from the parent
+      if (childLinks && childLinks[child] !== undefined) {
+        const newLinks = { ...childLinks }
+        delete newLinks[child]
+        state.childLinks[parent] = newLinks
+
+        return
+      }
+
+      // remove the partner link
+      const [partnerA, partnerB] = [parent, child].sort()
+
+      if (state.partnerLinks[partnerA] && state.partnerLinks[partnerA][partnerB] !== undefined) {
+        const newLinks = { ...state.partnerLinks[partnerA] }
+        delete newLinks[partnerB]
+        state.partnerLinks[partnerA] = newLinks
+      }
     }
   }
 
@@ -349,6 +371,9 @@ export default function (apollo) {
     },
     removeLinksToProfile ({ commit }, profileId) {
       commit('removeLinksToProfile', profileId)
+    },
+    removeLinkBetweenProfiles ({ commit }, link) {
+      commit('removeLinkBetweenProfiles', link)
     },
     async createWhakapapaView ({ dispatch }, input) {
       if (!input.authors) {
@@ -614,6 +639,85 @@ export default function (apollo) {
         console.log('failed to create link', input)
         console.log(err)
       }
+    },
+    async removeLinkFromTree ({ dispatch, state, rootState }, link) {
+      const removedImportantRelationship = await dispatch('checkAndUpdateImportantRelationships', link)
+
+      // we want to remove the person from the selectedProfile in the tree
+      if (removedImportantRelationship) await dispatch('loadWhakapapaView', state.view.id) // WARNING: this can get expensive for a larger tree
+      else {
+        // TODO: add support for removing links to the root node
+        // we need to be careful with how we remove a link from the graph,
+        // this will always remove the child in the relationship. This is because
+        // if we remove a parent, then the child may get cut out from the graph as well
+        // we need to remove the link directly
+        dispatch('removeLinkBetweenProfiles', link)
+      }
+
+      await dispatch('person/setSelectedProfileById', rootState.person.selectedProfileId, { root: true })
+    },
+    async checkAndUpdateImportantRelationships ({ dispatch, state }, link) {
+      const { parent: profileIdA, child: profileIdB } = link
+      /*
+        rule = {
+          profileId,
+          primary: { profileId, relationshipType },
+          other: [
+            { profileId, relationshipType }
+          ]
+        }
+
+        // find the rules which are about profileA
+        // see if they mention profileB
+        // -> could be a primary
+        // -> could be in other
+        // IF its in either, we need to set a new rule
+      */
+
+      const findImportantRelationship = (profileId, otherProfileId) => {
+        const rule = state.view.importantRelationships[profileId]
+        if (!rule) return
+
+        if (
+          rule.primary.profileId === otherProfileId ||
+          rule.other.some(r => r.profileId === otherProfileId)
+        ) return rule
+      }
+
+      let didUpdate = false
+      const ruleA = findImportantRelationship(profileIdA, profileIdB)
+      if (ruleA) {
+        didUpdate = true
+        await dispatch('saveWhakapapaView', {
+          id: state.view.id,
+          importantRelationships: {
+            profileId: profileIdA,
+            important: [
+              ruleA.primary.profileId,
+              ...ruleA.other.map(r => r.profileId)
+            ]
+              .filter(profileId => profileId !== profileIdB)
+          }
+        })
+      }
+
+      const ruleB = findImportantRelationship(profileIdB, profileIdA)
+      if (ruleB) {
+        didUpdate = true
+        await dispatch('saveWhakapapaView', {
+          id: state.view.id,
+          importantRelationships: {
+            profileId: profileIdB,
+            important: [
+              ruleB.primary.profileId,
+              ...ruleB.other.map(r => r.profileId)
+            ]
+              .filter(profileId => profileId !== profileIdA)
+          }
+        })
+      }
+
+      return didUpdate
     }
   }
 

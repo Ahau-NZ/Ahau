@@ -86,3 +86,7 @@ export const ACCESS_TYPES = [
   ACCESS_ALL_MEMBERS,
   ACCESS_KAITIAKI
 ]
+
+export const LINK_CHILD = 'child'
+export const LINK_PARENT = 'parent'
+export const LINK_PARTNER = 'partner'
