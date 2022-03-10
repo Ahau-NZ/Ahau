@@ -241,9 +241,9 @@
                 <hr v-if="partners.length" class="family-divider"/>
 
                 <!-- Displays a row of siblings -->
-                <v-col :cols="12" v-if="parents.length && profile.siblings" class="pa-0">
+                <v-col :cols="12" v-if="parents.length && siblings.length" class="pa-0">
                   <AvatarGroup
-                    :profiles="profile.siblings"
+                    :profiles="siblings"
                     :group-title="t('siblings')"
                     size="60px"
                     :show-labels="true"
@@ -255,12 +255,12 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="parents.length && profile.siblings" class="family-divider"/>
+                <hr v-if="parents.length && siblings.length" class="family-divider"/>
 
                 <!-- Displays a row of children -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
-                    :profiles="children.filter(Boolean)"
+                    :profiles="children"
                     :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
@@ -389,7 +389,10 @@ export default {
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess']),
     ...mapGetters('person', ['person']),
-    ...mapGetters('whakapapa', ['getRawParentIds', 'getRawChildIds', 'getRawPartnerIds', 'getPartnerRelationshipType']),
+    ...mapGetters('whakapapa', [
+      'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
+      'getPartnerRelationshipType'
+    ]),
     profile () {
       return this.person(this.profileId)
     },
@@ -402,8 +405,8 @@ export default {
         .map(childId => {
           const profile = this.person(childId)
           if (!profile) this.loadPersonMinimal(childId)
+          // HACK - make sure profile is loaded
 
-          // HACK - make sure they're loaded
           return profile
         })
         .filter(Boolean)
@@ -412,6 +415,23 @@ export default {
       return this.getRawPartnerIds(this.profileId)
         .filter(partnerId => this.getPartnerRelationshipType(this.profileId, partnerId) === 'partners')
         .map(partnerId => this.person(partnerId))
+    },
+    siblings () {
+      const childIds = this.getRawParentIds(this.profileId)
+        .flatMap(parentId => this.getRawChildIds(parentId))
+
+      const childIdSet = new Set(childIds)
+      childIdSet.delete(this.profileId)
+
+      return Array.from(childIdSet)
+        .map(childId => {
+          const profile = this.person(childId)
+          if (!profile) this.loadPersonMinimal(childId)
+          // HACK - make sure profile is loaded
+
+          return profile
+        })
+        .filter(Boolean)
     },
     scopedProfile () {
       if (this.profile && this.profile.adminProfile) {

@@ -107,7 +107,7 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
   t.end()
 })
 
-test.only('vuex/whakapapa mutations.removeLinksToProfile (partner)', t => {
+test('vuex/whakapapa mutations.removeLinksToProfile (partner)', t => {
   // SIMPLE
   const state = State({
     childLinks: {
