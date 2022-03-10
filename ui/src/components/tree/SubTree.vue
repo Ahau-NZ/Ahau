@@ -61,8 +61,6 @@ export default {
   },
   computed: {
     ...mapGetters('tree', ['secondaryLinks'])
-  },
-  methods: {
   }
 }
 
