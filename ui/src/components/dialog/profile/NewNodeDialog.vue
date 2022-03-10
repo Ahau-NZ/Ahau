@@ -111,6 +111,7 @@
 </template>
 
 <script>
+/* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
 import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
@@ -126,6 +127,8 @@ import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import { parseInterval } from '@/lib/date-helpers.js'
 
+const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
+
 export default {
   name: 'NewNodeDialog',
   components: {
@@ -138,16 +141,14 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
-    suggestions: Array,
+    suggestions: { type: Array, default: () => [] },
     hideDetails: Boolean,
     selectedProfile: Object,
     withView: { type: Boolean, default: true },
     isUser: { type: Boolean, default: false },
     type: {
       type: String,
-      validator: (val) => [
-        'child', 'parent', 'sibling', 'partner'
-      ].includes(val)
+      validator: (val) => VALID_TYPES.has(val)
     },
     isInTree: Function
   },
@@ -190,27 +191,22 @@ export default {
     generateSuggestions () {
       if (this.hasSelection) return []
 
-      let otherSuggestions = []
-      let closeSuggestions = []
-
-      if (this.suggestions && this.suggestions.length > 0) {
-        otherSuggestions = [
-          this.type ? { header: 'Are you looking for:' } : null,
+      if (this.suggestions.length) {
+        return [
+          ...(this.type ? [{ header: 'Are you looking for:' }] : []),
           ...this.suggestions
+          // { divider: true } // example of how to add a divider
         ]
       }
-      if (this.closeSuggestions && this.closeSuggestions.length > 0 && this.suggestions.length < 1) {
-        closeSuggestions = [
+      else if (this.closeSuggestions.length) {
+        return [
           this.header,
-          ...this.closeSuggestions,
-          this.divider
+          ...this.closeSuggestions
         ]
+        // NOTE 2022-03-08 mix
+        // this currently suggests existing contacts which are already linked
       }
-
-      return [
-        ...closeSuggestions,
-        ...otherSuggestions
-      ].filter(Boolean)
+      else return []
     },
     generateParents () {
       return this.getSuggestionsByField('parents')
@@ -231,9 +227,6 @@ export default {
         placeholder: ' ',
         class: this.hasSelection ? 'custom' : ''
       }
-    },
-    divider () {
-      return this.type ? { divider: true } : null
     },
     header () {
       switch (this.type) {
@@ -262,7 +255,8 @@ export default {
             default:
               submission[key] = value
           }
-        } else if (key === 'deceased') {
+        }
+        else if (key === 'deceased') {
           submission[key] = value
         }
       })
@@ -397,9 +391,8 @@ export default {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_children.length) submission.children = _children
-        } else {
-          submission.children = this.quickAdd.newChildren
         }
+        else submission.children = this.quickAdd.newChildren
       }
 
       if (this.hasProfiles('newParents')) {
@@ -408,9 +401,8 @@ export default {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_parents.length) submission.parents = _parents
-        } else {
-          submission.parents = this.quickAdd.newParents
         }
+        else submission.parents = this.quickAdd.newParents
       }
 
       if (this.hasProfiles('newPartners')) {
@@ -419,9 +411,8 @@ export default {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_partners.length) submission.partners = _partners
-        } else {
-          submission.partners = this.quickAdd.newPartners
         }
+        else submission.partners = this.quickAdd.newPartners
       }
 
       if (this.isDuplicate) {
@@ -507,13 +498,11 @@ export default {
     },
     'formData.preferredName' (newValue) {
       if (!newValue) return
+
       if (newValue.length > 2) {
-        if (!this.hasSelection) {
-          this.$emit('getSuggestions', newValue)
-        }
-      } else {
-        this.$emit('getSuggestions', null)
+        if (!this.hasSelection) this.$emit('getSuggestions', newValue)
       }
+      else this.$emit('getSuggestions', null)
     },
     async hasSelection (newValue) {
       if (newValue) {
@@ -532,7 +521,8 @@ export default {
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
         if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
-      } else {
+      }
+      else {
         this.quickAdd.newChildren = []
         this.quickAdd.newPartners = []
       }
