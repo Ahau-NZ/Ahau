@@ -28,10 +28,15 @@ const QUERY = gql`
 `
 export async function findByName (name, opts = {}) {
   const { groupId, type } = opts
+
+  const safeName = name
+    .replace('(', '\\(')
+    .replace(')', '\\)')
+
   const request = {
     query: QUERY,
     variables: {
-      name,
+      name: safeName,
       type,
       groupId // optional - can be groupId or poBoxId
     },
