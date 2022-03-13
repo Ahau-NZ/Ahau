@@ -474,6 +474,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
@@ -483,17 +485,12 @@ import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
-import { findByName } from '@/lib/search-helpers.js'
-
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
-import { mapGetters, mapMutations } from 'vuex'
-
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
-
 import { getAllStories } from '@/lib/story-helpers.js'
 
 export default {
@@ -613,6 +610,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setAllowSubmissions']),
+    ...mapActions('person', ['findPersonByName']),
     addContributor () {
       if (!this.formData.contributors.some(contributor => contributor.id === this.whoami.public.profile.id)) {
         return this.formData.contributors.push(this.whoami.public.profile)
@@ -634,7 +632,7 @@ export default {
     async getSuggestions (storeAt, name) {
       if (!name) return
 
-      const suggestions = await findByName(name, { type: 'person', groupId: this.groupId })
+      const suggestions = await this.findPersonByName({ name, type: 'person', groupId: this.groupId })
       this[storeAt] = suggestions
     },
     toggleDialog ($event, dialog) {
