@@ -841,9 +841,7 @@ function shouldCollapseChildren (loaded, depth, isLoadingFocus) {
     else return true
   }
   if (depth < 0) {
-    if (isLoadingFocus) {
-      if (loaded.size < MIN_LOADED_PROFILES) return true
-    }
+    if (isLoadingFocus && loaded.size < MIN_LOADED_PROFILES) return false
     return (depth % DEFAULT_DEPTH === 0)
   }
   // beyond our initial goal, we collapse every DEFAULT_DEPTH'd generation, so that when you expand (uncollapse)
