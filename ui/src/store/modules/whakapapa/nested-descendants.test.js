@@ -2,24 +2,16 @@ import { State, Getters } from './lib/test-helpers'
 import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
-const { getters } = require('./').default()
 
-const NestedDescendants = (state) => {
-  const _getters = Getters(state)
-  delete _getters.nestedDescendants
-  // NOTE - this prevents and infinite loop
-
-  return () => getters.nestedDescendants(state, _getters)
-}
 test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
   //   Y   X∙∙∙A---B   C
   //    \ / \ /  |  \ /
   //    xy  ax   ab  bc
   const state = ExtendedFamilyA()
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'A',
       children: [
@@ -30,10 +22,10 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
     'returns nestedDescendants'
   )
 
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'A',
       children: [
@@ -47,7 +39,7 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
   )
 
   t.equal(
-    getters.getPartnerRelationshipType(state)('A', 'C'),
+    getters.getPartnerRelationshipType('A', 'C'),
     undefined,
     'returns no relationshipType for extended family partner'
   )
@@ -60,11 +52,11 @@ test('vuex/whakapapa getters.nestedDescendants (with ignoredProfiles)', t => {
   //    \ / \ /  |  \ /
   //    xy  ax   ab  bc
   const state = ExtendedFamilyA()
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
   state.view.ignoredProfiles = ['ax']
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'A',
       children: [
@@ -77,10 +69,10 @@ test('vuex/whakapapa getters.nestedDescendants (with ignoredProfiles)', t => {
 
   // when we have a parent ignored, extended family stop with them.
   state.view.ignoredProfiles = ['X']
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'A',
       children: [
@@ -107,7 +99,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
   //     Baby
   //
   const state = WhangaiGrandparentSimple()
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
 
   // test when there's no importantRelationships to stop infinite
   // expect: grandaugter drawn in two places but stop infinite recursions
@@ -131,16 +123,16 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
     ]
   }
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'with no importantRelationships, people are rendered twice'
   )
 
   /* extendedFamily = true */
   // tests for watching for consistent behaviour, infinite loops!
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'with no importantRelationships, people are rendered twice (extendedFamily)'
   )
@@ -155,7 +147,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
   }
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Grandad',
       children: [
@@ -188,7 +180,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
   }
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Grandad',
       children: [
@@ -211,7 +203,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
 
 test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t => {
   const state = WhangaiGrandparentComplex()
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
   /* whangai to grandparent
 
                 Grandad─┬─Grandma
@@ -238,7 +230,7 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
   }
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'importantRelationship means no duplicate children'
   )
@@ -246,15 +238,15 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
   // change the importantRelationship link
   state.view.importantRelationships.Grandaughter.primary.profileId = 'Grandad'
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'importantRelationship means no duplicate children (grandad primary link)'
   )
 
-  console.log('set extendedFamily = true')
-  state.view.extendedFamily = true
+  console.log('set showExtendedFamily = true')
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Grandma',
       children: [
@@ -296,8 +288,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
 
   const state = State({
     view: {
-      focus: 'Parent',
-      extendedFamily: false
+      focus: 'Parent'
     },
     childLinks: {
       Parent: {
@@ -311,7 +302,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
       }
     }
   })
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
 
   const expected = {
     id: 'Parent',
@@ -321,16 +312,16 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
     ]
   }
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'with no importantRelationships, all partners are rendered as full nodes'
   )
 
   /* extendedFamily = true */
   // tests for watching for consistent behaviour
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     expected,
     'with no importantRelationships, all partners are rendered as full nodes (extendedFamily)'
   )
@@ -347,7 +338,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
   }
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Parent',
       children: [
@@ -378,10 +369,10 @@ test('vuex/whakapapa getters.nestedDescendants (marriage within tree)', t => {
 
   */
   const state = MarriageWithinTree()
-  const nestedDescendants = NestedDescendants(state)
+  const getters = Getters(state)
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Grandma',
       children: [
@@ -399,7 +390,7 @@ test('vuex/whakapapa getters.nestedDescendants (marriage within tree)', t => {
   state.view.importantRelationships = {}
 
   t.deepEqual(
-    nestedDescendants(),
+    getters.nestedDescendants,
     {
       id: 'Grandma',
       children: [

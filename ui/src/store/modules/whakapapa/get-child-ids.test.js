@@ -2,19 +2,21 @@ import { State, Getters } from './lib/test-helpers'
 import { WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
-const { getters } = require('./').default()
 
 test('vuex/whakapapa getters.getChildIds (with importantRelationships - children', t => {
   const state = WhangaiGrandparentSimple()
-  const getChildIds = getters.getChildIds(state, Getters(state))
-  /* whangai to grandparent */
-  //    Grandad --
-  //      |      |
-  //     Son     |
-  //      |      |
-  //  Grandaughter
-  //      |
-  //     Baby
+  const { getChildIds } = Getters(state)
+  /* whangai to grandparent
+
+          ∇
+       Grandad ╌╌┐
+          |      ┆
+         Son     ┆
+          |      ┆
+      Grandaughter
+          |
+         Baby
+  */
 
   t.deepEqual(getChildIds('Grandad'), ['Son', 'Grandaughter'], 'Grandad')
   t.deepEqual(getChildIds('Son'), ['Grandaughter'], 'Son')
@@ -33,14 +35,20 @@ test('vuex/whakapapa getters.getChildIds (with importantRelationships - children
   t.deepEqual(getChildIds('Son'), [], 'Son')
   t.deepEqual(getChildIds('Grandaughter'), ['Baby'], 'Grandaughter')
 
+  state.viewChanges.collapsed = { Son: true }
+  t.deepEqual(getChildIds('Grandad'), ['Son', 'Grandaughter'], 'Grandad')
+  t.deepEqual(getChildIds('Son'), [], 'Son')
+  t.deepEqual(getChildIds('Grandaughter'), ['Baby'], 'Grandaughter')
+
   t.end()
 })
 
 test('vuex/whakapapa getters.getChildIds (whangai grandparent complex)', t => {
   const state = WhangaiGrandparentComplex()
-  const getChildIds = getters.getChildIds(state, Getters(state))
+  const { getChildIds } = Getters(state)
   /* whangai to grandparent
 
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -49,7 +57,6 @@ test('vuex/whakapapa getters.getChildIds (whangai grandparent complex)', t => {
         Grandaughter╌╌╌╌╌╌╌╌╌╌┘
 
   */
-  // NOTE Grandma is the focus of the graph
 
   t.deepEqual(getChildIds('Grandma'), ['Daughter', 'Grandaughter'], 'Grandma')
   t.deepEqual(getChildIds('Grandad'), ['Daughter', 'Grandaughter'], 'Grandad')
@@ -79,30 +86,29 @@ test('vuex/whakapapa getters.getChildIds (whangai grandparent complex)', t => {
 })
 
 test('vuex/whakapapa getters.getChildIds (with collapsed)', t => {
-  // this test shows the importantRelationships does not effect partnerIds
-  // NOTE if the importantRelationship was with the parent, then it would effect the listed partners
-
-  //  A--B
+  //  A
+  //  |
+  //  B
 
   const state = State({
     view: {
-      focus: 'B',
-      extendedFamily: false
+      focus: 'A'
     },
     viewChanges: {
       collapsed: {
-        B: true
+        A: true
       }
     },
-    childLinks: {},
-    partnerLinks: {
+    childLinks: {
       A: {
-        B: 'partners'
+        B: 'birth'
       }
     }
   })
+  const { getChildIds } = Getters(state)
 
-  t.deepEqual(getters.getPartnerIds(state, Getters(state))('B'), [])
+  t.deepEqual(getChildIds('A'), [])
+  t.deepEqual(getChildIds('A', { showCollapsed: true }), ['B'])
 
   t.end()
 })
@@ -114,7 +120,9 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
 
   const state = State({
     view: {
-      focus: 'Y',
+      focus: 'Y'
+    },
+    viewChanges: {
       extendedFamily: false
     },
     childLinks: {
@@ -122,13 +130,13 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
       X: { ay: 'adopted' }
     }
   })
-  const getChildIds = getters.getChildIds(state, Getters(state))
+  const { getChildIds } = Getters(state)
 
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
 
   console.log('extendedFamily')
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
 
@@ -138,6 +146,7 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
 test('vuex/whakapapa getters.getChildIds (marriage within tree)', t => {
   /* marriage within tree
 
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -147,7 +156,7 @@ test('vuex/whakapapa getters.getChildIds (marriage within tree)', t => {
 
   */
   const state = MarriageWithinTree()
-  const getChildIds = getters.getChildIds(state, Getters(state))
+  const { getChildIds } = Getters(state)
 
   t.deepEqual(getChildIds('Grandma'), ['Daughter'])
   t.deepEqual(getChildIds('Grandad'), ['Daughter'])

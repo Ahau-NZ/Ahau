@@ -1,62 +1,69 @@
-export default function getExtendedFamily (state, getters, parentIds, opts = {}) {
-  if (opts.linkHelper) opts.linkHelper.adult.resetNew()
-
-  const {
-    // lineage = new Set(),
-    linkHelper = LinkStateHelper(parentIds[0])
-  } = opts
-
+export default function GetExtendedFamily (state, getters) {
   const {
     getRawChildIds, getRawParentIds, getRawPartnerIds,
     getChildRelationshipType,
     isImportantLink, isNotIgnored
   } = getters
 
-  // parentIds.forEach(parentId => lineage.add(parentId))
+  return function getExtendedFamily (parentIds, opts = {}) {
+    if (typeof parentIds === 'string') return getExtendedFamily([parentIds], opts)
+    if (opts.linkHelper) opts.linkHelper.adult.resetNew()
 
-  /* child-parent look-around */
-  parentIds
-    .filter(isNotIgnored)
-    .forEach(parentId => {
-      getRawChildIds(parentId)
-        // .filter(otherParentId => !linkHelper.child.has(otherParentId))
-        .filter(isNotIgnored)
-        .filter(childId => isImportantLink(childId, parentId))
-        .forEach(childId => {
-          linkHelper.child.add(childId)
+    const {
+      // lineage = new Set(),
+      linkHelper = LinkStateHelper(parentIds[0])
+    } = opts
 
-          getRawParentIds(childId)
-            .filter(isNotIgnored)
-            .filter(otherParentId => !linkHelper.adult.has(otherParentId))
-            .filter(otherParentId => isImportantLink(childId, otherParentId))
-            // NOTE following protects against some strange side-effects whangai links can have
-            // Check the otherParent you've found is not a parent of a parentId you're investigating
-            // and they're not a child of their parentId you're investigating
-            .filter(otherParentId => (
-              getChildRelationshipType(otherParentId, parentId) === undefined &&
-              getChildRelationshipType(parentId, otherParentId) === undefined
-              // this just checks immediate parents, ideally we would search through all ascendants
-            ))
-            .forEach(linkHelper.adult.add)
-        })
-    })
+    // parentIds.forEach(parentId => lineage.add(parentId))
 
-  /* partner-partner look-around */
-  parentIds.forEach(parentId => {
-    getRawPartnerIds(parentId)
+    /* search: parent-->childen-->otherParents */
+    parentIds.forEach(parentId => processParent(parentId, linkHelper))
+
+    /* search: parent-->partner */
+    parentIds
+      .flatMap(getRawPartnerIds)
       .filter(isNotIgnored)
-      // .filter(childId => isImportantLink(childId, parentId))
+      // .filter( ... isImportantLink)
       .forEach(linkHelper.adult.add)
-  })
 
-  const newAdults = linkHelper.adult.new
-  // .filter(id => !lineage.has(id))
+    const newAdults = linkHelper.adult.new
+    // .filter(id => !lineage.has(id))
 
-  // decide if we're going around for another round!
-  if (!newAdults.length) return linkHelper.output
-  else {
-    // console.log('recursing', { newAdults })
-    return getExtendedFamily(state, getters, newAdults, { linkHelper }) // , lineage })
+    // decide if we're going around for another round!
+    if (newAdults.length) return getExtendedFamily(newAdults, { linkHelper }) // , lineage }
+    else return linkHelper.output // DONE!
+  }
+
+  function processParent (parentId, linkHelper) {
+    if (!isNotIgnored(parentId)) return
+
+    getRawChildIds(parentId)
+      .filter(isNotIgnored)
+      .filter(childId => isImportantLink(childId, parentId))
+      .forEach(childId => {
+        // record the children
+        linkHelper.child.add(childId)
+
+        getRawPartnerIds(childId)
+          .forEach(linkHelper.childPartner.add)
+
+        if (getChildRelationshipType(parentId, childId) !== 'birth') return
+
+        getRawParentIds(childId)
+          .filter(isNotIgnored)
+          .filter(otherParentId => !linkHelper.adult.has(otherParentId))
+          .filter(otherParentId => isImportantLink(childId.child, otherParentId))
+          // NOTE we protect against strange side-effects whangai links can have
+          // Check the otherParent you've found is not a parent of a parentId you're investigating
+          // and they're not a child of their parentId you're investigating
+          .filter(otherParentId => (
+            getChildRelationshipType(otherParentId, parentId) === undefined &&
+            getChildRelationshipType(parentId, otherParentId) === undefined
+            // this just checks immediate parents, ideally we would search through all ascendants
+          ))
+          // record the new adults found
+          .forEach(linkHelper.adult.add)
+      })
   }
 }
 
@@ -64,6 +71,7 @@ function LinkStateHelper (targetId) {
   const adults = new Set([targetId]) // i.e. of parent generation, not child generation
   const newAdults = new Set([])
   const children = new Set([]) // i.e. of child generation
+  const childrenPartners = new Set([]) // sometimes we find a person who appers to be an adult, but because of a whangai is actually of the child generation
 
   return {
     adult: {
@@ -95,12 +103,17 @@ function LinkStateHelper (targetId) {
         return children.has(parentId)
       }
     },
+    childPartner: {
+      add (childId) {
+        childrenPartners.add(childId)
+      }
+    },
     get output () {
       const partners = new Set([...adults, ...newAdults])
       partners.delete(targetId)
 
       return {
-        partners: Array.from(partners),
+        partners: Array.from(partners).filter(partnerId => !childrenPartners.has(partnerId)),
         children: Array.from(children)
         // NOTE these are "graphChildren" and "graphPartners"
       }

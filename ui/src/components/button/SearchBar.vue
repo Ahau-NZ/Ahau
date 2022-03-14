@@ -32,14 +32,12 @@
 </template>
 
 <script>
-import Avatar from '@/components/Avatar.vue'
-
+import { mapGetters } from 'vuex'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 
+import Avatar from '@/components/Avatar.vue'
 import calculateAge from '../../lib/calculate-age'
-import { mapGetters, createNamespacedHelpers } from 'vuex'
-const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 function normalizeString (name) {
   if (isEmpty(name)) return ''
@@ -67,7 +65,7 @@ export default {
   computed: {
     ...mapGetters('tree', ['descendants']),
     ...mapGetters('person', ['person']),
-    ...mapTableGetters(['tableFilter']),
+    ...mapGetters('table', ['tableFilter']),
 
     customProps () {
       if (this.isFilter) {

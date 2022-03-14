@@ -1,7 +1,7 @@
 import { State } from '../lib/test-helpers'
 
 /* extended family A
-
+           ∇
    Y   X∙∙∙A---B   C
     \ / \ /  |  \ /
     xy  ax   ab  bc
@@ -26,8 +26,7 @@ import { State } from '../lib/test-helpers'
 export default function ExtendedFamilyA () {
   return State({
     view: {
-      focus: 'A',
-      extendedFamily: false
+      focus: 'A'
     },
     childLinks: {
       A: {

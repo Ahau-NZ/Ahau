@@ -40,6 +40,7 @@ export default function (apollo) {
         }
       }
     },
+    selectedProfileId: (state) => state.selectedProfileId,
     selectedProfile: (state, getters, rootState, rootGetters) => {
       if (!state.selectedProfileId) return
 

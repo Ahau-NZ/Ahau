@@ -2,10 +2,11 @@ import { State } from '../lib/test-helpers'
 
 /* whangai to grandparent
 
-      Grandad --
-        |      |
-       Son     |
-        |      |
+        ∇
+     Grandad ╌╌┐
+        |      ┆
+       Son     ┆
+        |      ┆
     Grandaughter
         |
        Baby
@@ -15,8 +16,7 @@ import { State } from '../lib/test-helpers'
 export default function WhangaiGrandparentSimple () {
   return State({
     view: {
-      focus: 'Grandad',
-      extendedFamily: false
+      focus: 'Grandad'
     },
     childLinks: {
       Grandad: {

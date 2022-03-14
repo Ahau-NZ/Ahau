@@ -2,6 +2,7 @@ import { State } from '../lib/test-helpers'
 
 /* whangai to grandparent
 
+                           ∇
               Grandad─┬─Grandma
                  ┌────┴╌╌╌╌╌┐
                  │          ┆
@@ -15,7 +16,6 @@ export default function WhangaiGrandparentComplex () {
   return State({
     view: {
       focus: 'Grandma',
-      extendedFamily: false,
       importantRelationships: {
         Grandaughter: {
           profileId: 'Grandaughter',

@@ -82,7 +82,7 @@
               <v-list-item-title align="start" v-text=" t('parents')"/>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="extendedFamily" />
+              <v-switch :value="showExtendedFamily" @change="setExtendedFamily($event)" />
             </v-list-item-action>
           </v-list-item>
 
@@ -121,8 +121,7 @@ export default {
       resetData: false,
       hideDeceased: false, // hides all deceased nodes
       showWhakapapa: false,
-      showAvatars: true,
-      extendedFamily: false
+      showAvatars: true
     }
   },
   watch: {
@@ -138,12 +137,6 @@ export default {
     },
     showAvatars () {
       this.$emit('toggleAvatars')
-    },
-    extendedFamily (val) {
-      this.setExtendedFamily(val)
-    },
-    showExtendedFamily (val) {
-      this.extendedFamily = val
     }
   },
   computed: {

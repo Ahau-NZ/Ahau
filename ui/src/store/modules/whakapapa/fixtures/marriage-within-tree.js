@@ -2,6 +2,7 @@ import { State } from '../lib/test-helpers'
 
 /* marriage within tree
 
+                           ∇
               Grandad─┬─Grandma
                  ┌────┴╌╌╌╌╌┐
                  │          ┆
@@ -18,7 +19,6 @@ export default function MarriageWithinTree () {
   return State({
     view: {
       focus: 'Grandma',
-      extendedFamily: false,
       importantRelationships: {
         Son: {
           profileId: 'Son',
