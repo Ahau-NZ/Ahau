@@ -82,7 +82,6 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { findByName } from '@/lib/search-helpers.js'
 import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
 
 export default {
@@ -127,7 +126,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['getTribe']),
-    ...mapActions('person', ['createPerson']),
+    ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
     async getSuggestions (name) {
       if (!name) {
@@ -137,11 +136,11 @@ export default {
 
       const { type, groupId } = this.currentAccess
       let records
-      if (type === ACCESS_ALL_MEMBERS) records = await findByName(name, { groupId, type: 'person' })
-      if (type === ACCESS_KAITIAKI) records = await findByName(name, { groupId, type: 'person/admin' })
+      if (type === ACCESS_ALL_MEMBERS) records = await this.findPersonByName({ name, groupId, type: 'person' })
+      if (type === ACCESS_KAITIAKI) records = await this.findPersonByName({ name, groupId, type: 'person/admin' })
       if (type === ACCESS_PRIVATE) {
-        const source = await findByName(name, { groupId, type: 'person/source' })
-        const other = await findByName(name, { groupId, type: 'person' })
+        const source = await this.findPersonByName({ name, groupId, type: 'person/source' })
+        const other = await this.findPersonByName({ name, groupId, type: 'person' })
         records = [...source, ...other]
       }
 

@@ -111,7 +111,6 @@ import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { findByName } from '@/lib/search-helpers.js'
 
 import findSuccessor from '@/lib/find-successor'
 
@@ -218,9 +217,16 @@ export default {
     getDisplayName,
     ...mapActions(['loading', 'setDialog']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['createPerson', 'loadPersonFull', 'updatePerson', 'deletePerson', 'setSelectedProfileById']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
+    ...mapActions('person', [
+      'createPerson',
+      'loadPersonFull',
+      'updatePerson',
+      'deletePerson',
+      'setSelectedProfileById',
+      'findPersonByName'
+    ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
       'loadDescendants',
@@ -632,7 +638,8 @@ export default {
         return
       }
 
-      let records = await findByName(name, {
+      let records = await this.findPersonByName({
+        name,
         type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
         groupId: this.view.recps[0]
       })

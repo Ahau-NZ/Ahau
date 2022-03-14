@@ -1,7 +1,12 @@
 import Vue from 'vue'
 
 import { getPerson as getPersonAndWhanau } from '@/lib/person-helpers'
-import { getPersonMinimal, savePerson as savePersonMutation, deletePerson, getPersonFull } from './apollo-helpers'
+import {
+  getPersonMinimal,
+  savePerson as savePersonMutation,
+  deletePerson, getPersonFull,
+  findPersonByName
+} from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -179,6 +184,27 @@ export default function (apollo) {
       }
       if (rootState.dialog.dialog) {
         dispatch('setDialog', null, { root: true })
+      }
+    },
+    async findPersonByName (context, opts) {
+      const { name, type, groupId } = opts
+
+      if (!name) return
+
+      // need to escape brackets for regexp
+      const safeName = name
+        .replace('(', '\\(')
+        .replace(')', '\\)')
+
+      try {
+        const res = await apollo.query(findPersonByName(safeName, type, groupId))
+
+        if (res.errors) throw res.errors
+
+        return res.data.findPersons
+      } catch (err) {
+        console.error('Something went wrong while trying to find persons by name: ' + name)
+        console.error(err)
       }
     }
   }
