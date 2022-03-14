@@ -627,11 +627,7 @@ export default {
     async submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
-      if (!isEmpty(output)) {
-        if (this.profile.adminProfile) output.id = this.profile.adminProfile.id
-
-        await this.processUpdate(output)
-      }
+      if (!isEmpty(output)) await this.processUpdate(output)
 
       this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
