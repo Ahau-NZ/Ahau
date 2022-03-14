@@ -1,5 +1,37 @@
 # Changelog | Ahau desktop
 
+## v2.9.0
+
+### Features
+
+- selected node in whakapapa is now highlighted
+- graph loads first 2 generations
+    - click ... to expand another 2 generations
+    - if there are less than 10 profiles loaded, keep loading generations till at least 10 are loaded
+    - graph loads much faster!
+- select a partner and the graph loads their ancestors
+    - currently follow the first ancenstor link created for that node. can customise this in future
+
+
+### Bugfixes
+
+- if you're a kaitiaki and edit a profile, it now correctly updates details in the graph
+    - bug was that it was saving to kaitiaki subgroup (and those details aren't shown in UI)
+- fixed personal group whakapapa import
+    - discovered that the process was failing when it tried to save contact details there
+    - contact details are currently not saved in personal group, but import doesn't crash
+- fixed "show exteneded family" edge case with whangai links
+
+
+## v2.8.0
+
+Major refacor of the graph loading
+
+Features:
+- hovering on a node in whakapapa highlights the childLinks for that node
+- added ability to search for partners within the graph
+
+
 ## v2.7.1
 
 ### Features
