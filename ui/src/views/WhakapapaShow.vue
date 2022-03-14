@@ -244,7 +244,8 @@ export default {
   },
   async mounted () {
     window.scrollTo(0, 0)
-    await this.reload()
+
+    this.loadWhakapapaView(this.$route.params.whakapapaId)
   },
 
   computed: {
@@ -329,12 +330,9 @@ export default {
     ...mapActions('whakapapa', [
       'loadWhakapapaView', 'resetWhakapapaView',
       'saveWhakapapaView',
-      'setViewFocus', 'setExtendedFamily', 'toggleViewMode'
+      'setViewFocus', 'toggleViewMode'
     ]),
     ...mapActions('table', ['resetTableFilters']),
-    async reload () {
-      await this.loadWhakapapaView(this.$route.params.whakapapaId)
-    },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars
     },
@@ -371,7 +369,7 @@ export default {
       this.setSelectedProfileById(profileId)
       this.setViewFocus(newFocus)
     },
-    async getWhakapapaHead (profileId, depth = 3) {
+    async getWhakapapaHead (profileId, depth) {
       if (depth === 0) return profileId
       if (this.whakapapaView.focus === profileId) return profileId
 
@@ -383,7 +381,7 @@ export default {
       // NOTE - currently totally arbitrary which ancestors it follows
       // perhaps we let the user expand upwards in the direction they want?
 
-      return this.getWhakapapaHead(parent.id, depth - 1)
+      return this.getWhakapapaHead(parent.id, depth && depth - 1)
     },
     /*
       makes changes of a person to all their decendants

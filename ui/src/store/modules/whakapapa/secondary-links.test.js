@@ -2,11 +2,10 @@ import { Getters } from './lib/test-helpers'
 import { WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
-const { getters } = require('./').default()
 
 test('vuex/whakapapa getters.secondaryLinks', t => {
   /* whangai to grandparent
-
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -16,10 +15,10 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
 
   */
   const state = WhangaiGrandparentComplex()
-  const secondaryLinks = () => getters.secondaryLinks(state, Getters(state))
+  const getters = Getters(state)
 
   t.deepEqual(
-    secondaryLinks(),
+    getters.secondaryLinks,
     [
       { parent: 'Daughter', child: 'Grandaughter', relationshipType: 'birth' },
       { parent: 'Husband', child: 'Grandaughter', relationshipType: 'birth' }
@@ -29,7 +28,7 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
 
   console.log('wipe importantRelationships')
   state.view.importantRelationships = {}
-  t.deepEqual(secondaryLinks(), [], 'no secondaryLinks')
+  t.deepEqual(getters.secondaryLinks, [], 'no secondaryLinks')
 
   console.log('set importantRelationship to be with Daughter')
   state.view.importantRelationships = {
@@ -39,7 +38,7 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
     }
   }
   t.deepEqual(
-    secondaryLinks(),
+    getters.secondaryLinks,
     [
       { parent: 'Grandma', child: 'Grandaughter', relationshipType: 'whangai' },
       { parent: 'Grandad', child: 'Grandaughter', relationshipType: 'whangai' }
@@ -53,6 +52,7 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
 test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
   /* marriage within tree
 
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -62,10 +62,10 @@ test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
 
   */
   const state = MarriageWithinTree()
-  const secondaryLinks = () => getters.secondaryLinks(state, Getters(state))
+  const getters = Getters(state)
 
   t.deepEqual(
-    secondaryLinks(),
+    getters.secondaryLinks,
     [
       { parent: 'Grandma', child: 'Son', relationshipType: 'whangai' },
       { parent: 'Grandad', child: 'Son', relationshipType: 'whangai' }
@@ -75,7 +75,7 @@ test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
 
   console.log('remove importantRelationship')
   state.view.importantRelationships = {}
-  t.deepEqual(secondaryLinks(), [])
+  t.deepEqual(getters.secondaryLinks, [])
 
   t.end()
 })

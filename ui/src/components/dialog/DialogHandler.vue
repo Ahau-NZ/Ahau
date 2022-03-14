@@ -141,9 +141,6 @@ export default {
     focus: {
       type: String
     },
-    view: {
-      type: Object, default: null
-    },
     dialog: {
       type: String,
       required: false,
@@ -186,6 +183,7 @@ export default {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapGetters('whakapapa', ['nestedDescendants']),
+    ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -300,20 +298,18 @@ export default {
 
       // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
-
       // remove them from input
       delete input.children
       delete input.parents
       delete input.partners
 
-      id = await this.createNewPerson(input)
+      const isNewProfile = !input.id
+      if (isNewProfile) id = await this.createNewPerson(input)
 
-      const ignored = await this.removeIgnoredProfile(id)
+      const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
+      if (isIgnoredProfile) this.removeIgnoredProfile(id)
 
-      const relationshipAttrs = pick(input, [
-        'relationshipType',
-        'legallyAdopted'
-      ])
+      const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
       switch (this.dialogType) {
         case 'child':
@@ -328,7 +324,7 @@ export default {
             return
           }
 
-          if (!ignored) {
+          if (!isIgnoredProfile) {
             // create the link
             await this.createChildLink({
               child,
@@ -340,8 +336,7 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          // TODO: this adds the child to the tree, but do we need to do this much?
-          await this.loadDescendants(parentProfileId)
+          this.loadDescendants({ profileId: parentProfileId })
 
           break
 
@@ -349,7 +344,7 @@ export default {
           child = this.selectedProfile.id
           var parent = id
 
-          if (!ignored) {
+          if (!isIgnoredProfile) {
             await this.createChildLink({
               child,
               parent,
@@ -391,9 +386,7 @@ export default {
           child = id
 
           // create the link
-          if (!ignored) {
-            await this.createPartnerLink({ parent, child })
-          }
+          if (!isIgnoredProfile) await this.createPartnerLink({ parent, child })
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
@@ -449,19 +442,12 @@ export default {
     },
 
     async removeIgnoredProfile (id) {
-      if (!this.view.ignoredProfiles.includes(id)) return false
-
-      const input = {
+      await this.saveWhakapapaView({
         id: this.$route.params.whakapapaId,
         ignoredProfiles: {
           remove: [id]
         }
-      }
-
-      await this.saveWhakapapaView(input)
-      await this.$parent.reload()
-
-      return true
+      })
     },
 
     async createChildLink ({ child, parent, relationshipAttrs }) {
@@ -571,26 +557,20 @@ export default {
         importantRelationship.important = [input.id, lessRelationship]
       }
 
-      const update = {
+      await this.saveWhakapapaView({
         id: this.$route.params.whakapapaId,
         importantRelationships: importantRelationship
-      }
-
-      await this.saveWhakapapaView(update)
-      await this.$parent.reload()
+      })
     },
     // END TODO
 
     async ignoreProfile () {
-      const input = {
+      await this.saveWhakapapaView({
         id: this.$route.params.whakapapaId,
         ignoredProfiles: {
           add: [this.selectedProfile.id]
         }
-      }
-
-      await this.saveWhakapapaView(input)
-      await this.$parent.reload()
+      })
 
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)

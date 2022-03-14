@@ -2,14 +2,14 @@ import { Getters, State } from './lib/test-helpers'
 import { ExtendedFamilyA, WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree } from './fixtures'
 
 const test = require('tape')
-const { getters } = require('./').default()
 
 test('vuex/whakapapa getters.getPartnerIds', t => {
+  //           ∇
   //   Y   X∙∙∙A---B   C
   //    \ / \ /  |  \ /
   //    xy  ax   ab  bc
   const state = ExtendedFamilyA()
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+  const { getPartnerIds } = Getters(state)
 
   t.deepEqual(
     getPartnerIds('A'),
@@ -17,7 +17,7 @@ test('vuex/whakapapa getters.getPartnerIds', t => {
     'returns correct partners of A'
   )
 
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
 
   t.deepEqual(
     getPartnerIds('A'),
@@ -30,7 +30,6 @@ test('vuex/whakapapa getters.getPartnerIds', t => {
   // const state2 = State({
   //   view: {
   //     // focus: 'B',
-  //     extendedFamily: false
   //   },
   //   // childLinks: {},
   //   partnerLinks: {
@@ -61,22 +60,26 @@ test('vuex/whakapapa getters.getPartnerIds', t => {
 
 test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - children)', t => {
   const state = WhangaiGrandparentSimple()
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
-  /* whangai to grandparent */
-  //    Grandad --
-  //      |      |
-  //     Son     |
-  //      |      |
-  //  Grandaughter
-  //      |
-  //     Baby
+  const { getPartnerIds } = Getters(state)
+  /* whangai to grandparent
+
+          ∇
+       Grandad ╌╌┐
+          |      ┆
+         Son     ┆
+          |      ┆
+      Grandaughter
+          |
+         Baby
+
+  */
 
   t.deepEqual(getPartnerIds('Grandad'), [], 'Grandad has no partners')
   t.deepEqual(getPartnerIds('Son'), [], 'Son has no partners')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('set extendedFamily = true')
-  state.view.extendedFamily = true
+  console.log('set showExtendedFamily = true')
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandad'), [], 'Grandad has no partners')
   t.deepEqual(getPartnerIds('Son'), [], 'Son has no partners')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
@@ -99,6 +102,7 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - childr
 test('vuex/whakapapa getters.getPartnerIds (whangai grandparent complex)', t => {
   /* whangai to grandparent
 
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -108,14 +112,14 @@ test('vuex/whakapapa getters.getPartnerIds (whangai grandparent complex)', t => 
 
   */
   const state = WhangaiGrandparentComplex()
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+  const { getPartnerIds } = Getters(state)
 
   t.deepEqual(getPartnerIds('Grandma'), ['Grandad'], 'Grandma partners = Grandad')
   t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('set extendedFamily = true')
-  state.view.extendedFamily = true
+  console.log('set showExtendedFamily = true')
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandma'), ['Grandad'], 'Grandma partners = Grandad')
   t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
@@ -156,8 +160,7 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - partne
 
   const state = State({
     view: {
-      focus: 'Parent',
-      extendedFamily: false
+      focus: 'Parent'
     },
     childLinks: {
       Parent: {
@@ -171,12 +174,12 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - partne
       }
     }
   })
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+  const { getPartnerIds } = Getters(state)
 
   t.deepEqual(getPartnerIds('Daughter'), ['Son'])
   t.deepEqual(getPartnerIds('Son'), ['Daughter'])
 
-  state.view.extendedFamily = true
+  state.viewChanges.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Daughter'), ['Son'], 'extendedFamily ok')
 
   state.view.importantRelationships = {
@@ -197,12 +200,13 @@ test('vuex/whakapapa getters.getPartnerIds (with collapsed)', t => {
   // this test shows the importantRelationships does not effect partnerIds
   // NOTE if the importantRelationship was with the parent, then it would effect the listed partners
 
+  //     ∇
   //  A--B
+  //
 
   const state = State({
     view: {
-      focus: 'B',
-      extendedFamily: false
+      focus: 'B'
     },
     viewChanges: {
       collapsed: {
@@ -216,16 +220,17 @@ test('vuex/whakapapa getters.getPartnerIds (with collapsed)', t => {
       }
     }
   })
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+  const { getPartnerIds } = Getters(state)
 
   t.deepEqual(getPartnerIds('B'), [])
+  t.deepEqual(getPartnerIds('B', { showCollapsed: true }), ['A'])
 
   t.end()
 })
 
 test('vuex/whakapapa getters.getPartnerIds (marriage within tree)', t => {
   /* marriage within tree
-
+                            ∇
                 Grandad─┬─Grandma
                    ┌────┴╌╌╌╌╌┐
                    │          ┆
@@ -235,7 +240,7 @@ test('vuex/whakapapa getters.getPartnerIds (marriage within tree)', t => {
 
   */
   const state = MarriageWithinTree()
-  const getPartnerIds = getters.getPartnerIds(state, Getters(state))
+  const { getPartnerIds } = Getters(state)
 
   t.deepEqual(getPartnerIds('Daughter'), ['Son'])
 

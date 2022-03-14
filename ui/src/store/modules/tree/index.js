@@ -87,11 +87,6 @@ export default function () {
 
           return 0
         })
-        /* calculate the total number of nodes in each SubTree (cummulatively) */
-        // see rootNode.value to see how many nodes are in the graph below rootNode
-        .sum(nodeData => {
-          return 1 + rootGetters['whakapapa/getPartnerIds'](nodeData.id).length
-        })
     },
 
     tree (state, getters, rootState, rootGetters) {

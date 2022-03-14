@@ -83,19 +83,18 @@ export default {
       return
     }
 
-    const profileCount = this.tree.value
-    if (!profileCount) return
-    if (this.whakapapaView.recordCount === profileCount) return
+    if (!this.recordCount) return
+    if (this.whakapapaView.recordCount === this.recordCount) return
 
     // if there are more records here than are recorded, update the whakapapa-view
     this.saveWhakapapaView({
       id: this.whakapapaView.id,
-      recordCount: profileCount
+      recordCount: this.recordCount
     })
   },
 
   computed: {
-    ...mapGetters('whakapapa', ['whakapapaView']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'recordCount']),
     ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode']),
     radius () {
       return settings.radius
@@ -133,12 +132,16 @@ export default {
       if (id === '') return null
 
       const node = this.getNode(id) || this.getPartnerNode(id)
-      if (node) this.centerNode(node)
+      if (!node) return
+
+      this.centerNode(node)
+      this.setSelectedProfileById(id)
     }
   },
 
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
 
     zoom () {
@@ -166,13 +169,17 @@ export default {
 
     handleRootNodeClick (id) {
       // if node is not already centered, center it
-      if (this.nodeCentered !== id) return this.centerNode(id)
+      if (this.nodeCentered !== id) {
+        this.setSelectedProfileById(id)
+        this.centerNode(id)
+        return
+      }
 
       // if it is already centered, collapse the node
       this.toggleNodeCollapse(id)
 
-      // setTimeout needed to get new node position after it has finished collapsing/expanding
-      setTimeout(() => this.centerNode(id), 100)
+      this.$nextTick(() => this.centerNode(id))
+      // this runs the function after the DOM has been updated
     },
 
     handlePartnerNodeClick (id) {

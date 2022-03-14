@@ -4,16 +4,40 @@
     :style="position"
     @mouseover="setHover(true)"
     @mouseleave="setHover(false)"
-    @click="$emit('click')"
     @mousedown.right="openMenu"
     @contextmenu.prevent
   >
-    <g v-if="showAvatars" class="avatar">
+
+    <g v-if="showAvatars" :style="textStyle">
+      <rect :width="textWidth" y="-16" height="20"></rect>
+      <text>{{ displayName }}</text>
+    </g>
+    <g v-else :style="nameTextStyle" @click="$emit('click')" >
+      <rect :width="textWidth*2" y="-25" height="30" />
+      <text :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }">
+        {{ displayName }}
+      </text>
+    </g>
+
+    <g v-if="showAvatars" class="avatar" @click="$emit('click')" >
       <defs>
         <clipPath :id="clipPathId">
           <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
       </defs>
+
+      <circle v-if="isSelected"
+        :style="{ fill: 'rgb(178, 37, 38)' }"
+        :cx="radius"
+        :cy="radius"
+        :r="radius + 4"
+      />
+      <!--
+        keen to get rid of background circle, but to do this need to change the color
+        of the default avatar (which is white)
+
+        <circle v-if="!imageSrc && profile.deceased"
+      -->
       <circle v-if="!imageSrc"
         :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
@@ -37,17 +61,10 @@
     <g v-if="hasUndrawnAscendants" :style="dotsAboveNode">
       <text> ... </text>
     </g>
-    <g v-if="isCollapsed || hasUndrawnDescendants" :style="dotsUnderNode">
-      <text> ... </text>
-    </g>
-
-    <g v-if="!showAvatars" :style="nameTextStyle">
-      <rect :width="textWidth*2" y="-25" height="30"></rect>
-      <text style="font-size: 30px;">{{ displayName }}</text>
-    </g>
-    <g v-else :style="textStyle">
-      <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ displayName }}</text>
+    <g v-if="hasUndrawnSubtree" :style="dotsUnderNode" @click="toggleNodeCollapse(profileId)" >
+      <rect width="40" height="40" y="-20" style="fill: rgba(0,0,0,0);" />
+      <!-- this rect helps the group be big enough to easily click on -->
+      <text> ...  </text>
     </g>
 
     <g v-if="isPartner && hasAncestors && !isDuplicate"
@@ -100,8 +117,8 @@ export default {
     this.loadPersonMinimal(this.profileId)
   },
   computed: {
-    ...mapGetters('person', ['person']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getChildIds']),
+    ...mapGetters('person', ['person', 'selectedProfileId']),
+    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
     ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode']),
     profile () {
       return this.person(this.profileId) || {}
@@ -109,16 +126,30 @@ export default {
     isCollapsed () {
       return this.isCollapsedNode(this.profileId)
     },
+    isSelected () {
+      return this.selectedProfileId === this.profileId
+    },
     isDuplicate () {
       const rule = this.getImportantRelationship(this.profileId)
       if (!rule) return false
       return rule.other.length > 1
       // TODO 2022-02-11 mix - ideally we won't lean on "other". Is there another way to do this?
+      // Idea - make a getAllNodes + getAllParterNodes (which doesn't just find the first)
     },
-    hasUndrawnDescendants () {
-      return this.getChildIds(this.profileId)
-        .filter(id => !this.getNode(id))
-        .length > 0
+    hasUndrawnSubtree () {
+      if (this.isCollapsed) {
+        const undrawnDescendants = this.getRawChildIds(this.profileId)
+          .filter(id => !this.getNode(id))
+          .length > 0
+        if (undrawnDescendants) return true
+
+        const undrawnPartners = this.getRawPartnerIds(this.profileId)
+          .filter(id => !this.getPartnerNode(id))
+          .length > 0
+        if (undrawnPartners) return true
+      }
+
+      return false
     },
     hasUndrawnAscendants () {
       return this.getParentIds(this.profileId)
@@ -168,10 +199,18 @@ export default {
     },
     dotsUnderNode () {
       // centers the three dots underneath a nodes name
+      const y = (
+        (this.showAvatars ? this.radius : 0) +
+        (this.isPartner ? 55 : 70)
+      )
+
       return {
         fontSize: '22px',
         fontWeight: 600,
-        transform: `translate(${this.radius - 2}px, ${this.radius + (this.isPartner ? 55 : 70)}px) rotate(90deg)`
+        transform: `
+          translate(${this.radius - 2}px, ${y}px)
+          rotate(90deg)
+        `
       }
     },
     dotsAboveNode () {
@@ -179,7 +218,10 @@ export default {
       return {
         fontSize: '22px',
         fontWeight: 600,
-        transform: `translate(${this.radius - 2}px, ${this.radius - (this.isPartner ? 57 : 72)}px) rotate(90deg)`
+        transform: `
+          translate(${this.radius - 2}px, ${this.radius - (this.isPartner ? 57 : 72)}px)
+          rotate(90deg)
+        `
       }
     },
     displayName () {
@@ -187,6 +229,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('whakapapa', ['toggleNodeCollapse']),
     ...mapActions('tree', ['setMouseEvent', 'setHoveredProfileId']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
     defaultImage () {

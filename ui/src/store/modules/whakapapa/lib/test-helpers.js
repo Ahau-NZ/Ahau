@@ -12,10 +12,16 @@ export function Getters (state) {
     const getterName = getterNames.shift()
 
     try {
-      getters[getterName](state, activeGetters)
+      const result = getters[getterName](state, activeGetters)
       // if it explodes, it was probably dependant on some other getters
       // so if it doesn't add it to the activeGetters
-      activeGetters[getterName] = getters[getterName](state, activeGetters)
+
+      if (typeof result === 'function') activeGetters[getterName] = result
+      else {
+        Object.defineProperty(activeGetters, getterName, {
+          get: () => getters[getterName](state, activeGetters)
+        })
+      }
     } catch (err) {
       // console.log(err)
       // not ready yet!
@@ -39,13 +45,13 @@ export function State (state) {
   const base = {
     view: {
       focus: 'TODO: set this',
-      extendedFamily: true,
       importantRelationships: {},
       ignoredProfiles: []
     },
     viewChanges: {
       focus: null,
-      collapsed: {}
+      collapsed: {},
+      showExtendedFamily: false // current default
     },
     childLinks: {},
     partnerLinks: {}
