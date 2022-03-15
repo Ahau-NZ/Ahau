@@ -589,25 +589,14 @@ export default {
         groupId: this.view.recps[0]
       })
 
-      if (this.source !== 'new-registration') {
-        this.predecessorArray = []
-        await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
-
-        const updatedRecords = []
-
-        records.forEach(record => {
-          var recordIsPredecessor = false
-          this.predecessorArray.forEach(predecessor => {
-            if (predecessor === record.id) recordIsPredecessor = true
-          })
-          if (!recordIsPredecessor) updatedRecords.push(record)
-        })
-
-        records = updatedRecords
-      }
+      this.predecessorArray = []
+      await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
       // sets suggestions which is passed into the dialogs
-      this.suggestions = records
+      this.suggestions = records.filter(record => {
+        // only keep updated records
+        return this.predecessorArray.some(predecessor => predecessor === record.id)
+      })
     },
     /*
       needed this function because this.profiles keeps track of more than just the nodes in this tree,
