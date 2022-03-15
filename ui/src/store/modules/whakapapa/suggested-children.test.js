@@ -1,7 +1,9 @@
+import { State, Getters } from './lib/test-helpers'
+
 const test = require('tape')
 const { actions } = require('./').default()
 
-test('whakapapa (action: suggestedChildren)', async t => {
+test('vuex/whakapapa (action: suggestedChildren)', async t => {
   // ////
   // Setup Mock Profiles
   // ////
@@ -22,11 +24,12 @@ test('whakapapa (action: suggestedChildren)', async t => {
   // ////
   // Setup Mock Whakapapa
   // ////
-  const state = {
+  const state = State({
     view: {
       ignoredProfiles: ['D']
     }
-  }
+  })
+  const getters = Getters(state)
 
   // ////
   // Setup Helpers
@@ -45,7 +48,7 @@ test('whakapapa (action: suggestedChildren)', async t => {
 
   // helper function to reduce duplicate code
   const suggestedChildren = (input) => {
-    return actions.suggestedChildren({ dispatch, state }, input)
+    return actions.suggestedChildren({ getters, dispatch }, input)
   }
 
   // ////

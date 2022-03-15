@@ -7,8 +7,10 @@ export function Getters (state) {
   const activeGetters = {}
 
   const getterNames = Object.keys(getters)
+  let count = 0
 
   while (getterNames.length) {
+    if (++count > 1000) throw new Error(`Getters helper stuck on: ${getterNames.join(', ')}`)
     const getterName = getterNames.shift()
 
     try {

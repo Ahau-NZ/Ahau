@@ -39,7 +39,7 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
   )
 
   t.equal(
-    getters.getPartnerRelationshipType('A', 'C'),
+    getters.getPartnerType('A', 'C'),
     undefined,
     'returns no relationshipType for extended family partner'
   )

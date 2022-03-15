@@ -38,3 +38,24 @@ export const saveLink = input => {
     variables: { input }
   }
 }
+
+export const whakapapaLink = ({ parent, child, isPartner }) => ({
+  query: gql`
+    query($parent: String!, $child: String!, $isPartner: Boolean) {
+      whakapapaLink (parent: $parent, child: $child, isPartner: $isPartner) {
+        type
+        linkId
+        parent
+        child
+        relationshipType
+        legallyAdopted
+        recps
+      }
+    }
+  `,
+  variables: {
+    parent,
+    child,
+    isPartner
+  }
+})

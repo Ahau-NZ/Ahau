@@ -2,12 +2,11 @@
 
 import Vue from 'vue'
 import uniqby from 'lodash.uniqby'
-import pick from 'lodash.pick'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
 
-import { saveLink } from '../../../lib/link-helpers'
+import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
 const DEFAULT_DEPTH = 2
@@ -19,7 +18,8 @@ const MIN_LOADED_PROFILES = 10
 // NOTE: the app assumes that the default childLink relationshipType is birth
 // when some are saved as null, it sets them to birth by default so
 // the graph displays these links correctly
-const UNKNOWN_REL_TYPE = 'birth'
+const FALLBACK_CHILD_REL = 'birth'
+const FALLBACK_PARTNER_REL = 'partners'
 
 const defaultView = () => ({
   name: 'Loading...',
@@ -27,8 +27,18 @@ const defaultView = () => ({
   focus: null,
   recps: null,
   image: { uri: '' },
-  ignoredProfiles: [],
+  ignoredProfiles: [], // TODO change to a map
   importantRelationships: {},
+  /*
+    maps profileId => Rule about that profileId
+      Rule = {
+        profileId,
+        primary: { profileId, relationshipType },
+        other: [
+          { profileId, relationshipType }
+        ]
+      }
+  */
   recordCount: 0,
 
   // settings
@@ -52,7 +62,7 @@ const defaultViewChanges = () => ({
 // It DOES NOT include layout calculations (see vuex/tree)
 //
 // NOTE concepts like "children" and "partners" in this file refer to graphChildren and graphPartners
-// use getChildRelationshipType, getPartnerRelationshipType to determine relationships
+// use getChildType, getPartnerType to determine relationships
 
 export default function (apollo) {
   const state = {
@@ -78,8 +88,6 @@ export default function (apollo) {
     focus: state => state.viewChanges.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.viewChanges.showExtendedFamily),
-    importantRelationships: state => state.view.importantRelationships,
-    // TODO search app for this term - we see that this.view.importantRelationships is being used a lot?
     recordCount: (state, getters) => {
       const queue = [state.view.focus]
       const profiles = new Set([])
@@ -102,9 +110,15 @@ export default function (apollo) {
     /* getter methods */
     isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
-    getImportantRelationship: state => (id) => state.view.importantRelationships[id],
-    isRawImportantLink: state => (targetId, otherId) => {
+    getImportantRelationship: (state, getters) => (targetId) => {
       const rule = state.view.importantRelationships[targetId]
+      if (!rule) return
+      if (!getters.isDuplicate(rule.profileId)) return
+      return rule
+    },
+
+    isRawImportantLink: (state, getters) => (targetId, otherId) => {
+      const rule = getters.getImportantRelationship(targetId)
       if (!rule) return true
       return rule.primary.profileId === otherId
     },
@@ -114,22 +128,60 @@ export default function (apollo) {
       // OR one of others partners has an importantRelationship with the target
       getters.getRawPartnerIds(otherId).some(partnerId => getters.isRawImportantLink(targetId, partnerId))
     ),
-    getChildRelationshipType: state => (parent, child) => {
+    isDuplicate: (state, getters) => (id) => {
+      // this method lets you check if an id would appear more than once if the graph was drawn
+      // (respecting: [ignoredProfiles], not respecting: [isRawImportantLink, showExtendedFamily]
+
+      // NOTE showExtendedFamily would change how partners and children are calculated
+
+      let foundCount = 0
+      const queue = [getters.focus]
+      const seenRootNodeIds = new Set()
+      while (foundCount < 2 && queue.length > 0) {
+        const profileId = queue.shift()
+
+        // for each rootNode, check:
+        // - rootNode
+        // - partners
+        if (profileId === id) foundCount++
+
+        if (seenRootNodeIds.has(profileId)) continue // stops infinite loops
+        else seenRootNodeIds.add(profileId)
+
+        const partnerIds = getters.getRawPartnerIds(profileId)
+          .filter(getters.isNotIgnored)
+        partnerIds.forEach(partnerId => { if (partnerId === id) foundCount++ })
+
+        const childIds = getters.getRawChildIds(profileId)
+          .filter(getters.isNotIgnored)
+
+        // queue up processing of children of rootNode/partners
+        const partnerChildIds = partnerIds
+          .flatMap(parentId => getters.getRawChildIds(parentId))
+          .filter(childId => getters.isNotIgnored(childId) && !childIds.includes(childId))
+
+        new Set([...childIds, ...partnerChildIds])
+          .forEach(childId => queue.push(childId))
+      }
+
+      return foundCount > 1
+    },
+    getChildType: state => (parent, child) => {
       return state.childLinks[parent] && state.childLinks[parent][child]
     },
-    getPartnerRelationshipType: state => (parent, child) => {
+    getPartnerType: state => (parent, child) => {
       const [partnerA, partnerB] = [parent, child].sort()
-
       return state.partnerLinks[partnerA] && state.partnerLinks[partnerA][partnerB]
     },
     // here "raw" means unfiltered links
+
     getRawChildIds: state => (parentId) => {
       return Object.keys(state.childLinks[parentId] || {})
     },
-    getRawParentIds: state => (childId) => {
+    getRawParentIds: (state, getters) => (childId) => {
       return Object.keys(state.childLinks)
+        .filter(parentId => getters.getChildType(parentId, childId))
         // find parents who have a relationship with this child
-        .filter(parentId => state.childLinks[parentId] && state.childLinks[parentId][childId] !== undefined)
     },
     getRawPartnerIds: state => (partnerId) => {
       return [
@@ -137,6 +189,9 @@ export default function (apollo) {
         ...Object.keys(state.partnerLinks).filter(partnerA => state.partnerLinks[partnerA][partnerId])
       ]
     },
+    // TODO 2022-04-11 mix
+    // consider splitting out vuex/links + vuex/whakapapa then we could just have getChildIds for each!
+    // maybe all the filtering stuff should happen over in tree...
 
     /* higher order getters */
     getChildIds: (state, getters) => (parentId, opts) => {
@@ -158,7 +213,7 @@ export default function (apollo) {
       ) return getExtendedFamily(state, getters)(parentId).children
       else {
         return getters.getRawChildIds(parentId)
-          .filter(childId => !state.view.ignoredProfiles.includes(childId))
+          .filter(getters.isNotIgnored)
           .filter(childId => getters.isImportantLink(childId, parentId))
       }
     },
@@ -171,11 +226,11 @@ export default function (apollo) {
         //   - OR there is line from focus -> parentId -> child (so they are rendered)
         parentIds = parentIds
           .filter(parentId => {
-            if (getters.getChildRelationshipType(parentId, childId) === 'birth') return true
+            if (getters.getChildType(parentId, childId) === 'birth') return true
 
             return (
               (
-                (getters.getPartnerRelationshipType(state.view.focus, parentId) !== undefined) ||
+                (getters.getPartnerType(state.view.focus, parentId)) ||
                 getters.isDescendant(getters.focus, parentId)
               ) && // connection from focus -> parentId
               getters.isDescendant(parentId, childId) // connection from parentId -> childId
@@ -260,7 +315,7 @@ export default function (apollo) {
             .map(parentId => ({
               parent: parentId,
               child: ruleTarget,
-              relationshipType: getters.getChildRelationshipType(parentId, ruleTarget)
+              relationshipType: getters.getChildType(parentId, ruleTarget)
             }))
 
           return acc.concat(links)
@@ -324,7 +379,7 @@ export default function (apollo) {
       childLinks.forEach(({ parent, child, relationshipType }) => {
         const newChildren = {
           ...(state.childLinks[parent] || {}),
-          [child]: relationshipType || UNKNOWN_REL_TYPE
+          [child]: relationshipType || FALLBACK_CHILD_REL
         }
 
         Vue.set(state.childLinks, parent, newChildren)
@@ -334,7 +389,7 @@ export default function (apollo) {
         const [partnerA, partnerB] = [parent, child].sort()
         const newPartners = {
           ...(state.partnerLinks[partnerA] || {}),
-          [partnerB]: relationshipType || UNKNOWN_REL_TYPE
+          [partnerB]: relationshipType || FALLBACK_PARTNER_REL
         }
 
         Vue.set(state.partnerLinks, partnerA, newPartners)
@@ -347,43 +402,41 @@ export default function (apollo) {
       /* remove from childLinks */
       if (state.childLinks[profileId]) state.childLinks[profileId] = {}
 
-      Object.keys(state.childLinks).forEach(parentId => {
-        if (state.childLinks[parentId] && state.childLinks[parentId][profileId] !== undefined) {
+      for (const parentId in state.childLinks) {
+        if (state.childLinks[parentId] && state.childLinks[parentId][profileId]) {
           const newLinks = { ...state.childLinks[parentId] }
           delete newLinks[profileId]
           state.childLinks[parentId] = newLinks
         }
-      })
+      }
 
       /* remove from partnerLinks */
       if (state.partnerLinks[profileId]) state.partnerLinks[profileId] = {}
 
-      Object.keys(state.partnerLinks).forEach(parentId => {
-        if (state.partnerLinks[parentId] && state.partnerLinks[parentId] !== undefined) {
-          const newLinks = { ...state.partnerLinks[parentId] }
+      for (const partnerA in state.childLinks) {
+        if (state.partnerLinks[partnerA] && state.partnerLinks[partnerA][profileId]) {
+          const newLinks = { ...state.partnerLinks[partnerA] }
           delete newLinks[profileId]
-          state.partnerLinks[parentId] = newLinks
+          state.partnerLinks[partnerA] = newLinks
         }
-      })
+      }
     },
-    removeLinkBetweenProfiles (state, link) {
-      const { parent, child } = link
 
-      const childLinks = state.childLinks[parent]
+    removeChildLink (state, { parent, child }) {
+      if (!parent || !child) return
 
-      // remove the child from the parent
-      if (childLinks && childLinks[child] !== undefined) {
-        const newLinks = { ...childLinks }
+      if (state.childLinks[parent] && state.childLinks[parent][child]) {
+        const newLinks = { ...state.childLinks[parent] }
         delete newLinks[child]
         state.childLinks[parent] = newLinks
-
-        return
       }
+    },
+    removePartnerLink (state, { parent, child }) {
+      if (!parent || !child) return
 
-      // remove the partner link
       const [partnerA, partnerB] = [parent, child].sort()
 
-      if (state.partnerLinks[partnerA] && state.partnerLinks[partnerA][partnerB] !== undefined) {
+      if (state.partnerLinks[partnerA] && state.partnerLinks[partnerA][partnerB]) {
         const newLinks = { ...state.partnerLinks[partnerA] }
         delete newLinks[partnerB]
         state.partnerLinks[partnerA] = newLinks
@@ -421,11 +474,12 @@ export default function (apollo) {
     addLinks ({ commit }, links) {
       commit('addLinks', links)
     },
-    removeLinksToProfile ({ commit }, profileId) {
+    removeLinksToProfile ({ state, commit }, profileId) {
       commit('removeLinksToProfile', profileId)
     },
     removeLinkBetweenProfiles ({ commit }, link) {
-      commit('removeLinkBetweenProfiles', link)
+      commit('removeChildLink', link)
+      commit('removePartnerLink', link)
     },
     async createWhakapapaView ({ dispatch }, input) {
       if (!input.authors) {
@@ -549,11 +603,10 @@ export default function (apollo) {
         dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth, loaded })
       })
     },
-    async saveWhakapapaView ({ dispatch, commit }, input) {
+    async saveWhakapapaView ({ state, commit, dispatch }, input) {
+      if (!input.id) input.id = state.view.id
       try {
-        const res = await apollo.mutate(
-          saveWhakapapaView(input)
-        )
+        const res = await apollo.mutate(saveWhakapapaView(input))
 
         if (res.errors) throw new Error(res.errors)
 
@@ -572,8 +625,11 @@ export default function (apollo) {
     addProfileLocation ({ commit }, node) {
       commit('addProfileLocation', node)
     },
-    async suggestedChildren ({ dispatch, state }, parentId) {
-      // get the persons full profile
+    async suggestedChildren ({ getters, dispatch }, parentId) {
+      // TODO 2022-03-11 mix
+      // change this to just use getters.getRawChildren
+      // and then return just ids (map to profile in the view)
+
       const person = await dispatch('person/getPerson', parentId, { root: true })
       // TODO 2022-03-08 mix
       // deprecate getPerson use. Would could probably use the childLinks + partnerLinks to look around
@@ -588,10 +644,10 @@ export default function (apollo) {
           // keep only children who aren't already a child of this profile
           !person.children.some(child => child.id === profile.id) ||
           // unless they're an ignored profile
-          state.view.ignoredProfiles.includes(profile.id)
+          !getters.isNotIgnored(profile.id)
         ))
     },
-    async suggestedParents ({ dispatch, state }, childId) {
+    async suggestedParents ({ getters, dispatch }, childId) {
       const person = await dispatch('person/getPerson', childId, { root: true })
       // TODO 2022-03-08 mix
       // deprecate getPerson use. Would could probably use the childLinks + partnerLinks to look around
@@ -608,7 +664,7 @@ export default function (apollo) {
           // keep only parents who aren't already a parent of this profile
           !person.parents.some(parent => parent.id === profile.id) ||
           // unless they're an ignored profile
-          state.view.ignoredProfiles.includes(profile.id)
+          !getters.isNotIgnored(profile.id)
         ))
         .concat(isRootNode ? person.parents : []) // handle existing parents if this is the root node
         // TODO 2022-03-08 mix
@@ -695,21 +751,15 @@ export default function (apollo) {
     },
     async createChildLink ({ dispatch }, input) {
       input.type = 'link/profile-profile/child'
-
       await dispatch('createLink', input)
     },
     async createPartnerLink ({ dispatch }, input) {
-      input = pick(input, ['child', 'parent', 'recps'])
       input.type = 'link/profile-profile/partner'
-
       await dispatch('createLink', input)
     },
-    async createLink (context, input) {
+    async saveLink (context, input) {
       try {
-        const res = await apollo.mutate(
-          saveLink(input)
-        )
-
+        const res = await apollo.mutate(saveLink(input))
         if (res.errors) throw res.errors
 
         return res.data.saveLink
@@ -735,68 +785,123 @@ export default function (apollo) {
 
       await dispatch('person/setSelectedProfileById', rootState.person.selectedProfileId, { root: true })
     },
-    async checkAndUpdateImportantRelationships ({ dispatch, state }, link) {
-      const { parent: profileIdA, child: profileIdB } = link
-      /*
-        rule = {
-          profileId,
-          primary: { profileId, relationshipType },
-          other: [
-            { profileId, relationshipType }
-          ]
+
+    async deleteChildLink ({ state, rootState, commit, dispatch }, input) {
+      const tombstoneId = await dispatch('deleteLink', input) // from db
+      if (!tombstoneId) return
+
+      await dispatch('deleteLinkFromImportantRelationsips', input)
+      commit('removeChildLink', input) // from state
+    },
+
+    async deletePartnerLink ({ state, rootState, commit, dispatch }, input) {
+      input.isPartner = true
+      const tombstoneId = await dispatch('deleteLink', input) // from db
+      if (!tombstoneId) return
+
+      await dispatch('deleteLinkFromImportantRelationsips', input)
+      commit('removeChildLink', input) // from state
+    },
+    async deleteLink ({ state, dispatch }, { linkId, tombstone, parent, child, isPartner }) {
+      try {
+        if (!linkId) {
+          const link = await dispatch('getLink', { parent, child, isPartner })
+          if (!link) throw new Error('cannot delete link, unable to find it')
+          linkId = link.linkId
         }
 
-        // find the rules which are about profileA
-        // see if they mention profileB
-        // -> could be a primary
-        // -> could be in other
-        // IF its in either, we need to set a new rule
-      */
+        const res = await apollo.mutate(saveLink({
+          linkId,
+          tombstone: tombstone || {
+            date: new Date().toISOString().slice(0, 10),
+            reason: 'user deleted'
+          }
+        }))
+        if (res.errors) throw res.errors
 
-      const findImportantRelationship = (profileId, otherProfileId) => {
-        const rule = state.view.importantRelationships[profileId]
+        return res.data.saveLink
+      }
+      catch (err) {
+        console.log('failed to delete link', { linkId, parent, child, tombstone, isPartner })
+        console.log(err)
+      }
+    },
+    async getLink ({ state }, input) { // input = { parent, child, isPartner }
+      try {
+        const res = await apollo.query(whakapapaLink(input))
+        if (res.errors) throw res.errors
+
+        return res.data.whakapapaLink
+      }
+      catch (err) {
+        console.log('failed to find link', input)
+        console.log(err)
+      }
+    },
+
+    async deleteLinkFromImportantRelationsips ({ state, getters, dispatch }, link) {
+      const { parent: A, child: B } = link
+
+      const findRuleThatNeedsChange = (targetId, otherId) => {
+        // find any rule about targetId
+        const rule = getters.getImportantRelationship(targetId)
         if (!rule) return
-
-        if (
-          rule.primary.profileId === otherProfileId ||
-          rule.other.some(r => r.profileId === otherProfileId)
-        ) return rule
+        // throw out ones which don't mention otherId
+        if (![rule.primary, ...rule.other].some(item => item.profileId === otherId)) return
+        return rule
       }
 
-      let didUpdate = false
-      const ruleA = findImportantRelationship(profileIdA, profileIdB)
+      const ruleA = findRuleThatNeedsChange(A, B)
       if (ruleA) {
-        didUpdate = true
         await dispatch('saveWhakapapaView', {
-          id: state.view.id,
           importantRelationships: {
-            profileId: profileIdA,
-            important: [
-              ruleA.primary.profileId,
-              ...ruleA.other.map(r => r.profileId)
-            ]
-              .filter(profileId => profileId !== profileIdB)
+            profileId: A,
+            important: [ruleA.primary, ...ruleA.other]
+              .map(r => r.profileId)
+              .filter(profileId => profileId !== B)
           }
         })
       }
 
-      const ruleB = findImportantRelationship(profileIdB, profileIdA)
+      const ruleB = findRuleThatNeedsChange(B, A)
       if (ruleB) {
-        didUpdate = true
         await dispatch('saveWhakapapaView', {
-          id: state.view.id,
           importantRelationships: {
-            profileId: profileIdB,
-            important: [
-              ruleB.primary.profileId,
-              ...ruleB.other.map(r => r.profileId)
-            ]
-              .filter(profileId => profileId !== profileIdA)
+            profileId: B,
+            important: [ruleB.primary, ...ruleB.other]
+              .map(r => r.profileId)
+              .filter(profileId => profileId !== A)
+          }
+        })
+      }
+    },
+    async deleteProfileFromImportantRelationships ({ state, getters, dispatch }, profileId) {
+      const rule = getters.getImportantRelationship(profileId)
+      if (rule) {
+        await this.saveWhakapapaView({
+          importantRelationships: {
+            profileId,
+            important: []
           }
         })
       }
 
-      return didUpdate
+      // find rules which mention profileId
+      await Promise.all(
+        Object.values(state.view.importantRelationships).map(async rule => {
+          const important = [rule.primary, ...rule.other].map(r => r.profileId)
+          if (!important.includes(profileId)) return
+
+          return this.saveWhakapapaView({
+            importantRelationships: {
+              profileId,
+              important: important.filter(id => id !== profileId)
+            }
+          })
+          // NOTE this may leave some importantRelationships with not enough "important" links
+          // But the getImportantRelationship getter filters out rules which are not useful
+        })
+      )
     }
   }
 
