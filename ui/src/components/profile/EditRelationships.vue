@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['selectedProfile']),
-    ...mapGetters('whakapapa', ['getChildRelationshipType']),
+    ...mapGetters('whakapapa', ['getChildType']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -75,7 +75,7 @@ export default {
 
       const { parent, child } = this.buildLink(relativesId)
 
-      return this.getChildRelationshipType(parent, child)
+      return this.getChildType(parent, child)
     },
     getImage (profile) {
       if (profile.avatarImage && profile.avatarImage.uri) return profile.avatarImage.uri

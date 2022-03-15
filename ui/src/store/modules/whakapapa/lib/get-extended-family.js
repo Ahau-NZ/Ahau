@@ -1,7 +1,7 @@
 export default function GetExtendedFamily (state, getters) {
   const {
     getRawChildIds, getRawParentIds, getRawPartnerIds,
-    getChildRelationshipType,
+    getChildType,
     isImportantLink, isNotIgnored
   } = getters
 
@@ -47,7 +47,7 @@ export default function GetExtendedFamily (state, getters) {
         getRawPartnerIds(childId)
           .forEach(linkHelper.childPartner.add)
 
-        if (getChildRelationshipType(parentId, childId) !== 'birth') return
+        if (getChildType(parentId, childId) !== 'birth') return
 
         getRawParentIds(childId)
           .filter(isNotIgnored)
@@ -57,8 +57,8 @@ export default function GetExtendedFamily (state, getters) {
           // Check the otherParent you've found is not a parent of a parentId you're investigating
           // and they're not a child of their parentId you're investigating
           .filter(otherParentId => (
-            getChildRelationshipType(otherParentId, parentId) === undefined &&
-            getChildRelationshipType(parentId, otherParentId) === undefined
+            getChildType(otherParentId, parentId) === undefined &&
+            getChildType(parentId, otherParentId) === undefined
             // this just checks immediate parents, ideally we would search through all ascendants
           ))
           // record the new adults found

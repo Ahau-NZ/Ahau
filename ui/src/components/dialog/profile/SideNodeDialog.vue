@@ -80,8 +80,8 @@
                 type="parent"
                 :label="t('parents')"
                 :profiles="parents"
-                @updateLink="updateLink"
-                @removeLink="removeChildLink"
+                @updateLink="updateChildLink"
+                @removeLink="deleteChildLink"
               />
               <v-divider/>
             </v-col>
@@ -90,7 +90,7 @@
                 type="partner"
                 :label="t('partners')"
                 :profiles="partners"
-                @removeLink="removePartnerLink"
+                @removeLink="deletePartnerLink"
               />
               <v-divider/>
             </v-col>
@@ -99,8 +99,8 @@
                 type="child"
                 :label="t('children')"
                 :profiles="children"
-                @updateLink="updateLink"
-                @removeLink="removeChildLink"
+                @updateLink="updateChildLink"
+                @removeLink="deleteChildLink"
               />
             </v-col>
           </v-row>
@@ -313,7 +313,6 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -373,9 +372,6 @@ export default {
     readonly: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
   },
-  mixins: [
-    mapProfileMixins({ mapMethods: ['getWhakapapaLink', 'saveLink'] })
-  ],
   data () {
     return {
       isEditing: false,
@@ -391,7 +387,7 @@ export default {
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
-      'getPartnerRelationshipType'
+      'getPartnerType'
     ]),
     profile () {
       return this.person(this.profileId)
@@ -413,7 +409,7 @@ export default {
     },
     partners () {
       return this.getRawPartnerIds(this.profileId)
-        .filter(partnerId => this.getPartnerRelationshipType(this.profileId, partnerId) === 'partners')
+        .filter(partnerId => this.getPartnerType(this.profileId, partnerId) === 'partners')
         .map(partnerId => this.person(partnerId))
     },
     siblings () {
@@ -538,55 +534,21 @@ export default {
     ...mapMutations(['updateDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('whakapapa', ['removeLinkFromTree']),
+    ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink']),
     ...mapActions('person', ['setSelectedProfileById', 'getPerson', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
     getDisplayName,
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
-    async updateLink (link) {
-      await this.updateLinkedPerson(link.parent, link.child, link.relationshipType)
+    async updateChildLink ({ parent, child, relationshipType, legallyAdopted }) {
+      const _link = await this.getLink({ parent, child, isPartner: false })
+      if (!_link) throw new Error('No linkId to update this link!')
 
-      // TODO cherese 9-3-22 replace this with a loadDescendantsToDepth method
-      this.$emit('reload-whakapapa')
-    },
-    async removeChildLink (link) {
-      // delete it from the database
-      await this.removeLinkedPerson(link.parent, link.child)
+      await this.saveLink({ linkId: _link.linkId, relationshipType, legallyAdopted })
 
-      // delete it from the graph
-      await this.removeLinkFromTree(link)
-    },
-    async removePartnerLink (link) {
-      await this.removeLinkedPerson(link.parent, link.child, true)
-      await this.removeLinkFromTree(link)
-    },
-    async updateLinkedPerson (parent, child, relationshipType) {
-      const { linkId } = await this.getWhakapapaLink(parent, child)
-      if (!linkId) throw new Error('No linkId to update this link!')
-
-      let input = {
-        type: 'link/profile-profile/child',
-        linkId,
-        relationshipType
-      }
-
-      await this.saveLink(input)
-    },
-    async removeLinkedPerson (parent, child, isPartner) {
-      const link = await this.getWhakapapaLink(parent, child, isPartner)
-
-      if (!link || !link.linkId) throw new Error('No linkId to remove this link!')
-
-      let input = {
-        linkId: link.linkId,
-        tombstone: {
-          date: new Date().toISOString().slice(0, 10),
-          reason: 'user deleted link'
-        }
-      }
-
-      await this.saveLink(input)
+      this.addLinks({
+        childLinks: [{ parent, child, relationshipType }]
+      })
     },
     goArchive () {
       if (

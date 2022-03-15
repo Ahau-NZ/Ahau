@@ -1,28 +1,41 @@
+import { State, Getters } from './lib/test-helpers'
+
 const test = require('tape')
 const { actions } = require('./').default()
 
-test('whakapapa (action: suggestedParents)', async t => {
-  // ////
+test('vuex/whakapapa (action: suggestedParents)', async t => {
   // Setup Mock Profiles
-  // ////
+
+  /*
+   X----A-----B
+      |    |
+      D    C
+
+  */
 
   // NOTE: A and B are not in the nestedDescendants
-  const A = { id: 'A', partners: [] }
-  const B = { id: 'B', partners: [A] }
+  const A = { id: 'A', parents: [], partners: [] }
+  const B = { id: 'B', parents: [], partners: [A] }
+  const X = { id: 'X', parents: [], partners: [A] }
+  A.partners.push(B)
+  A.partners.push(X)
+
   const C = { id: 'C', parents: [A, B], partners: [], siblings: [] }
-  const D = { id: 'D', parents: [A], siblings: [C] }
+  const D = { id: 'D', parents: [A, X], partners: [], siblings: [C] }
+  C.siblings.push(D)
 
   const profiles = { A, B, C, D }
 
   // ////
   // Setup Mock Whakapapa
   // ////
-  const state = {
+  const state = State({
     view: {
       focus: 'C',
       ignoredProfiles: []
     }
-  }
+  })
+  const getters = Getters(state)
 
   // ////
   // Setup Helpers
@@ -41,7 +54,7 @@ test('whakapapa (action: suggestedParents)', async t => {
 
   // helper function to reduce duplicate code
   const suggestedParents = (input) => {
-    return actions.suggestedParents({ dispatch, state }, input)
+    return actions.suggestedParents({ getters, dispatch }, input)
   }
 
   // ////
@@ -53,9 +66,10 @@ test('whakapapa (action: suggestedParents)', async t => {
     'returns empty suggestions when there are no parents or siblings'
   )
 
+  // <<<<<
   t.deepEqual(
     await suggestedParents(C.id),
-    [A, B],
+    [X],
     'returns the root nodes parents since they arent in the whakapapa yet'
   )
 

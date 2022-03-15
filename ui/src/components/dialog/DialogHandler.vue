@@ -52,7 +52,7 @@
       v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedDescendants.id"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== focus"
       @submit="removeProfile"
       @close="close"
     />
@@ -138,9 +138,6 @@ export default {
     story: {
       type: Object
     },
-    focus: {
-      type: String
-    },
     dialog: {
       type: String,
       required: false,
@@ -162,8 +159,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe'],
-      mapMethods: ['saveLink', 'getWhakapapaLink']
+      mapApollo: ['profile', 'tribe']
     })
   ],
   data () {
@@ -180,9 +176,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('person', ['selectedProfile']),
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
-    ...mapGetters('whakapapa', ['nestedDescendants']),
+    ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode']),
     mobile () {
@@ -230,13 +226,13 @@ export default {
       'loadDescendants',
       'saveWhakapapaView',
       'addLinks',
-      'removeLinksToProfile'
+      'saveLink',
+      'getLink',
+      'removeLinksToProfile',
+      'deleteProfileFromImportantRelationships'
     ]),
     isActive (type) {
-      if (type === this.dialog || type === this.storeDialog) {
-        return true
-      }
-      return false
+      return (type === this.dialog || type === this.storeDialog)
     },
     close () {
       if (this.isActive('new-node')) {
@@ -402,7 +398,7 @@ export default {
       await Promise.all(
         parents.map(async parent => {
           // check if a link already exists
-          const link = await this.getWhakapapaLink(parent.id, child)
+          const link = await this.getLink({ parent: parent.id, child })
           if (link) return
 
           const relationshipAttrs = pick(parent, ['relationshipType', 'legallyAdopted'])
@@ -414,7 +410,7 @@ export default {
       await Promise.all(
         children.map(async child => {
           // check if a link already exists
-          const link = await this.getWhakapapaLink(parent, child.id)
+          const link = await this.getLink({ parent, child: child.id })
           if (link) return
 
           const relationshipAttrs = pick(child, ['relationshipType', 'legallyAdopted'])
@@ -459,16 +455,17 @@ export default {
         ...relationshipAttrs
       })
         .then(() => {
-          this.addLinks({
-            childLinks: [{ parent, child, ...relationshipAttrs }]
-          })
+          this.addLinks({ childLinks: [{ parent, child, ...relationshipAttrs }] })
         })
     },
-    async createPartnerLink (input) {
-      input.type = 'link/profile-profile/partner'
-      input.recps = this.view.recps
-
-      return this.saveLink(input)
+    async createPartnerLink ({ child, parent }) {
+      return this.saveLink({
+        type: 'link/profile-profile/partner',
+        child,
+        parent,
+        recps: this.view.recps
+      })
+        .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },
     // TODO: see what is using this and move it into that component instead
     async processUpdate (input) {
@@ -482,50 +479,18 @@ export default {
       await this.loadPersonFull(profileId)
     },
     async removeProfile (deleteOrIgnore) {
-      await this.removeProfileFromImportantRelationships(this.selectedProfile.id)
-      if (deleteOrIgnore === 'delete') {
-        await this.processDeletePerson()
-      } else {
-        await this.ignoreProfile()
-      }
+      await this.deleteProfileFromImportantRelationships(this.selectedProfile.id)
+      if (deleteOrIgnore === 'delete') await this.processDeletePerson()
+      else await this.ignoreProfile()
     },
 
-    // TODO 25-11-2021 cherese move these methods to ssb-graphql-whakapapa
-    async removeProfileFromImportantRelationships (profileId) {
-      // find rule for profileId
-      const rule = this.view.importantRelationships[profileId]
-      if (rule) {
-        await this.saveWhakapapaView({
-          id: this.$route.params.whakapapaId,
-          importantRelationships: {
-            profileId,
-            important: []
-          }
-        })
-      }
-
-      // find rules which mention profileId
-      await Promise.all(
-        Object.values(this.view.importantRelationships).map(async rule => {
-          const important = [rule.primary.profileId, ...rule.other.map(r => r.profileId)]
-          if (important.includes(profileId)) {
-            return this.saveWhakapapaView({
-              id: this.$route.params.whakapapaId,
-              importantRelationships: {
-                profileId,
-                important: important.filter(id => id !== profileId)
-              }
-            })
-          }
-        })
-      )
-    },
+    // TODO 2022-03-12 mix - move to vuex?
     async addImportantRelationship (input) {
       // Check if we are moving a partner connection
       var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
 
       // check if there is already an existing important relationship
-      const exsistingDupe = this.view.importantRelationships[profile.id]
+      const exsistingDupe = this.getImportantRelationship(profile.id)
       var lessRelationship
 
       if (exsistingDupe) {

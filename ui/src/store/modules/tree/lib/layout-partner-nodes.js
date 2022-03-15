@@ -13,7 +13,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     // OR fall back to making it evenly placed
 
     const partnerChildren = rootGetters['whakapapa/getChildIds'](partnerId)
-      .filter(childId => rootGetters['whakapapa/getChildRelationshipType'](partnerId, childId) === 'birth')
+      .filter(childId => rootGetters['whakapapa/getChildType'](partnerId, childId) === 'birth')
       .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
       // find the position of partnerId's children below the the rootNode (if it exists)
       .filter(Boolean) // filters out empty entries

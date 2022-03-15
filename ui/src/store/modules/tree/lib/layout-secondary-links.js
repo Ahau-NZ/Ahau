@@ -7,6 +7,10 @@ import settings from '../../../../lib/link'
 export default function layoutSecondaryLinks (getters, rootGetters) {
   const linksByChild = groupBy(rootGetters['whakapapa/secondaryLinks'], 'child')
 
+  // TODO - check handles old rules gracefully
+  // A Current Rule is one which has a target, a valid primary node, and ANY other node which would
+  // lead to this rule being needed
+
   return Object.entries(linksByChild).reduce(
     (acc, [childId, childLinks]) => {
       const childNode = getters.getNode(childId)

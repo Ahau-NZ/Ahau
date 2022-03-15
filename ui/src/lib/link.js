@@ -9,7 +9,7 @@ import { linkColours } from '../lib/colours'
   H = horizontal lineto
 
 */
-function path ({ startX, startY, endX, endY, directed = true }, branch) {
+function path ({ startX, startY, endX, endY, directed = false }, branch) {
   // special case for when startY and endY are the same
   /*
                ____________________
@@ -19,11 +19,11 @@ function path ({ startX, startY, endX, endY, directed = true }, branch) {
          |_____|
 
   */
-  if (directed && startY === endY) {
+  if (directed && startY >= endY) { // NOTE bigger numbers are "lower"
     const offsetY = 85
     const offsetX = 75
     // these a semi-magic numbers which depened on other RADIUS + SPACING + OFFSET consts
-    return `M ${startX}, ${startY} v ${offsetY} H ${startX + (startX < endX ? offsetX : -offsetX)} v ${-2 * offsetY} H ${endX} V ${endY}`
+    return `M ${startX}, ${startY} V ${startY + offsetY} H ${startX + (startX < endX ? offsetX : -offsetX)} V ${endY - offsetY} H ${endX} V ${endY}`
   }
 
   // general case

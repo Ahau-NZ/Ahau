@@ -3,7 +3,7 @@ import { State } from './lib/test-helpers'
 const test = require('tape')
 const { mutations } = require('./').default()
 
-test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
+test('vuex/whakapapa mutations.removeChildLink', t => {
   // SIMPLE
   /*
       A
@@ -21,7 +21,7 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
 
   let link = { parent: 'A', child: 'B' }
 
-  mutations.removeLinkBetweenProfiles(state, link)
+  mutations.removeChildLink(state, link)
 
   t.deepEqual(
     state.childLinks,
@@ -43,25 +43,23 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
       A: {
         B: 'birth'
       },
-      B: {},
       C: {
         B: 'birth'
       }
     },
     partnerLinks: {
       A: {
-        B: 'partners'
+        C: 'partners'
       }
     }
   })
 
-  mutations.removeLinkBetweenProfiles(state, link)
+  mutations.removeChildLink(state, link)
 
   t.deepEqual(
     state.childLinks,
     {
       A: {},
-      B: {},
       C: {
         B: 'birth' // still here because it was only removed from A
       }
@@ -77,7 +75,6 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
       A: {
         B: 'birth'
       },
-      B: {},
       C: {
         B: 'birth'
       }
@@ -90,7 +87,7 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
   })
 
   link = { parent: 'C', child: 'B' }
-  mutations.removeLinkBetweenProfiles(state, link)
+  mutations.removeChildLink(state, link)
 
   t.deepEqual(
     state.childLinks,
@@ -98,7 +95,6 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
       A: {
         B: 'birth' // still here because it was only removed from C
       },
-      B: {},
       C: {}
     },
     'removes child only from C'
@@ -107,7 +103,7 @@ test('vuex/whakapapa mutations.removeLinksToProfile (child)', t => {
   t.end()
 })
 
-test('vuex/whakapapa mutations.removeLinksToProfile (partner)', t => {
+test('vuex/whakapapa mutations.removePartnerLink', t => {
   // SIMPLE
   const state = State({
     childLinks: {
@@ -123,7 +119,7 @@ test('vuex/whakapapa mutations.removeLinksToProfile (partner)', t => {
 
   const link = { parent: 'A', child: 'B' }
 
-  mutations.removeLinkBetweenProfiles(state, link)
+  mutations.removePartnerLink(state, link)
 
   t.deepEqual(
     state.partnerLinks,

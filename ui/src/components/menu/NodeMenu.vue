@@ -6,10 +6,13 @@
         <p class="ma-0 pl-3">{{ t('viewPerson') }}</p>
       </a>
     </li>
-    <li v-for="(option, index) in options" :key="index">
+    <li v-for="option in options" :key="option.dialog + option.type">
       <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-        <v-icon v-if="option.icon === 'mdi-delete'" class="contextMenuIcon black--text"> {{ option.icon }}</v-icon>
+        <v-icon v-if="option.dialog === 'delete-node'" class="contextMenuIcon black--text">
+          {{ option.icon }}
+        </v-icon>
         <img v-else class="contextMenuIcon" :src="option.icon"/>
+
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
     </li>

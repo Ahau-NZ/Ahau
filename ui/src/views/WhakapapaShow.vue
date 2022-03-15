@@ -140,7 +140,7 @@
       </div>
     </v-container>
 
-    <NodeMenu :view="whakapapaView" :currentFocus="focus" @open="updateDialog($event.dialog, $event.type)"/>
+    <NodeMenu @open="updateDialog($event.dialog, $event.type)" />
 
     <FilterMenu
       :show="searchFilter"
@@ -155,7 +155,6 @@
       :view="whakapapaView"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      :focus="focus"
 
       @persist-focus="processSaveWhakapapa({ focus: $event })"
       @update-whakapapa="processSaveWhakapapa"
@@ -192,7 +191,6 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_ALL_MEMBERS, ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
@@ -214,11 +212,6 @@ export default {
     ExportButton,
     FilterMenu
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getWhakapapaLink']
-    })
-  ],
   data () {
     return {
       accessOptions: [],
@@ -252,7 +245,7 @@ export default {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapGetters('whakapapa', ['focus', 'whakapapaView']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs

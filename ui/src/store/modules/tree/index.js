@@ -93,10 +93,10 @@ export default function () {
       const treeLayout = getters.layout(getters.root)
 
       const getChildType = (parentNode, childNode) => {
-        return rootGetters['whakapapa/getChildRelationshipType'](parentNode.data.id, childNode.data.id)
+        return rootGetters['whakapapa/getChildType'](parentNode.data.id, childNode.data.id)
       }
       const getPartnerType = (A, B) => {
-        return rootGetters['whakapapa/getPartnerRelationshipType'](A.data.id, B.data.id)
+        return rootGetters['whakapapa/getPartnerType'](A.data.id, B.data.id)
       }
 
       // for each node in the tree:

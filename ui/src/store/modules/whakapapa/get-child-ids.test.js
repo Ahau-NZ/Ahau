@@ -3,7 +3,7 @@ import { WhangaiGrandparentSimple, WhangaiGrandparentComplex, MarriageWithinTree
 
 const test = require('tape')
 
-test('vuex/whakapapa getters.getChildIds (with importantRelationships - children', t => {
+test('vuex/whakapapa getters.getChildIds (with importantRelationships - children)', t => {
   const state = WhangaiGrandparentSimple()
   const { getChildIds } = Getters(state)
   /* whangai to grandparent

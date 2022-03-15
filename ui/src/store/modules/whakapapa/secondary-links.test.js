@@ -79,3 +79,27 @@ test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
 
   t.end()
 })
+
+test('vuex/whakapapa getters.secondaryLinks (leftover importantRelationships)', t => {
+  /* marriage within tree
+
+                Grandad─┬─Grandma
+                   ┌────┴╌╌╌╌╌┐
+                   │          ┆
+             x Daughter─┬───(Son)
+                        │
+                   Grandaughter
+
+  */
+  const state = MarriageWithinTree()
+  const getters = Getters(state)
+  // remove the Daughter node
+  delete state.childLinks.Grandma.Daughter
+  delete state.childLinks.Grandad.Daughter
+  delete state.partnerLinks.Daughter.Son
+  // NOTE there is a useless importantRelationship defined on Son now
+
+  t.deepEqual(getters.secondaryLinks, [], 'no secondary links')
+
+  t.end()
+})
