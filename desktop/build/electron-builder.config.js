@@ -72,9 +72,17 @@ module.exports = {
   /* Windows */
   win: {
     icon: 'build/win/icon.ico',
-    publisherName: ['Āhau NZ Limited', 'Ahau NZ Limited']
-    // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
-    // In future if this name changes, auto-updating will fail D:
+    publisherName: [
+      'Āhau NZ Limited', // << New name
+      'Ahau NZ Limited' // << old certificate name, to be deprecated
+    ],
+    // WARNING - this name must *exactly* match the subject/ "issued to" field on the Signing Certificate
+    // otherwise in future if this name changes, auto-updating will fail D:
+
+    // certificateSubjectName: 'Ahau NZ Limited', // The name of the subject of the signing certificate
+    // NOTE - this field worked for code signing certificate, but not the EV signing
+    certificateSha1: 'A5F49ED3D5EBBCA6EE093BF2A8AA93DA36BDBF56'
+    // This is a way to be VERY specific about the exact certificate used. This worked well with EV signing cert.
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
