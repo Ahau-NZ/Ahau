@@ -24,7 +24,7 @@
       :isInTree="isInTree"
       withView
       @getSuggestions="getSuggestions($event)"
-      @create="addPerson($event)"
+      @create="addPerson"
       @close="close"
     />
     <!-- TODO: this doesnt appear to be used by anything here! -->
@@ -303,7 +303,7 @@ export default {
       if (isNewProfile) id = await this.createNewPerson(input)
 
       const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
-      if (isIgnoredProfile) this.removeIgnoredProfile(id)
+      if (isIgnoredProfile) await this.removeIgnoredProfile(id)
 
       const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
@@ -332,7 +332,7 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          this.loadDescendants({ profileId: parentProfileId })
+          await this.loadDescendants({ profileId: parentProfileId })
 
           break
 
@@ -490,12 +490,12 @@ export default {
       var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
 
       // check if there is already an existing important relationship
-      const exsistingDupe = this.getImportantRelationship(profile.id)
+      const existingDupe = this.getImportantRelationship(profile.id)
       var lessRelationship
 
-      if (exsistingDupe) {
+      if (existingDupe) {
         // YES - there is an important relationship so we use that one instead
-        lessRelationship = exsistingDupe.primary.profileId
+        lessRelationship = existingDupe.primary.profileId
       } else {
         // NO - there isnt an important relationship so we find the parent which takes "presidence"
         lessRelationship = (profile.parents && profile.parents.length && this.isInTree(profile.parents[0].id))
