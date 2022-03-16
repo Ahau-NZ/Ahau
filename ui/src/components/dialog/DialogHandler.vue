@@ -303,7 +303,7 @@ export default {
       if (isNewProfile) id = await this.createNewPerson(input)
 
       const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
-      if (isIgnoredProfile) this.removeIgnoredProfile(id)
+      if (isIgnoredProfile) await this.removeIgnoredProfile(id)
 
       const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
@@ -332,7 +332,7 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          this.loadDescendants({ profileId: parentProfileId })
+          await this.loadDescendants({ profileId: parentProfileId })
 
           break
 
