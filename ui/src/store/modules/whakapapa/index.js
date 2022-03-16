@@ -477,10 +477,6 @@ export default function (apollo) {
     removeLinksToProfile ({ state, commit }, profileId) {
       commit('removeLinksToProfile', profileId)
     },
-    removeLinkBetweenProfiles ({ commit }, link) {
-      commit('removeChildLink', link)
-      commit('removePartnerLink', link)
-    },
     async createWhakapapaView ({ dispatch }, input) {
       if (!input.authors) {
         input.authors = {
@@ -769,24 +765,7 @@ export default function (apollo) {
         console.log(err)
       }
     },
-    async removeLinkFromTree ({ dispatch, state, rootState }, link) {
-      const removedImportantRelationship = await dispatch('checkAndUpdateImportantRelationships', link)
-
-      // we want to remove the person from the selectedProfile in the tree
-      if (removedImportantRelationship) await dispatch('loadWhakapapaView', state.view.id) // WARNING: this can get expensive for a larger tree
-      else {
-        // TODO: add support for removing links to the root node
-        // we need to be careful with how we remove a link from the graph,
-        // this will always remove the child in the relationship. This is because
-        // if we remove a parent, then the child may get cut out from the graph as well
-        // we need to remove the link directly
-        dispatch('removeLinkBetweenProfiles', link)
-      }
-
-      await dispatch('person/setSelectedProfileById', rootState.person.selectedProfileId, { root: true })
-    },
-
-    async deleteChildLink ({ state, rootState, commit, dispatch }, input) {
+    async deleteChildLink ({ commit, dispatch }, input) {
       const tombstoneId = await dispatch('deleteLink', input) // from db
       if (!tombstoneId) return
 
@@ -802,6 +781,7 @@ export default function (apollo) {
       await dispatch('deleteLinkFromImportantRelationships', input)
       commit('removePartnerLink', input) // from state
     },
+
     async deleteLink ({ dispatch }, { linkId, tombstone, parent, child, isPartner }) {
       try {
         if (!linkId) {
@@ -826,7 +806,8 @@ export default function (apollo) {
         console.log(err)
       }
     },
-    async getLink ({ state }, input) { // input = { parent, child, isPartner }
+
+    async getLink (context, input) { // input = { parent, child, isPartner }
       try {
         const res = await apollo.query(whakapapaLink(input))
         if (res.errors) throw res.errors
@@ -839,7 +820,7 @@ export default function (apollo) {
       }
     },
 
-    async deleteLinkFromImportantRelationships ({ state, getters, dispatch }, link) {
+    async deleteLinkFromImportantRelationships ({ getters, dispatch }, link) {
       const { parent: A, child: B } = link
 
       const findRuleThatNeedsChange = (targetId, otherId) => {

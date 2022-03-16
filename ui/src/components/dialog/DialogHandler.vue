@@ -490,12 +490,12 @@ export default {
       var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
 
       // check if there is already an existing important relationship
-      const exsistingDupe = this.getImportantRelationship(profile.id)
+      const existingDupe = this.getImportantRelationship(profile.id)
       var lessRelationship
 
-      if (exsistingDupe) {
+      if (existingDupe) {
         // YES - there is an important relationship so we use that one instead
-        lessRelationship = exsistingDupe.primary.profileId
+        lessRelationship = existingDupe.primary.profileId
       } else {
         // NO - there isnt an important relationship so we find the parent which takes "presidence"
         lessRelationship = (profile.parents && profile.parents.length && this.isInTree(profile.parents[0].id))
