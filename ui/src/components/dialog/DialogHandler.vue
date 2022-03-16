@@ -24,7 +24,7 @@
       :isInTree="isInTree"
       withView
       @getSuggestions="getSuggestions($event)"
-      @create="addPerson($event)"
+      @create="addPerson"
       @close="close"
     />
     <!-- TODO: this doesnt appear to be used by anything here! -->

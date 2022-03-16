@@ -790,19 +790,19 @@ export default function (apollo) {
       const tombstoneId = await dispatch('deleteLink', input) // from db
       if (!tombstoneId) return
 
-      await dispatch('deleteLinkFromImportantRelationsips', input)
+      await dispatch('deleteLinkFromImportantRelationships', input)
       commit('removeChildLink', input) // from state
     },
 
-    async deletePartnerLink ({ state, rootState, commit, dispatch }, input) {
+    async deletePartnerLink ({ commit, dispatch }, input) {
       input.isPartner = true
       const tombstoneId = await dispatch('deleteLink', input) // from db
       if (!tombstoneId) return
 
-      await dispatch('deleteLinkFromImportantRelationsips', input)
-      commit('removeChildLink', input) // from state
+      await dispatch('deleteLinkFromImportantRelationships', input)
+      commit('removePartnerLink', input) // from state
     },
-    async deleteLink ({ state, dispatch }, { linkId, tombstone, parent, child, isPartner }) {
+    async deleteLink ({ dispatch }, { linkId, tombstone, parent, child, isPartner }) {
       try {
         if (!linkId) {
           const link = await dispatch('getLink', { parent, child, isPartner })
@@ -839,7 +839,7 @@ export default function (apollo) {
       }
     },
 
-    async deleteLinkFromImportantRelationsips ({ state, getters, dispatch }, link) {
+    async deleteLinkFromImportantRelationships ({ state, getters, dispatch }, link) {
       const { parent: A, child: B } = link
 
       const findRuleThatNeedsChange = (targetId, otherId) => {
@@ -878,7 +878,7 @@ export default function (apollo) {
     async deleteProfileFromImportantRelationships ({ state, getters, dispatch }, profileId) {
       const rule = getters.getImportantRelationship(profileId)
       if (rule) {
-        await this.saveWhakapapaView({
+        await dispatch('saveWhakapapaView', {
           importantRelationships: {
             profileId,
             important: []
@@ -892,7 +892,7 @@ export default function (apollo) {
           const important = [rule.primary, ...rule.other].map(r => r.profileId)
           if (!important.includes(profileId)) return
 
-          return this.saveWhakapapaView({
+          return dispatch('saveWhakapapaView', {
             importantRelationships: {
               profileId,
               important: important.filter(id => id !== profileId)
