@@ -632,7 +632,7 @@ export default function (apollo) {
       if (!person || !person.children) return []
 
       return uniqueId([
-        ...flatMap(person, 'partners', 'children'), // get all children of partners
+        ...flatMap(person, 'partners', 'children'),
         ...person.children // for ignored children
       ])
         .filter(profile => (
@@ -898,6 +898,11 @@ export default function (apollo) {
   }
 }
 
+const removeRelationshipType = (person) => {
+  if (person.relationshipType) person.relationshipType = null
+  return person
+}
+
 /**
  * A helper function to flatten nested arrays within an array of objects.
  * E.g. to get a persons siblings parents use flatMap(person, 'siblings', 'parents')
@@ -911,6 +916,7 @@ function flatMap (obj, array, nestedArray) {
 
   return obj[array]
     .flatMap(m => m[nestedArray]) // flattens from [[A, B], [C]] to [A, B, C]
+    .map(removeRelationshipType)
 }
 
 function uniqueId (array) {
