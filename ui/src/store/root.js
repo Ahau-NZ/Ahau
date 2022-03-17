@@ -50,6 +50,8 @@ export default function rootModule (apollo) {
 
     getters: {
       loadingState: state => {
+        if (state.isRebuilding) return state.percentageIndexedSinceStartup
+
         // if it's been indexing longer than 2 seconds
         if (
           state.indexingSince &&
@@ -88,8 +90,10 @@ export default function rootModule (apollo) {
 
         if (typeof isIndexing === 'boolean') state.isIndexing = isIndexing
         if (typeof isRebuilding === 'boolean') state.isRebuilding = isRebuilding
-        if (typeof percentageIndexed === 'number') state.percentageIndexed = percentageIndexed
-        if (typeof percentageIndexedSinceStartup === 'number') state.percentageIndexedSinceStartup = percentageIndexedSinceStartup
+        if (typeof percentageIndexed === 'number') state.percentageIndexed = roundOneDP(percentageIndexed)
+        if (typeof percentageIndexedSinceStartup === 'number') {
+          state.percentageIndexedSinceStartup = roundOneDP(percentageIndexedSinceStartup)
+        }
       },
       updateSyncing (state, syncing) {
         state.syncing = syncing
@@ -146,4 +150,8 @@ export default function rootModule (apollo) {
       }
     }
   }
+}
+
+function roundOneDP (percent) {
+  return Math.round(percent * 10) / 10
 }
