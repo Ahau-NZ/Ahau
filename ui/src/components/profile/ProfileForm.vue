@@ -82,7 +82,7 @@
         </v-row>
 
         <!-- No longer living -->
-        <v-row v-if="!isUser && !readonly" class="mb-8">
+        <v-row v-if="!isLoginPage && !readonly" class="mb-8">
           <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ':'pt-0'">
             <v-checkbox
               v-model="formData.deceased"
@@ -437,7 +437,6 @@ export default {
     hideDetails: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
-    isUser: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
     dialogType: { type: String, default: '' },
     type: String,
@@ -486,6 +485,9 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki']),
+    isLoginPage () {
+      return this.$route.name === 'login'
+    },
     showBirthOrder () {
       if (this.dialogType === 'parent') return false
       if (this.readonly && !this.formData.birthOrder) return false

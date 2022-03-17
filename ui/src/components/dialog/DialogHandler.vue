@@ -17,14 +17,10 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="t('newNodeTitle', {dialogType, displayName: getDisplayName(selectedProfile)})"
-      :selectedProfile="selectedProfile"
-      :suggestions="suggestions"
+      :title="t('newNodeTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
       :type="dialogType"
-      :isInTree="isInTree"
       withView
-      @getSuggestions="getSuggestions($event)"
-      @create="addPerson"
+      @create="addPerson($event)"
       @close="close"
     />
     <!-- TODO: this doesnt appear to be used by anything here! -->
@@ -164,15 +160,11 @@ export default {
   ],
   data () {
     return {
-      suggestions: [],
       source: null,
       registration: '',
       dialogType: '',
-      parents: [],
-      parentIndex: null,
       profile: {},
-      tribe: {},
-      predecessorArray: []
+      tribe: {}
     }
   },
   computed: {
@@ -180,7 +172,7 @@ export default {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
-    ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -576,71 +568,6 @@ export default {
         this.removeLinksToProfile(this.selectedProfile.id)
       }
       this.setSelectedProfileById(null)
-    },
-    async getSuggestions (name) {
-      if (!name) {
-        this.suggestions = []
-        return
-      }
-
-      let records = await this.findPersonByName({
-        name,
-        type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
-        groupId: this.view.recps[0]
-      })
-
-      this.predecessorArray = []
-      await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
-
-      // sets suggestions which is passed into the dialogs
-      this.suggestions = records.filter(record => {
-        // only keep updated records
-        return this.predecessorArray.some(predecessor => predecessor === record.id)
-      })
-    },
-    /*
-      needed this function because this.profiles keeps track of more than just the nodes in this tree,
-      i only needed the nodes in this tree to be able to check if i can add them or not
-    */
-    isInTree (profileId) {
-      return Boolean(
-        this.getNode(profileId) ||
-        this.getPartnerNode(profileId)
-      )
-    },
-    async getNodePredecessors (currentId) {
-      this.predecessorArray.push(currentId) // Push the current person into predecessors array
-      const currentProfile = await this.getProfile(currentId) // Get the current profile
-
-      const { parents, partners, siblings } = currentProfile
-
-      const hasParents = this.arrayIsNotEmpty(parents)
-      const hasPartners = this.arrayIsNotEmpty(partners)
-      const hasSiblings = this.arrayIsNotEmpty(siblings)
-
-      // Return if there are no parents, partners and siblings on the current node
-      if (!hasParents && !hasPartners && !hasSiblings) return
-
-      // Filter out partners of predecessors
-      if (hasPartners) this.addToPredecessors(partners)
-
-      // Get the current parents and their predecessors
-      const currentProfileParents = parents
-      await this.mapPredecessors(currentProfileParents)
-    },
-    mapPredecessors (currentProfileParents) {
-      // Return the predecessors of the current parents
-      return Promise.all(currentProfileParents.map(async parent => {
-        await this.getNodePredecessors(parent.id)
-      }))
-    },
-    arrayIsNotEmpty (array) {
-      return array && array.length > 0
-    },
-    addToPredecessors (array) {
-      array.forEach(person => {
-        if (!this.predecessorArray.includes(person.id)) this.predecessorArray.push(person.id)
-      })
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)

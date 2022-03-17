@@ -146,6 +146,14 @@ export default function () {
 
     secondaryLinks (state, getters, rootState, rootGetters) {
       return layoutSecondaryLinks(getters, rootGetters)
+    },
+    // if there is a node for the profile, then it means it is in the drawn tree
+    // NOTE: the collapsed nodes are not in the drawn tree!
+    isInTree: (state, getters) => (id) => {
+      return Boolean(
+        getters.getNode(id) ||
+        getters.getPartnerNode(id)
+      )
     }
   }
 

@@ -60,12 +60,20 @@
       </v-col>
     </v-row>
 
-    <NewViewDialog v-if="showViewForm" :show="showViewForm" :title="t2('createWhakapapa')" @close="toggleViewForm"
-      @submit="handleStepOne($event)" />
-    <!-- TODO: add suggestions in here as well? -->
-    <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
-      @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep"
-      :withRelationships="false" @close="close"
+    <NewViewDialog v-if="showViewForm"
+      :show="showViewForm"
+      :title="t2('createWhakapapa')"
+
+      @close="toggleViewForm"
+      @submit="handleStepOne"
+    />
+
+    <NewNodeDialog v-if="showProfileForm"
+      :show="showProfileForm"
+      title="Add a Person"
+
+      @create="handleDoubleStep"
+      @close="close"
     />
     <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
   </v-container>
@@ -82,7 +90,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -128,25 +136,6 @@ export default {
     ...mapActions('tribe', ['getTribe']),
     ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
-    async getSuggestions (name) {
-      if (!name) {
-        this.suggestions = []
-        return
-      }
-
-      const { type, groupId } = this.currentAccess
-      let records
-      if (type === ACCESS_ALL_MEMBERS) records = await this.findPersonByName({ name, groupId, type: 'person' })
-      if (type === ACCESS_KAITIAKI) records = await this.findPersonByName({ name, groupId, type: 'person/admin' })
-      if (type === ACCESS_PRIVATE) {
-        const source = await this.findPersonByName({ name, groupId, type: 'person/source' })
-        const other = await this.findPersonByName({ name, groupId, type: 'person' })
-        records = [...source, ...other]
-      }
-
-      // sets suggestions which is passed into the dialogs
-      this.suggestions = records
-    },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },

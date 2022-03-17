@@ -5,11 +5,10 @@
   >
 
     <!-- Content Slot -->
-    <template v-if="!hideDetails" v-slot:content>
+    <template v-slot:content>
       <v-col class="py-0 px-0">
 
         <ProfileForm
-          :isUser="isUser"
           :profile.sync="formData"
           :readonly="hasSelection"
           :withRelationships="allowRelationships"
@@ -126,8 +125,10 @@ import AccessButton from '@/components/button/AccessButton.vue'
 import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import { parseInterval } from '@/lib/date-helpers.js'
+import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
+const isNotEmpty = (array) => array && array.length > 0
 
 export default {
   name: 'NewNodeDialog',
@@ -141,19 +142,15 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
-    suggestions: { type: Array, default: () => [] },
-    hideDetails: Boolean,
-    selectedProfile: Object,
-    withView: { type: Boolean, default: true },
-    isUser: { type: Boolean, default: false },
     type: {
       type: String,
       validator: (val) => VALID_TYPES.has(val)
-    },
-    isInTree: Function
+    }
   },
   data () {
     return {
+      suggestions: [],
+      timer: undefined,
       formData: setDefaultData(this.allowRelationships),
       hasSelection: false, // TODO - describe what this does
       closeSuggestions: [],
@@ -182,11 +179,78 @@ export default {
       else if (this.type === 'parent') this.quickAdd.children = this.newParentChildren(this.selectedProfile)
     }
   },
+  watch: {
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+
+        this.formData = setPersonProfile(newVal)
+        if (!this.formData.relationshipType) this.formData.relationshipType = 'birth' // choose birth by default
+      }
+    },
+    'formData.relationshipType' (newValue, oldValue) {
+      // make sure adoption status can't be set true when relationship type is birth
+      if (newValue === 'birth') this.formData.legallyAdopted = false
+    },
+    // watch for changes to avatarImage to decide when to show avatar
+    'formData.avatarImage' (newValue) {
+      if (!isEmpty(newValue)) {
+        this.showAvatar = true
+      }
+    },
+    async 'formData.preferredName' (name) {
+      clearTimeout(this.timer)
+
+      if (!name) {
+        this.suggestions = []
+        return
+      }
+
+      if (name.length > 2 && !this.hasSelection) {
+        this.timer = setTimeout(async () => {
+          this.suggestions = await this.findSuggestionsByGroup(name)
+        }, 500)
+      }
+      else {
+        this.suggestions = []
+      }
+    },
+    async hasSelection (newValue) {
+      if (newValue) {
+        this.suggestions = []
+
+        this.existingProfile = await this.getProfile(this.profile.id)
+
+        // if hasSelection and quickAdd Section, show exsisting links
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
+        if (this.generatePartners && this.existingProfile.partners) {
+          this.quickAdd.partners = [...this.existingProfile.partners]
+          this.quickAdd.newPartners = [...this.existingProfile.partners]
+        }
+
+        // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
+        // doing this forces it to show
+        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
+      }
+      else {
+        this.quickAdd.newChildren = []
+        this.quickAdd.newPartners = []
+      }
+    }
+  },
   computed: {
     ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['getParentIds']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds']),
+    ...mapGetters('tree', ['isInTree', 'getNode']),
+    ...mapGetters('person', ['selectedProfile']),
     allowRelationships () {
       return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
+    },
+    isWhakapapaIndex () {
+      return ['community/whakapapa', 'person/whakapapa'].includes(this.$route.name)
     },
     generateSuggestions () {
       if (this.hasSelection) return []
@@ -208,6 +272,7 @@ export default {
       }
       else return []
     },
+
     generateParents () {
       return this.getSuggestionsByField('parents')
     },
@@ -267,6 +332,7 @@ export default {
   methods: {
     ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
     ...mapActions('profile', ['getProfile']),
+    ...mapActions('person', ['findPersonByName', 'getPerson']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       const index = this.quickAdd[selectedArray].findIndex(x => x.id === profile.id)
@@ -299,7 +365,7 @@ export default {
         .filter(filterSelection)
     },
     clearSuggestions () {
-      this.$emit('getSuggestions', null)
+      this.suggestions = []
     },
     getCloseSuggestions () {
       switch (this.type) {
@@ -469,63 +535,95 @@ export default {
         this.formData = setDefaultData(this.withRelationships)
       }
       this.isDuplicate = false
-      this.$emit('getSuggestions', null)
+      this.suggestions = []
     },
     t (key, vars) {
       return this.$t('newNode.' + key, vars)
-    }
-  },
-  watch: {
-    profile: {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        if (!newVal) return
-
-        this.formData = setPersonProfile(newVal)
-        if (!this.formData.relationshipType) this.formData.relationshipType = 'birth' // choose birth by default
-      }
     },
-    'formData.relationshipType' (newValue, oldValue) {
-      // make sure adoption status can't be set true when relationship type is birth
-      if (newValue === 'birth') this.formData.legallyAdopted = false
+
+    async findSuggestionsByGroup (name) {
+      if (!name) return []
+
+      if (this.isWhakapapaIndex) return this.findPersonsByNameWithinGroup(name)
+
+      // find persons in the group who arent an ancestor
+      return this.findAndFilterSuggestions(name)
     },
-    // watch for changes to avatarImage to decide when to show avatar
-    'formData.avatarImage' (newValue) {
-      if (!isEmpty(newValue)) {
-        this.showAvatar = true
+    async findPersonsByNameWithinGroup (name) {
+      const { type, groupId } = this.currentAccess
+
+      let suggestions = []
+
+      if (type === ACCESS_ALL_MEMBERS) suggestions = await this.findPersonByName({ name, groupId, type: 'person' })
+      if (type === ACCESS_KAITIAKI) suggestions = await this.findPersonByName({ name, groupId, type: 'person/admin' })
+      if (type === ACCESS_PRIVATE) {
+        const source = await this.findPersonByName({ name, groupId, type: 'person/source' })
+        const other = await this.findPersonByName({ name, groupId, type: 'person' })
+        suggestions = [...source, ...other]
       }
+
+      return suggestions
     },
-    'formData.preferredName' (newValue) {
-      if (!newValue) return
-
-      if (newValue.length > 2) {
-        if (!this.hasSelection) this.$emit('getSuggestions', newValue)
+    async findAndFilterSuggestions (name) {
+      if (!name) {
+        this.suggestions = []
+        return
       }
-      else this.$emit('getSuggestions', null)
+
+      let rawSuggestions = await this.findPersonByName({
+        name,
+        type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
+        groupId: this.whakapapaView.recps[0]
+      })
+      // reset the ancestors array
+      this.ancestors = []
+      await this.loadPersonsAncestors(this.selectedProfile.id) // Get the ancestors of the current node
+
+      return rawSuggestions
+        .filter(person => {
+          return (
+            // dont suggest ancestors
+            // this will make it hard to add a grandparent as a whangai parent
+            // but you can still do that the other way around by adding the grandchild to the grandparent
+            !this.ancestors.some(ancestorId => ancestorId === person.id) &&
+
+            // dont suggest direct descendants already in the tree
+            !this.selectedProfile.children.some(child => child.id === person.id)
+          )
+        })
     },
-    async hasSelection (newValue) {
-      if (newValue) {
-        this.$emit('getSuggestions', null)
+    async loadPersonsAncestors (profileId) {
+      this.addPersonToAncestors(profileId)
 
-        this.existingProfile = await this.getProfile(this.profile.id)
+      // TODO: should we do this or something less expensive?
+      const person = await this.getProfile(profileId)
 
-        // if hasSelection and quickAdd Section, show exsisting links
-        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
-        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
-        if (this.generatePartners && this.existingProfile.partners) {
-          this.quickAdd.partners = [...this.existingProfile.partners]
-          this.quickAdd.newPartners = [...this.existingProfile.partners]
-        }
+      const { parents, partners, siblings } = person
 
-        // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
-        // doing this forces it to show
-        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
-      }
-      else {
-        this.quickAdd.newChildren = []
-        this.quickAdd.newPartners = []
-      }
+      const hasParents = isNotEmpty(parents)
+      const hasPartners = isNotEmpty(partners)
+      const hasSiblings = isNotEmpty(siblings)
+
+      // Return if there are no parents, partners and siblings on the current node
+      if (!hasParents && !hasPartners && !hasSiblings) return
+
+      // Include partners of ancestors
+      if (hasPartners) partners.forEach(partner => this.addPersonToAncestors(partner.id))
+
+      // Get the current parents and their ancestors
+      await Promise.all(
+        parents
+          .filter(parent => !this.ancestors.includes(parent.id)) // prevent infinite recursion
+          .map(async parent => this.loadPersonsAncestors(parent.id))
+      )
+    },
+    arrayIsNotEmpty (array) {
+      return array && array.length > 0
+    },
+    addPersonToAncestors (profileId) {
+      if (this.ancestors.includes(profileId)) return
+
+      this.ancestors.push(profileId)
     }
   }
 }

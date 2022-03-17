@@ -49,11 +49,9 @@
       />
       <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
     </div>
-    <NewNodeDialog
-      v-if="dialog"
+    <NewNodeDialog v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
-      isUser
       @close="toggleNew"
       @create="save($event)"
     />

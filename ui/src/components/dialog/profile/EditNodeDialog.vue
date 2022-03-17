@@ -40,7 +40,7 @@
       <v-tabs-items light v-model="tab">
         <v-tab-item value="tab-1">
           <v-col class="py-0 px-0">
-            <ProfileForm isUser :profile.sync="formData" :withRelationships="false" :mobile="mobile" :fullForm="true"/>
+            <ProfileForm :profile.sync="formData" :withRelationships="false" :mobile="mobile" :fullForm="true"/>
           </v-col>
         </v-tab-item>
         <v-tab-item value="tab-2">
