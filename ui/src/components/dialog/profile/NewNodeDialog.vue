@@ -243,7 +243,7 @@ export default {
   },
   computed: {
     ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     allowRelationships () {
@@ -499,7 +499,8 @@ export default {
       if (this.type === 'parent') {
         const existingParents = this.selectedProfile.parents
         const isNewParentExistingParentsPartner = existingParents.some(parent => {
-          return parent.partners.some(p => p.id === profile.id)
+          const partnerIds = this.getRawPartnerIds(parent.id)
+          return partnerIds.includes(profile.id)
         })
         if (isNewParentExistingParentsPartner) return false
       }
@@ -507,7 +508,8 @@ export default {
       if (this.type === 'child') {
         const existingPartners = this.selectedProfile.partners
         const isNewChildExistingPartnersChild = existingPartners.some(partner => {
-          return partner.children.some(c => c.id === profile.id)
+          const childIds = this.getRawChildIds(partner.id)
+          return childIds.includes(profile.id)
         })
         if (isNewChildExistingPartnersChild) return false
       }
@@ -515,7 +517,8 @@ export default {
       if (this.type === 'partner') {
         const existingChildren = this.selectedProfile.children
         const isNewPartnerExistingChildsParent = existingChildren.some(child => {
-          return child.parents.some(p => p.id === profile.id)
+          const parentIds = this.getRawParentIds(child.id)
+          return parentIds.includes(profile.id)
         })
         if (isNewPartnerExistingChildsParent) return false
       }
