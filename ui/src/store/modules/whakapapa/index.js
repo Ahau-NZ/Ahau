@@ -413,7 +413,7 @@ export default function (apollo) {
       /* remove from partnerLinks */
       if (state.partnerLinks[profileId]) state.partnerLinks[profileId] = {}
 
-      for (const partnerA in state.childLinks) {
+      for (const partnerA in state.partnerLinks) {
         if (state.partnerLinks[partnerA] && state.partnerLinks[partnerA][profileId]) {
           const newLinks = { ...state.partnerLinks[partnerA] }
           delete newLinks[profileId]
