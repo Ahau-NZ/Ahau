@@ -629,7 +629,7 @@ export default function (apollo) {
       // TODO 2022-03-08 mix
       // deprecate getPerson use. Would could probably use the childLinks + partnerLinks to look around
 
-      if (!person || !person.children || !person.children.length) return []
+      if (!person || !person.children) return []
 
       return uniqueId([
         ...flatMap(person, 'partners', 'children'), // get all children of partners
