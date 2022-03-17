@@ -3,7 +3,7 @@
     <g id="baseGroup">
       <g :transform="`translate(${treeX - radius} ${treeY - radius})`" ref="tree" >
         <SubTree v-if="tree"
-          :root="tree"
+          v-bind="tree"
           :showAvatars="showAvatars"
 
           @root-node-click="handleRootNodeClick"

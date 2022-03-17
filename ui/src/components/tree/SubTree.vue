@@ -1,7 +1,7 @@
 <template>
   <g>
     <!-- only draw this for top node -->
-    <g v-if="root.parent === null">
+    <g v-if="parent === null">
       <Link v-for="link in secondaryLinks" :key="link.key"
         :link="link"
       />
@@ -12,10 +12,10 @@
         - partners
         - children
     -->
-    <Link v-for="link in root.links" :link="link" :key="link.key"/>
+    <Link v-for="link in links" :link="link" :key="link.key"/>
 
     <!-- partners -->
-    <Node v-for="partner in root.partners" :key="`partner-${partner.data.id}`"
+    <Node v-for="partner in partners" :key="`partner-${partner.data.id}`"
       :profileId="partner.data.id"
       :x="partner.x"
       :y="partner.y"
@@ -25,7 +25,8 @@
     />
 
     <!-- children -->
-    <SubTree v-for="child in root.children" :key="`child-${child.data.id}`"
+    <SubTree v-for="child in children" :key="`child-${child.data.id}`"
+      v-bind="child"
       :root="child"
       :showAvatars="showAvatars"
       @partner-node-click="$emit('partner-node-click', $event)"
@@ -33,12 +34,12 @@
     />
 
     <!-- rootNode of this subtree -->
-    <Node v-if="root.data && root.data.id" :key="`root-${root.data.id}`"
-      :profileId="root.data.id"
-      :x="root.x"
-      :y="root.y"
+    <Node v-if="data && data.id" :key="`root-${data.id}`"
+      :profileId="data.id"
+      :x="x"
+      :y="y"
       :showAvatars="showAvatars"
-      @click="$emit('root-node-click', root.data.id)"
+      @click="$emit('root-node-click', data.id)"
       />
   </g>
 </template>
@@ -52,15 +53,21 @@ import Link from './Link.vue'
 export default {
   name: 'SubTree',
   props: {
-    root: Object,
+    x: Number,
+    y: Number,
+    data: Object,
+    parent: Object,
+    children: Array,
+    partners: Array,
+    links: Array,
     showAvatars: Boolean
+  },
+  computed: {
+    ...mapGetters('tree', ['secondaryLinks'])
   },
   components: {
     Node,
     Link
-  },
-  computed: {
-    ...mapGetters('tree', ['secondaryLinks'])
   }
 }
 
