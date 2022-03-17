@@ -599,8 +599,7 @@ export default function (apollo) {
         dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth, loaded })
       })
     },
-    async saveWhakapapaView ({ state, commit, dispatch }, input) {
-      if (!input.id) input.id = state.view.id
+    async saveWhakapapaView ({ commit, dispatch }, input) {
       try {
         const res = await apollo.mutate(saveWhakapapaView(input))
 
@@ -820,7 +819,7 @@ export default function (apollo) {
       }
     },
 
-    async deleteLinkFromImportantRelationships ({ getters, dispatch }, link) {
+    async deleteLinkFromImportantRelationships ({ state, getters, dispatch }, link) {
       const { parent: A, child: B } = link
 
       const findRuleThatNeedsChange = (targetId, otherId) => {
@@ -835,6 +834,7 @@ export default function (apollo) {
       const ruleA = findRuleThatNeedsChange(A, B)
       if (ruleA) {
         await dispatch('saveWhakapapaView', {
+          id: state.view.id,
           importantRelationships: {
             profileId: A,
             important: [ruleA.primary, ...ruleA.other]
@@ -847,6 +847,7 @@ export default function (apollo) {
       const ruleB = findRuleThatNeedsChange(B, A)
       if (ruleB) {
         await dispatch('saveWhakapapaView', {
+          id: state.view.id,
           importantRelationships: {
             profileId: B,
             important: [ruleB.primary, ...ruleB.other]
@@ -860,6 +861,7 @@ export default function (apollo) {
       const rule = getters.getImportantRelationship(profileId)
       if (rule) {
         await dispatch('saveWhakapapaView', {
+          id: state.view.id,
           importantRelationships: {
             profileId,
             important: []
@@ -874,6 +876,7 @@ export default function (apollo) {
           if (!important.includes(profileId)) return
 
           return dispatch('saveWhakapapaView', {
+            id: state.view.id,
             importantRelationships: {
               profileId,
               important: important.filter(id => id !== profileId)
