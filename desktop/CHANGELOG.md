@@ -1,5 +1,20 @@
 # Changelog | Ahau desktop
 
+## v2.9.1
+
+### Features
+
+### Bug Fixes
+
+- fix bug in NewNodeDialog that may have resulted in duplicate profiles not being detected
+- fix loading spinner on rebuild + made it easier to read the percentage
+- fix bug where it was suggesting people to add in NewNodeDialog that were already there
+- fix bug where it wasnt suggesting to add partners children in NewNodeDialog
+- fix bug where it wasnt allowing you to select a relationshipType in NewNodeDialog
+- fix bug where it wasnt showing some whanau members in the SideNodeDialog
+- fix bugs where deleting links wouldnt update the tree
+- fix bugs where important links werent being displayed correctly (NOTE: there are still some existing bugs)
+
 ## v2.9.0
 
 ### Features
@@ -30,7 +45,6 @@ Major refacor of the graph loading
 Features:
 - hovering on a node in whakapapa highlights the childLinks for that node
 - added ability to search for partners within the graph
-
 
 ## v2.7.1
 
