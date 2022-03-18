@@ -455,15 +455,8 @@ export default function (apollo) {
     toggleViewMode ({ commit, dispatch }) {
       commit('toggleViewMode')
     },
-    async setExtendedFamily ({ state, commit, dispatch, getters }, extended) {
-      const id = state.view.id
-      commit('resetWhakapapaView')
+    async setExtendedFamily ({ commit }, extended) {
       commit('setExtendedFamily', extended)
-      const view = await dispatch('getWhakapapaView', id)
-      if (view) {
-        dispatch('setView', view)
-        dispatch('loadDescendants', { profileId: view.focus, depth: DEFAULT_DEPTH })
-      }
     },
     toggleNodeCollapse ({ state, commit }, nodeId) {
       commit('setNodeCollapsed', {

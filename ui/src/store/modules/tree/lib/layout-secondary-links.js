@@ -13,7 +13,12 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
 
   return Object.entries(linksByChild).reduce(
     (acc, [childId, childLinks]) => {
-      const childNode = getters.getNode(childId)
+      let childNode = getters.getNode(childId)
+      let isChildPartner = false
+      if (!childNode) {
+        childNode = getters.getPartnerNode(childId)
+        isChildPartner = true
+      }
 
       if (!childNode) {
         console.log('cannot find childNode', childId)
@@ -29,7 +34,7 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
           return
         }
 
-        acc.push(link(parentNode, childNode, childLink.relationshipType))
+        acc.push(link(parentNode, childNode, childLink.relationshipType, isChildPartner))
       })
 
       return acc
@@ -39,7 +44,7 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
 }
 
 const LINK_OFFSET = 10
-function link (fromNode, toNode, relType) {
+function link (fromNode, toNode, relType, isToNodePartner) {
   const isDashed = relType && (relType !== 'birth') && (relType !== 'partner')
 
   const coords = {
@@ -53,8 +58,9 @@ function link (fromNode, toNode, relType) {
   if (relType === 'partner') console.error('surprise! I did not think partner links were possible here')
 
   const offsetX = (coords.startX < coords.endX) ? LINK_OFFSET : -LINK_OFFSET
+
   if (fromNode.children && fromNode.children.length) coords.startX += offsetX
-  coords.endX -= offsetX
+  if (!isToNodePartner) coords.endX -= offsetX
 
   return {
     key: linkKey('secondary', fromNode, toNode),
@@ -62,7 +68,7 @@ function link (fromNode, toNode, relType) {
     child: toNode.data.id,
     d: settings.path(coords),
     style: linkStyle({
-      stroke: '#b22526',
+      stroke: '#58c6c6',
       strokeDasharray: isDashed ? 2.5 : 0
     })
   }
