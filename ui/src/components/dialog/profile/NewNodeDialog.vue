@@ -243,7 +243,7 @@ export default {
   },
   computed: {
     ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     allowRelationships () {
@@ -497,30 +497,41 @@ export default {
     },
     checkIfDuplicate (profile) {
       if (this.type === 'parent') {
-        const existingParents = this.selectedProfile.parents
-        const isNewParentExistingParentsPartner = existingParents.some(parent => {
-          const partnerIds = this.getRawPartnerIds(parent.id)
-          return partnerIds.includes(profile.id)
-        })
-        if (isNewParentExistingParentsPartner) return false
+        const stepParents = this.getRawParentIds(this.selectedProfile.id)
+          .filter(this.isNotIgnored)
+          .filter(parentId => {
+            return this.getRawPartnerIds(parentId)
+              .filter(this.isNotIgnored)
+              .includes(profile.id)
+          })
+
+        if (stepParents.length) return false
       }
 
       if (this.type === 'child') {
-        const existingPartners = this.selectedProfile.partners
-        const isNewChildExistingPartnersChild = existingPartners.some(partner => {
-          const childIds = this.getRawChildIds(partner.id)
-          return childIds.includes(profile.id)
-        })
-        if (isNewChildExistingPartnersChild) return false
+        const stepChildren = this.getRawPartnerIds(this.selectedProfile.id)
+          .filter(this.isNotIgnored)
+          .filter(partnerId => {
+            const childs = this.getRawChildIds(partnerId)
+              .filter(this.isNotIgnored)
+              .includes(profile.id)
+
+            return childs
+          })
+
+        if (stepChildren.length) return false
       }
 
       if (this.type === 'partner') {
-        const existingChildren = this.selectedProfile.children
-        const isNewPartnerExistingChildsParent = existingChildren.some(child => {
-          const parentIds = this.getRawParentIds(child.id)
-          return parentIds.includes(profile.id)
-        })
-        if (isNewPartnerExistingChildsParent) return false
+        const childsParents = this.getRawChildIds(this.selectedProfile.id)
+          .filter(this.isNotIgnored)
+          .filter(childId => {
+            return this.getRawParentIds(childId)
+              .filter(this.isNotIgnored)
+              .includes(profile.id)
+          })
+
+        if (childsParents.length) return false
       }
 
       if (this.isInTree(profile.id)) return true
