@@ -394,23 +394,19 @@ export default {
     },
     parents () {
       return this.getRawParentIds(this.profileId)
-        .map(parentId => this.person(parentId))
+        .map(this.findOrLoadProfile)
+        .filter(Boolean)
     },
     children () {
       return this.getRawChildIds(this.profileId)
-        .map(childId => {
-          const profile = this.person(childId)
-          if (!profile) this.loadPersonMinimal(childId)
-          // HACK - make sure profile is loaded
-
-          return profile
-        })
+        .map(this.findOrLoadProfile)
         .filter(Boolean)
     },
     partners () {
       return this.getRawPartnerIds(this.profileId)
-        .filter(partnerId => this.getPartnerType(this.profileId, partnerId) === 'partners')
-        .map(partnerId => this.person(partnerId))
+        .filter(partnerId => this.getPartnerType(this.profileId, partnerId) === 'partners') // dont include inferred partners
+        .map(this.findOrLoadProfile)
+        .filter(Boolean)
     },
     siblings () {
       const childIds = this.getRawParentIds(this.profileId)
@@ -420,13 +416,7 @@ export default {
       childIdSet.delete(this.profileId)
 
       return Array.from(childIdSet)
-        .map(childId => {
-          const profile = this.person(childId)
-          if (!profile) this.loadPersonMinimal(childId)
-          // HACK - make sure profile is loaded
-
-          return profile
-        })
+        .map(this.findOrLoadProfile)
         .filter(Boolean)
     },
     scopedProfile () {
@@ -539,6 +529,13 @@ export default {
     getDisplayName,
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
+    },
+    findOrLoadProfile (profileId) {
+      const profile = this.person(profileId)
+      if (!profile) this.loadPersonMinimal(profileId)
+      // HACK - make sure profile is loaded
+
+      return profile
     },
     async updateChildLink ({ parent, child, relationshipType, legallyAdopted }) {
       const _link = await this.getLink({ parent, child, isPartner: false })
