@@ -20,7 +20,7 @@
     </g>
 
     <g v-if="showAvatars" class="avatar" @click="$emit('click')" >
-      <defs>
+      <defs v-if="imageSrc">
         <clipPath :id="clipPathId">
           <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
@@ -49,7 +49,7 @@
         :width="diameter"
         :height="diameter"
         :clip-path="`url(#${clipPathId})`"
-        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
+        :style="avatarStyle"
       />
       <NodeMenuButton
         v-if="showMenuButton"
@@ -196,6 +196,11 @@ export default {
       return {
         transform: `translate(${this.radius - this.textWidth}px, ${this.radius + 10}px)`
       }
+    },
+    avatarStyle () {
+      return this.profile.deceased
+        ? { filter: 'grayscale(1) sepia(0.2)' }
+        : {}
     },
     dotsUnderNode () {
       // centers the three dots underneath a nodes name

@@ -26,8 +26,15 @@
 
     <!-- children -->
     <SubTree v-for="child in children" :key="`child-${child.data.id}`"
-      v-bind="child"
-      :root="child"
+      :x="child.x"
+      :y="child.y"
+      :data="child.data"
+
+      :parent="child.parent"
+      :children="child.children"
+      :partners="child.partners"
+      :links="child.links"
+
       :showAvatars="showAvatars"
       @partner-node-click="$emit('partner-node-click', $event)"
       @root-node-click="$emit('root-node-click', $event)"

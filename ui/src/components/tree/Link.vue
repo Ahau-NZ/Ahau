@@ -18,7 +18,7 @@ export default {
       if (hasHoveredParent(this.link, this.hoveredProfileId)) {
         return {
           ...this.link.style,
-          stroke: 'red',
+          stroke: '#c72e19',
           strokeWidth: this.link.style.strokeWidth + 1
         }
       }
