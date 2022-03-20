@@ -14,7 +14,7 @@
         <div class="information">
           <v-card-title v-text="view.name" class="py-3" style="word-break: break-word;"/>
           <v-card-subtitle v-if="description" v-text="description" class="py-1"/>
-          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} people`" class="mt-n2"/>
+          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} ${personText}`" class="mt-n2"/>
           <v-card-text v-if="hasSlotContent">
             <slot></slot>
           </v-card-text>
@@ -42,6 +42,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    personText () {
+      return this.view.recordCount === 1 ? 'person' : 'people'
     },
     hasSlotContent () {
       return Boolean(this.$slots.default)
