@@ -33,7 +33,7 @@
       :nodeProfile="profile"
     />
     <SideNodeDialog
-      v-if="isActive('view-edit-node')"
+      v-if="isActive('view-edit-node') && selectedProfile"
       :show="isActive('view-edit-node')"
       :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
