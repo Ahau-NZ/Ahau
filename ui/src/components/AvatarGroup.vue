@@ -31,8 +31,6 @@
             :isView="profile.type === 'community' && !profile.avatarImage"
             :dark="dark"
             :row="row"
-            :addable="addable"
-            :addableProfile="addedProfile(profile)"
           />
         </div>
       </div>
@@ -61,9 +59,7 @@ export default {
     isView: Boolean,
     clickable: { type: Boolean, default: true },
     dark: Boolean,
-    row: Boolean,
-    addable: Boolean,
-    addedProfiles: { type: Array, default: null }
+    row: Boolean
   },
   computed: {
     columns () {

@@ -14,7 +14,7 @@
         </v-btn>
         <v-avatar :size="size" :tile="isView">
             <v-overlay
-              v-if="addable"
+              v-if="showAddIcon"
               :dark='false'
               :light="true"
               color="white"
@@ -91,8 +91,7 @@ export default {
     showPicker: { type: Boolean, default: false },
     placeHolder: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
-    addable: Boolean,
-    addableProfile: Boolean
+    showAddIcon: Boolean
   },
   components: {
     ImagePicker

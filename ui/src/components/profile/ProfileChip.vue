@@ -5,25 +5,25 @@
         <v-col :cols="mobile ? '3':'2'" class="py-0">
           <Avatar
             size="50px"
-            :image="item.avatarImage"
-            :alt="getDisplayName(item)"
-            :gender="item.gender"
-            :aliveInterval="item.aliveInterval"
-            :addable="!addableProfile"
-            :clickable="!addSibling"
-            @click="emitWithKey('profile-click')"
+            :image="profile.avatarImage"
+            :alt="displayName"
+            :gender="profile.gender"
+            :aliveInterval="profile.aliveInterval"
+            :showAddIcon="!isNewProfile"
+            :clickable="!readonly"
+            @click="handleEmit('click')"
           />
         </v-col>
         <v-col :cols="mobile ? '5':'3'" class="py-0" justify="center">
-          <span class="list-title"> {{ item.legalName || item.preferredName || 'Unknown' }} </span>
+          <span class="list-title"> {{ displayName }} </span>
           <p v-if="!mobile" class="list-subtitle">Name</p>
         </v-col>
         <v-col v-if="!mobile" cols="4" class="py-0">
-          <span class="list-title"> {{ item.placeOfBirth || '...' }} </span>
+          <span class="list-title"> {{ profile.placeOfBirth || '...' }} </span>
           <p class="list-subtitle">Place of Birth</p>
         </v-col>
         <v-col cols="3" class="py-0">
-          <span class="list-title"> {{ age(item.aliveInterval) || '...' }} </span>
+          <span class="list-title"> {{ age(profile.aliveInterval) || '...' }} </span>
           <p v-if="!mobile" class="list-subtitle">Year of Birth</p>
         </v-col>
       </v-row>
@@ -36,7 +36,7 @@
         :menu-props="{ light: true }"
         hide-details
         style="width: 110px;"
-        change="emitWithKey('related-by')"
+        @change="handleEmit('update')"
       />
     </v-col>
   </v-row>
@@ -54,12 +54,11 @@ export default {
     Avatar
   },
   props: {
-    item: { type: Object, default: null },
-    addableProfile: { type: Boolean, default: false },
-    mobile: { type: Boolean, default: false },
+    profile: Object,
+    isNewProfile: Boolean,
+    readonly: Boolean,
     label: String,
-    index: { type: Number, default: -1 },
-    groupType: { type: String, default: '' }
+    hideDetails: Boolean
   },
   data () {
     return {
@@ -69,20 +68,22 @@ export default {
   },
   computed: {
     showRelatedBy () {
-      return this.addableProfile && this.label !== 'Add partners'
+      return !this.hideDetails && this.isNewProfile
     },
-    addSibling () {
-      return this.index === 0 && this.groupType === 'parents-siblings'
+    displayName () {
+      return getDisplayName(this.profile)
+    },
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
   methods: {
-    getDisplayName,
     age (aliveInterval) {
       return getBirthYear(aliveInterval)
     },
-    emitWithKey (key) {
-      this.$emit(key, {
-        id: this.item.id,
+    handleEmit (type) {
+      this.$emit(type, {
+        id: this.profile.id,
         relationshipType: this.relatedBy
       })
     }
