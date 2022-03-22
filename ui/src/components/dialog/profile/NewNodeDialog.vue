@@ -70,11 +70,13 @@
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
               <ProfileList
                 :label="t('addParent')"
-                :addedProfiles.sync="quickAdd.newParents"
-                :items="generateParents"
-                :groupType="type === 'sibling' ? 'parents-siblings': ''"
-                @profile-click="updateQuickAdd($event, 'newParents')"
-                @related-by="updateRelationships($event, 'newParents')"
+
+                :readonly="type === 'sibling'"
+                :newProfiles="quickAdd.newParents"
+                :existingProfiles="generateParents"
+
+                @click="updateQuickAdd($event, 'newParents')"
+                @update="updateRelationships($event, 'newParents')"
               />
             </v-col>
           </template>
@@ -82,10 +84,12 @@
             <v-col cols="12" v-if="hasProfiles('children')">
               <ProfileList
                 :label="t('addChildren')"
-                :addedProfiles.sync="quickAdd.newChildren"
-                :items="generateChildren"
-                @profile-click="updateQuickAdd($event, 'newChildren')"
-                @related-by="updateRelationships($event, 'newChildren')"
+
+                :newProfiles="quickAdd.newChildren"
+                :existingProfiles="generateChildren"
+
+                @click="updateQuickAdd($event, 'newChildren')"
+                @update="updateRelationships($event, 'newChildren')"
               />
             </v-col>
           </template>
@@ -93,9 +97,12 @@
             <v-col cols="12" v-if="hasProfiles('partners')">
               <ProfileList
                 :label="t('addPartners')"
-                :addedProfiles.sync="quickAdd.newPartners"
-                :items="generatePartners"
-                @profile-click="updateQuickAdd($event, 'newPartners')"
+                hide-details
+
+                :newProfiles="quickAdd.newPartners"
+                :existingProfiles="generatePartners"
+
+                @click="updateQuickAdd($event, 'newPartners')"
               />
             </v-col>
           </template>
