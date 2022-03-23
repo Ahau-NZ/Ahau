@@ -104,6 +104,9 @@ export default function () {
         // add partners (sorted by children)
         node.partners = layoutPartnerNodes(node, rootGetters)
 
+        const partnerLinks = layoutPartnerLinks(node, { getPartnerType })
+        const childLinks = layoutChildLinks(node, partnerLinks, { getChildType, getPartnerType })
+
         // then add link data
         //    - rootNode --> partner (if there's a relationship)
         //    - rootNode --> child (when solo parent)
@@ -111,8 +114,8 @@ export default function () {
         //    - rootNode + partner --> child
 
         node.links = [
-          ...layoutChildLinks(node, { getChildType, getPartnerType }),
-          ...layoutPartnerLinks(node, { getPartnerType })
+          ...childLinks,
+          ...partnerLinks
         ]
       })
 

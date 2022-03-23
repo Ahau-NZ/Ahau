@@ -64,7 +64,7 @@ test('layoutChildLinks', t => {
     }
   }
 
-  const links = layoutChildLinks(rootNode, getters)
+  const links = layoutChildLinks(rootNode, [], getters)
   t.equal(links.length, 3, 'correct number of links')
 
   const findLink = (parents, child) => {

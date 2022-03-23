@@ -7,10 +7,11 @@ import settings from '../../../../lib/link'
 
 const pileSort = require('pile-sort')
 
-export default function layoutChildLinks (rootNode, { getChildType, getPartnerType }) {
+export default function layoutChildLinks (rootNode, partnerLinks, { getChildType, getPartnerType }) {
   if (!rootNode.children || !rootNode.children.length) return []
 
   const adults = [rootNode, ...rootNode.partners]
+
   // find all the children with only one parentLink (of each type) among the adults
   const [soloLinkChildren, multiLinkChildren] = pileSort(
     rootNode.children,
@@ -43,7 +44,13 @@ export default function layoutChildLinks (rootNode, { getChildType, getPartnerTy
         if (!relType) return
         if (getChildType(B, childNode) !== relType) return
 
-        const link = multiLink(rootNode, [A, B], childNode, relType)
+        // search for the partner link
+        const partnerLinkKey = linkKey('partner', [A, B])
+        const partnerLink = partnerLinks.find(link => link.key === partnerLinkKey)
+
+        const opts = (partnerLink) ? { startY: partnerLink.y } : {}
+
+        const link = multiLink(rootNode, [A, B], childNode, relType, opts)
         multiLinks[link.key] = link
       })
     })
@@ -89,10 +96,11 @@ function soloLink (rootNode, parentNode, childNode, relType) {
   }
 }
 
-function multiLink (rootNode, [A, B], childNode, relType) {
+function multiLink (rootNode, [A, B], childNode, relType, opts = {}) {
   const isDashed = relType !== 'birth'
   // for drawing a isDashed link to represent adopted/whangai
   const radius = (node) => (node === rootNode) ? RADIUS : PARTNER_RADIUS
+  const startY = opts.startY || A.y
 
   let startX
   if (A === rootNode) {
@@ -118,11 +126,11 @@ function multiLink (rootNode, [A, B], childNode, relType) {
     d: settings.path( // for drawing a link from the parent to child
       {
         startX,
-        startY: A.y,
+        startY,
         endX: childNode.x,
         endY: childNode.y
       },
-      (A.y + childNode.y) / 2 + Y_OFF
+      (startY + childNode.y) / 2 + Y_OFF
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
