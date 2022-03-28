@@ -545,18 +545,18 @@ export default function (apollo) {
       loaded.add(profileId)
 
       let { childLinks, partnerLinks } = await dispatch('getFamilyLinks', { profileId, extended: true })
+
       // NOTE we get extended family links in every case right now (extended: true)
       // becuase they help with rendering, and mean transition to the extendedFamily view is smoother
       // const links = await dispatch('getFamilyLinks', { profileId, extended: state.view.extendedFamily
 
-      const isLiveLink = (link) => (
-        // filter links involving ignored profiles
-        getters.isNotIgnored(link.child) && getters.isNotIgnored(link.parent) &&
+      const isNotTombstoned = (link) => (
         // filter links involving tombstoned profiles
         !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
       )
-      childLinks = childLinks.filter(isLiveLink)
-      partnerLinks = partnerLinks.filter(isLiveLink)
+
+      childLinks = childLinks.filter(isNotTombstoned)
+      partnerLinks = partnerLinks.filter(isNotTombstoned)
 
       // TODO 2022-03-07 mix - move this into table/Node.vue I think
       if (getters.isTable) {
@@ -586,6 +586,11 @@ export default function (apollo) {
       }
 
       commit('addLinks', { childLinks, partnerLinks })
+
+      const isNotIgnored = (link) => getters.isNotIgnored(link.child) && getters.isNotIgnored(link.parent)
+
+      childLinks = childLinks.filter(isNotIgnored)
+      partnerLinks = partnerLinks.filter(isNotIgnored)
 
       // recurse through children
       childIds.forEach(childId => {
