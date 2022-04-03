@@ -20,7 +20,9 @@ function path ({ startX, startY, endX, endY, directed = false }, branch) {
 
   */
   if (directed && startY >= endY) { // NOTE bigger numbers are "lower"
-    const offsetY = 85
+    const offsetY = 75
+    // NOTE check the "tracks" in layout-child-links.
+    // this offsetY puts secondary links undernear solo + multi child links
     const offsetX = 75
     // these a semi-magic numbers which depened on other RADIUS + SPACING + OFFSET consts
     return `M ${startX}, ${startY} V ${startY + offsetY} H ${startX + (startX < endX ? offsetX : -offsetX)} V ${endY - offsetY} H ${endX} V ${endY}`

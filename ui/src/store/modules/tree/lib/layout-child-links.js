@@ -62,13 +62,14 @@ export default function layoutChildLinks (rootNode, partnerLinks, { getChildType
   ]
 }
 
-const Y_OFF = 5
+const Y_BASE = 5
+const Y_SPACE = 10
 
 // tracks
 //
-//          5 -- soloLinks
 // midpoint 0
-//         -5 -- multiLinks
+//          5  -- soloLinks
+//         15  -- multiLinks
 
 function soloLink (rootNode, parentNode, childNode, relType) {
   const isDashed = relType !== 'birth'
@@ -85,7 +86,7 @@ function soloLink (rootNode, parentNode, childNode, relType) {
         endX: childNode.x,
         endY: childNode.y
       },
-      (parentNode.y + childNode.y) / 2 - Y_OFF
+      (parentNode.y + childNode.y) / 2 + Y_BASE
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
@@ -130,7 +131,7 @@ function multiLink (rootNode, [A, B], childNode, relType, opts = {}) {
         endX: childNode.x,
         endY: childNode.y
       },
-      (startY + childNode.y) / 2 + Y_OFF
+      (startY + childNode.y) / 2 + Y_BASE + Y_SPACE
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
