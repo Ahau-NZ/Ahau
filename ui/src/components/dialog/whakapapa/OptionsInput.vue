@@ -108,12 +108,12 @@ export default {
   watch: {
     option (newVal) {
       if (newVal === 'hide all') {
-        this.items.map(item => {
+        this.items.forEach(item => {
           if (item.type === 'preferredName' || item.type === 'legalName') return
           item.value = false
         })
       } else if (newVal === 'show all') {
-        this.items.map(item => {
+        this.items.forEach(item => {
           item.value = true
         })
       }

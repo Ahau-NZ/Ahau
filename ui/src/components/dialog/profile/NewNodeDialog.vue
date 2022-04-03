@@ -309,8 +309,8 @@ export default {
       }
     },
     submission () {
-      let submission = {}
-      Object.entries(this.formData).map(([key, value]) => {
+      const submission = {}
+      Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEmpty(this.formData[key])) {
           switch (key) {
             case 'birthOrder':
@@ -387,7 +387,7 @@ export default {
       }
     },
     newChildParents (profile) {
-      var currentPartners = []
+      const currentPartners = []
 
       if (this.type === 'child' && profile.partners) {
         profile.partners.forEach(d => {
@@ -413,9 +413,9 @@ export default {
 
     // suggests other parents of children
     async findPartners () {
-      var currentPartners = this.selectedProfile.partners || []
+      const currentPartners = this.selectedProfile.partners || []
 
-      var suggestedPartners = []
+      const suggestedPartners = []
 
       this.selectedProfile.children.map(child => {
         if (!child.parents) return child
@@ -448,11 +448,11 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var recps = this.currentAccess
+      const recps = this.currentAccess
         ? [this.currentAccess.groupId]
         : null
 
-      var submission = {
+      const submission = {
         ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
         recps
       }
@@ -460,7 +460,7 @@ export default {
       if (this.hasProfiles('newChildren')) {
         if (this.existingProfile && this.existingProfile.children) {
           // if quick adding children, remove exisiting children from the list
-          let _children = this.quickAdd.newChildren.filter(child => {
+          const _children = this.quickAdd.newChildren.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_children.length) submission.children = _children
@@ -470,7 +470,7 @@ export default {
 
       if (this.hasProfiles('newParents')) {
         if (this.existingProfile && this.existingProfile.parents) {
-          let _parents = this.quickAdd.newParents.filter(child => {
+          const _parents = this.quickAdd.newParents.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_parents.length) submission.parents = _parents
@@ -480,7 +480,7 @@ export default {
 
       if (this.hasProfiles('newPartners')) {
         if (this.existingProfile && this.existingProfile.partners) {
-          let _partners = this.quickAdd.newPartners.filter(child => {
+          const _partners = this.quickAdd.newPartners.filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_partners.length) submission.partners = _partners
@@ -591,7 +591,7 @@ export default {
         return
       }
 
-      let rawSuggestions = await this.findPersonByName({
+      const rawSuggestions = await this.findPersonByName({
         name,
         type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
         groupId: this.whakapapaView.recps[0]

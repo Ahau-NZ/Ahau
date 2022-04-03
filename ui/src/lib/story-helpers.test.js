@@ -72,7 +72,7 @@ test('create/update new story (arrays)', t => {
 
   const arrayStoryChanges = getObjectChanges(storyInitial, storyComplete)
 
-  var expectedArray = {
+  const expectedArray = {
     add: [...children]
   }
   t.deepEqual(arrayStoryChanges, {
@@ -81,14 +81,14 @@ test('create/update new story (arrays)', t => {
     creators: expectedArray
   }, 'returns all the changed arrays in format array: { add: [...], remove: [...] }')
 
-  var storyUpdated = clone(storyComplete)
+  const storyUpdated = clone(storyComplete)
 
   storyUpdated.mentions.splice(0, 1) // remove first mention
   storyUpdated.mentions.push(parents[0]) // add a profile in
 
   storyUpdated.contributors.splice(1, 1)
 
-  var updatedStoryChanges = getObjectChanges(storyComplete, storyUpdated)
+  const updatedStoryChanges = getObjectChanges(storyComplete, storyUpdated)
 
   t.deepEqual(updatedStoryChanges.mentions, {
     add: [parents[0]],
@@ -100,14 +100,14 @@ test('create/update new story (arrays)', t => {
   }, 'contains contributor profile to be removed')
 
   // add another three to mentions that are duplicates
-  var storyUpdated2 = clone(storyUpdated)
-  var parent = parents[1]
+  const storyUpdated2 = clone(storyUpdated)
+  const parent = parents[1]
 
   storyUpdated2.mentions.push(parent)
   storyUpdated2.mentions.push(parent)
   storyUpdated2.mentions.push(parent)
 
-  var updatedStory2Changes = getObjectChanges(storyUpdated, storyUpdated2)
+  const updatedStory2Changes = getObjectChanges(storyUpdated, storyUpdated2)
 
   t.true(updatedStory2Changes.mentions.add.length === 1, 'returns correct amount of mentions, removing duplicates')
   t.deepEqual(updatedStory2Changes.mentions.add[0], parent, 'returns correct mentioned profile')

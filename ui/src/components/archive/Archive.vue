@@ -160,11 +160,7 @@ export default {
       if (!this.stories) return []
 
       if (this.showCollectionStories) return this.stories
-      else {
-        return this.stories.filter(story => {
-          if (story.collections.length === 0) return true
-        })
-      }
+      else return this.stories.filter(story => story.collections.length === 0)
     }
   },
   methods: {
@@ -174,7 +170,7 @@ export default {
     ...mapActions('collection', ['createCollection', 'getCollectionsByGroup']),
     getDisplayName,
     showCurrentCollection ({ id }) {
-      var type = this.$route.name.split('/archive')[0]
+      const type = this.$route.name.split('/archive')[0]
       this.$router.push({
         name: type + '/collection',
         params: {

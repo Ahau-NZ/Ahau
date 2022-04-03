@@ -37,7 +37,7 @@ const actions = {
 
       if (res.errors) throw res.errors
 
-      var { unseen, accepted, declined } = res.data
+      let { unseen, accepted, declined } = res.data
 
       unseen = unseen.map(application => mapValues(application, whoami))
       accepted = accepted.map(application => mapValues(application, whoami))

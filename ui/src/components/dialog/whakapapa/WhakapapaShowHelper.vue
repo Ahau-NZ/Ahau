@@ -73,14 +73,22 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/images/menu.png'),
-          text: 'actions menu' },
-        { src: require('../../../assets/images/parent.png'),
-          text: 'adding a person' },
-        { src: require('../../../assets/images/view.png'),
-          text: 'a persons profile' },
-        { src: require('../../../assets/images/example.png'),
-          text: 'an example whakapapa' }
+        {
+          src: require('../../../assets/images/menu.png'),
+          text: 'actions menu'
+        },
+        {
+          src: require('../../../assets/images/parent.png'),
+          text: 'adding a person'
+        },
+        {
+          src: require('../../../assets/images/view.png'),
+          text: 'a persons profile'
+        },
+        {
+          src: require('../../../assets/images/example.png'),
+          text: 'an example whakapapa'
+        }
       ]
     }
   },

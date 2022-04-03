@@ -8,8 +8,8 @@ import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-hel
 import { CollectionFragment } from '../store/modules/collection/apollo-helpers.js'
 
 export function setDefaultStory (newStory) {
-  var story = clone(newStory)
-  var { artefacts, mentions, contributors, creators, relatedRecords, collections } = story
+  const story = clone(newStory)
+  let { artefacts, mentions, contributors, creators, relatedRecords, collections } = story
 
   function mapLinks (link, entity) {
     return {
@@ -285,7 +285,7 @@ export const getAllStoriesByMentions = id => ({
 })
 
 export const saveStory = input => {
-  var submissionDate = new Date().toISOString().slice(0, 10)
+  const submissionDate = new Date().toISOString().slice(0, 10)
 
   input = {
     type: '*', // TODO: sort out types

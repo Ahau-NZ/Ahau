@@ -3,7 +3,7 @@ import clone from 'lodash.clonedeep'
 import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
 
 export function setPersonProfile (input) {
-  var profile = clone(input)
+  const profile = clone(input)
 
   return {
     id: profile.id,

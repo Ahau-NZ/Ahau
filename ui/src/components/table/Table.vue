@@ -226,7 +226,7 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      var nodes = this.descendants
+      const nodes = this.descendants
         .map(node => {
           const profileId = node.data.id
           const profile = this.person(profileId)
@@ -284,8 +284,8 @@ export default {
           }
         })
         .sort((a, b) => {
-          var A = a.style.stroke
-          var B = b.style.stroke
+          const A = a.style.stroke
+          const B = b.style.stroke
           if (A > B) return -1
           if (A < B) return 1
           return 0
@@ -345,7 +345,7 @@ export default {
 
         this.$emit('update:download', false)
 
-        var hiddenElement = document.createElement('a')
+        const hiddenElement = document.createElement('a')
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
         hiddenElement.target = '_blank'
         hiddenElement.download = this.whakapapaView.name + '.csv'
@@ -371,7 +371,7 @@ export default {
       return adminValue
     },
     async tableOverflow () {
-      var width = await this.colWidth + this.columns[this.columns.length - 1].x
+      const width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
       this.$emit('update', this.tableWidth)
     },
@@ -396,7 +396,7 @@ export default {
 
     // changes row colour
     nodeColor (data) {
-      var age = calculateAge(data.aliveInterval)
+      const age = calculateAge(data.aliveInterval)
       if (data.isCollapsed) {
         return 'fill:cadetblue'
       } else if (age !== null && age < 2) {
@@ -431,7 +431,7 @@ export default {
         return ''
       }
 
-      var ageString = ''
+      let ageString = ''
       const dateSplit = dateIntervalToString(age, this.monthTranslations).split('-')
 
       if (requiredDate === 'dob') {
@@ -484,10 +484,10 @@ export default {
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
       const country = ['Country', 'Country ↑', 'Country ↓']
 
-      if (label === 'Preferred Name') return preferredName[this.sort['preferredName']]
-      if (label === 'Age') return age[this.sort['age']]
-      if (label === 'Profession') return profession[this.sort['profession']]
-      if (label === 'Country') return country[this.sort['country']]
+      if (label === 'Preferred Name') return preferredName[this.sort.preferredName]
+      if (label === 'Age') return age[this.sort.age]
+      if (label === 'Profession') return profession[this.sort.profession]
+      if (label === 'Country') return country[this.sort.country]
 
       return label
     },
@@ -559,11 +559,11 @@ export default {
       const macronArray = ['ā', 'ē', 'ī', 'ō', 'ū', 'Ā', 'Ē', 'Ī', 'Ō', 'Ū']
       const nonMacronArray = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
 
-      var newString = ''
-      for (var i = 0; i < str.length; i++) {
-        var macronFound = false
+      let newString = ''
+      for (let i = 0; i < str.length; i++) {
+        let macronFound = false
         const currChar = str[i]
-        for (var j = 0; j < macronArray.length; j++) {
+        for (let j = 0; j < macronArray.length; j++) {
           if (currChar === macronArray[j]) {
             macronFound = true
             newString += nonMacronArray[j]
@@ -577,7 +577,7 @@ export default {
       return newString
     },
     centerNode (node) {
-      var div = this.$refs.tablediv
+      const div = this.$refs.tablediv
       const element = document.getElementById(`${node.data.id}`)
       const coord = element.getBoundingClientRect()
       const elementPos = this.scrollTop + coord.y - 400
@@ -609,10 +609,10 @@ export default {
             this.findAltNameMatch(search, node.data.altNames)
     },
     findAltNameMatch (filterString, altNames) {
-      var altNameFound = false
+      let altNameFound = false
 
       if (altNames && altNames.length > 0) {
-        for (var i = 0; i < altNames.length; i++) {
+        for (let i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
           if (currAltName.includes(filterString)) altNameFound = true
         }
@@ -639,10 +639,10 @@ export default {
       const skills = node.data.education
       const profession = this.setString(node.data.profession)
       const search = this.setString(this.tableFilter.skills)
-      var skillFound = false
+      let skillFound = false
 
       if (skills && skills.length && skills[0] !== '') {
-        for (var i = 0; i < skills.length; i++) {
+        for (let i = 0; i < skills.length; i++) {
           const currSkill = this.setString(skills[i])
           if (currSkill.includes(search)) skillFound = true
         }

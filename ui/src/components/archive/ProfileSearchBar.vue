@@ -165,7 +165,7 @@ export default {
       const { artefacts } = item
       if (artefacts && artefacts.length > 0) {
         // still in link format
-        var artefact = artefacts[0].artefact
+        const artefact = artefacts[0].artefact
         if (artefact.type === 'photo') return artefact.blob.uri
       }
 

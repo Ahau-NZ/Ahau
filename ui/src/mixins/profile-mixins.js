@@ -2,7 +2,7 @@ import { getProfile } from '../store/modules/profile/apollo-helpers'
 import { getTribe } from '../store/modules/tribe/apollo-helpers'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
-  var customMixin = {}
+  const customMixin = {}
   if (mapMethods) {
     customMixin.methods = {}
 

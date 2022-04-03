@@ -154,7 +154,7 @@ export default {
       this.formData.joiningQuestions.splice(index, 1)
     },
     submit () {
-      var output = {}
+      let output = {}
       if (this.editing) {
         // get all changes
         output = getObjectChanges(setDefaultCommunity(this.profile), this.formData)

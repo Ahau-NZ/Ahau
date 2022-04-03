@@ -1,9 +1,12 @@
+import {
+  hierarchy as d3Hierarchy,
+  stratify as d3Stratify
+} from 'd3'
 import * as csv from './csv'
 
 const test = require('tape')
 const fs = require('fs').promises
 const path = require('path')
-const d3 = require('d3')
 
 const simpleNestedDescendants = require('../mocks/nested-whakapapa.js')
 
@@ -163,7 +166,7 @@ test('real data', (t) => {
       .then((rows) => {
         t.ok(rows, 'csv parse returns result')
 
-        const tree = d3.stratify()
+        const tree = d3Stratify()
           .id(function (d) {
             return d.csvId
           })
@@ -335,7 +338,7 @@ test('csv.schema', t => {
 test('csv.convertDate', (t) => {
   t.plan(8)
   function convert (date, expectedRes) {
-    var res = csv.convertDate(date)
+    const res = csv.convertDate(date)
     t.true(res, date + ' returns result')
     t.deepEqual(res, expectedRes, date + ' returns expected result ' + expectedRes)
   }
@@ -350,7 +353,7 @@ test('csv.mapNodesToCsv', t => {
   t.plan(2)
 
   // use the nestedDescendants to generate nodes
-  const nodes = d3.hierarchy(simpleNestedDescendants)
+  const nodes = d3Hierarchy(simpleNestedDescendants)
     .descendants()
 
   // run the nodes through the csv row mapping

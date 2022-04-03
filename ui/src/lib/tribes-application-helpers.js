@@ -188,7 +188,7 @@ function copyImage (image) {
 
   if (image.uri) {
     delete image.unbox
-    var url = new URL(image.uri)
+    const url = new URL(image.uri)
     image.unbox = url.searchParams.get('unbox')
   }
   const allowed = pick(image, ['blob', 'mimeType', 'size', 'unbox', 'width', 'height'])

@@ -55,8 +55,8 @@ function setDefaultWhakapapa (whakapapa) {
 }
 
 function whakapapaSubmission (newWhakapapa) {
-  var output = {}
-  var whakapapa = pick(newWhakapapa, [...PERMITTED_WHAKAPAPA_ATTRS])
+  const output = {}
+  const whakapapa = pick(newWhakapapa, [...PERMITTED_WHAKAPAPA_ATTRS])
   Object.entries(whakapapa).forEach(([key, value]) => {
     if (!isEmpty(whakapapa[key])) {
       output[key] = value

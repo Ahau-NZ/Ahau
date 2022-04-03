@@ -80,7 +80,7 @@ export default {
         if (!interval) interval = '/'
 
         if (interval === null || interval === '') interval = '/'
-        var [start, end] = interval.split('/')
+        const [start, end] = interval.split('/')
 
         this.start = start
         this.end = end
@@ -116,11 +116,11 @@ export default {
   methods: {
     ...mapMutations(['setAllowSubmissions']),
     updateInterval () {
-      var interval = this.start + '/' + this.end
+      let interval = this.start + '/' + this.end
 
       try {
         if (this.start === '' && this.end !== '') {
-          var [year] = this.end.split('-')
+          const [year] = this.end.split('-')
           interval = year + '/' + this.end
         } else if (this.start !== this.end) edtf(interval)
         this.$emit('update:interval', interval)

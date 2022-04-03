@@ -176,7 +176,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     submission () {
-      let changes = {}
+      const changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.view[key])) {
           changes[key] = value === '' ? null : value
@@ -200,7 +200,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      var output = Object.assign({}, this.submission)
+      const output = Object.assign({}, this.submission)
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       }

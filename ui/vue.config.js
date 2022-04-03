@@ -1,4 +1,5 @@
 const dotenv = require('dotenv')
+const webpack = require('webpack')
 const { join } = require('path')
 
 const env = dotenv.config({ path: join(__dirname, '.env') })
@@ -19,8 +20,12 @@ process.env.VUE_APP_PLATFORM = process.env.PLATFORM === 'cordova'
   ? 'cordova'
   : 'web'
 
+const publicPath = (process.env.VUE_APP_PLATFORM === 'cordova' || process.env.NODE_ENV === 'production')
+  ? './'
+  : '/'
+
 module.exports = {
-  publicPath: './',
+  publicPath,
   devServer: {
     port: 8080
   },
@@ -29,5 +34,24 @@ module.exports = {
     apollo: {
       lintGQL: true
     }
+  },
+  configureWebpack: {
+    // webpack 5 removed default-on polyfills for many Node modules
+    // the following config is about providing browser-friendly replacements
+
+    resolve: {
+      fallback: {
+        path: require.resolve('path-browserify')
+      }
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'global.Date': 'globalThis.Date' // required for edtf
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser'
+      })
+    ]
   }
 }

@@ -102,8 +102,7 @@ import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
-import * as csv from '@/lib/csv'
-import { downloadCsv } from '@/lib/csv'
+import { importCsv, downloadCsv } from '@/lib/csv'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -155,7 +154,7 @@ export default {
     view (newVal) {
       this.formData = newVal
     },
-    'formData': {
+    formData: {
       handler (newVal) {
         this.$emit('update:view', newVal)
       },
@@ -167,7 +166,7 @@ export default {
       this.errorMsgs = []
       this.successMsg = []
 
-      csv.importCsv(newFile)
+      importCsv(newFile)
         .then(csv => {
           this.successMsg = ['Expected result = Top ancestor: ' + csv[0].profile.preferredName + '. First child: ' + csv[1].profile.preferredName]
           this.$emit('update:data', csv)

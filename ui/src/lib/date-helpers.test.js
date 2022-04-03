@@ -27,7 +27,7 @@ test('dateTest', t => {
     '1999/1999'
   ]
 
-  var expected = [
+  const expected = [
     '28 Feb 20XX',
     '201X - 202X',
     'Mar 1987 - 2100',
@@ -75,6 +75,7 @@ test('edtfToDate', t => {
   t.deepEqual(edtfToDateString(null), '')
   t.deepEqual(edtfToDateString(''), '')
   t.deepEqual(edtfToDateString('dog'), undefined)
+
   t.deepEqual(edtfToDateString('20XX-02-28/'), new Date('2000-02-28'))
   t.deepEqual(edtfToDateString('201X/202X'), new Date('2010-01-01'))
   t.deepEqual(edtfToDateString('1987-03-XX/2100'), new Date('1987-03-01'))

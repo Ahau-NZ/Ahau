@@ -161,7 +161,7 @@ export default {
       if (whakapapaId) this.goToWhakapapaView(whakapapaId)
     },
     goToWhakapapaView (whakapapaId) {
-      var type = this.$route.name.split('/whakapapa')[0]
+      const type = this.$route.name.split('/whakapapa')[0]
 
       this.$router.push({
         name: type + '/whakapapa/:whakapapaId',
@@ -200,7 +200,7 @@ export default {
     },
     async handleDoubleStep (input) {
       try {
-        var { id } = input
+        let { id } = input
 
         // if theres no id, that means we're creating the whakapapa from a new person
         if (!id) {

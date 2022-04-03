@@ -22,19 +22,19 @@ function humanDate (date, t) {
     return ''
   }
 
-  var split = date.split('-')
+  const split = date.split('-')
   if (!split[0].length && !split[1].length) return ''
   if (!split[0].length && split[1].length) {
-    var bcYear = `-${split[1]}`
+    const bcYear = `-${split[1]}`
     return bcYear
   }
-  var year = split[0]
-  var month = split[1]
+  const year = split[0]
+  let month = split[1]
   if (!month) return year
   if (!month.length) return year
   if (month.match(/X/)) return year
   month = t(MONTHS[month])
-  var day = split[2]
+  const day = split[2]
   if (!day) return `${month} ${year}`
   if (!day.length) return `${month} ${year}`
   if (day.match(/X/)) return `${month} ${year}`
@@ -44,7 +44,7 @@ function humanDate (date, t) {
 export function intervalToDayMonthYear (interval) {
   if (interval === null) return ''
 
-  var [lower, upper] = interval.split('/')
+  let [lower, upper] = interval.split('/')
   if (lower.length && upper.length) {
     lower.replace(/ /g, '')
     upper.replace(/ /g, '')
@@ -67,15 +67,15 @@ export function intervalToDayMonthYear (interval) {
 }
 
 function dateToDayMonthYear (date) {
-  var split = date.split('-')
+  const split = date.split('-')
 
-  var year = split[0]
-  var month = split[1]
+  const year = split[0]
+  const month = split[1]
   if (!month || !month.length || month.match(/X/)) {
     year.replace(/X/g, '0')
     return `01-01-${year}`
   }
-  var day = split[2]
+  const day = split[2]
   if (!day || !day.length || day.match(/X/)) {
     year.replace(/X/g, '0')
     return `01-${month}-${year}`
@@ -96,14 +96,14 @@ export function yearMonthDay (interval, t) {
 }
 
 function yearMonthDayFormatter (date, t) {
-  var split = date.split('-')
+  const split = date.split('-')
   if (!split[0].length && !split[1].length) return
   if (!split[0].length && split[1].length) {
-    var bcYear = `-${split[1]}`
+    const bcYear = `-${split[1]}`
     return bcYear
   }
-  var year = split[0]
-  var month = split[1]
+  const year = split[0]
+  let month = split[1]
   if (!month) return year
   if (!month.length) return year
   if (month.match(/X/)) return year
@@ -125,13 +125,19 @@ export function edtfToDateString (dateStr) {
 
   try {
     // get the date object
-    const { upper, lower } = edtf(dateStr)
-    var time = ''
+    const { max, min } = edtf(dateStr)
 
-    if (!lower && upper) time = upper
-    else time = lower
+    if (min) return new Date(min)
+    else {
+      const d = new Date(max) // this is the end of the day
+      const year = d.getUTCFullYear()
+      const month = d.getUTCMonth() + 1
+      const day = d.getUTCDate()
+      return new Date(`${year}-${month < 10 ? '0' : ''}${month}-${day}`)
 
-    return time
+      // NOTE new Date(1999, 1, 14) !== new Date('1999-02-14')
+      // one is set assuming UTC time, the othee your local time T_T
+    }
   } catch (err) {
     // NOTE: if edtf fails, then it will be caught here
     console.error('There was an error with converting an edtfDateString', err)
@@ -154,9 +160,9 @@ const MONTHS = {
 }
 
 export function convertDateObjToString (obj) {
-  var { year, month, day } = obj
+  const { year, month, day } = obj
 
-  var error
+  let error
 
   if (year && month && day) return `${year}-${month}-${day}`
   if (year && month && !day) return `${year}-${month}`
@@ -234,7 +240,7 @@ export function formatSubmissionDate (submittedDate, t) {
 
 export function getBirthYear (aliveInterval) {
   if (!aliveInterval) return ''
-  var split = aliveInterval.split('/')
+  const split = aliveInterval.split('/')
   if (split[0] === '' || !split[0]) return ''
   if (aliveInterval !== '' && aliveInterval) return aliveInterval.substring(0, 4)
   return ''

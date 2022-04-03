@@ -400,7 +400,7 @@ export default {
     },
     dob () {
       if (this.applicant.aliveInterval) {
-        var formattedDate = dateIntervalToString(this.applicant.aliveInterval, this.monthTranslations)
+        const formattedDate = dateIntervalToString(this.applicant.aliveInterval, this.monthTranslations)
         return formattedDate
       }
       return ' '
@@ -421,7 +421,7 @@ export default {
       return ''
     },
     age () {
-      var age = calculateAge(this.applicant.aliveInterval)
+      const age = calculateAge(this.applicant.aliveInterval)
       if (age === null) return ' '
       return age.toString()
     },
@@ -445,7 +445,7 @@ export default {
   },
   methods: {
     async submit (approved) {
-      var output = {
+      const output = {
         id: this.notification.id, // the applicationId
         comment: this.comment
         // TODO (later): groupIntro

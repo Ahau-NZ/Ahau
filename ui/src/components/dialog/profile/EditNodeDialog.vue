@@ -112,7 +112,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     profileChanges () {
-      let changes = {}
+      const changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.nodeProfile[key])) {
           switch (key) {
@@ -162,7 +162,7 @@ export default {
       this.formData.avatarImage = avatarImage
     },
     age (born) {
-      var age = calculateAge(born)
+      const age = calculateAge(born)
       return age
     },
     close () {
@@ -203,7 +203,7 @@ export default {
         .catch(() => {})
     },
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
+      const output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {

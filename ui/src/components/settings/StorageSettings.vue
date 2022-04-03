@@ -209,7 +209,7 @@ export default {
       await this.reloadConfig()
     },
     async turnOnAutoPrune () {
-      var config = this.config
+      let config = this.config
       if (config === null) {
         config = {
           startDelay: START_DELAY,

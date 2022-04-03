@@ -201,7 +201,7 @@ export default {
     ...mapActions('person', ['setSelectedProfileById']),
 
     goTribe (tribe) {
-      var profile = tribe.private.length > 0
+      const profile = tribe.private.length > 0
         ? tribe.private[0]
         : tribe.public[0]
 

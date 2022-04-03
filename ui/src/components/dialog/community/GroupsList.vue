@@ -210,7 +210,7 @@ export default {
     // scroll to the bottom of the dialog
     jumpToBottom () {
       setTimeout(() => {
-        var element = document.getElementById('app-dialog')
+        const element = document.getElementById('app-dialog')
         element.scrollTo({
           top: element.scrollHeight,
           behavior: 'smooth'

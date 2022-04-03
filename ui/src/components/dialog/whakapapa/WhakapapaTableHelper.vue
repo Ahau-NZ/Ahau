@@ -65,14 +65,22 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/images/table.png'),
-          text: 'Example whakapapa registry' },
-        { src: require('../../../assets/images/relationships.png'),
-          text: 'Users can hide whakapapa links' },
-        { src: require('../../../assets/images/ancestors.png'),
-          text: 'Users can hide ancestors that have passed' },
-        { src: require('../../../assets/images/table-menu.png'),
-          text: 'Update ancestor information' }
+        {
+          src: require('../../../assets/images/table.png'),
+          text: 'Example whakapapa registry'
+        },
+        {
+          src: require('../../../assets/images/relationships.png'),
+          text: 'Users can hide whakapapa links'
+        },
+        {
+          src: require('../../../assets/images/ancestors.png'),
+          text: 'Users can hide ancestors that have passed'
+        },
+        {
+          src: require('../../../assets/images/table-menu.png'),
+          text: 'Update ancestor information'
+        }
       ]
     }
   },

@@ -134,12 +134,12 @@ export default {
         const title = this.setString(story.title)
         const location = this.setString(story.location)
 
-        var mentionsMatch = false
+        let mentionsMatch = false
         story.mentions.forEach(mention => {
           mentionsMatch = this.storyProfileMatchesSearch(mention.profile, search)
         })
 
-        var contributorsMatch = false
+        let contributorsMatch = false
         story.contributors.forEach(contributor => {
           contributorsMatch = this.storyProfileMatchesSearch(contributor.profile, search)
         })
@@ -173,7 +173,7 @@ export default {
       const mentionPreferredName = this.setString(mention.preferredName)
       const mentionLegalName = this.setString(mention.legalName)
 
-      var altNameMatch = false
+      let altNameMatch = false
       if (mention.altNames && mention.altNames.length > 0) {
         mention.altNames.forEach(alt => {
           const currName = this.setString(alt)

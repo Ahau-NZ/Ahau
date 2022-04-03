@@ -144,7 +144,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      var output = {}
+      let output = {}
       if (this.editing) {
         // get all changes
         output = {

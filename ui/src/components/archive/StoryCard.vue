@@ -408,7 +408,7 @@ export default {
   watch: {
     story (newVal, oldVal) {
       // show any changes to showArtefact if artefacts change
-      var changes = { ...getObjectChanges(oldVal, newVal) }
+      const changes = { ...getObjectChanges(oldVal, newVal) }
       if (changes.artefacts) {
         if (this.showArtefact && changes.artefacts.remove) {
           this.setShowArtefact()
@@ -426,7 +426,7 @@ export default {
     saveArtefact ($event) {
       this.updateArtefacts($event)
       // get all changes
-      var output = {
+      const output = {
         id: this.story.id,
         ...getObjectChanges(setDefaultStory(this.story), this.formData)
       }
@@ -444,7 +444,7 @@ export default {
       if (this.deletable) return
 
       window.scrollTo(0, 0)
-      var story = await this.getStory(relatedRecord.id)
+      const story = await this.getStory(relatedRecord.id)
       this.setCurrentStory(story)
     },
     showRelatedCollection (collection) {

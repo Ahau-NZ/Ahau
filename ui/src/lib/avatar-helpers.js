@@ -20,7 +20,7 @@ function defaultImage (isView, aliveInterval, gender, noAvatar) {
   }
   if (noAvatar) return account
 
-  var age = calculateAge(aliveInterval)
+  const age = calculateAge(aliveInterval)
 
   switch (gender) {
     case 'male':
