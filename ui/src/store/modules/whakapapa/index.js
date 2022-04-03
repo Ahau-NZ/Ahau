@@ -708,7 +708,7 @@ export default function (apollo) {
             add: ['*']
           }
 
-          var profileId = await dispatch('person/createPerson', profile, { root: true })
+          const profileId = await dispatch('person/createPerson', profile, { root: true })
           profiles[csvId] = profileId
         })
       )

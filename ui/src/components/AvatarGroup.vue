@@ -91,7 +91,7 @@ export default {
     },
     addedProfile (profile) {
       if (!this.addedProfiles || !this.addedProfiles.length) return null
-      let added = this.addedProfiles.some(person => {
+      const added = this.addedProfiles.some(person => {
         return person.id === profile.id
       })
       return added

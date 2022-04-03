@@ -310,12 +310,11 @@ import EditRelationships from '@/components/profile/EditRelationships.vue'
 
 import calculateAge from '../../../lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
+import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDisplayName } from '@/lib/person-helpers.js'
 
 function defaultData (input) {
-  var profile = clone(input)
+  const profile = clone(input)
 
   return {
     id: profile.id,
@@ -451,13 +450,13 @@ export default {
     },
     diedAt () {
       if (this.scopedProfile.aliveInterval) {
-        var date = this.scopedProfile.aliveInterval.split('/')
+        const date = this.scopedProfile.aliveInterval.split('/')
         return dateToString(date[1], this.monthTranslations)
       }
       return null
     },
     profileChanges () {
-      let changes = {}
+      const changes = {}
 
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.scopedProfile[key])) {
@@ -561,7 +560,7 @@ export default {
       }).catch(() => {})
     },
     age (born) {
-      var age = calculateAge(born)
+      const age = calculateAge(born)
       if (age || age === 0) {
         return age.toString()
       }
@@ -584,7 +583,7 @@ export default {
       this.toggleEdit()
     },
     async submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      const output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) await this.processUpdate(output)
 

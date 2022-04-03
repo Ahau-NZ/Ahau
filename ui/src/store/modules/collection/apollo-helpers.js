@@ -44,7 +44,7 @@ export const CollectionFragment = gql`
 `
 
 export const saveCollection = input => {
-  var submissionDate = Date.now()
+  const submissionDate = Date.now()
 
   input = {
     ...pick(input, ALL_PERMITTED_COLLECTION_ATTRS), // TODO: this stops us from knowing we are passing the wrong input

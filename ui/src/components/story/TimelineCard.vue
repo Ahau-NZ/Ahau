@@ -110,7 +110,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     sortedData () {
-      var sortedData = this.sortDesc(this.data)
+      const sortedData = this.sortDesc(this.data)
       return sortedData
     }
   },

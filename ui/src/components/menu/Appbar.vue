@@ -218,9 +218,9 @@ export default {
     },
     classObject: function () {
       return {
-        'mobile': this.mobile,
-        'desktop': !this.mobile,
-        'sideMenuAppBarStyle': this.sideMenu
+        mobile: this.mobile,
+        desktop: !this.mobile,
+        sideMenuAppBarStyle: this.sideMenu
       }
     },
     mobile () {
@@ -251,7 +251,7 @@ export default {
     },
     goMyProfile () {
       if (this.mobile && this.showStory) this.toggleShowStory()
-      var route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
+      const route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
       this.$router.push({
         name: 'person/' + route,
         params: {
@@ -263,7 +263,7 @@ export default {
     },
     goTribeProfile (tribe) {
       if (this.mobile && this.showStory) this.toggleShowStory()
-      var profile = tribe.private[0]
+      const profile = tribe.private[0]
       this.$router.push({
         name: 'community/' + this.navComponent,
         params: {

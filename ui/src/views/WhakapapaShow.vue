@@ -330,7 +330,7 @@ export default {
       this.showAvatars = !this.showAvatars
     },
     tableOverflow (width) {
-      var show = width > screen.width
+      const show = width > screen.width
       this.overflow = show
     },
     clickedOffSearch () {
@@ -383,7 +383,7 @@ export default {
     async loadKnownFamily (loadProfile, person) {
       // TODO move this into vuex
       const { children, parents, partners, siblings, parent, relationshipType, legallyAdopted } = person
-      var profile = {}
+      let profile = {}
 
       if (loadProfile) {
         profile = await this.getRelatives(person.id)
@@ -448,7 +448,7 @@ export default {
       await this.saveWhakapapaView(input)
     },
     async deleteWhakapapa () {
-      var input = {
+      const input = {
         tombstone: { date: new Date() }
       }
 
@@ -456,7 +456,7 @@ export default {
 
       // check the group we are going to is an admin one
       const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
-      var type = this.$route.name.split('/whakapapa')[0]
+      const type = this.$route.name.split('/whakapapa')[0]
 
       if (parentGroup) {
         // navigate to the parent group instead if we found this group has one

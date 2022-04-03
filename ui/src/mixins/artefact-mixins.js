@@ -20,7 +20,7 @@ export const methods = {
     if (res.errors) throw res.errors
   },
   removeArtefact (index) {
-    var artefact = this.formData.artefacts[index]
+    const artefact = this.formData.artefacts[index]
     // remove from formData
     this.removeItem(this.formData.artefacts, index)
 
@@ -29,7 +29,7 @@ export const methods = {
       this.deleteArtefact(artefact.id)
       this.model--
       // remove from current story
-      var output = {
+      const output = {
         id: this.story.id,
         ...getObjectChanges(setDefaultStory(this.story), this.formData)
       }

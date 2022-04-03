@@ -100,16 +100,16 @@ $ npm run release:desktop         # from the root folder
 Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/desktop`.
 
 RESOURCES
-- See : https://www.electron.build/code-signing for useful links
 
+- See : https://www.electron.build/code-signing for useful links
 
 ### Test installers
 
-If you don't want to build and publish full installers you can manually run parts of the publishing process to inpect output, e.g.
+If you don't want to build and publish full installers you can manually run parts of the publishing process to inspect output, e.g.
 
 - `npm run build-ui:desktop` (from root directory) makes a production build of ui
-- `npm run dist` (in this folder) takes built ui and this desktop folder and builds an installer (without auto-publishing)
-    - if you run this command you don't have to rebuild the ui for production = faster!
-    - if you want to skip signing, temporarily remove `elctron-builder.env` = faster!
+- `npm run dist` (in the desktop folder) takes built ui and this desktop folder and builds an installer (without auto-publishing)
+  - if you run this command you don't have to rebuild the ui for production = faster!
+  - if you want to skip signing, temporarily remove `electron-builder.env` = faster!
 
 Output won't be in `releases/desktop` rather `desktop/dist/installers`

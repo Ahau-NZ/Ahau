@@ -12,12 +12,14 @@ function findItemById (initialArray, itemToFind) {
 }
 
 export function getObjectChanges (initialValue, updatedValue) {
-  var changes = {}
+  const changes = {}
 
   if (isEqual(initialValue, updatedValue)) return changes
 
   Object.entries(updatedValue).forEach(([key, value]) => {
     if (key === 'kaitiaki' || key === 'tiaki') return
+
+    let newItems = []
 
     // see if the value has changes
     if (!isEqual(initialValue[key], updatedValue[key])) {
@@ -32,14 +34,13 @@ export function getObjectChanges (initialValue, updatedValue) {
           }
           // intiate the array to add, remove fields
           changes[key] = { add: [], remove: [] }
-          var newItems = []
           updatedValue[key].forEach(newItem => {
             // if the item already exists
-            var oldItem = findItemById(initialValue[key], newItem)
+            const oldItem = findItemById(initialValue[key], newItem)
 
             if (oldItem) {
               // only get what changed...
-              var itemChanges = getObjectChanges(oldItem, newItem)
+              const itemChanges = getObjectChanges(oldItem, newItem)
 
               // only add if there are changes
               if (!isEmpty(itemChanges)) {
@@ -86,7 +87,7 @@ export function getObjectChanges (initialValue, updatedValue) {
   Note: only catches duplicates that have an ID
 */
 function removeAddDuplicates (array) {
-  var i = 0
+  let i = 0
 
   // make sure newItems are unique as well
   return uniqby(array, (item) => {

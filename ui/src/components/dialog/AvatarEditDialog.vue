@@ -115,7 +115,7 @@ export default {
           if (image.blobId) image.blob = image.blobId
           delete image.blobId
 
-          let cleanImage = {}
+          const cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {
             if (key === '__typename') return
             if (key === 'type') return

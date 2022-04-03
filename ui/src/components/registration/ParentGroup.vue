@@ -80,15 +80,15 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     age () {
-      var age = calculateAge(this.profile.aliveInterval)
+      const age = calculateAge(this.profile.aliveInterval)
       if (age === null) return ''
       return age.toString()
     },
     grandParents () {
-      var grandparents = []
+      const grandparents = []
       if (this.profile.parents) {
-        this.profile.parents.map(grandparent => {
-          var profile = {
+        this.profile.parents.forEach(grandparent => {
+          const profile = {
             ...grandparent.profile,
             relationshipType: grandparent.relationshipType
           }

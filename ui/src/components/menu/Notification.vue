@@ -52,7 +52,7 @@ export default {
     },
     author () {
       if (this.notification.isPersonal) {
-        let message = this.notification.history.find(history => history.type === 'decision')
+        const message = this.notification.history.find(history => history.type === 'decision')
         if (message && this.notification.isAccepted) return message.author
         return this.notification.group
       }

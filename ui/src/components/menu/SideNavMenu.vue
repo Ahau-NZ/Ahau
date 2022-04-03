@@ -160,7 +160,7 @@ export default {
   },
   watch: {
     '$route.name' (name) {
-      var route = name.split('/')
+      const route = name.split('/')
       if (route[1] === 'profile' && this.mobile) this.offset = 260
       else if (route[1] === 'profile') this.offset = 135
     }
@@ -249,7 +249,7 @@ export default {
     },
     onScroll () {
       this.scroll = window.pageYOffset
-      var sideNav = this.$refs.sideNav
+      const sideNav = this.$refs.sideNav
 
       // TODO tidy this up by making methods?
       if (!this.mobile && this.activeComponent === 'profile') {

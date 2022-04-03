@@ -52,16 +52,20 @@ export default {
   data () {
     return {
       items: [
-        { src: require('@/assets/animations/replication-via-internet_css.svg'),
+        {
+          src: require('@/assets/animations/replication-via-internet_css.svg'),
           text: this.t('replication')
         },
-        { src: require('@/assets/animations/data-on-a-pātaka_css.svg'),
+        {
+          src: require('@/assets/animations/data-on-a-pātaka_css.svg'),
           text: this.t('onPataka')
         },
-        { src: require('@/assets/animations/corporate-server.svg'),
+        {
+          src: require('@/assets/animations/corporate-server.svg'),
           text: this.t('corporateServer')
         },
-        { src: require('@/assets/animations/alternative-servers.svg'),
+        {
+          src: require('@/assets/animations/alternative-servers.svg'),
           text: this.t('ahauServer')
         }
       ]

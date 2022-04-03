@@ -144,17 +144,17 @@ export default {
 
       // make sure the years only up to the minimum allowed year (given as a prop)
       const min = this.minDate.year
-      var maxYears = max - min + 1
+      const maxYears = max - min + 1
 
       // array to return
-      var years = [{ text: '', value: null }]
+      const years = [{ text: '', value: null }]
 
       // generates an array from 0 to max years
       Array(maxYears)
         .fill('')
         .forEach((v, i) => {
           // calculate the value of the current index e.g. (2020 - 0) = 2020, (2020 - 1) = 2019
-          var val = max - i
+          const val = max - i
 
           // if the current value is the current year
           if (val === max) {
@@ -163,8 +163,8 @@ export default {
             return
           }
 
-          var unspecified = this.unspecified(val)
-          var normalized = this.normalize(val)
+          const unspecified = this.unspecified(val)
+          const normalized = this.normalize(val)
 
           if (unspecified) {
             years.push({ value: unspecified, text: unspecified })
@@ -200,7 +200,7 @@ export default {
     // generates an array of days
     days () {
       // the array to return will always have the unspecified option
-      var days = [
+      const days = [
         { value: null, text: '' },
         { value: 'XX', text: 'XX' }
       ]
@@ -210,7 +210,7 @@ export default {
         .fill('')
         .forEach((v, i) => {
           // turns the current index into a double digit string e.g. 1 -> '01'
-          var indexString = this.intToDDString(i)
+          const indexString = this.intToDDString(i)
 
           // make sure we dont add 0
           if (i === 0) return
@@ -223,7 +223,7 @@ export default {
           }
 
           // otherwise, it does
-          var newDay = (i / 10).toString() + 'X'
+          const newDay = (i / 10).toString() + 'X'
           days.push({ value: indexString, text: indexString })
           days.push({ value: newDay, text: newDay })
         })
@@ -235,7 +235,7 @@ export default {
       TODO: change to get date in NZ
     */
     maxDate () {
-      var currentDate = new Date()
+      const currentDate = new Date()
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, '-')
@@ -279,7 +279,7 @@ export default {
       if (n.length === 0) return ''
     },
     normalize (n) {
-      var sign = ''
+      let sign = ''
       if (n < 0) {
         n *= -1
         sign = '-'
@@ -298,7 +298,7 @@ export default {
       }
     },
     unspecified (n) {
-      var sign = ''
+      let sign = ''
       if (n < 0) {
         n *= -1
         sign = '-'
@@ -326,7 +326,7 @@ export default {
       deep: true,
       handler (newValue) {
         try {
-          var date = convertDateObjToString(newValue)
+          const date = convertDateObjToString(newValue)
           this.errorMsg = null
           this.$emit('update:value', date)
         } catch (err) {
@@ -348,8 +348,8 @@ export default {
             }
           }
 
-          var str = value.edtf
-          var date = str.split('-')
+          const str = value.edtf
+          const date = str.split('-')
 
           if (str.charAt(0) === '-') {
             this.date.year = '-' + date[1]
@@ -376,8 +376,8 @@ export default {
             value = edtf(value)
           }
 
-          var str = value.edtf
-          var date = str.split('-')
+          const str = value.edtf
+          const date = str.split('-')
 
           if (str.charAt(0) === '-') {
             this.minDate.year = '-' + date[1]

@@ -101,7 +101,7 @@ export default {
     return {
       valid: false,
       formData: isEmpty(this.profile) ? setDefaultSubgroup(EMPTY_SUBGROUP) : setDefaultSubgroup(this.profile),
-      nameRules: [ v => !!v || 'Name is required' ]
+      nameRules: [v => !!v || 'Name is required']
     }
   },
   computed: {
@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     submit () {
-      var output = {}
+      let output = {}
       if (this.editing) {
         // get all changes
         output = getObjectChanges(setDefaultSubgroup(this.profile), this.formData)

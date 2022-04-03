@@ -279,13 +279,13 @@ export default {
     },
     async addPerson (input) {
       // if moveDup is in input than add duplink
-      if (input.hasOwnProperty('moveDup')) {
+      if ('moveDup' in input) {
         await this.addImportantRelationship(input)
         delete input.moveDup
       }
 
       // get children, parents, partners quick add links
-      var { id, children, parents, partners } = input
+      let { id, children, parents, partners } = input
       // remove them from input
       delete input.children
       delete input.parents
@@ -299,11 +299,12 @@ export default {
 
       const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
+      let child, parent, parentProfileId
       switch (this.dialogType) {
         case 'child':
         case 'sibling':
-          let child = id
-          const parentProfileId = this.dialogType === 'child'
+          child = id
+          parentProfileId = this.dialogType === 'child'
             ? this.selectedProfile.id
             : this.getParentNodeId(this.selectedProfile.id)
 
@@ -330,7 +331,7 @@ export default {
 
         case 'parent':
           child = this.selectedProfile.id
-          var parent = id
+          parent = id
 
           if (!isIgnoredProfile) {
             await this.createChildLink({
@@ -355,7 +356,7 @@ export default {
 
           if (child === this.view.focus) this.$emit('persist-focus', parent)
           else {
-            let parentId = this.getParentNodeId(child)
+            const parentId = this.getParentNodeId(child)
 
             // when a node already has a parent node above them, this will be called
             if (parentId) { // when a node already has a parent node above them, this will be called
@@ -479,11 +480,11 @@ export default {
     // TODO 2022-03-12 mix - move to vuex?
     async addImportantRelationship (input) {
       // Check if we are moving a partner connection
-      var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
+      const profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
 
       // check if there is already an existing important relationship
       const existingDupe = this.getImportantRelationship(profile.id)
-      var lessRelationship
+      let lessRelationship
 
       if (existingDupe) {
         // YES - there is an important relationship so we use that one instead
@@ -499,7 +500,7 @@ export default {
         if (!lessRelationship) return
       }
 
-      var importantRelationship = {
+      const importantRelationship = {
         profileId: profile.id
       }
 

@@ -160,7 +160,7 @@ export default {
     goWhakapapaIndex () {
       // check the group we are going to is an admin one
       const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
-      var type = this.$route.name.split('/whakapapa')[0]
+      const type = this.$route.name.split('/whakapapa')[0]
 
       if (parentGroup) {
         // navigate to the parent group instead if we found this group has one

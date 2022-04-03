@@ -128,7 +128,7 @@ export default {
     },
     recordCount () {
       if (this.recordCount !== this.collection.recordCount) {
-        let input = {
+        const input = {
           id: this.collection.id,
           recordCount: this.recordCount
         }

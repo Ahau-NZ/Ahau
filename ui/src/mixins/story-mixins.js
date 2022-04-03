@@ -92,7 +92,7 @@ export const methods = {
   async processStory (input) {
     if (!this.reload) throw new Error('the processStory mixin requires you have a reload function defined')
 
-    var {
+    const {
       artefacts,
       mentions,
       contributors,
@@ -106,7 +106,7 @@ export const methods = {
       const id = await this.saveStory(input)
 
       // get the full story
-      var story = await this.getStory(id)
+      let story = await this.getStory(id)
 
       await Promise.all(
         // save all link updates
@@ -177,7 +177,7 @@ export const methods = {
 
           // if the artefact didnt have an id, then it means we create the link
           if (!artefact.id) {
-            var artefactInput = {
+            const artefactInput = {
               type: TYPES.STORY_ARTEFACT,
               parent: story.id,
               child: artefactId,

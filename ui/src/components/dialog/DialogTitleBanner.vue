@@ -45,13 +45,13 @@ export default {
     splitTitle () {
       let titleObj = {}
       // check to see if is a maori & english title with the ---- in the middle
-      var str = this.title
-      var substr = '----'
+      const str = this.title
+      const substr = '----'
       if (str.indexOf(substr) !== -1) {
-        var delimiter = '-'
-        var start = 2
-        var maori = str.split(delimiter).slice(0, start + 1).join(delimiter)
-        var english = str.split(delimiter).slice(start).join(delimiter)
+        const delimiter = '-'
+        const start = 2
+        const maori = str.split(delimiter).slice(0, start + 1).join(delimiter)
+        const english = str.split(delimiter).slice(start).join(delimiter)
         titleObj = {
           maori: maori,
           english: english

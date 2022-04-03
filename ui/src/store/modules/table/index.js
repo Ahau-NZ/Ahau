@@ -28,7 +28,7 @@ export default function () {
       const root = rootGetters['tree/root']
       if (!root) return
 
-      var index = -1
+      let index = -1
       return rootGetters['tree/root'].eachBefore((n) => {
         n.x = state.settings.flatten ? 0.1 : n.depth * 15
         n.y = ++index * 30

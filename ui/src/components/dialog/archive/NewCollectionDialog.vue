@@ -34,9 +34,9 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 function setDefaultCollection (newCollection) {
-  var collection = clone(newCollection)
+  const collection = clone(newCollection)
 
-  var { stories } = collection
+  let { stories } = collection
 
   if (stories && stories.length > 0) {
     stories = stories.map(d => {
@@ -139,7 +139,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      var output = {}
+      let output = {}
 
       if (this.editing) {
         output = {

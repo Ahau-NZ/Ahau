@@ -25,7 +25,7 @@ export const EMPTY_COMMUNITY = {
 }
 
 export function setDefaultCommunity (newCommunity) {
-  var community = clone(newCommunity)
+  const community = clone(newCommunity)
 
   return {
     id: community.id,
@@ -56,7 +56,7 @@ export const EMPTY_SUBGROUP = {
 }
 
 export function setDefaultSubgroup (newSubgroup) {
-  var subGroup = clone(newSubgroup)
+  const subGroup = clone(newSubgroup)
 
   return {
     id: subGroup.id,

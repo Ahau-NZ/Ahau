@@ -314,8 +314,8 @@ export default {
       }
     },
     storyDate () {
-      var start = this.formData.recordDate
-      var end = this.formData.recordEndDate
+      const start = this.formData.recordDate
+      const end = this.formData.recordEndDate
       if (start && end) {
         return start + '-' + end
       }

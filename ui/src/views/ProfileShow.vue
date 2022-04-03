@@ -233,7 +233,7 @@ export default {
       return this.profile.type === 'community'
     },
     length () {
-      var name = ''
+      let name = ''
       if (this.profile.legalName) name = this.profile.legalName
       else if (this.profile.preferredName) name = this.profile.preferredName
       if (name.length > 30) return 'font-size:6vw; text-align:center; margin-left:15px; margin-right:15px'

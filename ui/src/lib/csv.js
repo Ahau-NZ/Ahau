@@ -60,14 +60,14 @@ function importCsv (file) {
 }
 
 function parse (fileContent) {
-  var count = 0
-  var errors = []
+  let count = 0
+  let errors = []
 
   return new Promise((resolve, reject) => {
     const seen = new Set()
 
     const csv = d3CsvParse(fileContent, (d, i) => {
-      var row = i + 1
+      const row = i + 1
 
       if (i === 0 && !isEmpty(d.parentNumber)) {
         errors.push({ row, field: 'parentNumber', error: 'the first parent number must be empty', value: d.parentNumber })
@@ -89,7 +89,7 @@ function parse (fileContent) {
         d.bornAt = convertDate(d.bornAt)
         d.diedAt = convertDate(d.diedAt)
 
-        var aliveInterval = `${d.bornAt}/${d.diedAt}`
+        let aliveInterval = `${d.bornAt}/${d.diedAt}`
 
         // validate the dates make up a valid interval
         if (!isValidInterval(aliveInterval)) {
@@ -278,7 +278,7 @@ function personErrors (d, row) {
   // d = a particular rows data
   // i = row number
 
-  var errors = []
+  const errors = []
   // loops through the schema and validates the relevant fields
   Object.keys(schema)
     .filter(key => !schema[key].action(d[key])) // the action is the validation function for this key
@@ -356,7 +356,7 @@ function isString (d) {
   return typeof d === 'string'
 }
 
-var dateRegex = /^(0[1-9]|[0-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
+const dateRegex = /^(0[1-9]|[0-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
 
 function isValidDate (d) {
   return isEmpty(d) || dateRegex.test(d)
@@ -389,7 +389,7 @@ function isValidNumber (d) {
   as given by d3.csvParse()
 */
 function headerColumnErrors (headers) {
-  var errors = []
+  const errors = []
 
   const missingColumns = PERMITTED_CSV_COLUMNS.filter(d => {
     return !headers.includes(d)
@@ -416,16 +416,16 @@ function headerColumnErrors (headers) {
 function convertDate (date) {
   if (!date) return ''
   // the date is valid so we can convert it
-  var [day, month, year] = date.replace(/\//g, '-').split('-')
+  let [day, month, year] = date.replace(/\//g, '-').split('-')
   day = convertDigit(day)
   month = convertDigit(month)
-  var _date = `${year}-${month}-${day}`
+  const _date = `${year}-${month}-${day}`
 
   return _date
 }
 
 function convertToSet (str) {
-  var set = { add: [] }
+  const set = { add: [] }
   if (str.indexOf(', ') > -1) {
     str = str.split(',')
     str.forEach(i => set.add.push(i))
@@ -459,8 +459,8 @@ function convertDigit (digit) {
 }
 
 function downloadCsv () {
-  var csv = PERMITTED_CSV_COLUMNS.join(',') + '\n'
-  var hiddenElement = document.createElement('a')
+  const csv = PERMITTED_CSV_COLUMNS.join(',') + '\n'
+  const hiddenElement = document.createElement('a')
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
   hiddenElement.target = '_blank'
   hiddenElement.download = 'whakapapa.csv'

@@ -49,7 +49,7 @@ export default {
 
       const artefacts = await Promise.all(
         files.map(async file => {
-          var artefact = await this.processArtefact(file)
+          const artefact = await this.processArtefact(file)
           this.processing = this.processing - 1
           return artefact
         })
@@ -58,7 +58,7 @@ export default {
       this.$emit('artefacts', artefacts.filter(Boolean))
     },
     async processArtefact (file) {
-      let [ type ] = file.type.split('/')
+      let [type] = file.type.split('/')
       if (type === 'image') type = 'photo'
       else if (type === 'application' || type === 'text') type = 'document'
 

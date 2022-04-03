@@ -557,7 +557,7 @@ export default {
     async groupId (id) {
       if (!id) return
 
-      var storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
+      const storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
       this.stories = storyRes.data.stories
       this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', id)
     },
@@ -583,7 +583,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     totalCharLength () {
-      var data = this.formData
+      const data = this.formData
       function calc (src) {
         return src ? src.length : 0
       }

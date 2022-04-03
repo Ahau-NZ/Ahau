@@ -58,8 +58,7 @@ import { mapGetters, mapActions } from 'vuex'
 import {
   select as d3Select,
   zoom as d3Zoom,
-  zoomIdentity as d3ZoomIdentity,
-  event as d3Event
+  zoomIdentity as d3ZoomIdentity
 } from 'd3'
 
 import SubTree from './SubTree'
@@ -160,25 +159,21 @@ export default {
     ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
 
     zoom () {
-      var svg = d3Select('#baseSvg')
-      var g = d3Select('#baseGroup')
+      const svg = d3Select('#baseSvg')
+      const g = d3Select('#baseGroup')
 
       svg.call(
         d3Zoom()
           .scaleExtent([0.05, 2])
-          .on('zoom', function () {
-            g.attr('transform', d3Event.transform)
-          })
+          .on('zoom', (event) => g.attr('transform', event.transform))
       )
         .on('dblclick.zoom', null)
     },
     scale () {
-      var svg = d3Select('#baseSvg')
-      var g = d3Select('#baseGroup')
-      var zoom = d3Zoom()
-        .on('zoom', function () {
-          g.attr('transform', d3Event.transform)
-        })
+      const svg = d3Select('#baseSvg')
+      const g = d3Select('#baseGroup')
+      const zoom = d3Zoom()
+        .on('zoom', (event) => g.attr('transform', event.transform))
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 
@@ -222,37 +217,35 @@ export default {
 
       this.nodeCentered = node.data.id
 
-      var width = this.$refs.tree.clientWidth
-      var height = this.$refs.tree.clientHeight
+      const width = this.$refs.tree.clientWidth
+      const height = this.$refs.tree.clientHeight
 
-      var x = width / 2 - node.x
-      var y = height / 2 - node.y + 150
+      const x = width / 2 - node.x
+      const y = height / 2 - node.y + 150
 
       this.moveTo(x, y)
     },
 
     zoomInOut (scale) {
-      var svg = d3Select('#baseSvg')
-      var g = d3Select('#baseGroup')
+      const svg = d3Select('#baseSvg')
+      const g = d3Select('#baseGroup')
 
-      var zoom = d3Zoom()
+      const zoom = d3Zoom()
         .scaleExtent([0.05, 2])
-        .on('zoom', function () {
-          g.attr('transform', d3Event.transform)
-        })
+        .on('zoom', (event) => g.attr('transform', event.transform))
 
       zoom.scaleBy(svg.transition().duration(150), scale)
     },
     zoomReset () {
-      var svg = d3Select('#baseSvg')
-      var g = d3Select('#baseGroup')
+      const svg = d3Select('#baseSvg')
+      const g = d3Select('#baseGroup')
 
-      var width = this.$refs.tree.clientWidth
-      var height = this.$refs.tree.clientHeight
+      const width = this.$refs.tree.clientWidth
+      const height = this.$refs.tree.clientHeight
       g.transition()
         .duration(400)
         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
-        .on('end', function () {
+        .on('end', (event) => {
           svg.call(
             d3Zoom().transform,
             d3ZoomIdentity.translate((width / 2), (height / 2))

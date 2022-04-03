@@ -446,12 +446,12 @@ export default {
       return ''
     },
     age () {
-      var age = calculateAge(this.personalProfile.aliveInterval)
+      const age = calculateAge(this.personalProfile.aliveInterval)
       if (age === null) return ' '
       return age.toString()
     },
     length () {
-      var name = ''
+      let name = ''
       if (this.profile.legalName) name = this.profile.legalName
       else if (this.profile.preferredName) name = this.profile.preferredName
       if (name.length > 30) return 'font-size:6vw'

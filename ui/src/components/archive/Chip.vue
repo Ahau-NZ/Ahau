@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     colour () {
-      var artefacts = this.chip.artefacts
+      const artefacts = this.chip.artefacts
       if (artefacts) {
         if (artefacts.length > 0) {
           if (artefacts[0].artefact.type === 'photo') return colours[1]
@@ -73,7 +73,7 @@ export default {
       if (this.image) return true
       if (this.chip.image && this.chip.uri) return true
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
-        var artefact = this.chip.artefacts[0].artefact
+        const artefact = this.chip.artefacts[0].artefact
         if (artefact.type === 'photo') {
           return true
         }
