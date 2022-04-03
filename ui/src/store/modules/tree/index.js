@@ -1,3 +1,5 @@
+/* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
+
 import {
   tree as d3Tree,
   hierarchy as d3Hierarchy
@@ -10,7 +12,7 @@ import {
   layoutSecondaryLinks
 } from './lib'
 
-import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE } from './constants'
+import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE, COUSIN_SPACE } from './constants'
 import calculateAge from '../../../lib/calculate-age'
 
 export default function () {
@@ -30,27 +32,44 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
+    countPartnersBetween: (state, getters) => (nodeA, nodeB) => {
+      const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
+      let partnersBetween = 0
+      let count
+
+      // count the num partners on the right of the leftNode
+      count = getters.countPartners(leftNode)
+      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
+
+      // add the num partners on the left of rightNode
+      count = getters.countPartners(rightNode)
+      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
+
+      return partnersBetween
+    },
     distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
       // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
-      const { countPartners } = getters
 
-      const combinedPartners = countPartners(nodeA) + countPartners(nodeB)
+      const partnersBetween = getters.countPartnersBetween(nodeA, nodeB)
 
-      if (nodeA.parent === nodeB.parent) { // nodes are siblings
+      /* if nodes are siblings */
+      if (nodeA.parent === nodeB.parent) {
         return (
           RADIUS +
-          (Math.ceil(combinedPartners / 2) * (PARTNER_SPACE + 2 * PARTNER_RADIUS)) +
+          (partnersBetween * (PARTNER_SPACE + 2 * PARTNER_RADIUS)) +
           SIBLING_SPACE +
           RADIUS
         ) / NODE_SIZE_X
-        // a cheaper approximation:
-        // return 1 + combinedPartners / 2
       }
-
-      // NOTE - could be cousins
-      // (i.e. nodeA.parent.parent === nodeB.parent.parent), but not necessarily
-      const parentsCombinedPartners = countPartners(nodeA.parent) + countPartners(nodeB.parent)
-      return 1 + combinedPartners / 2 + parentsCombinedPartners / 4
+      /* if nodes are more distant */
+      else {
+        return (
+          RADIUS +
+          (partnersBetween * (PARTNER_SPACE + 2 * PARTNER_RADIUS)) +
+          COUSIN_SPACE + // <<< this is bigger than sibling spacing
+          RADIUS
+        ) / NODE_SIZE_X
+      }
     },
 
     layout (state, getters) {
