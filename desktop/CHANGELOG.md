@@ -1,5 +1,20 @@
 # Changelog | Ahau desktop
 
+## v2.9.2
+
+### Features
+
+- updated various front-end dependencies
+  
+### Bug Fixes
+
+- fixed bug where ignored profiles werent showing up in the SideNodeDialog
+- fixed bug where partner nodes were sometimes overlapping
+- fixed bug where partner links were on the same y-axis
+- fixed errors in the console when opening the SideNodeDialog
+- fixed text on a WhakapapaViewCard that said "1 people" instead of "1 person"
+- fixed a bug when adding a person using the quick add feature wasnt applying a change in the relationshipType
+
 ## v2.9.1
 
 ### Features
@@ -28,7 +43,7 @@
     - currently follow the first ancenstor link created for that node. can customise this in future
 
 
-### Bugfixes
+### Bug Fixes
 
 - if you're a kaitiaki and edit a profile, it now correctly updates details in the graph
     - bug was that it was saving to kaitiaki subgroup (and those details aren't shown in UI)
