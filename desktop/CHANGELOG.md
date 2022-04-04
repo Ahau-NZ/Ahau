@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.9.3
+
+### Bug Fixes
+
+- fix bug in 2.9.2 where default icons werent loading in production
+
 ## v2.9.2
 
 ### Features
