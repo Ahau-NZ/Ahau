@@ -61,33 +61,33 @@ export default {
     return {
       items: [
         {
-          src: require('../../../assets/images/add-record.png'),
+          src: require('@/assets/images/add-record.png'),
           text: this.t('itemsStories')
         },
         {
-          src: require('../../../assets/images/edit-artefact.png'),
+          src: require('@/assets/images/edit-artefact.png'),
           text: this.t('itemsArtefacts')
         },
         {
-          src: require('../../../assets/images/view-archive.png'),
+          src: require('@/assets/images/view-archive.png'),
           text: this.t('itemsViewAll')
         },
         {
-          src: require('../../../assets/images/view-story.png'),
+          src: require('@/assets/images/view-story.png'),
           text: this.t('itemsIndividual')
         }
       ],
       mobileItems: [
         {
-          src: require('../../../assets/images/mobile-add-record.png'),
+          src: require('@/assets/images/mobile-add-record.png'),
           text: this.t('itemsStories')
         },
         {
-          src: require('../../../assets/images/mobile-edit-artefact.png'),
+          src: require('@/assets/images/mobile-edit-artefact.png'),
           text: this.t('itemsArtefacts')
         },
         {
-          src: require('../../../assets/images/mobile-view-archive.png'),
+          src: require('@/assets/images/mobile-view-archive.png'),
           text: this.t('itemsViewAll')
         }
       ]

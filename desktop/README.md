@@ -109,7 +109,8 @@ If you don't want to build and publish full installers you can manually run part
 
 - `npm run build-ui:desktop` (from root directory) makes a production build of ui
 - `npm run dist` (in the desktop folder) takes built ui and this desktop folder and builds an installer (without auto-publishing)
-  - if you run this command you don't have to rebuild the ui for production = faster!
-  - if you want to skip signing, temporarily remove `electron-builder.env` = faster!
+  - if you want to skip notorization for Mac:
+    - temporarily comment out the `afterSign` config in `desktop/electron-builder.config.js`
+  - NOTE: if you have made changes to the UI, they wont be included in the installer, unless you have run `npm run build-ui:desktop` again.
 
 Output won't be in `releases/desktop` rather `desktop/dist/installers`

@@ -94,7 +94,7 @@ export default {
       rgba(255, 255, 255, 0.99),
       rgba(255, 255, 255, 0.8)
     ),
-    url(../assets/niho.svg);
+    url(@/assets/niho.svg);
   background-position-x: -450px;
   background-attachment: fixed;
   background-repeat: no-repeat;

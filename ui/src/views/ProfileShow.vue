@@ -385,7 +385,7 @@ export default {
 
 .niho-bg {
   background: linear-gradient(to right, rgba(255, 255, 255, 0.8),
-  rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+  rgba(255, 255, 255, 0.7)), url(@/assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;

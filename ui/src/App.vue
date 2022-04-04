@@ -175,14 +175,14 @@ body {
   --primary-background: #303030;
 
   &.page--login {
-    background: url(./assets/niho.svg);
+    background: url(@/assets/niho.svg);
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-size: cover;
     background-position-y: 10vh;
   }
   &.page--whakapapaindex {
-    background: url(./assets/niho.svg);
+    background: url(@/assets/niho.svg);
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-position-x: 150%;

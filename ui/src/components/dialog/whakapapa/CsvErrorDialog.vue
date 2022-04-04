@@ -50,8 +50,8 @@ export default {
         { text: 'Value given', value: 'value' }
       ],
       items: [
-        { src: require('../../../assets/tree.jpg') },
-        { src: require('../../../assets/whakapapa-list.jpg') }
+        { src: require('@/assets/tree.jpg') },
+        { src: require('@/assets/whakapapa-list.jpg') }
       ]
     }
   },
