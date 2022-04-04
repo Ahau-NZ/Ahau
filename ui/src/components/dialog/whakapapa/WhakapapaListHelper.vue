@@ -48,11 +48,11 @@ export default {
     return {
       items: [
         {
-          src: require('../../../assets/tree.jpg'),
+          src: require('@/assets/tree.jpg'),
           text: 'an example whakapapa'
         },
         {
-          src: require('../../../assets/whakapapa-list.jpg'),
+          src: require('@/assets/whakapapa-list.jpg'),
           text: 'list of whakapapa records'
         }
       ]

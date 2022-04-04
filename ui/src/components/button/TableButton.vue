@@ -11,7 +11,7 @@
   <v-tooltip v-else bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle" fab x-small color="black">
-            <img width="25" src="../../assets/icons/tree-white.svg" alt="tree">
+            <img width="25" src="@/assets/icons/tree-white.svg" alt="tree">
         </v-btn>
     </template>
     <span>Whakapapa</span>

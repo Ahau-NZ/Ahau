@@ -107,8 +107,8 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/tree.jpg') },
-        { src: require('../../../assets/whakapapa-list.jpg') }
+        { src: require('@/assets/tree.jpg') },
+        { src: require('@/assets/whakapapa-list.jpg') }
       ],
       fields: [
         { name: 'preferredName', description: 'Name the person is known by. Generally, the first name or even a nick name.', formats: ['Text'] },

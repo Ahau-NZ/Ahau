@@ -264,7 +264,7 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
-  background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.88)), url(../../assets/niho.svg);
+  background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.88)), url(@/assets/niho.svg);
   background-repeat: no-repeat;
   background-size: cover;
 }
