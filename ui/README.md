@@ -22,8 +22,12 @@ $ npm install
 $ npm run dev
 ```
 
+**NOTE**
+- `browserslist` is currently set to the version of Electron we're using
+    - this may need to change to support mobile builds in future
+    - run `npx browserslist` to see what the current rules are resolving to (see package.json)
 
-TODO
+**TODO**
     - describe how these tools are used in concert
     - upgrade to `storybook@6`
         - [migration docs >>](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#from-version-53x-to-60x)

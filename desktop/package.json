@@ -58,9 +58,6 @@
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
   },
-  "browserslist": [
-    "Electron >= 12.2.2 and Electron < 13"
-  ],
   "author": "Āhau Ltd.",
   "repository": {
     "type": "git",
