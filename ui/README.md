@@ -22,6 +22,10 @@ $ npm install
 $ npm run dev
 ```
 
+**NOTE**
+- `browserslist` is currently set to the version of Electron we're using
+    - this may need to change to support mobile builds in future
+    - run `npx browserslist` to see what the current rules are resolving to (see package.json)
 
 ### TODO
 
