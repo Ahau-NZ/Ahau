@@ -5,24 +5,46 @@ module.exports = {
   directories: {
     output: 'dist/installers'
   },
-  files: fileRules([
-    /* local setup */
-    '!build/node_modules',
-    '!dist/installers',
-    '!electron-builder.env',
+  files: [
+    '!build',
+    '!node_modules',
+    '!*.env*',
 
-    // sodium-native - drop un-needed prebuilds
-    '!node_modules/sodium-native/{prebuilds/*, deps, test, binding.*, *.md}',
+    /* electron main process */
+    'index.bundle.js',
+
+    /* native bindings  (dependencies of main.bundle.js) */
+    'node_modules/node-gyp-build/index.js',
+
+    'node_modules/ssb-ahau/src/migrations/',
+
+    'node_modules/sodium-chloride/index.js',
+
+    'node_modules/sodium-native/index.js',
     'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    // leveldown - drop un-needed prebuilds
-    '!node_modules/leveldown/{prebuilds/*, deps, binding.*, *.md}',
+    'node_modules/leveldown/index.js',
     'node_modules/leveldown/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    // es-abstract
-    '!node_modules/es-abstract/',
-    'node_modules/es-abstract/helpers/getOwnPropertyDescriptor.js'
-  ]),
+    'node_modules/utp-native/index.js',
+    'node_modules/utp-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
+
+    /* UI files (referenced by index.bundle.js) */
+    'dist',
+    '!dist/installers',
+
+    /* ssb-ahoy ui-window dependency */
+    'node_modules/ssb-ahoy/electron/preload.js'
+  ],
+
+  // NOTE how to figure out what's needed:
+  //   1. run `npm run dist`
+  //   2. try to launch the output (see dist/installers/*.AppImage etc)
+  //   3. read the errors about what's missing and add it above
+  //
+  // NOTE that we have to include ! (not) rules in files, otherwise
+  // electron-builder auto-adds **/*  (add everything!)
+
   publish: [{
     provider: 'github',
     owner: 'ahau-nz',
@@ -78,25 +100,4 @@ module.exports = {
     include: 'build/win/add-missing-dll.nsh' // fixes missing VCRUNTIME140.dll
     // source: https://github.com/sodium-friends/sodium-native/issues/100
   }
-}
-
-function fileRules (rules) {
-  // defaults from electron-builder
-  //   https://www.electron.build/configuration/contents#files
-  const defaults = [
-    '**/*',
-    '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
-    '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
-    '!**/node_modules/*.d.ts',
-    '!**/node_modules/.bin',
-    '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
-    '!.editorconfig',
-    '!**/._*',
-    '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
-    '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
-    '!**/{appveyor.yml,.travis.yml,circle.yml}',
-    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
-  ]
-
-  return [...defaults, ...rules]
 }

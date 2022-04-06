@@ -3,13 +3,15 @@
   "version": "2.9.3",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
+  "main": "main.bundle.js",
   "scripts": {
-    "start": "electron index.js -- --title Āhau",
-    "dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
+    "start": "electron main.bundle.js -- --title Āhau",
+    "dev": "cross-env NODE_ENV=development electron main.js -- --title Āhau",
+    "build:main": "noderify main.js > main.bundle.js",
     "build:icons": "node build/build-icons.js",
-    "pack": "electron-builder --config build/electron-builder.config.js --dir",
-    "dist": "electron-builder --config build/electron-builder.config.js",
-    "publish": "electron-builder --config build/electron-builder.config.js --publish always",
+    "dist": "npm run build:main && electron-builder --config build/electron-builder.config.js",
+    "pack": "npm run dist -- --dir",
+    "publish": "npm run dist -- --publish always",
     "clear": "rm -rf node_modules",
     "win:clear": "rmdir /s /q node_modules"
   },
@@ -21,7 +23,7 @@
     "lodash.merge": "^4.6.2",
     "secret-stack": "^6.4.1",
     "ssb-ahau": "^14.5.3",
-    "ssb-ahoy": "github:ssbc/ssb-ahoy#main_server",
+    "ssb-ahoy": "^5.0.0",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.0",
@@ -50,6 +52,7 @@
     "cross-env": "^7.0.2",
     "electron-notarize": "^1.0.0",
     "esm": "^3.2.25",
+    "noderify": "^5.1.0",
     "typescript": "^3.7.2"
   },
   "engines": {
