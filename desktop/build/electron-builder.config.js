@@ -6,6 +6,11 @@ module.exports = {
     output: 'dist/installers'
   },
   files: fileRules([
+    /* local setup */
+    '!build/node_modules',
+    '!dist/installers',
+    '!electron-builder.env',
+
     // sodium-native - drop un-needed prebuilds
     '!node_modules/sodium-native/{prebuilds/*, deps, test, binding.*, *.md}',
     'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
