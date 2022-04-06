@@ -100,9 +100,6 @@
     "vue-template-compiler": "^2.6.14",
     "vuetify-loader": "^1.7.0"
   },
-  "browserslist": [
-    "Electron >= 12.2.2 and Electron < 13"
-  ],
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "license": "AGPL-3.0",
   "repository": {

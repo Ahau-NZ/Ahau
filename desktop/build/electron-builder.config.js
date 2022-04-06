@@ -11,7 +11,7 @@ module.exports = {
     '!*.env*',
 
     /* electron main process */
-    'index.bundle.js',
+    'main.bundle.js',
 
     /* native bindings  (dependencies of main.bundle.js) */
     'node_modules/node-gyp-build/index.js',
