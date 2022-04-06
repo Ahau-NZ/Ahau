@@ -145,6 +145,7 @@ import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
 
 export default {
+  name: 'WhakapapaTable',
   props: {
     searchNodeId: String,
     searchNodeEvent: {

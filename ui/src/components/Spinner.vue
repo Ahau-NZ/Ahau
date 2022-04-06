@@ -17,7 +17,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Spinner',
+  name: 'LoadingSpinner',
   computed: {
     ...mapGetters(['loadingState']),
     label () {

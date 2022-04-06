@@ -120,12 +120,9 @@ export default {
 
       return getTribalProfile(this.selectedSubGroup, this.whoami)
     },
-    membersInKaitiakiGroup () {
-      return this.formData.authors
-    },
     membersNotInKaitiakiGroup () {
       return this.parentGroup && this.parentGroup.members.filter(d => {
-        return !this.membersInKaitiakiGroup.some(m => m.feedId === d.feedId)
+        return !this.formData.authors.some(m => m.feedId === d.feedId)
       })
     }
   },
@@ -143,7 +140,9 @@ export default {
     //   this.subGroups = await this.getSubGroups(this.tribe.id)
     // },
     async addMember (member) {
-      this.formData.authors.push(member)
+      const formData = this.formData
+      formData.authors.push(member)
+      this.$emit('update:formData', formData)
       this.showKaitiaki = false
     },
     isCurrentKaitiaki (kaitiaki) {
@@ -152,7 +151,9 @@ export default {
     deleteKaitiaki (tiaki) {
       const index = this.formData.authors.indexOf(tiaki)
       if (index > -1) {
-        this.formData.authors.splice(index, 1)
+        const formData = this.formData
+        formData.authors.splice(index, 1)
+        this.$emit('update:formData', formData)
       }
     },
     async addSubGroup ($event) {

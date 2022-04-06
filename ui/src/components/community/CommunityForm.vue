@@ -78,11 +78,20 @@ export default {
     ImagePicker
   },
   props: {
-    formData: Object
+    communityProfile: Object
   },
   data () {
     return {
+      formData: this.communityProfile,
       allowJoiningQuestions: false
+    }
+  },
+  watch: {
+    formData: {
+      deep: true,
+      handler (formData) {
+        this.$emit('update:communityProfile', formData)
+      }
     }
   },
   computed: {

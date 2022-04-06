@@ -93,7 +93,7 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 import { RADIUS, PARTNER_RADIUS } from '@/store/modules/tree/constants'
 
 export default {
-  name: 'Node',
+  name: 'TreeNode',
   props: {
     profileId: { type: String, required: true },
     x: { type: Number, default: 0 },

@@ -1,6 +1,6 @@
 <template>
   <!-- coming soon dialog  -->
-  <v-dialog v-model="show" max-width="450">
+  <v-dialog v-model="showDialog" max-width="450">
     <v-card>
       <v-card-title class="headline">Aroha mai</v-card-title>
       <v-card-text>
@@ -20,6 +20,11 @@ export default {
   name: 'ComingSoonDialog',
   props: {
     show: { type: Boolean, required: true }
+  },
+  data () {
+    return {
+      showDialog: this.show
+    }
   },
   methods: {
     close () {

@@ -11,7 +11,7 @@
           :color="color"
           text
           v-bind="attrs"
-          @click="show = false"
+          @click="showMessage = false"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>

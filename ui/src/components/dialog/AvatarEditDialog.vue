@@ -91,41 +91,37 @@ export default {
       this.$emit('close')
     },
     async submit () {
-      try {
-        const canvas = this.$refs.avatar.clip({
-          maxWPixel: this.type === 'header' ? 1920 : 800
+      const canvas = this.$refs.avatar.clip({
+        maxWPixel: this.type === 'header' ? 1920 : 800
+      })
+      canvas.toBlob(async blob => {
+        const file = makeFile(blob)
+
+        if (file.size >= 5 * 1024 * 1024) {
+          console.error('this avatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')
+          throw new Error('avatar image must me < 5MB')
+        }
+
+        const image = await this.uploadFile({ file, encrypt: true })
+
+        if (image.mimeType === null) image.mimeType = file.type
+        // TODO: HACK until mimeType: Hello World gets solved
+        if (image.mimeType === 'Hello World') {
+          image.mimeType = file.type
+        }
+
+        // NOTE: ssb-profile blobs uses blob.blob not blob.blobId (which are the artefact style)
+        if (image.blobId) image.blob = image.blobId
+        delete image.blobId
+
+        const cleanImage = {}
+        Object.entries(image).forEach(([key, value]) => {
+          if (key === '__typename') return
+          if (key === 'type') return
+          cleanImage[key] = value
         })
-        canvas.toBlob(async blob => {
-          const file = makeFile(blob)
-
-          if (file.size >= 5 * 1024 * 1024) {
-            console.error('this avatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')
-            throw new Error('avatar image must me < 5MB')
-          }
-
-          const image = await this.uploadFile({ file, encrypt: true })
-
-          if (image.mimeType === null) image.mimeType = file.type
-          // TODO: HACK until mimeType: Hello World gets solved
-          if (image.mimeType === 'Hello World') {
-            image.mimeType = file.type
-          }
-
-          // NOTE: ssb-profile blobs uses blob.blob not blob.blobId (which are the artefact style)
-          if (image.blobId) image.blob = image.blobId
-          delete image.blobId
-
-          const cleanImage = {}
-          Object.entries(image).forEach(([key, value]) => {
-            if (key === '__typename') return
-            if (key === 'type') return
-            cleanImage[key] = value
-          })
-          this.$emit('submit', cleanImage)
-        })
-      } catch (error) {
-        throw error
-      }
+        this.$emit('submit', cleanImage)
+      })
     }
   }
 }

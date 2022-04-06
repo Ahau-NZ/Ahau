@@ -77,7 +77,7 @@ import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { VueContext } from 'vue-context'
 
 export default {
-  name: 'Archive',
+  name: 'StoryArchive',
   props: {
     profile: {
       type: Object,

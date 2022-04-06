@@ -46,7 +46,7 @@
       <v-tabs-items light v-model="tab">
         <v-tab-item value="tab-1">
           <v-col class="py-0">
-            <CommunityForm :editing="editing" :formData.sync="formData" />
+            <CommunityForm :editing="editing" :communityProfile.sync="formData" />
           </v-col>
         </v-tab-item>
         <v-tab-item value="tab-2">

@@ -41,7 +41,7 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'Discovery',
+  name: 'CommunityDiscovery',
   components: {
     // CommunitiesNav,
     CommunitiesList,

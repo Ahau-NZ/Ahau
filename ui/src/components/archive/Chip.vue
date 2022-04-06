@@ -43,7 +43,7 @@
 import { colours } from '@/lib/colours.js'
 
 export default {
-  name: 'Chip',
+  name: 'StoryChip',
   props: {
     title: String,
     description: String,

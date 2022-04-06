@@ -72,7 +72,7 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 export default {
-  name: 'Avatar',
+  name: 'ProfileAvatar',
   props: {
     image: Object,
     alt: String,

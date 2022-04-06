@@ -158,7 +158,7 @@ export default {
     return {
       suggestions: [],
       timer: undefined,
-      formData: setDefaultData(this.allowRelationships),
+      formData: null,
       hasSelection: false, // TODO - describe what this does
       closeSuggestions: [],
       profile: {}, // the profile state in the form
@@ -176,6 +176,7 @@ export default {
     }
   },
   async mounted () {
+    this.formData = setDefaultData(this.allowRelationships)
     this.closeSuggestions = await this.getCloseSuggestions()
 
     if (this.$route.name !== 'login' && this.selectedProfile) {

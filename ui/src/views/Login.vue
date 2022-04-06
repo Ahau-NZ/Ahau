@@ -93,6 +93,7 @@ For each other
 `
 
 export default {
+  name: 'AhauLogin',
   props: {
     mobileServerLoaded: { type: Boolean, default: false }
   },

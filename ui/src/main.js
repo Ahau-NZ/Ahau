@@ -27,6 +27,7 @@ VuexRouterSync.sync(store, router)
 async function main () {
   function startVue () {
     new Vue({
+      name: 'AhauMain',
       router,
       store,
 

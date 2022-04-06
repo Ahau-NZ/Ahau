@@ -62,7 +62,7 @@ import NodeMenuButton from '../tree/NodeMenuButton.vue'
 // import flower.svg from '@/src/assets'
 
 export default {
-  name: 'Node',
+  name: 'TableNode',
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },

@@ -109,7 +109,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import { isCordova } from '@/lib/cordova-helpers'
 
 export default {
-  name: 'Dialog',
+  name: 'DialogContainer',
   props: {
     show: Boolean,
     isEditing: Boolean,
