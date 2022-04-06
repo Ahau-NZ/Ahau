@@ -149,7 +149,7 @@ export default {
       return this.profile && this.profile.authors.some(m => m.feedId === kaitiaki.feedId)
     },
     deleteKaitiaki (tiaki) {
-      const index = this.authors.indexOf(tiaki)
+      const index = this.formData.authors.indexOf(tiaki)
       if (index > -1) {
         const formData = this.formData
         formData.authors.splice(index, 1)

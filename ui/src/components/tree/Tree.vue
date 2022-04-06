@@ -65,6 +65,7 @@ import SubTree from './SubTree'
 import settings from '@/lib/link.js'
 
 export default {
+  name: 'WhakapapaTree',
   props: {
     searchNodeId: String,
     getRelatives: Function,
