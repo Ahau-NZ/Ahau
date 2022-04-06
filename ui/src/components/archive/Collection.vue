@@ -40,7 +40,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import niho from '@/assets/niho.svg'
 
 export default {
-  name: 'Collection',
+  name: 'CollectionCard',
   props: ['collection', 'selected'],
   components: { AvatarGroup },
   computed: {

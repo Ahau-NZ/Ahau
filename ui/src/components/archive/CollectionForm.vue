@@ -119,9 +119,7 @@ export default {
     ProfileSearchBar
   },
   props: {
-    formData: {
-      type: Object
-    },
+    collection: Object,
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
@@ -130,12 +128,21 @@ export default {
   ],
   data () {
     return {
+      formData: this.collection,
       form: {
         valid: true,
         rules: RULES
       },
       stories: [],
       showStories: false
+    }
+  },
+  watch: {
+    formData: {
+      deep: true,
+      handler (formData) {
+        this.$emit('update:collection', formData)
+      }
     }
   },
   computed: {

@@ -163,7 +163,7 @@ To return to everyday activities
 `
 
 export default {
-  name: 'Appbar',
+  name: 'AppBar',
   props: {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },

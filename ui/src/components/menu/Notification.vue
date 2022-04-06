@@ -23,7 +23,7 @@
 import Avatar from '@/components/Avatar'
 
 export default {
-  name: 'Notification',
+  name: 'NotificationListItem',
   props: {
     notification: Object,
     showBadge: Boolean

@@ -8,7 +8,7 @@
       <RecordForm
         ref="recordForm"
         :editing="editing"
-        :formData.sync="formData"
+        :story.sync="formData"
         :groupId="currentAccess && currentAccess.groupId"
         :collection="collection"
       />

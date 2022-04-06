@@ -508,9 +508,7 @@ export default {
     DateIntervalPicker
   },
   props: {
-    formData: {
-      type: Object
-    },
+    story: Object,
     editing: Boolean,
     groupId: String,
     collection: Object
@@ -521,6 +519,7 @@ export default {
   ],
   data () {
     return {
+      formData: this.story,
       stories: [],
       dialog: null,
       index: 0,
@@ -554,6 +553,12 @@ export default {
     }
   },
   watch: {
+    formData: {
+      deep: true,
+      handler (formData) {
+        this.$emit('update:story', formData)
+      }
+    },
     async groupId (id) {
       if (!id) return
 

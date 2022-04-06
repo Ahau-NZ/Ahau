@@ -146,7 +146,7 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
-  name: 'Profile',
+  name: 'ProfileContainer',
   components: {
     ProfileInfoCard,
     ProfileCard,

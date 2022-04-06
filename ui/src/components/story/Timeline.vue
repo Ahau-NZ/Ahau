@@ -69,7 +69,7 @@ import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
-  name: 'Timeline',
+  name: 'StoryTimeline',
   components: {
     TimelineCard,
     StoryCard

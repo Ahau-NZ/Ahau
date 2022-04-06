@@ -52,7 +52,7 @@
 <script>
 
 export default {
-  name: 'Permissions',
+  name: 'RecordPermissions',
   props: {
     mobile: Boolean
   },

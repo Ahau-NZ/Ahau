@@ -18,7 +18,7 @@ import Avatar from '@/components/Avatar.vue'
 import gql from 'graphql-tag'
 
 export default {
-  name: 'Header',
+  name: 'ProfileHeaderImage',
   props: {
     profile: Object,
     canEdit: Boolean

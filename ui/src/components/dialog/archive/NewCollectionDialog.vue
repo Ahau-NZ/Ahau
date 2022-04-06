@@ -5,7 +5,7 @@
   >
     <!-- FORM -->
     <template v-slot:content>
-      <CollectionForm ref="collectionForm" :formData.sync="formData" @edit="$emit('edit')"/>
+      <CollectionForm ref="collectionForm" :collection.sync="formData" @edit="$emit('edit')"/>
       <v-col v-if="editing" class="pt-8" align="center">
         <v-btn text @click="$emit('delete')">
           Delete this Collection

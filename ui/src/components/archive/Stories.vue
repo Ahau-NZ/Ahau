@@ -84,7 +84,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 
 export default {
-  name: 'Stories',
+  name: 'StoriesList',
   props: {
     stories: Array,
     title: String,
