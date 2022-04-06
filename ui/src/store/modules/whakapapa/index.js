@@ -744,11 +744,11 @@ export default function (apollo) {
     },
     async createChildLink ({ dispatch }, input) {
       input.type = 'link/profile-profile/child'
-      await dispatch('createLink', input)
+      await dispatch('saveLink', input)
     },
     async createPartnerLink ({ dispatch }, input) {
       input.type = 'link/profile-profile/partner'
-      await dispatch('createLink', input)
+      await dispatch('saveLink', input)
     },
     async saveLink (context, input) {
       try {
