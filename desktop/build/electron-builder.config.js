@@ -5,36 +5,19 @@ module.exports = {
   directories: {
     output: 'dist/installers'
   },
-  asarUnpack: [
-    './node_modules/sodium-native/**' // needed for sodium-native/prebuilds trim, not sure why
-  ],
-  files: [
-    '**/*',
-
-    /* custom */
-    '!build/node_modules',
-    '!dist/installers',
-    '!electron-builder.env',
-
-    // sodium-native: only include needed prebuilds
-    '!node_modules/sodium-native/{src,test,libsodium,tmp}',
-    '!node_modules/sodium-native/prebuilds/*',
+  files: fileRules([
+    // sodium-native - drop un-needed prebuilds
+    '!node_modules/sodium-native/{prebuilds/*, deps, test, binding.*, *.md}',
     'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    // README / tests: more aggressive exclusion than default
-    '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
-    '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
+    // leveldown - drop un-needed prebuilds
+    '!node_modules/leveldown/{prebuilds/*, deps, binding.*, *.md}',
+    'node_modules/leveldown/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    /* custom */
-    '!**/node_modules/*.d.ts',
-    '!**/node_modules/.bin',
-    '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
-    '!**/._*',
-    '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
-    '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
-    '!**/{appveyor.yml,.travis.yml,circle.yml}',
-    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
-  ],
+    // es-abstract
+    '!node_modules/es-abstract/',
+    'node_modules/es-abstract/helpers/getOwnPropertyDescriptor.js'
+  ]),
   publish: [{
     provider: 'github',
     owner: 'ahau-nz',
@@ -90,4 +73,25 @@ module.exports = {
     include: 'build/win/add-missing-dll.nsh' // fixes missing VCRUNTIME140.dll
     // source: https://github.com/sodium-friends/sodium-native/issues/100
   }
+}
+
+function fileRules (rules) {
+  // defaults from electron-builder
+  //   https://www.electron.build/configuration/contents#files
+  const defaults = [
+    '**/*',
+    '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
+    '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
+    '!**/node_modules/*.d.ts',
+    '!**/node_modules/.bin',
+    '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
+    '!.editorconfig',
+    '!**/._*',
+    '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
+    '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
+    '!**/{appveyor.yml,.travis.yml,circle.yml}',
+    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
+  ]
+
+  return [...defaults, ...rules]
 }

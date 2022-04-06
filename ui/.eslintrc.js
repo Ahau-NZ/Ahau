@@ -1,4 +1,4 @@
-const isTimeToFix = Date.now() > Number(new Date('2022-04-05'))
+const isTimeToFix = Date.now() > Number(new Date('2022-05-05'))
 const warnForNow = isTimeToFix ? 'error' : 'warn'
 const offForNow = isTimeToFix ? 'error' : 'off'
 
