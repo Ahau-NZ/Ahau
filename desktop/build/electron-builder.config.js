@@ -1,7 +1,6 @@
 module.exports = {
   appId: 'io.ahau.ahau',
   productName: 'Ahau',
-  afterSign: 'build/mac/notarize.js', // N
   directories: {
     output: 'dist/installers'
   },
@@ -36,7 +35,6 @@ module.exports = {
     /* ssb-ahoy ui-window dependency */
     'node_modules/ssb-ahoy/electron/preload.js'
   ],
-
   // NOTE how to figure out what's needed:
   //   1. run `npm run dist`
   //   2. try to launch the output (see dist/installers/*.AppImage etc)
@@ -76,6 +74,7 @@ module.exports = {
     icon: 'build/mac/dmg-icon.icns',
     sign: false // N
   },
+  afterSign: 'build/mac/notarize.js', // N
   // N = this settings requires for Apple notarization
   // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
 

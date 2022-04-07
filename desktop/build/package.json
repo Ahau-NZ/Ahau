@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "this is just here for building icons",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:icons": "node build-icons.js"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.8",
