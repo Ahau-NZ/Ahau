@@ -7,9 +7,13 @@
         These instructions will walk you through those steps to successfully transfer and upload this information. If you are having any issues with this please contact us at <b>info@ahau.io</b> and we will do our best to help you.
       </v-card-text>
       <div class="video-player">
-        <video class="video" ref="video" controls>
-          <source src="@/assets/buildCSV.mp4" type="video/mp4">
-        </video>
+        <iframe :src="youtubeEmbedURL" class="video"
+          width="600" height="332"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
       </div>
       <v-card-text>
         <ol id="instruction-list">
@@ -106,6 +110,8 @@ export default {
   name: 'CsvHelperDialog',
   data () {
     return {
+      // youtubeURL: 'https://www.youtube.com/watch?v=XTtETIF8488', // buildCSV uploaded to Mix's account
+      youtubeEmbedURL: 'https://www.youtube.com/embed/XTtETIF8488',
       items: [
         { src: require('@/assets/tree.jpg') },
         { src: require('@/assets/whakapapa-list.jpg') }
@@ -166,6 +172,7 @@ export default {
 }
 
 .video {
+  height: 332px;
   width: 100%;
 }
 .instruction-list .li {

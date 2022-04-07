@@ -1,40 +1,48 @@
 module.exports = {
   appId: 'io.ahau.ahau',
   productName: 'Ahau',
-  afterSign: 'build/mac/notarize.js', // N
   directories: {
     output: 'dist/installers'
   },
-  asarUnpack: [
-    './node_modules/sodium-native/**' // needed for sodium-native/prebuilds trim, not sure why
-  ],
   files: [
-    '**/*',
+    '!build',
+    '!node_modules',
+    '!*.env*',
 
-    /* custom */
-    '!build/node_modules',
-    '!dist/installers',
-    '!electron-builder.env',
+    /* electron main process */
+    'main.bundle.js',
 
-    // sodium-native: only include needed prebuilds
-    '!node_modules/sodium-native/{src,test,libsodium,tmp}',
-    '!node_modules/sodium-native/prebuilds/*',
+    /* native bindings  (dependencies of main.bundle.js) */
+    'node_modules/node-gyp-build/index.js',
+
+    'node_modules/ssb-ahau/src/migrations/',
+
+    'node_modules/sodium-chloride/index.js',
+
+    'node_modules/sodium-native/index.js',
     'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    // README / tests: more aggressive exclusion than default
-    '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
-    '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
+    'node_modules/leveldown/index.js',
+    'node_modules/leveldown/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
-    /* custom */
-    '!**/node_modules/*.d.ts',
-    '!**/node_modules/.bin',
-    '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
-    '!**/._*',
-    '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
-    '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
-    '!**/{appveyor.yml,.travis.yml,circle.yml}',
-    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
+    'node_modules/utp-native/index.js',
+    'node_modules/utp-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
+
+    /* UI files (referenced by index.bundle.js) */
+    'dist',
+    '!dist/installers',
+
+    /* ssb-ahoy ui-window dependency */
+    'node_modules/ssb-ahoy/electron/preload.js'
   ],
+  // NOTE how to figure out what's needed:
+  //   1. run `npm run dist`
+  //   2. try to launch the output (see dist/installers/*.AppImage etc)
+  //   3. read the errors about what's missing and add it above
+  //
+  // NOTE that we have to include ! (not) rules in files, otherwise
+  // electron-builder auto-adds **/*  (add everything!)
+
   publish: [{
     provider: 'github',
     owner: 'ahau-nz',
@@ -66,6 +74,7 @@ module.exports = {
     icon: 'build/mac/dmg-icon.icns',
     sign: false // N
   },
+  afterSign: 'build/mac/notarize.js', // N
   // N = this settings requires for Apple notarization
   // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
 

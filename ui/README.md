@@ -22,11 +22,20 @@ $ npm install
 $ npm run dev
 ```
 
+**NOTE**
+- `browserslist` is currently set to the version of Electron we're using
+    - this may need to change to support mobile builds in future
+    - run `npx browserslist` to see what the current rules are resolving to (see package.json)
 
-TODO
-    - describe how these tools are used in concert
-    - upgrade to `storybook@6`
-        - [migration docs >>](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#from-version-53x-to-60x)
-    - updgrade to `d3@7`
-        - full esm means out libs which use it for testing will need to go full esm
-        - change test files to `*.test.mjs`
+### TODO
+
+- package.json `browserslist`
+    - keep this in step with electron version `cd desktop && npm ls electron`
+    - :fire: mobile build will need something else
+    - run `npx browerslist` to see what the rules resolve to!
+- describe how these tools are used in concert
+- upgrade to `d3@7`
+    - full esm means out libs which use it for testing will need to go full esm
+    - change test files to `*.test.mjs`
+- upgrade to `storybook@6`
+    - [migration docs >>](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#from-version-53x-to-60x)

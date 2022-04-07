@@ -15,6 +15,9 @@
     "win:clear": "rmdir /s /q node_modules",
     "build-fragment": "NODE_ENV=development ./bin/build-fragment.js"
   },
+  "browserslist": [
+    "electron 18.0.1"
+  ],
   "dependencies": {
     "@mdi/font": "^5.9.55",
     "ahau-env": "^3.0.0",
