@@ -405,9 +405,6 @@ export default {
       }
       return ' '
     },
-    monthTranslations (key, vars) {
-      return this.$t('months.' + key, vars)
-    },
     altNames () {
       if (this.applicant.altNames) return this.applicant.altNames.join(', ')
       return ''
@@ -444,6 +441,9 @@ export default {
     }
   },
   methods: {
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
+    },
     async submit (approved) {
       const output = {
         id: this.notification.id, // the applicationId
