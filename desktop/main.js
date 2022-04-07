@@ -9,7 +9,7 @@ const karakia = require('./karakia')
 
 ahoy(
   env.isDevelopment
-    ? 'http://localhost:8080' // dev-server
+    ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
     : `file://${__dirname}/dist/index.html`, // production build
   {
     title: 'Ahau',

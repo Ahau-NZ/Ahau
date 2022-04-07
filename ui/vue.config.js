@@ -27,7 +27,7 @@ const publicPath = (process.env.VUE_APP_PLATFORM === 'cordova' || process.env.NO
 module.exports = {
   publicPath,
   devServer: {
-    port: 8080
+    port: process.env.DEV_SERVER_PORT || 3000
   },
   transpileDependencies: ['vuetify'],
   pluginOptions: {
