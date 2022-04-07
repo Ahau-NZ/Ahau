@@ -23,7 +23,7 @@
     "lodash.merge": "^4.6.2",
     "secret-stack": "^6.4.1",
     "ssb-ahau": "^14.5.3",
-    "ssb-ahoy": "^5.0.0",
+    "ssb-ahoy": "github:ssbc/ssb-ahoy#dmg-license",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.0",
@@ -50,7 +50,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "dmg-license": "^1.0.11",
     "electron-notarize": "^1.0.0",
     "esm": "^3.2.25",
     "noderify": "^5.1.0",
