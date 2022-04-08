@@ -3,25 +3,26 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
 
     <!-- Sizes your content based upon application components -->
-    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile}">
-
+    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ mobileWhakapapaTitleStyle: mobile }">
       <!-- Provides the application the proper gutter -->
       <v-container fluid class="pa-0">
-
         <transition name="fade" mode="out-in">
           <router-view :mobileServerLoaded="mobileServerLoaded" />
         </transition>
         <Spinner />
       </v-container>
     </v-main>
+
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
+
     <AlertMessage
       :show="alertSettings.show"
       :message="alertSettings.message"
       :color="alertSettings.color"
     />
+
     <DialogHandler /> <!-- TODO: find out what uses this? -->
   </v-app>
 </template>
@@ -189,11 +190,6 @@ body {
   }
 }
 
-.mobileWhakapapaTitleStyle {
-  padding-top: 56px !important;
-  overflow-x: hidden;
-}
-
 .v-timeline--dense .v-timeline-item__opposite {
   display: inline-block !important;
   flex:none
@@ -202,6 +198,18 @@ body {
 // .v-image__image--cover {
 //     background-size: contain !important;
 // }
+
+// see https://css-tricks.com/custom-scrollbars-in-webkit/
+::-webkit-scrollbar {
+  width: 10px;
+}
+</style>
+
+<style lang="scss" scoped>
+.mobileWhakapapaTitleStyle {
+  padding-top: 56px !important;
+  overflow-x: hidden;
+}
 
 .version {
   color: #999;
@@ -231,5 +239,4 @@ body {
     }
   }
 }
-
 </style>
