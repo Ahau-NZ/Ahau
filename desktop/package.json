@@ -5,6 +5,7 @@
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "main": "main.bundle.js",
   "scripts": {
+    "preinstall": "node check-engine",
     "start": "electron main.bundle.js -- --title Āhau",
     "dev": "cross-env NODE_ENV=development electron main.js -- --title Āhau",
     "build:main": "noderify main.js > main.bundle.js",
@@ -56,8 +57,8 @@
     "typescript": "^3.7.2"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=14.16.1 <15",
+    "npm": ">=7.11.2 <8"
   },
   "author": "Āhau Ltd.",
   "repository": {

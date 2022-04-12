@@ -105,5 +105,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
+  },
+  "engines": {
+    "node": ">=14.16.1 <15",
+    "npm": ">=7.11.2 <8"
   }
 }

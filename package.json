@@ -52,5 +52,9 @@
   },
   "dependencies": {
     "env-paths": "^2.2.1"
+  },
+  "engines": {
+    "node": ">=14.16.1 <15",
+    "npm": ">=7.11.2 <8"
   }
 }
