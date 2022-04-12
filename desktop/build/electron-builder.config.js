@@ -13,9 +13,8 @@ module.exports = {
     'main.bundle.js',
 
     /* migrations - not explicity required */
-    'node_modules/ssb-ahau/lib/',
-    'node_modules/ssb-ahau/src/migrations/',
-    'node_modules/@ssb-graphql/main/src/ssb/load-context/',
+    // WARNING - currently ssb-ahau/src/migrations are explicitly required
+    // we need to fix that to all be included by noderify
 
     /* native bindings  (dependencies of main.bundle.js) */
     'node_modules/node-gyp-build/index.js',
