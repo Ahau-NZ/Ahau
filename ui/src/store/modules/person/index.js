@@ -174,10 +174,10 @@ export default function (apollo) {
       dispatch('loadPersonFull', id)
 
       if (id === rootState.whoami.public.profile.id) {
-        dispatch('setWhoami', id, { root: null })
+        dispatch('setWhoami', id, { root: true })
       }
       if (id === rootState.whoami.personal.profile.id) {
-        dispatch('setWhoami', id, { root: null })
+        dispatch('setWhoami', id, { root: true })
       }
       // if viewing a story and sideview is open and you want to jump to another profile > close the story
       if (rootState.archive.showStory && rootState.dialog.preview) {

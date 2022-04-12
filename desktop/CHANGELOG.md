@@ -9,6 +9,7 @@
 ### Bug Fixes
 
 - fix bug where you couldnt search for people who have a macron in their name
+- fix error when opening your personal profile in the SideNodeDialog
 
 ## v2.9.3
 
