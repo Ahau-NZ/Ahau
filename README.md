@@ -12,12 +12,20 @@ For more info see ahau.io
 This repo is used for building desktop and mobile apps.
 The `ui/` folder is common to both, while `desktop/` and `mobile/` folders contain setups specific to those platforms.
 
+### Requirements
+
+- node: `v14.16.1` to `v15.0.0`
+- npm: `v7.11.2` to `v8.0.0`
+
 ```bash
-$ npm install
+$ npm install --engine-strict
 // installs the ui (common to both projects) and some linting tools
 ```
 
+> NOTE: the `engine-strict` flag will make sure you have the right version of `node` and `npm` installed
+
 Then follow the documentation for target platform:
+
 - desktop app : [desktop/README.md](./desktop/README.md)
 - mobile app : [mobile/README.md](./mobile/README.md)
 

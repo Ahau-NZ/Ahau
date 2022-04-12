@@ -1,5 +1,16 @@
 # Changelog | Ahau desktop
 
+## Latest 12/04/2022
+
+### Features
+
+- you can now search for people who have a macron, without using macrons in the search text
+
+### Bug Fixes
+
+- fix bug where you couldnt search for people who have a macron in their name
+- fix error when opening your personal profile in the SideNodeDialog
+
 ## v2.9.3
 
 ### Bug Fixes

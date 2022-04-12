@@ -1,10 +1,17 @@
 # Ahau Destkop
 
+## Requirements
+
+- node: `v14.16.1` to `v15.0.0`
+- npm: `v7.11.2` to `v8.0.0`
+
 ## Setup
 
 ```bash
-$ npm run install
+$ npm install --engine-strict
 ```
+
+> NOTE: the `engine-strict` flag will make sure you have the right version of `node` and `npm` installed
 
 ## Development
 
