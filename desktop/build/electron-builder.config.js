@@ -12,10 +12,13 @@ module.exports = {
     /* electron main process */
     'main.bundle.js',
 
+    /* migrations - not explicity required */
+    'node_modules/ssb-ahau/lib/',
+    'node_modules/ssb-ahau/src/migrations/',
+    'node_modules/@ssb-graphql/main/src/ssb/load-context/',
+
     /* native bindings  (dependencies of main.bundle.js) */
     'node_modules/node-gyp-build/index.js',
-
-    'node_modules/ssb-ahau/src/migrations/',
 
     'node_modules/sodium-chloride/index.js',
 
