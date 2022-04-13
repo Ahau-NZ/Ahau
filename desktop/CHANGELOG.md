@@ -1,6 +1,12 @@
 # Changelog | Ahau desktop
 
-## Latest 12/04/2022
+## v2.9.6
+
+### Bug Fixes
+
+- Fixes issues where the app wasnt starting up when starting from a new user
+
+## v2.9.5
 
 ### Features
 
