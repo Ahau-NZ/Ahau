@@ -12,9 +12,8 @@ module.exports = {
     /* electron main process */
     'main.bundle.js',
 
-    /* migrations - not explicity required */
-    // WARNING - currently ssb-ahau/src/migrations are explicitly required
-    // we need to fix that to all be included by noderify
+    /* migrations - needed for ssb-migrate to check all migrations have been provided */
+    'node_modules/ssb-ahau/src/migrations/',
 
     /* native bindings  (dependencies of main.bundle.js) */
     'node_modules/node-gyp-build/index.js',
