@@ -48,6 +48,7 @@ const defaultView = () => ({
 
 const defaultViewChanges = () => ({
   focus: null, // can temporarily over-ride the saved view.focus
+  autoCollapse: true,
   collapsed: { // maps node.data.id to Boolean (default false)
   },
   showExtendedFamily: false
@@ -88,6 +89,7 @@ export default function (apollo) {
     focus: state => state.viewChanges.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.viewChanges.showExtendedFamily),
+    autoCollapse: state => state.viewChanges.autoCollapse,
     recordCount: (state, getters) => {
       const queue = [state.view.focus]
       const profiles = new Set([])
@@ -441,6 +443,13 @@ export default function (apollo) {
         delete newLinks[partnerB]
         state.partnerLinks[partnerA] = newLinks
       }
+    },
+
+    setAutoCollapse (state, autoCollapse) {
+      state.viewChanges.autoCollapse = autoCollapse
+    },
+    resetCollapsed (state) {
+      state.viewChanges.collapsed = {}
     }
   }
 
@@ -576,13 +585,15 @@ export default function (apollo) {
         .filter(link => getters.isImportantLink(link.child, profileId))
         .map(link => link.child)
 
-      // dont collapse a node who doesnt have descendants and partners
-      if (!childIds.length && !partnerLinks.length) commit('setNodeCollapsed', { nodeId: profileId, isCollapsed: false })
+      if (getters.autoCollapse) {
+        // dont collapse a node who doesnt have descendants and partners
+        if (!childIds.length && !partnerLinks.length) commit('setNodeCollapsed', { nodeId: profileId, isCollapsed: false })
 
-      if (shouldCollapseChildren(loaded, depth, isLoadingFocus)) {
-        childIds.forEach(childId => {
-          commit('setNodeCollapsed', { nodeId: childId, isCollapsed: true })
-        })
+        if (shouldCollapseChildren(loaded.size, depth, isLoadingFocus)) {
+          childIds.forEach(childId => {
+            commit('setNodeCollapsed', { nodeId: childId, isCollapsed: true })
+          })
+        }
       }
 
       commit('addLinks', { childLinks, partnerLinks })
@@ -884,6 +895,11 @@ export default function (apollo) {
           // But the getImportantRelationship getter filters out rules which are not useful
         })
       )
+    },
+
+    setAutoCollapse ({ commit }, autoCollapse) {
+      commit('setAutoCollapse', autoCollapse)
+      if (!autoCollapse) commit('resetCollapsed')
     }
   }
 
@@ -921,7 +937,7 @@ function uniqueId (array) {
   return uniqby(array, 'id')
 }
 
-function shouldCollapseChildren (loaded, depth, isLoadingFocus) {
+function shouldCollapseChildren (numberLoaded, depth, isLoadingFocus) {
   if (depth === null) return false
 
   if (depth > 0) return false
@@ -929,12 +945,12 @@ function shouldCollapseChildren (loaded, depth, isLoadingFocus) {
     // when depth is 0, we have used up all or generation-hops,
     // so we pre-emptively continue loading links, but collapse the next children
     // so that the graph drawing is bounded
-    if (isLoadingFocus && loaded.size < MIN_LOADED_PROFILES) return false
+    if (isLoadingFocus && numberLoaded < MIN_LOADED_PROFILES) return false
     // we may want to load more to account for some graphs starting out like a line
     else return true
   }
   if (depth < 0) {
-    if (isLoadingFocus && loaded.size < MIN_LOADED_PROFILES) return false
+    if (isLoadingFocus && numberLoaded < MIN_LOADED_PROFILES) return false
     return (depth % DEFAULT_DEPTH === 0)
   }
   // beyond our initial goal, we collapse every DEFAULT_DEPTH'd generation, so that when you expand (uncollapse)
