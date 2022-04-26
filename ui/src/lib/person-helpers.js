@@ -292,7 +292,9 @@ export async function getRelatives (profileId, apollo) {
 }
 
 export function getDisplayName (profile) {
-  if (!profile || (!profile.preferredName && !profile.legalName)) return 'Unknown'
+  if (!profile || Object.keys(profile).length === 0) return ''
+
+  if (!profile.preferredName && !profile.legalName) return 'Unknown'
   if (profile.preferredName === '' && profile.legalName === '') return 'Unknown'
 
   return profile.preferredName || profile.legalName.split(' ')[0]
