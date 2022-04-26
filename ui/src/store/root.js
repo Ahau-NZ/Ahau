@@ -31,6 +31,7 @@ export default function rootModule (apollo) {
       },
       loading: false, // boolean
       loadingTimeout: 2 * SECOND,
+      navComponent: 'profile',
 
       /* indexing data */
       indexingSince: null,
@@ -49,6 +50,8 @@ export default function rootModule (apollo) {
     },
 
     getters: {
+      whoami: state => state.whoami,
+      navComponent: state => state.navComponent,
       loadingState: state => {
         if (state.isRebuilding) return state.percentageIndexedSinceStartup
 
@@ -63,7 +66,6 @@ export default function rootModule (apollo) {
         return state.loading
       },
       syncing: state => state.syncing,
-      whoami: state => state.whoami,
       isKaitiaki: state => {
         return (
           state.isKaitiaki ||
@@ -80,6 +82,9 @@ export default function rootModule (apollo) {
     mutations: {
       updateWhoami (state, whoami) {
         state.whoami = whoami
+      },
+      setNavComponent (state, component) {
+        state.navComponent = component
       },
       updateLoading (state, loading) {
         state.loading = loading
@@ -147,6 +152,12 @@ export default function rootModule (apollo) {
       },
       setGoBack ({ commit }, id) {
         commit('updateGoBack', id)
+      },
+      setNavComponent ({ commit }, component) {
+        commit('setNavComponent', component)
+      },
+      setIsKaitiaki ({ commit }, bool = false) {
+        commit('setIsKaitiaki', bool)
       }
     }
   }

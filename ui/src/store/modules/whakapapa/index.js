@@ -516,19 +516,32 @@ export default function (apollo) {
         return []
       }
     },
-    async getFamilyLinks (context, opts = {}) {
+    async getFamilyLinks ({ rootGetters }, opts = {}) {
       const { profileId, extended = true } = opts
       try {
         const res = await apollo.query(getFamilyLinks(profileId, extended))
         if (res.errors) throw new Error(res.errors)
 
-        return res.data.loadFamilyOfPerson
+        const { childLinks, partnerLinks } = res.data.loadFamilyOfPerson
+        const isNotTombstoned = (link) => (
+          // filter links involving tombstoned profiles
+          !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
+        )
+
+        return {
+          childLinks: childLinks.filter(isNotTombstoned),
+          partnerLinks: partnerLinks.filter(isNotTombstoned)
+        }
       }
       catch (err) {
         console.error('error getting family links', err)
         // TODO error alert message
         return { childLinks: [], partnerLinks: [] }
       }
+    },
+    async loadFamilyLinks ({ dispatch }, profileId) {
+      const links = await dispatch('getFamilyLinks', { profileId })
+      if (links) dispatch('addLinks', links)
     },
     async loadWhakapapaView ({ commit, dispatch }, id) {
       commit('resetWhakapapaView')
@@ -553,19 +566,11 @@ export default function (apollo) {
       const depth = (lastDepth != null) ? lastDepth - 1 : null
       loaded.add(profileId)
 
-      let { childLinks, partnerLinks } = await dispatch('getFamilyLinks', { profileId, extended: true })
+      const { childLinks, partnerLinks } = await dispatch('getFamilyLinks', { profileId, extended: true })
 
       // NOTE we get extended family links in every case right now (extended: true)
       // becuase they help with rendering, and mean transition to the extendedFamily view is smoother
       // const links = await dispatch('getFamilyLinks', { profileId, extended: state.view.extendedFamily
-
-      const isNotTombstoned = (link) => (
-        // filter links involving tombstoned profiles
-        !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
-      )
-
-      childLinks = childLinks.filter(isNotTombstoned)
-      partnerLinks = partnerLinks.filter(isNotTombstoned)
 
       // TODO 2022-03-07 mix - move this into table/Node.vue I think
       if (getters.isTable) {
@@ -596,12 +601,11 @@ export default function (apollo) {
         }
       }
 
-      commit('addLinks', { childLinks, partnerLinks })
-
       const isNotIgnored = (link) => getters.isNotIgnored(link.child) && getters.isNotIgnored(link.parent)
-
-      childLinks = childLinks.filter(isNotIgnored)
-      partnerLinks = partnerLinks.filter(isNotIgnored)
+      commit('addLinks', {
+        childLinks: childLinks.filter(isNotIgnored),
+        partnerLinks: partnerLinks.filter(isNotIgnored)
+      })
 
       // recurse through children
       childIds.forEach(childId => {

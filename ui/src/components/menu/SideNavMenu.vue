@@ -9,7 +9,7 @@
       >
           <v-btn
             :class="tablet ? 'pl-2':''"
-            @click="setActive('profile')"
+            @click="setActive(PROFILE)"
             light
             text
             style="height: auto;"
@@ -24,13 +24,15 @@
             />
           </v-btn>
       </v-row>
+
       <RegisterButton v-if="nonMember" :text="buttonText" @click="$emit('new-registration')" />
+
       <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="setActive('profile')" light :fab="mobile" text>
+          <v-btn @click="setActive(PROFILE)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
-                v-if="mobile && activeComponent !=='profile'"
+                v-if="mobile && activeComponent !== PROFILE"
                 :image="profile.avatarImage"
                 :gender="profile.gender"
                 size="40px"
@@ -39,15 +41,15 @@
               <UserIcon
                 v-else
                 :size="tablet ? 'x-large':'medium'"
-                :color="activeComponent === 'profile' ? 'red' : 'black'"
+                :color="activeComponent === PROFILE ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
+                :style="activeComponent === PROFILE? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >{{ t('profile')}}</span>
+              >{{ t(PROFILE)}}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -68,51 +70,68 @@
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'archive' || activeComponent === 'collection' ? 'red' : 'black'"
+                :color="activeComponent === ARCHIVE || activeComponent === 'collection' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'archive' || activeComponent === 'collection' ? 'color:#B02425;' : ''"
+                :style="activeComponent === ARCHIVE || activeComponent === 'collection' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >{{ t('archive') }}</span>
+              >{{ t(ARCHIVE ) }}</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect timeline -->
-          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <v-btn @click="setActive(TIMELINE)" light :fab="mobile" text>
           <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'timeline' ? 'red' : 'black'"
+                :color="activeComponent === TIMELINE? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'"
+                :style="activeComponent === TIMELINE? 'color:#B02425;' : 'black'"
                 class="ml-2 nav-label subtitle-1"
-              >{{ t('timeline')}}</span>
+              >{{ t(TIMELINE)}}</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <v-btn @click="setActive(WHAKAPAPA)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'whakapapa' ? 'red' : 'black'"
+                :color="activeComponent === WHAKAPAPA? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
+                :style="activeComponent === WHAKAPAPA? 'color:#B02425;' : 'black'"
                 class="ml-2 subtitle-1"
-              >{{ t('whakapapa') }}</span>
+              >{{ t(WHAKAPAPA) }}</span>
+            </v-col>
+          </v-btn>
+        </v-col>
+        <v-col cols="3" md="12" v-if="showPeopleList" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+          <v-btn @click="setActive(PERSON)" light :fab="mobile" text>
+            <v-col class="pa-0" :cols="mobile ? '12' : '2'">
+              <PersonListIcon
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === WHAKAPAPA? 'red' : 'black'"
+              />
+            </v-col>
+            <v-col class="py-0" v-if="!mobile && !isOverflowing">
+              <span
+                ref="text"
+                :style="$route.name === 'personIndex' ? 'color:#B02425;' : 'black'"
+                class="ml-2 subtitle-1"
+              >{{ t(PERSON) }}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -126,12 +145,19 @@
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 // import ActivityIcon from '@/components/button/ActivityIcon.vue'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
+import PersonListIcon from '@/components/button/PersonListIcon.vue'
 import UserIcon from '@/components/button/UserIcon.vue'
 import TimelineIcon from '@/components/button/TimelineIcon.vue'
 import RegisterButton from '@/components/button/RegisterButton.vue'
 
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+
+const PROFILE = 'profile'
+const TIMELINE = 'timeline'
+const ARCHIVE = 'archive'
+const WHAKAPAPA = 'whakapapa'
+const PERSON = 'person'
 
 export default {
   name: 'SideNavMenu',
@@ -146,6 +172,13 @@ export default {
   },
   data () {
     return {
+      // magic strings
+      PROFILE,
+      ARCHIVE,
+      TIMELINE,
+      WHAKAPAPA,
+      PERSON,
+
       offset: 0,
       componentLoaded: false,
       stickyMobile: false,
@@ -183,6 +216,14 @@ export default {
       else if (this.profile.id === this.whoami.personal.profile.id) return true
       else return false
     },
+    showPeopleList () {
+      if (!this.profile) return false
+
+      if (this.profile.id === this.whoami.personal.profile.id) return true
+      if (!Array.isArray(this.profile.kaitiaki)) return false
+
+      return this.profile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId)
+    },
     nonMember () {
       return (
         this.isCommunity &&
@@ -213,34 +254,31 @@ export default {
     },
     position () {
       return {
-        user: !this.mobile && this.activeComponent === 'profile',
-        sticky: !this.mobile && this.activeComponent !== 'profile',
-        userMobile: this.mobile && this.activeComponent === 'profile',
-        archiveMobile: this.mobile && this.activeComponent !== 'profile',
-        sideNav: this.activeComponent !== 'profile'
+        user: !this.mobile && this.activeComponent === PROFILE,
+        sticky: !this.mobile && this.activeComponent !== PROFILE,
+        userMobile: this.mobile && this.activeComponent === PROFILE,
+        archiveMobile: this.mobile && this.activeComponent !== PROFILE,
+        sideNav: this.activeComponent !== PROFILE
       }
     }
   },
   methods: {
-    ...mapActions(['setDialog']),
+    ...mapActions(['setDialog', 'setNavComponent']),
     ...mapActions('archive', ['toggleShowStory']),
-    ...mapMutations('archive', ['updateComponent']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()
         this.setDialog(null)
-      } else this.setActive('archive')
+      } else this.setActive(ARCHIVE)
     },
     setActive (component) {
       if (this.showStory) this.toggleShowStory()
-      this.updateComponent(component)
+      this.setNavComponent(component)
 
-      const type = this.isCommunity
-        ? 'community'
-        : 'person'
+      const type = this.isCommunity ? 'community' : 'person'
 
       this.$router.push({
-        name: type + '/' + component,
+        name: component === this.PERSON ? 'personIndex' : (type + '/' + component),
         params: {
           tribeId: this.$route.params.tribeId,
           profileId: this.$route.params.profileId
@@ -252,7 +290,7 @@ export default {
       const sideNav = this.$refs.sideNav
 
       // TODO tidy this up by making methods?
-      if (!this.mobile && this.activeComponent === 'profile') {
+      if (!this.mobile && this.activeComponent === PROFILE) {
         if (this.scroll > this.offset) {
           sideNav.classList.add('sticky')
           sideNav.classList.remove('user')
@@ -261,7 +299,7 @@ export default {
           sideNav.classList.remove('sticky')
           sideNav.classList.add('user')
         }
-      } else if (this.mobile && this.activeComponent === 'profile') {
+      } else if (this.mobile && this.activeComponent === PROFILE) {
         if (this.scroll > this.offset + 100) {
           sideNav.classList.remove('userMobile')
           sideNav.classList.remove('sideNav')
@@ -277,7 +315,7 @@ export default {
           sideNav.classList.remove('sideNav')
           sideNav.classList.add('userMobile')
         }
-      } else if (this.mobile && this.activeComponent !== 'profile') {
+      } else if (this.mobile && this.activeComponent !== PROFILE) {
         if (this.scroll > 60) {
           sideNav.classList.remove('archiveMobile')
           sideNav.classList.add('hideStickyMobile')
@@ -303,6 +341,7 @@ export default {
     ArchiveIcon,
     // ActivityIcon,
     WhakapapaIcon,
+    PersonListIcon,
     UserIcon,
     TimelineIcon,
     Avatar,

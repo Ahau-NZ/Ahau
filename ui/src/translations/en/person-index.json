@@ -1,0 +1,32 @@
+{
+  "title": "People",
+  "action": {
+    "search": "Search",
+    "expand": "more...",
+    "edit": "Edit"
+  },
+  "prop": {
+    "preferredName": "First name / known as",
+    "legalName": "Full name",
+    "gender": "Gender",
+    "aliveInterval": "Birth/Death",
+
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "postCode": "Post Code",
+    "country": "Country",
+
+    "altNames": "Also known as",
+    "description": "Description",
+    "placeOfBirth": "Place of Birth",
+    "birthOrder": "Birth Order",
+    "placeOfDeath": "Place of Death",
+    "buriedLocation": "Buried Location",
+    "profession": "Profession",
+    "education": "Education",
+    "school": "School"
+  },
+  "loading": "Loading profiles..."
+}

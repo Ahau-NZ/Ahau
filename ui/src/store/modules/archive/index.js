@@ -1,5 +1,4 @@
 const state = {
-  navComponent: 'profile',
   currentStory: {},
   showStory: false,
   showArtefact: false,
@@ -7,11 +6,6 @@ const state = {
 }
 
 const getters = {
-  // TODO 2021-12-01, mix: this is only used by Appbar currently.
-  // Migrate to root store module?
-  navComponent: state => {
-    return state.navComponent
-  },
   currentStory: state => {
     return state.currentStory
   },
@@ -27,9 +21,6 @@ const getters = {
 }
 
 const mutations = {
-  updateComponent (state, component) {
-    state.navComponent = component
-  },
   setStory (state, story) {
     state.currentStory = story
   },

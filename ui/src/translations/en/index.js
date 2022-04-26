@@ -1,11 +1,14 @@
 module.exports = {
   /* Indexes (overviews) */
+  // TODO rename tribe-index.json etc.
   viewTribes: require('./view-tribes.json'),
+  personIndex: require('./person-index.json'),
   whakapapaIndex: require('./whakapapa-index.json'),
   viewTribalRegistry: require('./view-tribal-registry.json'),
   timeline: require('./timeline.json'),
 
   /* Shows (see a particular record) */
+  // TODO rename person-show.json etc.
   viewPerson: require('./view-person.json'),
   viewArchive: require('./view-archive.json'),
   whakapapaTable: require('./whakapapa-table.json'),

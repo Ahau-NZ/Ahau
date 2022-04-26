@@ -36,7 +36,7 @@
             </g>
             <svg :width="columns[2].x - 45" >
               <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'preferredName') }}
+                {{ node.data.preferredName }}
               </text>
             </svg>
             <svg :width="columns[3].x - 40" >
@@ -57,67 +57,67 @@
             </svg>
             <svg :width="columns[4].x - 45" >
               <text :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ altNames(dataField(node, 'altNames')) }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'age') }}
+                {{ node.data.age }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', dataField(node, 'aliveInterval')) }}
+                {{ computeDate('dob', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', dataField(node, 'aliveInterval')) }}
+                {{ computeDate('dod', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'profession') }}
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg v-if="node.data && node.data.adminProfile" :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'address') }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
               <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'city') }}
+                {{ node.data.city }}
               </text>
             </svg>
             <svg :width="columns[11].x - 45">
               <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'postCode') }}
+                {{ node.data.postCode }}
               </text>
             </svg>
             <svg :width="columns[12].x - 45">
               <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'country') }}
+                {{ node.data.country }}
               </text>
             </svg>
             <svg :width="columns[13].x - 45">
               <text  :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'placeOfBirth') }}
+                {{ node.data.placeOfBirth }}
               </text>
             </svg>
             <svg :width="columns[14].x - 45">
               <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'placeOfDeath') }}
+                {{ node.data.placeOfDeath }}
               </text>
             </svg>
-            <svg v-if="dataField(node, 'email')">
+            <svg v-if="node.data.email">
               <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'email') }}
+                {{ node.data.email }}
               </text>
             </svg>
-            <svg v-if="dataField(node, 'phone')">
+            <svg v-if="node.data.phone">
               <text :transform="`translate(${columns[15].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ dataField(node, 'phone') }}
+                {{ node.data.phone }}
               </text>
             </svg>
           </g>
@@ -140,6 +140,7 @@ import Link from '../tree/Link.vue'
 
 import calculateAge from '../../lib/calculate-age.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { mergeAdminProfile } from '@/lib/person-helpers.js'
 
 import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
@@ -181,7 +182,7 @@ export default {
     // NOTE we use an async iterator here because with something like Promise.all
     // it would try to ram all descendants through graphql query and crash the app
     // with a big tree.
-    // This is loke pull-streams but with async-await (ugly aye)
+    // This is like pull-streams but with async-await (ugly aye)
 
     async function * generateLoader (nodes) {
       for (let i = 0; i < nodes.length; i++) {
@@ -230,7 +231,7 @@ export default {
       const nodes = this.descendants
         .map(node => {
           const profileId = node.data.id
-          const profile = this.person(profileId)
+          const profile = mergeAdminProfile(this.person(profileId))
           const partners = this.getPartnerIds(profileId)
             .map(partnerId => this.person(partnerId))
 
@@ -360,16 +361,6 @@ export default {
     // sets the width of the table
     onscroll (e) {
       this.scrollTop = e.target.scrollTop
-    },
-    dataField (node, field) {
-      const adminValue = node.data.adminProfile && node.data.adminProfile[field]
-
-      if (
-        adminValue == null ||
-        (Array.isArray(adminValue) && adminValue.length === 0)
-      ) return node.data[field]
-
-      return adminValue
     },
     async tableOverflow () {
       const width = await this.colWidth + this.columns[this.columns.length - 1].x

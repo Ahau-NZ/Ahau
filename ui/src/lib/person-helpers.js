@@ -339,3 +339,31 @@ export function setDefaultData (withRelationships) {
 
   return formData
 }
+
+export function mergeAdminProfile (profile) {
+  if (!profile.adminProfile) return profile
+
+  const adminProfile = profile.adminProfile
+  profile.adminProfile = null // faster than delete
+
+  for (const [key, value] of Object.entries(adminProfile)) {
+    if (key === 'id') continue
+    if (isEmpty(value)) continue
+
+    // over-ride!
+    profile[key] = value
+  }
+
+  return profile
+}
+
+function isEmpty (value) {
+  if (value == null) return true
+  if (value === '') return true
+  if (Array.isArray(value)) {
+    if (value.length === 0) return true
+    if (value.every(el => el === '')) return true
+  }
+
+  return false
+}

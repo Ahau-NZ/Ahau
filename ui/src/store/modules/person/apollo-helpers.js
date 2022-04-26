@@ -104,7 +104,7 @@ const DELETE_PERSON = gql`
     tombstoneProfileAndLinks(id: $id, details: $details, allowPublic: $allowPublic)
   }
 `
-export const deletePerson = (id, details = {}, allowPublic = false) => {
+export function deletePerson (id, details = {}, allowPublic = false) {
   // TODO support allowPublic? this method will likely error on public person profiles
   return {
     mutation: DELETE_PERSON,
@@ -112,6 +112,65 @@ export const deletePerson = (id, details = {}, allowPublic = false) => {
       id,
       details,
       allowPublic
+    }
+  }
+}
+
+const LIST_PERSON = gql`
+query($type: String!, $tribeId: String!) {
+  listPerson(type: $type, groupId: $tribeId)  {
+    id
+    preferredName
+    legalName
+    altNames
+    description
+    avatarImage { uri }
+    gender
+    aliveInterval
+    placeOfBirth
+    placeOfDeath
+    buriedLocation
+    birthOrder
+    city
+    country
+    postCode
+    profession
+    education
+    school
+
+    adminProfile {
+      preferredName
+      legalName
+      altNames
+      description
+      avatarImage { uri }
+      gender
+      aliveInterval
+      placeOfBirth
+      placeOfDeath
+      buriedLocation
+      birthOrder
+      city
+      country
+      postCode
+      profession
+      education
+      school
+
+      address
+      email
+      phone
+    }
+  }
+}
+`
+
+export function loadPersonList (type, tribeId) {
+  return {
+    query: LIST_PERSON,
+    variables: {
+      type,
+      tribeId
     }
   }
 }

@@ -89,8 +89,7 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: '' },
     hideDetails: { type: Boolean, default: false },
-    nodeProfile: { type: Object, default: () => {} },
-    readOnly: { type: Boolean, default: false }
+    nodeProfile: { type: Object, default: () => {} }
   },
   mixins: [
     mapProfileMixins({

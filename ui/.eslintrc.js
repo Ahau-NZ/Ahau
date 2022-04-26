@@ -30,6 +30,12 @@ module.exports = {
 
     // these are pretty important
     'vue/no-mutating-props': warnForNow,
-    'vue/no-computed-properties-in-data': warnForNow
+    'vue/no-computed-properties-in-data': warnForNow,
+
+    // needed for v-data-table slots
+    // > Some slots such as item.<name> and header.<name> use modifiers to target more scoped slots.
+    // > Eslint by default will throw errors when slots use modifiers.
+    // > To disable these errors, add the following rule to your eslint configuration:
+    'vue/valid-v-slot': ['error', { allowModifiers: true }]
   }
 }
