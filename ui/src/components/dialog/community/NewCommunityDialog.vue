@@ -60,6 +60,7 @@
                 append-icon="mdi-delete"
                 @click:append="removeJoiningQuestion(i)"
                 :label="`Question ${i + 1}`"
+                :placeholder="$t('addCommunity.questionPlaceholder')"
                 auto-focus
                 outlined
                 hide-details

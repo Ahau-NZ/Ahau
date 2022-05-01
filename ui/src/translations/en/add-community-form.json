@@ -15,6 +15,7 @@
   "form": "Create your tribal registration questions",
   "addQuestion": "Add question",
   "question": "Question",
+  "questionPlaceholder": "Example: Why would you like to join this tribe?",
   "cancel": "Cancel",
   "save": "Save",
   "selectMember": "Select a member as Kaitiaki",
