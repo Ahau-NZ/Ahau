@@ -270,29 +270,38 @@
             </ProfileCard> -->
           </v-row>
         </v-col>
-        <v-col v-if="notification.answers && notification.answers.length > 0" class="px-0">
-          <v-row :class="headerClass">
-            Question Answers
-          </v-row>
-          <v-row class="pl-0">
-            <v-card outlined class="px-0">
-              <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
-                <v-text-field
-                  :value="notification.answers[i].answer"
-                  v-bind="customProps"
-                  :label="notification.answers[i].question"
 
+        <!-- Header for question answers -->
+        <v-col v-if="hasAnswers" :class="headerClass">
+          <span>
+            Question Answers
+          </span>
+        </v-col>
+
+        <!-- Content for question answers -->
+        <v-col v-if="hasAnswers" :class="mobile ? 'px-0' : ''">
+          <v-card outlined :class="mobile ? '' : 'ml-2'">
+            <v-row align="center">
+              <v-col cols="12" sm="12" v-for="({ question, answer }, i) in answers" :key="`q-a-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
+                <v-text-field
+                  v-bind="customProps"
+                  :label="question"
+                  :value="answer"
                 />
               </v-col>
-            </v-card>
-          </v-row>
+            </v-row>
+          </v-card>
         </v-col>
-        <v-col :class="headerClass">
+
+        <!-- Header for comments -->
+        <v-col v-if="showComments" :class="headerClass">
           <span>
             Comments
           </span>
         </v-col>
-        <v-col :class="mobile ? 'px-0' : ''">
+
+        <!-- Content for comments -->
+        <v-col v-if="showComments" :class="mobile ? 'px-0' : ''">
           <v-card outlined :class="mobile ? '' : 'ml-2'">
             <v-row align="center">
               <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
@@ -303,7 +312,9 @@
                   :label="author.preferredName || author.legalName"
                 />
               </v-col>
-              <v-col v-if="!notification.isPersonal && notification.isNew">
+            </v-row>
+            <v-row>
+              <v-col v-if="allowNewComments">
                 <v-textarea
                   v-model="comment"
                   label="Send a message"
@@ -398,6 +409,27 @@ export default {
     group () {
       return this.notification.group
     },
+    answers () {
+      return this.notification.answers
+    },
+    hasAnswers () {
+      return this.answers && this.answers.length
+    },
+    comments () {
+      return this.notification.history
+        .filter(d => {
+          return (
+            d.type === 'comment',
+            d.comment && d.comment !== ''
+          )
+        })
+    },
+    allowNewComments () {
+      return !this.notification.isPersonal && this.notification.isNew
+    },
+    showComments () {
+      return (this.comments && this.comments.length) || this.allowNewComments
+    },
     dob () {
       if (this.applicant.aliveInterval) {
         const formattedDate = dateIntervalToString(this.applicant.aliveInterval, this.monthTranslations)
@@ -421,9 +453,6 @@ export default {
       const age = calculateAge(this.applicant.aliveInterval)
       if (age === null) return ' '
       return age.toString()
-    },
-    comments () {
-      return this.notification.history.filter(d => d.type === 'comment')
     },
     text () {
       const { isPersonal, isNew, isAccepted } = this.notification
