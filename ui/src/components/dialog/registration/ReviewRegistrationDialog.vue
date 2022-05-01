@@ -72,7 +72,7 @@
                     :class="mobile ? 'bb':'br bb'"
                     smCols="12"
                     mdCols="6"
-                    title="Date of birth"
+                    :title="t('dob')"
                     :value="dob"
                     class="pb-0"
                   />
@@ -80,7 +80,7 @@
                     :class="mobile ? 'bb':'bb'"
                     smCols="12"
                     mdCols="6"
-                    title="Phone"
+                    :title="t('phone')"
                     :value="applicant.phone"
                     class="pb-0"
                   />
@@ -88,21 +88,21 @@
                     :class="mobile ? 'bb':'br bb'"
                     smCols="12"
                     mdCols="6"
-                    title="Email"
+                    :title="t('email')"
                     :value="applicant.email"
                     class="pb-0"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="6"
-                    title="Postcode"
+                    :title="t('postcode')"
                     :value="applicant.postCode"
                     class="pb-0 bb"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="12"
-                    title="Address"
+                    :title="t('address')"
                     :value="applicant.address"
                     class="pb-0"
                   />
@@ -116,7 +116,7 @@
                     :class="mobile ? 'bb':' bb'"
                     smCols="12"
                     mdCols="12"
-                    title="Description"
+                    :title="t('description')"
                     :value="applicant.description"
                     class="pb-0"
                   />
@@ -124,14 +124,14 @@
                     :class="mobile ? 'bb':'bb br'"
                     smCols="12"
                     mdCols="6"
-                    title="Preferred Name"
+                    :title="t('preferredName')"
                     :value="applicant.preferredName"
                     class="pb-0"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="6"
-                    title="Full Name"
+                    :title="t('fullName')"
                     :value="applicant.legalName"
                     class="pb-0 bb"
                   />
@@ -139,14 +139,14 @@
                     :class="mobile ? 'bb':'br'"
                     smCols="12"
                     mdCols="6"
-                    title="Other names"
+                    :title="t('otherNames')"
                     :value="altNames"
                     class="pb-0"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="6"
-                    title="Place of birth"
+                    :title="t('placeOfBirth')"
                     :value="applicant.placeOfBirth"
                     class="pb-0"
                   />
@@ -160,7 +160,7 @@
                     :class="mobile ? 'bb':' bb br'"
                     smCols="12"
                     mdCols="6"
-                    title="Age"
+                    :title="t('age')"
                     :value="age"
                     class="pb-0"
                   />
@@ -168,7 +168,7 @@
                     :class="mobile ? 'bb':'bb'"
                     smCols="12"
                     mdCols="6"
-                    title="Profession"
+                    :title="t('profession')"
                     :value="applicant.profession"
                     class="pb-0"
                   />
@@ -176,14 +176,14 @@
                     :class="mobile ? 'bb':'br'"
                     smCols="12"
                     mdCols="6"
-                    title="Education"
+                    :title="t('education')"
                     :value="education"
                     class="pb-0"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="6"
-                    title="School"
+                    :title="t('school')"
                     :value="school"
                     class="pb-0"
                   />
@@ -197,84 +197,27 @@
                     :class="mobile ? 'bb':'br'"
                     smCols="12"
                     mdCols="6"
-                    title="City"
+                    :title="t('city')"
                     :value="applicant.city"
                     class="pb-0"
                   />
                   <ProfileInfoItem
                     smCols="12"
                     mdCols="6"
-                    title="Country"
+                    :title="t('country')"
                     :value="applicant.country"
                     class="pb-0"
                   />
                 </v-row>
               </template>
             </ProfileCard>
-            <!-- <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-              <template v-slot:content>
-                <v-row cols="12" class="pt-0">
-                  <ProfileInfoItem
-                    :class="mobile ? 'bb':'bb br'"
-                    smCols="12"
-                    mdCols="6"
-                    title="Age"
-                    :value="age"
-                    class="pb-0"
-                  />
-                  <ProfileInfoItem
-                    smCols="12"
-                    mdCols="6"
-                    title="Profession"
-                    :value="applicant.profession"
-                    class="pb-0 bb"
-                  />
-                  <ProfileInfoItem
-                    :class="mobile ? 'bb':'br'"
-                    smCols="12"
-                    mdCols="6"
-                    title="Education"
-                    :value="education"
-                    class="pb-0"
-                  />
-                  <ProfileInfoItem
-                    smCols="12"
-                    mdCols="6"
-                    title="School"
-                    :value="school"
-                    class="pb-0"
-                  />
-                </v-row>
-              </template>
-            </ProfileCard> -->
-            <!-- <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-              <template v-slot:content>
-                <v-row cols="12">
-                  <ProfileInfoItem
-                    :class="mobile ? 'bb':'br'"
-                    smCols="12"
-                    mdCols="6"
-                    title="City"
-                    :value="applicant.city"
-                    class="pb-0"
-                  />
-                  <ProfileInfoItem
-                    class="pb-0"
-                    smCols="12"
-                    mdCols="6"
-                    title="Country"
-                    :value="applicant.country"
-                  />
-                </v-row>
-              </template>
-            </ProfileCard> -->
           </v-row>
         </v-col>
 
         <!-- Header for question answers -->
         <v-col v-if="hasAnswers" :class="headerClass">
           <span>
-            Question Answers
+            {{ t('answers') }}
           </span>
         </v-col>
 
@@ -296,7 +239,7 @@
         <!-- Header for comments -->
         <v-col v-if="showComments" :class="headerClass">
           <span>
-            Comments
+            {{ t('comments') }}
           </span>
         </v-col>
 
@@ -317,7 +260,7 @@
               <v-col v-if="allowNewComments">
                 <v-textarea
                   v-model="comment"
-                  label="Send a message"
+                  :label="t('message')"
                   no-resize
                   rows="3"
                   auto-grow
@@ -334,15 +277,15 @@
       <template v-slot:actions>
         <div v-if="showActions">
           <v-btn @click="submit(false)" text large class="secondary--text">
-            <span>decline</span>
+            <span>{{ t('decline') }}</span>
           </v-btn>
           <v-btn @click="submit(true)" text large class="blue--text mx-5">
-            <span>approve</span>
+            <span>{{ t('approve') }}</span>
           </v-btn>
         </div>
         <div v-else>
           <v-btn @click="close" text large class="blue--text mx-5">
-            <span>close</span>
+            <span>{{ t('close') }}</span>
           </v-btn>
         </div>
       </template>
@@ -497,6 +440,9 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    t (key, vars) {
+      return this.$t('reviewRegistration.' + key, vars)
     }
   }
 }

@@ -25,6 +25,7 @@ module.exports = {
   dialogHandler: require('./dialog-handler.json'),
   dialog: require('./dialog.json'),
   editNodeDialog: require('./edit-node-dialog.json'),
+  reviewRegistration: require('./review-registration-dialog.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),
