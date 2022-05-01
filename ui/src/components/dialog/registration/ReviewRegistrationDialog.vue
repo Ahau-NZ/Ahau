@@ -294,14 +294,14 @@
         </v-col>
 
         <!-- Header for comments -->
-        <v-col :class="headerClass">
+        <v-col v-if="showComments" :class="headerClass">
           <span>
             Comments
           </span>
         </v-col>
 
         <!-- Content for comments -->
-        <v-col :class="mobile ? 'px-0' : ''">
+        <v-col v-if="showComments" :class="mobile ? 'px-0' : ''">
           <v-card outlined :class="mobile ? '' : 'ml-2'">
             <v-row align="center">
               <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
@@ -312,7 +312,9 @@
                   :label="author.preferredName || author.legalName"
                 />
               </v-col>
-              <v-col v-if="!notification.isPersonal && notification.isNew">
+            </v-row>
+            <v-row>
+              <v-col v-if="allowNewComments">
                 <v-textarea
                   v-model="comment"
                   label="Send a message"
@@ -421,6 +423,12 @@ export default {
             d.comment && d.comment !== ''
           )
         })
+    },
+    allowNewComments () {
+      return !this.notification.isPersonal && this.notification.isNew
+    },
+    showComments () {
+      return (this.comments && this.comments.length) || this.allowNewComments
     },
     dob () {
       if (this.applicant.aliveInterval) {
