@@ -37,7 +37,7 @@
         </transition>
       </v-col>
     </v-row>
-    <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
+    <v-spacer v-if="addBottomSpacer" style="height:200px"></v-spacer>
 
     <NewCommunityDialog
       v-if="dialog === 'edit-community'"
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
@@ -223,6 +223,9 @@ export default {
     isWhakapapaShow () {
       return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
+    isPersonList () {
+      return this.$route.name === 'personIndex'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -244,12 +247,18 @@ export default {
     hideNav () {
       if (this.mobile && this.showStory) return true
       else return false
+    },
+    addBottomSpacer () {
+      return (
+        !this.mobile &&
+        !this.isWhakapapaShow &&
+        !this.isPersonList
+      )
     }
   },
   methods: {
     getDisplayName,
-    ...mapMutations(['setIsKaitiaki']),
-    ...mapActions(['setWhoami', 'setCurrentAccess']),
+    ...mapActions(['setWhoami', 'setCurrentAccess', 'setIsKaitiaki']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
     ...mapActions('person', ['updatePerson']),

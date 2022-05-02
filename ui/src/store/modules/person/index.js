@@ -1,11 +1,12 @@
 import Vue from 'vue'
 
-import { getPerson as getPersonAndWhanau } from '@/lib/person-helpers'
+import { getPerson as getPersonAndWhanau, mergeAdminProfile } from '@/lib/person-helpers'
 import {
   getPersonMinimal,
   savePerson as savePersonMutation,
   deletePerson, getPersonFull,
-  findPersonByName
+  findPersonByName,
+  loadPersonList
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -50,7 +51,7 @@ export default function (apollo) {
   }
 
   const mutations = {
-    setSelectedProfileById (state, id) {
+    setSelectedProfileId (state, id) {
       state.selectedProfileId = id
     },
     setPerson (state, profile) {
@@ -165,9 +166,14 @@ export default function (apollo) {
         dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
       } // eslint-disable-line
       else commit('setPerson', profile)
+      return profile
     },
-    async setSelectedProfileById ({ dispatch, commit, rootState }, id) {
-      commit('setSelectedProfileById', id)
+    async setSelectedProfileById ({ dispatch }, id) {
+      // legacy : TODO go through app and change to setSelectedProfileId
+      dispatch('setSelectedProfileId', id)
+    },
+    async setSelectedProfileId ({ dispatch, commit, rootState }, id) {
+      commit('setSelectedProfileId', id)
 
       if (!id) return
 
@@ -205,6 +211,19 @@ export default function (apollo) {
         return res.data.findPersons
       } catch (err) {
         console.error('Something went wrong while trying to find persons by name: ' + name)
+        console.error(err)
+      }
+    },
+    async loadPersonList (context, { type, tribeId }) {
+      try {
+        const res = await apollo.query(loadPersonList(type, tribeId))
+
+        if (res.errors) throw res.errors
+
+        return res.data.listPerson
+          .map(mergeAdminProfile)
+      } catch (err) {
+        console.error('Something went wrong while trying to load person list for group: ' + tribeId)
         console.error(err)
       }
     }

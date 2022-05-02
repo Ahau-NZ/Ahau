@@ -13,6 +13,8 @@
       :bottom="mobile"
     >
       <v-card light height="90%" class="text-center" flat>
+
+        <!-- Table -->
         <v-container v-if="isTable" class="black--text">
           <v-row class="justify-end">
             <v-btn icon class="mr-3">
@@ -57,6 +59,8 @@
             </v-col>
           </v-row>
         </v-container>
+
+        <!-- Tree -->
         <v-container v-else class="black--text">
           <v-row class="justify-end">
             <v-btn icon class="mr-3">
@@ -86,6 +90,15 @@
             </v-list-item-action>
           </v-list-item>
 
+          <v-list-item class="pb-4">
+            <v-list-item-content>
+              <v-list-item-title align="start" v-text=" t('autoCollapse')"/>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model='autoCollapse' @change='setAutoCollapse($event)' />
+            </v-list-item-action>
+          </v-list-item>
+
           <v-row>
             <v-col cols="12" class="mt-10">
               <v-btn @click="resetTree" text large color="red" :class="mobile ? 'ml-10':'pl-5'">
@@ -94,6 +107,7 @@
             </v-col>
           </v-row>
         </v-container>
+
       </v-card>
     </v-navigation-drawer>
   </transition>
@@ -121,7 +135,10 @@ export default {
       resetData: false,
       hideDeceased: false, // hides all deceased nodes
       showWhakapapa: false,
-      showAvatars: true
+
+      showAvatars: true,
+      autoCollapse: true,
+      showExtendedFamily: false
     }
   },
   watch: {
@@ -141,7 +158,6 @@ export default {
   },
   computed: {
     ...mapGetters('table', ['tableFlatten', 'tableFilter']),
-    ...mapGetters('whakapapa', ['showExtendedFamily']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -152,7 +168,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('whakapapa', ['setExtendedFamily']),
+    ...mapActions('whakapapa', ['setExtendedFamily', 'setAutoCollapse']),
     ...mapActions('table', ['toggleTableFlatten', 'resetTableFilters', 'updateTableFilter']),
     toggleWhakapapa () {
       if (this.whakapapa) this.whakapapa = false

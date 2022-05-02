@@ -23,7 +23,13 @@
           <v-row v-if="isEditing">
             <!-- Displays the form to edit the profile fields -->
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
+              <ProfileForm :profile.sync="formData"
+                isSideViewDialog
+                isEditing
+                :readonly="!isEditing"
+                :fullForm='fullForm'
+                :mobile="mobile"
+                @cancel="cancel" >
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <v-btn
@@ -308,43 +314,19 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import EditRelationships from '@/components/profile/EditRelationships.vue'
 
-import calculateAge from '../../../lib/calculate-age'
+import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 
-function defaultData (input) {
-  const profile = clone(input)
-
+function defaultData (profile) {
   return {
-    id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    aliveInterval: profile.aliveInterval,
-    preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
-    description: profile.description,
-    birthOrder: profile.birthOrder,
-    relationshipType: profile.relationshipType,
-    legallyAdoped: profile.legallyAdopted,
-    email: profile.email,
-    phone: profile.phone,
-    deceased: profile.deceased,
-    placeOfBirth: profile.placeOfBirth,
-    placeOfDeath: profile.placeOfDeath,
-    buriedLocation: profile.buriedLocation,
-    address: profile.address,
-    city: profile.city,
-    country: profile.country,
-    postCode: profile.postCode,
-    profession: profile.profession,
+    ...profile,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    },
-    education: profile.education,
-    school: profile.school
+    }
   }
 }
 
@@ -361,24 +343,30 @@ export default {
     EditRelationships
   },
   props: {
-    profileId: {
-      type: String,
-      required: true
-    },
-    deleteable: { type: Boolean, default: false },
-    view: { type: Object },
+    /* required */
+    profileId: { type: String, required: true },
     show: { type: Boolean, required: true },
+
+    /* optional */
+    view: { type: Object },
     readonly: { type: Boolean, default: false },
+    editing: { type: Boolean, default: false },
+    fullForm: { type: Boolean, default: false },
+    deleteable: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
+  },
+  mounted () {
+    this.loadPersonFull(this.profileId)
+    this.loadFamilyLinks(this.profileId)
   },
   data () {
     return {
-      isEditing: false,
       formData: {},
       showDescription: false,
       drawer: false,
       authors: [],
-      allowRemoveChildren: false
+      allowRemoveChildren: false,
+      isEditing: this.editing
     }
   },
   computed: {
@@ -523,8 +511,8 @@ export default {
     ...mapMutations(['updateDialog']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink']),
-    ...mapActions('person', ['setSelectedProfileById', 'getPerson', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
+    ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
     getDisplayName,
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
@@ -581,6 +569,7 @@ export default {
       // reset form values
       this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
+      this.$emit('cancel')
     },
     async submit () {
       const output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
@@ -598,6 +587,7 @@ export default {
 
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
+      this.$emit('saved')
     },
     toggleNew (type) {
       this.$emit('new', type)

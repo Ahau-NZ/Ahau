@@ -23,13 +23,14 @@
         <v-row v-if="isEditing" class="justify-center">
           <h1>{{ t('addPersonFormTitle', { displayName: getDisplayName(formData) }) }}</h1>
         </v-row>
-        <v-row v-if="isEditing" class="justify-center">
+        <v-row v-if="isEditing && !isSideViewDialog" class="justify-center">
           <v-btn
             @click="$emit('cancel')"
             color="white"
             text
             medium
             class="blue--text"
+            style='z-index: 100;'
           >
             <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
           </v-btn>
@@ -70,7 +71,7 @@
             />
           </v-col>
           <!-- Order of birth -->
-          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2':'pt-2 px-0'" >
+          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2':'pl-1 pr-0 pt-2'" >
             <v-text-field
               v-model="formData.birthOrder"
               type="number"
@@ -95,7 +96,7 @@
       </v-col>
     </v-row>
 
-    <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
+    <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'" justify='start'>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('genderIdentity') }}</p>
@@ -705,7 +706,7 @@ export default {
   }
   .gender-label-text {
     position: absolute;
-    top: 90%;
+    top: 95%;
   }
 
   .sideView-gender-label-text {

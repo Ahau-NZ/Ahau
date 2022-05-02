@@ -208,8 +208,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'syncing']),
-    ...mapGetters('archive', ['showStory', 'navComponent']),
+    ...mapGetters(['whoami', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters('archive', ['showStory']),
+    // mix (T_T) why is the navComponent in the archive store??
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
@@ -251,9 +252,8 @@ export default {
     },
     goMyProfile () {
       if (this.mobile && this.showStory) this.toggleShowStory()
-      const route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
       this.$router.push({
-        name: 'person/' + route,
+        name: this.navComponent === 'person' ? 'personIndex' : ('person/' + this.navComponent),
         params: {
           tribeId: this.whoami.personal.groupId,
           profileId: this.whoami.personal.profile.id
@@ -263,13 +263,12 @@ export default {
     },
     goTribeProfile (tribe) {
       if (this.mobile && this.showStory) this.toggleShowStory()
-      const profile = tribe.private[0]
       this.$router.push({
-        name: 'community/' + this.navComponent,
+        name: this.navComponent === 'person' ? 'personIndex' : ('community/' + this.navComponent),
+        // name: this.$router.name, // would need to check if is in an index page, if not, fall back to index?
         params: {
           tribeId: tribe.id,
-          profileId: profile.id,
-          profile
+          profileId: tribe.private[0].id
         }
       }).catch(() => {})
       this.toggleDrawer()
