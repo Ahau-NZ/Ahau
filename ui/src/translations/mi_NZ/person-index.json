@@ -1,0 +1,30 @@
+{
+  "title": "People",
+  "action": {
+    "search": "Search",
+    "expand": "more...",
+    "edit": "Whakaniko"
+  },
+  "prop": {
+    "preferredName": "First name / known as",
+    "legalName": "Ingoa katoa",
+    "gender": "Ira",
+    "aliveInterval": "Birth/Death",
+    "phone": "Waea",
+    "email": "Īmēra",
+    "address": "Wāhi Noho",
+    "city": "Tāone",
+    "postCode": "Waehere poutāpeta",
+    "country": "Mot",
+    "altNames": "Kei te mohiotia ano ko",
+    "description": "Kōrero whakaaturanga",
+    "placeOfBirth": "Noho",
+    "birthOrder": "Birth Order",
+    "placeOfDeath": "Wāhi i mate ai",
+    "buriedLocation": "Buried Location",
+    "profession": "Umanga",
+    "education": "Education",
+    "school": "School"
+  },
+  "loading": "Loading profiles..."
+}
