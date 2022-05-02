@@ -1,5 +1,25 @@
 # Changelog | Ahau desktop
 
+## v2.10.0
+
+### Features
+
+- whakapapa (family tree) view:
+    - added ability to turn off "auto-collapsing" of nodes
+        - when turned off, all nodes and all future nodes added will be uncollapsed
+- person list view for a tribe
+    - a searchable table of all profiles (of type 'person.group') in a group
+    - only accessible to kaitiaki
+    - searchable
+    - edit dialog
+
+### Fixes
+
+- registration form
+    - fixes ui for joining questions
+    - add placeholders
+    - hide comments section when there are no comments 
+
 ## v2.9.6
 
 ### Bug Fixes
