@@ -1,34 +1,34 @@
 <template>
-  <v-container v-if='isKaitiaki' fluid class='px-2' style='margin-top: 64px' >
+  <v-container v-if="isKaitiaki" fluid class="px-2" style="margin-top: 64px" >
     <v-card light flat>
       <v-card-title>
         {{ t('title') }}
         <v-spacer></v-spacer>
         <v-text-field
-          append-icon='mdi-magnify'
-          :label='t("action.search")'
+          append-icon="mdi-magnify"
+          :label="t('action.search')"
           single-line
           hide-details
 
-          style='max-width: 20rem;'
-          ref='search'
-          @input='handleSearchInput' />
+          style="max-width: 20rem;"
+          ref="search"
+          @input="handleSearchInput" />
       </v-card-title>
 
       <v-data-table
-        :headers='headers'
-        :items='profiles'
-        item-key='id'
+        :headers="headers"
+        :items="profiles"
+        item-key="id"
 
-        :loading='isLoading'
-        :loading-text='t("loading")'
+        :loading="isLoading"
+        :loading-text="t('loading')"
 
-        :search='search'
-        :customFilter='searchFilter'
+        :search="search"
+        :customFilter="searchFilter"
 
         light
 
-        class='mt-10'
+        class="mt-10"
       >
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="handleEdit(item)" >
@@ -38,18 +38,18 @@
       </v-data-table>
     </v-card>
 
-    <SideNodeDialog v-if='showEditor && selectedProfileId'
-      :show='showEditor'
-      :profileId='selectedProfileId'
+    <SideNodeDialog v-if="showEditor && selectedProfileId"
+      :show="showEditor"
+      :profileId="selectedProfileId"
 
       deleteable
       editing
       fullForm
 
-      @close='showEditor = false'
-      @cancel='showEditor = false'
-      @delete='handleDelete'
-      @saved='handleSaved'
+      @close="showEditor = false"
+      @cancel="showEditor = false"
+      @delete="handleDelete"
+      @saved="handleSaved"
     />
   </v-container>
 </template>
