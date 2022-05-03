@@ -2,6 +2,7 @@
   "delete": "Delete {preferredName}",
   "hideProfile": "Hide this profile from this whakapapa record",
   "deleteProile": "Delete this profile from all whakapapa records",
-  "confirmationMessage": " Are you sure you want to hide this profile from this whakapapa record? This will also remove all connected children from the whakapaparecord.",
-  "warnAboutChildren": "This will also remove all connected children from the whakapaparecord."
+  "deleteConfirmation": " Are you sure you want to delete this profile from this whakapapa record?",
+  "hideConfirmation": "Are you sure you want to hide this profile from this whakapapa record?",
+  "warnAboutChildren": "This will also remove all connected children from the whakapapa record."
 }
