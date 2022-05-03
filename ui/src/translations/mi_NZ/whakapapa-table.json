@@ -33,5 +33,6 @@
   "view": "View controls",
   "avatars": "Show profile photos",
   "parents": "Show extended family",
+  "autoCollapse": "Auto-collapse nodes",
   "default": "revert to default settings"
 }
