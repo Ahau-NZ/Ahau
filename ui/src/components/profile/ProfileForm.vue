@@ -337,12 +337,12 @@
             class="pa-1"
           >
             <v-text-field
-            v-model="formData.school[index]"
-            :label="t('skills.placeOfEducation')"
-            :append-icon="readonly ? '' : 'mdi-delete'"
-            @click:append="removeItem(formData.school, index)"
-            v-bind="customProps"
-            :readonly="readonly"
+              v-model="formData.school[index]"
+              :label="t('skills.placeOfEducation')"
+              :append-icon="readonly ? '' : 'mdi-delete'"
+              @click:append="removeItem(formData.school, index)"
+              v-bind="customProps"
+              :readonly="readonly"
             />
           </v-col>
           <v-col v-if="!readonly">
