@@ -123,7 +123,7 @@
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <PersonListIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === WHAKAPAPA? 'red' : 'black'"
+                :color="activeComponent === PERSON? '#B02425' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
@@ -208,7 +208,9 @@ export default {
       return this.isCommunity && !this.profile.avatarImage
     },
     activeComponent () {
-      if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
+      if (this.$route.name === 'whakapapa/:whakapapaId') return WHAKAPAPA
+      if (this.$route.name === 'personIndex') return PERSON
+
       return this.$route.name.split('/')[1]
     },
     showWhakapapa () {

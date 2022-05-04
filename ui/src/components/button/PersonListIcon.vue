@@ -1,5 +1,5 @@
 <template>
-  <v-icon :class='styleClasses'>
+  <v-icon v-bind="customProps" >
     mdi-account-multiple
   </v-icon>
 </template>
@@ -12,8 +12,11 @@ export default {
     color: String
   },
   computed: {
-    styleClasses () {
-      return [this.size, this.color].map(val => val && `is-${val}`)
+    customProps () {
+      return {
+        [this.size]: true,
+        color: this.color
+      }
     }
   }
 }
