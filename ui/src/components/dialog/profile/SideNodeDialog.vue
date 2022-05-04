@@ -319,9 +319,18 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 
+function arrayEquals (a, b) {
+  return (
+    Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index])
+  )
+}
+
 function defaultData (profile) {
   return {
-    ...profile,
+    ...clone(profile),
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
@@ -447,7 +456,11 @@ export default {
       const changes = {}
 
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.scopedProfile[key])) {
+        if (['school', 'education'].includes(key)) {
+          if (!arrayEquals(this.formData[key], this.profile[key])) {
+            changes[key] = value
+          }
+        } else if (!isEqual(this.formData[key], this.scopedProfile[key])) {
           switch (key) {
             case 'altNames':
               if (!isEqual(this.formData.altNames.add, this.scopedProfile.altNames)) {
