@@ -44,7 +44,7 @@
       :view="view"
       :preview="previewProfile"
     />
-    <DeleteNodeDialog
+    <RemovePersonDialog
       v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
@@ -97,7 +97,7 @@ import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
-import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
+import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDialog.vue'
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
@@ -120,7 +120,7 @@ export default {
     NewNodeDialog,
     EditNodeDialog,
     SideNodeDialog,
-    DeleteNodeDialog,
+    RemovePersonDialog,
     WhakapapaViewDialog,
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,

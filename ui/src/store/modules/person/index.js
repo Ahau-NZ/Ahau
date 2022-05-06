@@ -140,10 +140,17 @@ export default function (apollo) {
 
         commit('tombstoneId', id)
         dispatch('whakapapa/removeLinksToProfile', id, { root: true })
+        dispatch('alerts/showMessage', 'Person successfully deleted!', { root: true })
         return res.data.saveProfile
       } catch (err) {
-        console.error('Something went wrong while trying to delete a person', id)
-        console.error(err)
+        if (err.message.includes('whakapapa')) dispatch('alerts/showError', err.message, { root: true })
+        else {
+          const message = 'Something went wrong while trying to delete a person'
+          dispatch('alerts/showError', message, { root: true })
+          console.error(message, id)
+          console.error(err)
+        }
+        return null
       }
     },
 

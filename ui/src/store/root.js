@@ -51,6 +51,9 @@ export default function rootModule (apollo) {
 
     getters: {
       whoami: state => state.whoami,
+      isMyProfile: state => (profileId) => {
+        return state.whoami.linkedProfileIds.includes(profileId)
+      },
       navComponent: state => state.navComponent,
       loadingState: state => {
         if (state.isRebuilding) return state.percentageIndexedSinceStartup

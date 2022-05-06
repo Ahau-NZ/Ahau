@@ -12,7 +12,8 @@
 
           style="max-width: 20rem;"
           ref="search"
-          @input="handleSearchInput" />
+          @input="handleSearchInput"
+        />
       </v-card-title>
 
       <v-data-table
@@ -48,8 +49,18 @@
 
       @close="showEditor = false"
       @cancel="showEditor = false"
-      @delete="handleDelete"
+      @delete="showDeleteConfirmation"
       @saved="handleSaved"
+    />
+
+    <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
+      :show="showDelete"
+      context="personIndex"
+
+      :profile="selectedProfile"
+
+      @submit="handleDelete"
+      @close="showDelete = false"
     />
   </v-container>
 </template>
@@ -59,10 +70,15 @@ import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
+import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import { getDisplayName, mergeAdminProfile } from '@/lib/person-helpers.js'
 
 export default {
   name: 'PersonList',
+  components: {
+    SideNodeDialog,
+    RemovePersonDialog
+  },
   data () {
     const header = (key) => ({
       value: key,
@@ -102,15 +118,8 @@ export default {
       isLoading: false,
       profiles: [],
       showEditor: false,
+      showDelete: false,
       search: ''
-    }
-  },
-  computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
-    ...mapGetters('person', ['person', 'selectedProfileId']),
-    ...mapGetters('tribe', ['tribes']),
-    mobile () {
-      return this.$vuetify.breakpoint.xs
     }
   },
   async mounted () {
@@ -124,8 +133,21 @@ export default {
 
     this.isLoading = false
   },
+  computed: {
+    ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
+    ...mapGetters('person', ['person', 'selectedProfileId']),
+    ...mapGetters('tribe', ['tribes']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    selectedProfile () {
+      if (!this.selectedProfileId) return null
+
+      return this.person(this.selectedProfileId)
+    }
+  },
   methods: {
-    ...mapActions('person', ['loadPersonList', 'loadPersonFull', 'updatePerson', 'setSelectedProfileId']),
+    ...mapActions('person', ['loadPersonList', 'loadPersonFull', 'updatePerson', 'setSelectedProfileId', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     t (key) {
       return this.$t('personIndex.' + key)
@@ -155,7 +177,6 @@ export default {
     updateSearch: debounce(function (search) {
       // we debounce the search update, because updating this causes a potentially
       // heavy filter calculation to be run
-      console.log('update:search', search)
       this.search = search
     }, 500),
     async handleEdit (item) {
@@ -175,17 +196,20 @@ export default {
       this.search = search
       this.isLoading = false
     },
-    // if (this.whoami.personal.profile.id === this.selectedProfileId) await this.setWhoami()
-    // NEEDED?
-    handleDelete () {
-      this.showAlert({ message: 'Please delete profiles from whakapapa trees (under construction)', color: 'red' })
-      // :fire: WARNING - when deleting we needt to:
-      // - [ ] check it's safe to delete this profile (if it's ours, or "owned" we should not)
-      // - [ ] when we delete, also delete all links that pointed to this (so we're not clogging up graphs)
+    showDeleteConfirmation () {
+      this.showEditor = false
+      this.showDelete = true
+    },
+    async handleDelete () {
+      this.showDelete = false
+
+      const updateId = await this.deletePerson({ id: this.selectedProfileId })
+
+      // handle removing the profile from the list
+      if (updateId) this.profiles = this.profiles.filter(profile => profile.id !== this.selectedProfileId)
+
+      this.setSelectedProfileId(null)
     }
-  },
-  components: {
-    SideNodeDialog
   }
 }
 </script>

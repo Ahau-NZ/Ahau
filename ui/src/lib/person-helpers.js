@@ -199,6 +199,7 @@ export const whoami = ({
             ...SettingsFragment
           }
         }
+        linkedProfileIds
       }
     }
   `,
