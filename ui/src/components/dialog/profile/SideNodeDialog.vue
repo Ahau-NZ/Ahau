@@ -49,9 +49,8 @@
 
           <v-row v-if="isEditing">
             <!-- Displays delete profile button (if editing and allowed to delete) -->
-            <v-col cols="12" sm="auto" v-if="!isAdminProfile">
+            <v-col cols="12" sm="auto" v-if="isDeletable">
               <v-btn
-                v-if="deleteable"
                 @click="$emit('delete')"
                 align="center"
                 color="white"
@@ -379,12 +378,24 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki', 'currentAccess']),
+    ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
       'getPartnerType'
     ]),
+    isDeletable () {
+      return (
+        this.deleteable &&
+
+        // protects us from deleting a profile we cant
+        // mainly owned profiles
+        this.profile.canEdit &&
+
+        // not one of your personal profiles
+        !this.isMyProfile(this.profileId)
+      )
+    },
     profile () {
       return this.person(this.profileId)
     },

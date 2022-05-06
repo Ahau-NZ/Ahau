@@ -39,7 +39,7 @@ export const ShowViewEditNodeDialog = () => ({
   components: { DialogHandler }
 })
 
-export const ShowDeleteNodeDialog = () => ({
+export const ShowRemovePersonDialog = () => ({
   template:
     '<DialogHandler dialog="delete-node" :selectedProfile="profileComplete"/>',
   data () {
