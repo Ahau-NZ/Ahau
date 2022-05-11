@@ -1,11 +1,51 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default function (apollo) {
   const state = {
+    currentTribe: null,
     tribes: []
   }
 
   const getters = {
+    currentTribe: state => state.currentTribe,
+    accessOptions: (state, _, rootState) => {
+      const tribe = state.currentTribe
+
+      if (!tribe) return []
+
+      if (rootState.whoami.personal.groupId === tribe.id) {
+        return [{
+          type: ACCESS_PRIVATE,
+          groupId: rootState.whoami.personal.groupId,
+          profileId: rootState.whoami.personal.profile.id
+        }]
+      }
+
+      const profileId = (
+        (tribe.private && tribe.private.length)
+          ? tribe.private[0]
+          : tribe.public[0]
+      ).id
+
+      const options = [
+        {
+          type: ACCESS_ALL_MEMBERS,
+          groupId: tribe.id,
+          profileId // community profile
+        }
+      ]
+
+      if (tribe.admin && tribe.admin.id) {
+        options.push({
+          type: ACCESS_KAITIAKI,
+          groupId: tribe.admin.id,
+          profileId // community profiel NOTE: admin subgroups dont have a community profile
+        })
+      }
+
+      return options
+    },
     tribes: state => {
       return state.tribes
     }
@@ -14,10 +54,16 @@ export default function (apollo) {
   const mutations = {
     updateTribes (state, tribes) {
       state.tribes = tribes
+    },
+    setCurrentTribe (state, tribe) {
+      state.currentTribe = tribe
     }
   }
 
   const actions = {
+    setCurrentTribe ({ commit }, tribe) {
+      commit('setCurrentTribe', tribe)
+    },
     updateTribes ({ commit }, tribes) {
       commit('updateTribes', tribes)
     },

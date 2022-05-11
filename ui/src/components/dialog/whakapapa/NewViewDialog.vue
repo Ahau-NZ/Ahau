@@ -25,9 +25,6 @@ import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
-
 const EMPTY_WHAKAPAPA = {
   name: '',
   description: '',
@@ -76,20 +73,14 @@ export default {
   },
   data () {
     return {
-      tribe: null, // to be loaded
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: '',
-      accessOptions: []
+      csv: ''
     }
   },
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['tribe']
-    })
-  ],
   computed: {
     ...mapGetters(['whoami']),
+    ...mapGetters('tribe', ['accessOptions']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -101,42 +92,8 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-  watch: {
-    tribe: {
-      deep: true,
-      immediate: true,
-      handler (tribe) {
-        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.accessOptions = [{
-            type: ACCESS_PRIVATE,
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id
-          }]
-        } // eslint-disable-line
-        else {
-          if (!tribe) return
-
-          const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
-          this.accessOptions = [
-            {
-              type: ACCESS_ALL_MEMBERS,
-              groupId: tribe.id,
-              profileId // community profileId
-            },
-            {
-              type: ACCESS_KAITIAKI,
-              groupId: tribe.admin.id,
-              profileId // community profileId
-            }
-          ]
-        }
-
-        this.setCurrentAccess(this.accessOptions[0])
-      }
-    }
-  },
   methods: {
-    ...mapActions(['setLoading', 'setCurrentAccess']),
+    ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()
