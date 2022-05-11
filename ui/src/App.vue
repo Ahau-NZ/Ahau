@@ -49,6 +49,12 @@ export default {
       indexes: null
     }
   },
+  components: {
+    Appbar,
+    Spinner,
+    DialogHandler,
+    AlertMessage
+  },
   apollo: {
     indexes: {
       ...getIndexes,
@@ -69,45 +75,16 @@ export default {
     // if we don't have a language like that, fall back to english
     this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
   },
-  methods: {
-    ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
-    ...mapActions('analytics', ['appUsed'])
-  },
-  computed: {
-    ...mapGetters(['storeDialog', 'loadingState']),
-    ...mapGetters('alerts', ['alertSettings']),
-    mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    indexPollingInterval () {
-      if (typeof this.loadingState === 'boolean') return 4000
-      else return 500
-    },
-    enableMenu () {
-      if (
-        this.$route.name === 'profileEdit' &&
-        this.$route.query.setup === true
-      ) {
-        return false
-      } else return true
-    },
-    displayAppbar () {
-      if (this.$route.name === 'login') return false
-      else return true
+  async mounted () {
+    if (!this.currentTribe && this.$route.params.tribeId) {
+      await this.loadTribe(this.$route.params.tribeId)
     }
-  },
-  mounted () {
-    this.setWhoami()
+
+    await this.setWhoami()
 
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
     }
-  },
-  components: {
-    Appbar,
-    Spinner,
-    DialogHandler,
-    AlertMessage
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each .route.
@@ -132,6 +109,42 @@ export default {
 
         this.setIndexingData(data)
       }
+    },
+    async '$route.params.tribeId' (groupId) {
+      await this.loadTribe(groupId)
+    }
+  },
+  computed: {
+    ...mapGetters('tribe', ['currentTribe']),
+    ...mapGetters(['storeDialog', 'loadingState']),
+    ...mapGetters('alerts', ['alertSettings']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    indexPollingInterval () {
+      if (typeof this.loadingState === 'boolean') return 4000
+      else return 500
+    },
+    enableMenu () {
+      if (
+        this.$route.name === 'profileEdit' &&
+        this.$route.query.setup === true
+      ) {
+        return false
+      } else return true
+    },
+    displayAppbar () {
+      if (this.$route.name === 'login') return false
+      else return true
+    }
+  },
+  methods: {
+    ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
+    ...mapActions('tribe', ['setCurrentTribe', 'getTribe']),
+    ...mapActions('analytics', ['appUsed']),
+    async loadTribe (groupId) {
+      const tribe = await this.getTribe(groupId)
+      this.setCurrentTribe(tribe)
     }
   }
 }
