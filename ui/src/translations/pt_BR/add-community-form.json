@@ -36,5 +36,6 @@
   "data": "Data",
   "type": "Type",
   "included": "Included",
-  "required": "Required"
+  "required": "Required",
+  "settings": "Settings"
 }

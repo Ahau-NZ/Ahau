@@ -1,0 +1,11 @@
+{
+  "kaitiakiFeatures": "Kaitiaki Features",
+  "kaitiakiFeaturesDescription": "Turn on/off the features available to kaitiaki of this community",
+  "memberFeatures": "Member Features",
+  "memberFeaturesDescription": "Turn on/off the features available to members and kaitiaki of this community",
+  "allowPersonsList": "Turn {toggle} peoples list",
+  "allowWhakapapaViews": "Turn {toggle} whakapapa records",
+  "allowStories": "Turn {toggle} the archive and stories",
+  "on": "on",
+  "off": "off"
+}
