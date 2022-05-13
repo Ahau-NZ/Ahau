@@ -1,8 +1,16 @@
 {
   "delete": "Muku {preferredName}",
-  "hideProfile": "Hunaia tēnei kōrero mai i te whakapapa nei",
-  "deleteProile": "Mukua tēnei tohu mai i ngā whakapapa katoa",
-  "deleteConfirmation": " Are you sure you want to delete this profile from this whakapapa record?",
-  "hideConfirmation": "Are you sure you want to hide this profile from this whakapapa record?",
-  "warnAboutChildren": "This will also remove all connected children from the whakapapa record."
+  "deleteLabel": "delete",
+  "cancel": "cancel",
+  "whakapapaShow": {
+    "hideProfile": "Hunaia tēnei kōrero mai i te whakapapa nei",
+    "deleteProile": "Mukua tēnei tohu mai i ngā whakapapa katoa",
+    "deleteConfirmation": " Are you sure you want to delete this profile from this whakapapa record?",
+    "hideConfirmation": "Are you sure you want to hide this profile from this whakapapa record?",
+    "warnAboutChildren": "This will also remove all connected children from the whakapapa record."
+  },
+  "personIndex": {
+    "deleteConfirmation": "Are you sure you want to delete this profile?",
+    "warnAboutChildren": "This will also remove all connected children from all whakapapa records that this profile is linked to."
+  }
 }

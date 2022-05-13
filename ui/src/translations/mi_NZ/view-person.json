@@ -25,6 +25,8 @@
   },
   "tribes": "Ngā iwi",
   "editProfile": "Panoni whaiaro",
+  "accountSettings": "Tautuhinga pūkete",
+  "tribeSettings": "Tribe Settings",
   "settings": "Tautuhinga",
   "failMembers": "Something went wrong while trying to fetch members",
   "noChanges": "No changes submitted",

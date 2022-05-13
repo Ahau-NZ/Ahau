@@ -25,6 +25,8 @@
   },
   "tribes": "Tribos",
   "editProfile": "Edit Profile",
+  "accountSettings": "Account Settings",
+  "tribeSettings": "Tribe Settings",
   "settings": "Settings",
   "failMembers": "Something went wrong while trying to fetch members",
   "noChanges": "No changes submitted",
