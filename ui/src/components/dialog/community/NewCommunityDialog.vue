@@ -38,6 +38,12 @@
             </v-icon>
             {{t('permissions')}}
           </v-tab>
+          <v-tab href="#tab-5" :class="mobile ? 'mb-tabs':'desk-tabs'">
+            <v-icon small v-if="!mobile" left>
+              mdi-cog
+            </v-icon>
+            {{t('settings')}}
+          </v-tab>
         </v-tabs>
       </v-app-bar>
       <v-divider/>
@@ -60,7 +66,7 @@
                 append-icon="mdi-delete"
                 @click:append="removeJoiningQuestion(i)"
                 :label="`Question ${i + 1}`"
-                :placeholder="$t('addCommunity.questionPlaceholder')"
+                :placeholder="$t('addCommunityForm.questionPlaceholder')"
                 auto-focus
                 outlined
                 hide-details
@@ -80,6 +86,9 @@
         <v-tab-item light value="tab-4">
           <Permissions mobile />
         </v-tab-item>
+        <v-tab-item light value="tab-5">
+          <TribeSettings :settings="settings" @change="updateSettings" />
+        </v-tab-item>
       </v-tabs-items>
     </template>
     <template v-slot:before-actions>
@@ -94,13 +103,18 @@
 </template>
 
 <script>
+import pick from 'lodash.pick'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import GroupsList from './GroupsList.vue'
 import Permissions from './Permissions.vue'
+import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'NewCommunityDialog',
@@ -109,6 +123,7 @@ export default {
     CommunityForm,
     GroupsList,
     Permissions,
+    TribeSettings,
     DataModel
   },
   props: {
@@ -125,6 +140,17 @@ export default {
     }
   },
   watch: {
+    tribeSettings: {
+      deep: true,
+      immediate: true,
+      handler (settings) {
+        if (!settings) return
+
+        this.formData.allowWhakapapaViews = settings.allowWhakapapaViews
+        this.formData.allowStories = settings.allowStories
+        this.formData.allowPersonsList = settings.allowPersonsList
+      }
+    },
     'formData.joiningQuestions': {
       deep: true,
       immediate: true,
@@ -142,8 +168,12 @@ export default {
   },
 
   computed: {
+    ...mapGetters('tribe', ['tribeSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    settings () {
+      return pick(this.formData, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
     }
   },
   methods: {
@@ -152,6 +182,9 @@ export default {
     },
     removeJoiningQuestion (index) {
       this.formData.joiningQuestions.splice(index, 1)
+    },
+    updateSettings ({ key, value }) {
+      this.formData[key] = value
     },
     submit () {
       let output = {}

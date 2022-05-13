@@ -21,7 +21,12 @@ export const EMPTY_COMMUNITY = {
   phone: null,
   joiningQuestions: [],
   authors: [],
-  kaitiaki: []
+  kaitiaki: [],
+
+  // private community settings
+  allowWhakapapaViews: true,
+  allowStories: true,
+  allowPersonsList: true
 }
 
 export function setDefaultCommunity (newCommunity) {
@@ -40,7 +45,12 @@ export function setDefaultCommunity (newCommunity) {
     email: community.email,
     phone: community.phone,
     joiningQuestions: community.joiningQuestions,
-    authors: (community.kaitiaki || community.tiaki).map(d => ({ ...d.profile, feedId: d.feedId }))
+    authors: (community.kaitiaki || community.tiaki).map(d => ({ ...d.profile, feedId: d.feedId })),
+
+    // private community settings
+    allowWhakapapaViews: community.allowWhakapapaViews,
+    allowStories: community.allowStories,
+    allowPersonsList: community.allowPersonsList
   }
 }
 // TODO: uncomment needed fields
@@ -86,7 +96,12 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'tombstone',
   'tiaki',
   // private only attrs
-  'recps'
+  'recps',
+
+  // private community settings
+  'allowWhakapapaViews',
+  'allowStories',
+  'allowPersonsList'
 ]
 
 export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
@@ -132,10 +147,13 @@ ${PublicProfileFieldsFragment}
         ...PublicProfileFields
       }
     }
+
+    # only on public profiles
     joiningQuestions {
       type
       label
     }
+
   }
 `
 // copied until returning empty author is fixed

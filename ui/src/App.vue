@@ -115,14 +115,21 @@ export default {
     async '$route.params.tribeId' (id) {
       if (id) {
         await this.loadTribe(id)
+
+        this.validateRoute()
+
         // make sure the personal tribe is loaded
         await this.setWhoami()
+      } else {
+        // clear the current tribe
+        this.resetCurrentTribe()
       }
       // NOTE: id is null when on the tribes discovery page
     }
   },
   computed: {
-    ...mapGetters('tribe', ['currentTribe']),
+    ...mapGetters(['isKaitiaki']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
     ...mapGetters(['storeDialog', 'loadingState']),
     ...mapGetters('alerts', ['alertSettings']),
     mobile () {
@@ -147,8 +154,30 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
-    ...mapActions('tribe', ['loadTribe']),
-    ...mapActions('analytics', ['appUsed'])
+    ...mapActions('tribe', ['loadTribe', 'resetCurrentTribe']),
+    ...mapActions('analytics', ['appUsed']),
+    validateRoute () {
+      if (this.isPersonalTribe) return
+
+      // we need to check if we're allowed on the route we are on
+      const name = this.$route.name
+      if (name === 'community/profile' || name === 'person/profile') return
+
+      const [type, component] = name.split('/')
+
+      if (type === 'personIndex' && this.isKaitiaki && this.tribeSettings.allowPersonsList) return
+      if (component === 'whakapapa' && this.tribeSettings.allowWhakapapaViews) return
+      if ((component === 'archive' || component === 'timeline') && this.tribeSettings.allowStories) return
+
+      // not allowed on this route, so we redirect it to the profile
+      this.$router.push({
+        name: type === 'personIndex' ? 'community/profile' : type + '/profile',
+        params: {
+          tribeId: this.currentTribe.id,
+          profileId: this.currentTribe.private[0].id
+        }
+      }).catch(() => {})
+    }
   }
 }
 </script>

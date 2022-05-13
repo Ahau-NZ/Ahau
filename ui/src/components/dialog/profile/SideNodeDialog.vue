@@ -379,6 +379,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
+    ...mapGetters('tribe', ['tribeSettings']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
@@ -451,7 +452,10 @@ export default {
       return this.profile && this.profile.adminProfile
     },
     showStoriesButton () {
-      return this.currentAccess.type !== ACCESS_KAITIAKI
+      return (
+        this.currentAccess.type !== ACCESS_KAITIAKI &&
+        (this.tribeSettings && this.tribeSettings.allowStories)
+      )
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
