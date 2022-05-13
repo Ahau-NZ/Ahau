@@ -24,15 +24,16 @@
                         text
                         rounded
                         small
+                        :disabled="disabled"
                       >
                         <v-icon small>mdi-eye</v-icon>
                         <span class="ml-2">{{ currentAccess.label || $t(`accessButton.${currentAccess.type}`) }}</span>
-                        <v-icon v-if="!disabled && accessOptions.length > 1">mdi-chevron-down</v-icon>
+                        <v-icon v-if="!disabled && allowedOptions.length > 1">mdi-chevron-down</v-icon>
                       </v-btn>
                     </template>
-                    <v-list v-if="accessOptions.length > 1">
+                    <v-list v-if="allowedOptions.length > 1">
                       <v-list-item
-                        v-for="(accessOption, index) in accessOptions"
+                        v-for="(accessOption, index) in allowedOptions"
                         :key="index"
                         @click="setCurrentAccess(accessOption)"
                       >
@@ -139,6 +140,15 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    allowedOptions () {
+      if (this.type === 'whakapapa') return this.accessOptions
+
+      // we currently are only allowing the kaitiaki-only option in whakapapa
+      // so for now, im just filtering it on all other types
+      // TODO: when kaitiaki-only is allowed in other places, remove this filter
+      return this.accessOptions
+        .filter(option => option.type !== ACCESS_KAITIAKI)
+    },
     tooltipText () {
       // NOTE: this is a temporary fix to display different tooltip text when looking at whakapapa
       // this is because access is coming soon on all other types of records

@@ -33,7 +33,7 @@
       >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
-          <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe" />
+          <router-view :key="JSON.stringify(profile)" :profile="profile" />
         </transition>
       </v-col>
     </v-row>
@@ -48,7 +48,6 @@
       @submit="processUpdateCommunity"
       @close="dialog = null"
       :profile="profile"
-      :tribe="tribe"
     />
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
@@ -67,7 +66,7 @@
     <NewRegistrationDialog
       v-if="dialog === 'new-registration'"
       :show="dialog === 'new-registration'"
-      :title="`Request to join : ${tribe.public[0].preferredName}`"
+      :title="`Request to join : ${tribeProfile.preferredName}`"
       :profile="profile"
       @submit="createGroupApplication"
       @close="dialog = null"
@@ -92,13 +91,12 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { deleteTribe } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { ACCESS_PRIVATE, ACCESS_KAITIAKI, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile']
     })
   ],
   components: {
@@ -113,7 +111,6 @@ export default {
   data () {
     return {
       profile: {},
-      tribe: {},
       editing: false,
       dialog: null,
       parents: [],
@@ -124,74 +121,6 @@ export default {
     }
   },
   watch: {
-    tribe: {
-      deep: true,
-      immediate: true,
-      async handler (tribe) {
-        // 2021-12-02 mix: this all feels like logic that should be collected somewhere else
-        // Anti-patterns:
-        //   - bolting data onto existing profiles which might mutate
-        //   - watching for data changes instead of just requesting the exact data you need
-
-        if (!tribe || !tribe.id || !this.whoami) return
-
-        const groupId = tribe.id
-
-        // if we are looking at our personal group
-        if (this.whoami.personal.groupId === groupId) {
-          this.setIsKaitiaki(true)
-          this.setCurrentAccess({
-            type: ACCESS_PRIVATE,
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id
-          })
-        } else {
-          // otherwise we are looking at another group which could be:
-          // 1. a group
-          // 2. an admin-only subgroup
-
-          // check if we are the kaitiaki of this group
-          const isKaitiaki = tribe.public.length
-            ? tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId)
-            : false
-          // NOTE this isn't perfect, as kaitiaki only subgroups have no public/private community
-          // in the isKaitiaki getter we check the combination of isKaitiaki + currentAccess.type
-
-          this.setIsKaitiaki(isKaitiaki)
-
-          // load the members of this group
-          this.tribe.members = await this.getMembers(groupId) || []
-
-          // check if this group has a parentGroup
-          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
-
-          // if it does, it means we are looking at an admin-only subgroup
-          if (parentGroup) {
-            // find the parent groups profile and use that instead
-            const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
-            this.setCurrentAccess({
-              type: ACCESS_KAITIAKI,
-              groupId,
-              profileId // community profileId of the parentGroup
-            })
-          } else {
-            // no parent group means we are already on a parent group
-            const profile = tribe.private.length ? tribe.private[0] : tribe.public[0]
-            if (!profile) return console.warn('cannot find community profile (probably just a reload issue)')
-
-            this.profile.joiningQuestions = (tribe.public.length)
-              ? tribe.public[0].joiningQuestions
-              : []
-
-            this.setCurrentAccess({
-              type: ACCESS_ALL_MEMBERS,
-              groupId,
-              profileId: profile.id // community profileId
-            })
-          }
-        }
-      }
-    },
     '$route.params' (params) {
       if (!params.application) return
       const { dialog, source } = params.application
@@ -204,12 +133,8 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
-    ...mapGetters('tribe', ['tribes']),
-    myProfile () {
-      return this.whoami.personal.groupId === this.tribe.id
-    },
     personalProfileCopy () {
       return copyProfileInformation(this.whoami.personal.profile)
     },
@@ -258,9 +183,9 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapActions(['setWhoami', 'setCurrentAccess', 'setIsKaitiaki']),
+    ...mapActions(['setWhoami']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('tribe', ['addAdminsToGroup', 'getMembers']),
+    ...mapActions('tribe', ['addAdminsToGroup', 'getMembers', 'loadTribe']),
     ...mapActions('person', ['updatePerson']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
@@ -282,13 +207,14 @@ export default {
         else {
           const adminIds = input.authors.add
 
-          await this.addAdminsToGroup({ groupId: this.tribe.id, adminIds })
+          await this.addAdminsToGroup({ groupId: this.currentTribe.id, adminIds })
         }
       }
 
-      await this.updateCommunity({ tribe: this.tribe, input })
+      await this.updateCommunity({ tribe: this.currentTribe, input })
       this.closeDialog()
       await this.refresh()
+      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
     async processUpdatePerson ($event) {
       // attach the id to the input
@@ -296,7 +222,7 @@ export default {
       await this.updatePerson(input)
 
       this.closeDialog()
-      this.refresh()
+      await this.refresh()
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.whoami.personal.profile.id === this.profile.id) await this.setWhoami()
@@ -308,14 +234,14 @@ export default {
     async deleteCommunity () {
       try {
         const res = await this.$apollo.mutate(
-          deleteTribe(this.tribe)
+          deleteTribe(this.currentTribe)
         )
 
         if (res.errors) throw res.errors
         this.showAlert({ message: this.t('communityDeleted'), color: 'green' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
-        console.error(this.t('failCommunityDeleted'), this.tribe.id)
+        console.error(this.t('failCommunityDeleted'), this.currentTribe.id)
         console.error(err)
         this.showAlert({ message: this.t('failCommunityDeleted'), delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
@@ -325,7 +251,7 @@ export default {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
-            groupId: this.tribe.id,
+            groupId: this.currentTribe.id,
             comment,
             answers
           })
@@ -361,9 +287,9 @@ export default {
     closeDialog () {
       this.dialog = null
     },
-    refresh () {
+    async refresh () {
       // tell apollo to refresh the current tribe and profile queries
-      this.$apollo.queries.tribe.refetch()
+      await this.loadTribe(this.currentTribe.id)
       this.$apollo.queries.profile.refetch()
     },
     t (key, vars) {

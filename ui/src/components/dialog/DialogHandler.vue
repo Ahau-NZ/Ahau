@@ -155,7 +155,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile']
     })
   ],
   data () {
@@ -163,8 +163,7 @@ export default {
       source: null,
       registration: '',
       dialogType: '',
-      profile: {},
-      tribe: {}
+      profile: {}
     }
   },
   computed: {

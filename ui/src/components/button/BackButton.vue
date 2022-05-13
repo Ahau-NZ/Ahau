@@ -159,6 +159,7 @@ export default {
     },
     goWhakapapaIndex () {
       // check the group we are going to is an admin one
+      // TODO: replace with parentGroup vuex getter
       const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
       const type = this.$route.name.split('/whakapapa')[0]
 

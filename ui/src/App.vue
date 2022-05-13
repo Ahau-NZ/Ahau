@@ -76,11 +76,13 @@ export default {
     this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
   },
   async mounted () {
+    await this.setWhoami()
+
+    // this is for the case of when the route is reloaded to
+    // the same tribeId
     if (!this.currentTribe && this.$route.params.tribeId) {
       await this.loadTribe(this.$route.params.tribeId)
     }
-
-    await this.setWhoami()
 
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
@@ -110,8 +112,13 @@ export default {
         this.setIndexingData(data)
       }
     },
-    async '$route.params.tribeId' (groupId) {
-      await this.loadTribe(groupId)
+    async '$route.params.tribeId' (id) {
+      if (id) {
+        await this.loadTribe(id)
+        // make sure the personal tribe is loaded
+        await this.setWhoami()
+      }
+      // NOTE: id is null when on the tribes discovery page
     }
   },
   computed: {
@@ -140,12 +147,8 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
-    ...mapActions('tribe', ['setCurrentTribe', 'getTribe']),
-    ...mapActions('analytics', ['appUsed']),
-    async loadTribe (groupId) {
-      const tribe = await this.getTribe(groupId)
-      this.setCurrentTribe(tribe)
-    }
+    ...mapActions('tribe', ['loadTribe']),
+    ...mapActions('analytics', ['appUsed'])
   }
 }
 </script>

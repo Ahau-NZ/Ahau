@@ -1,14 +1,14 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    <Dialog :show="show" :title="title" width="720px" :goBack="closeOrCancel" enableMenu
       @submit="submit"
-      @close="close"
+      @close="closeOrCancel"
     >
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
-      <template v-slot:before-actions>
+      <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
         <AccessButton type="whakapapa" :accessOptions="accessOptions"/>
       </template>
     </Dialog>
@@ -93,7 +93,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading']),
+    ...mapActions(['setLoading', 'setCurrentAccess']),
+    closeOrCancel () {
+      // need to reset the access, only when the close or cancel button was pressed
+      // not when the submit is pressed
+      if (this.accessOptions && this.accessOptions.length) this.setCurrentAccess(this.accessOptions[0])
+      this.close()
+    },
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()

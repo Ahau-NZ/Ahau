@@ -95,8 +95,7 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 export default {
   name: 'WhakapapaIndex',
   props: {
-    profile: Object,
-    tribe: Object
+    profile: Object
   },
   data () {
     return {
@@ -114,26 +113,32 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['currentTribe', 'tribes', 'isPersonalTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
-  async mounted () {
-    const groupId = this.$route.params.tribeId
+  watch: {
+    currentTribe: {
+      immediate: true,
+      deep: true,
+      async handler (tribe) {
+        if (!tribe) return
 
-    // set the current default access as the current group
-    this.views = await this.getWhakapapaViews({ groupId })
+        this.views = await this.getWhakapapaViews({ groupId: tribe.id })
 
-    this.adminGroupId = this.tribe.admin && this.tribe.admin.id
-    if (this.adminGroupId) {
-      this.adminViews = await this.getWhakapapaViews({ groupId: this.adminGroupId })
+        if (this.isPersonalTribe) return
+
+        if (tribe.admin) {
+          this.adminGroupId = tribe.admin.id
+          this.adminViews = await this.getWhakapapaViews({ groupId: this.adminGroupId })
+        }
+      }
     }
   },
   methods: {
     ...mapActions(['setLoading']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('tribe', ['getTribe']),
     ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
     toggleWhakapapaHelper () {

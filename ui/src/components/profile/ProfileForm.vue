@@ -465,9 +465,11 @@ export default {
       this.updateSelectedGender(this.formData.gender)
     }
     if (!this.readonly && isEmpty(this.formData.education)) {
+      this.formData.education = []
       this.formData.education.push('')
     }
     if (!this.readonly && isEmpty(this.formData.school)) {
+      this.formData.school = []
       this.formData.school.push('')
     }
   },
