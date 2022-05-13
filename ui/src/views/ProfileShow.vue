@@ -12,8 +12,8 @@
         <ProfileButton
           v-if="profile.canEdit"
           @click="goEdit"
-          icon="mdi-account-edit"
-          :label="t('editProfile')"
+          icon="mdi-account-cog"
+          :label="editButtonLabel"
         />
         <v-divider v-else class="py-5"></v-divider>
       </div>
@@ -133,7 +133,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
-    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe']),
+    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe', 'isPersonalTribe']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
     personalProfileCopy () {
       return copyProfileInformation(this.whoami.personal.profile)
@@ -141,6 +141,12 @@ export default {
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
+    },
+    editButtonLabel () {
+      if (this.isPersonalTribe) return this.t('accountSettings')
+      if (this.isCommunity) return this.t('tribeSettings')
+
+      return this.t('editProfile')
     },
     isProfile () {
       return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
