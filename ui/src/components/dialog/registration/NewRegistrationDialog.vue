@@ -408,7 +408,8 @@ export default {
       deep: true,
       immediate: true,
       handler (profile) {
-        this.answers = profile.joiningQuestions.map(q => {
+        profile.joiningQuestions = this.tribeJoiningQuestions
+        this.answers = this.tribeJoiningQuestions.map(q => {
           return {
             question: q.label,
             answer: ''
@@ -433,6 +434,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
+    ...mapGetters('tribe', ['tribeJoiningQuestions']),
     altNames () {
       if (this.personalProfile.altNames && this.personalProfile.altNames.length) return this.personalProfile.altNames.join(', ')
       return ''

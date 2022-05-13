@@ -69,11 +69,18 @@ export default function rootModule (apollo) {
         return state.loading
       },
       syncing: state => state.syncing,
-      isKaitiaki: state => {
-        return (
-          state.isKaitiaki ||
-          (state.currentAccess && state.currentAccess.type === ACCESS_KAITIAKI)
-        )
+      isKaitiaki: (state, getters) => {
+        if (getters['tribe/isPersonalTribe']) return true
+
+        // if you're in the kaitiaki tribe, you're a kaitiaki
+        if (state.currentAccess && state.currentAccess.type === ACCESS_KAITIAKI) return true
+
+        // otherwise look at the current tribes profile, to see if you're a listed kaitiaki
+        const kaitiaki = getters['tribe/tribeKaitiaki']
+
+        return kaitiaki.some(kaitiaki => {
+          return kaitiaki.feedId === state.whoami.public.feedId
+        })
       },
 
       // TODO-implement goBack to previous profile &| component

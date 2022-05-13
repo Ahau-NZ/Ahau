@@ -58,7 +58,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-row v-if="!showArtefact" class="px-4 pb-0">
-        <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+        <v-col v-if="access && access.length" cols="auto" class="pb-0">
           <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
           <AvatarGroup
             style="position:relative; bottom:15px; right:15px"
@@ -289,7 +289,6 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 
 import { colours } from '@/lib/colours.js'
 import { setDefaultStory } from '@/lib/story-helpers.js'
-import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { convertBytes } from '@/lib/artefact-helpers.js'
@@ -330,8 +329,7 @@ export default {
       truncateText: true,
       textHeight: 0,
       selectedIndex: 0,
-      dialog: null,
-      access: null
+      dialog: null
     }
   },
   async mounted () {
@@ -340,15 +338,14 @@ export default {
     if (this.fullStory) {
       this.truncateText = false
     }
-
-    // populate access
-    const tribe = await this.getTribe(this.story.recps[0])
-    // get the profile of the tribe
-    this.access = [getTribalProfile(tribe, this.whoami)]
   },
   computed: {
     ...mapGetters(['storeDialog', 'whoami']),
     ...mapGetters('archive', ['showArtefact']),
+    ...mapGetters('tribe', ['tribeProfile']),
+    access () {
+      return [this.tribeProfile].filter(Boolean)
+    },
     artefacts () {
       return this.story.artefacts.map(link => link.artefact)
     },
@@ -421,7 +418,6 @@ export default {
   methods: {
     ...mapActions('archive', ['setCurrentStory', 'setShowArtefact', 'toggleShowStory']),
     ...mapActions('story', ['deleteStory']),
-    ...mapActions('tribe', ['getTribe']),
     //  save artefact from showArtefact
     saveArtefact ($event) {
       this.updateArtefacts($event)

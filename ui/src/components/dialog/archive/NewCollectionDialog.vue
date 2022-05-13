@@ -14,7 +14,7 @@
       </v-col>
     </template>
 
-    <template v-if="accessOptions.length" v-slot:before-actions>
+    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing"  />
     </template>
   </Dialog>
@@ -30,8 +30,6 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 function setDefaultCollection (newCollection) {
   const collection = clone(newCollection)
@@ -81,59 +79,24 @@ export default {
   },
   data () {
     return {
-      formData: setDefaultCollection(this.collection),
-      accessOptions: []
+      formData: setDefaultCollection(this.collection)
     }
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile']
     })
   ],
 
-  watch: {
-    tribe: {
-      deep: true,
-      immediate: true,
-      handler (tribe) {
-        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.accessOptions = [{
-            type: ACCESS_PRIVATE,
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id
-          }]
-        } // eslint-disable-line
-        else {
-          if (!tribe) return
-
-          const profileId = (tribe.private[0] || tribe.public[0]).id
-          this.accessOptions = [
-            {
-              type: ACCESS_ALL_MEMBERS,
-              groupId: tribe.id,
-              profileId // community profileId
-            }
-            /* NOTE - currently don't have kaitiaki-only collections set up */
-            // {
-            //   type: ACCESS_KAITIAKI,
-            //   groupId: tribe.admin.id,
-            //   profileId // community profileId
-            // }
-          ]
-        }
-
-        this.setCurrentAccess(this.accessOptions[0])
-      }
-    }
-  },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters('tribe', ['accessOptions']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentAccess']),
+    ...mapActions(['setDialog']),
     close () {
       this.formData = setDefaultCollection(this.collection)
       this.$emit('close')

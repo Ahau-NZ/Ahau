@@ -44,9 +44,6 @@ export default function (apollo) {
         )
 
         if (res.errors) throw res.errors
-
-        // TODO: figure out how to use translations in vuex, leaving these for now
-        dispatch('alerts/showMessage', 'Successfully updated the community', { root: true })
       } catch (err) {
         console.error('Error updating a community', err)
         dispatch('alerts/showError', 'Something went wrong while trying to update the community', { root: true })

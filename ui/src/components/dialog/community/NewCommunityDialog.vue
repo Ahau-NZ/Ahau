@@ -75,7 +75,7 @@
           <DataModel />
         </v-tab-item>
         <v-tab-item light value="tab-3">
-          <GroupsList :formData.sync="formData" :profile="profile" :tribe="tribe" :mobile="mobile" />
+          <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" />
         </v-tab-item>
         <v-tab-item light value="tab-4">
           <Permissions mobile />
@@ -116,8 +116,7 @@ export default {
     profile: { type: Object, default () { return EMPTY_COMMUNITY } },
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
-    editing: Boolean,
-    tribe: Object
+    editing: Boolean
   },
   data () {
     return {

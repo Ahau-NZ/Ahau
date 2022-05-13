@@ -1,5 +1,4 @@
 import { getProfile } from '../store/modules/profile/apollo-helpers'
-import { getTribe } from '../store/modules/tribe/apollo-helpers'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   const customMixin = {}
@@ -44,30 +43,6 @@ const apollo = {
         console.error('There was an error fetching the profile with id: ', this.$route.params.profileId)
         console.error(err)
       }
-    }
-  },
-  tribe () {
-    if (!this.whoami) throw new Error('tribe mixin requires whoami')
-    return {
-      skip () {
-        if (this.$route.name === 'login' || this.$route.name === 'tribe') return true
-        if (this.$route.params.tribeId === this.whoami.personal.groupId) {
-          this.tribe = {
-            id: this.whoami.personal.groupId,
-            public: [this.whoami.public.profile],
-            private: [this.whoami.personal.profile]
-          }
-          return true
-        }
-        return false
-      },
-      ...getTribe,
-      variables () {
-        return {
-          id: this.$route.params.tribeId
-        }
-      },
-      error: err => console.error('Error getting tribe', err)
     }
   }
 }

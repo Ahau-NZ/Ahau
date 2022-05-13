@@ -128,10 +128,14 @@ export default {
     // and then magically being able to load this list
 
     this.isLoading = true
-    const { tribeId } = this.$route.params
-    this.profiles = await this.loadPersonList({ type: 'group', tribeId })
+    await this.loadData()
 
     this.isLoading = false
+  },
+  watch: {
+    async isKaitiaki (isKaitiaki) {
+      if (isKaitiaki) await this.loadData()
+    }
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
@@ -153,6 +157,10 @@ export default {
       return this.$t('personIndex.' + key)
     },
     getDisplayName,
+    async loadData () {
+      const { tribeId } = this.$route.params
+      this.profiles = await this.loadPersonList({ type: 'group', tribeId })
+    },
     searchFilter (value, search, item) {
       const _search = search.toLocaleLowerCase()
       return Object.values(item).some(value => {

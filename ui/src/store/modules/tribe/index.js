@@ -9,12 +9,87 @@ export default function (apollo) {
 
   const getters = {
     currentTribe: state => state.currentTribe,
-    accessOptions: (state, _, rootState) => {
+    tribeProfile: (state, getters, rootState) => {
+      const tribe = state.currentTribe
+      if (!tribe) return null
+
+      if (getters.isPersonalTribe) {
+        return rootState.whoami.personal.profile
+      }
+
+      const parentTribe = getters.parentTribe
+      if (parentTribe) {
+        // just use the parent groups profileId
+        if (parentTribe.private.length) return parentTribe.private[0] // private profile
+        if (parentTribe.public.length) return parentTribe.public[0] // public profile
+      }
+
+      if (tribe.private.length) return tribe.private[0] // private profile
+      if (tribe.public.length) return tribe.public[0] // public profile
+
+      // NOTE: we load public profiles in the case where we are looking at a tribe
+      // we are not yet apart of
+
+      console.error('Error loading tribe profile')
+
+      return null
+    },
+    tribeJoiningQuestions: (state, getters) => {
+      const tribe = state.currentTribe
+      if (!tribe) return []
+
+      if (getters.isPersonalTribe) return []
+
+      if (tribe.public && tribe.public.length) return tribe.public[0].joiningQuestions || []
+
+      return []
+    },
+    tribeKaitiaki: (state, getters) => {
+      const tribe = state.currentTribe
+      if (!tribe) return []
+      if (getters.isPersonalTribe) return []
+
+      const profile = getters.tribeProfile
+      if (!profile || !profile.kaitiaki) return []
+
+      return profile.kaitiaki
+    },
+    tribeMembers: (state, getters) => {
+      const tribe = state.currentTribe
+
+      if (!tribe) return []
+      if (getters.isPersonalTribe) return []
+
+      // get the members of the tribe
+      return tribe.members || []
+    },
+    tribeProfileId: (_, getters) => {
+      const profile = getters.tribeProfile
+      if (!profile) return null
+
+      return profile.id
+    },
+    isPersonalTribe: (state, _, rootState) => {
+      if (!state.currentTribe) return false
+      return state.currentTribe.id === rootState.whoami.personal.groupId
+    },
+    parentTribe: (state, getters) => {
+      const tribe = state.currentTribe
+
+      if (!tribe) return null
+      if (getters.isPersonalTribe) return null
+
+      // check if its the admin group for one of the tribes
+      return state.tribes.find(otherTribe => {
+        return otherTribe.admin && otherTribe.admin.id === tribe.id
+      })
+    },
+    accessOptions: (state, getters, rootState) => {
       const tribe = state.currentTribe
 
       if (!tribe) return []
 
-      if (rootState.whoami.personal.groupId === tribe.id) {
+      if (getters.isPersonalTribe) {
         return [{
           type: ACCESS_PRIVATE,
           groupId: rootState.whoami.personal.groupId,
@@ -22,25 +97,34 @@ export default function (apollo) {
         }]
       }
 
-      const profileId = (
-        (tribe.private && tribe.private.length)
-          ? tribe.private[0]
-          : tribe.public[0]
-      ).id
+      const profileId = getters.tribeProfileId
 
-      const options = [
-        {
-          type: ACCESS_ALL_MEMBERS,
+      if (!profileId) return []
+
+      const parentTribe = getters.parentTribe
+
+      // if theres a parent group, it means the current tribe
+      // is an admin tribe
+      if (parentTribe) {
+        return [{
+          type: ACCESS_KAITIAKI,
           groupId: tribe.id,
-          profileId // community profile
-        }
-      ]
+          profileId // community profiel NOTE: admin subgroups dont have a community profile
+        }]
+      }
 
-      if (tribe.admin && tribe.admin.id) {
+      const options = [{
+        type: ACCESS_ALL_MEMBERS,
+        groupId: tribe.id,
+        profileId // community profile
+      }]
+
+      // only tribes you are apart of, that arent subtribes will have an admin group
+      if (tribe.admin) {
         options.push({
           type: ACCESS_KAITIAKI,
           groupId: tribe.admin.id,
-          profileId // community profiel NOTE: admin subgroups dont have a community profile
+          profileId // community profile NOTE: admin subgroups dont have a community profile
         })
       }
 
@@ -57,10 +141,16 @@ export default function (apollo) {
     },
     setCurrentTribe (state, tribe) {
       state.currentTribe = tribe
+    },
+    resetCurrentTribe (state) {
+      state.currentTribe = null
     }
   }
 
   const actions = {
+    resetCurrentTribe ({ commit }) {
+      commit('resetCurrentTribe')
+    },
     setCurrentTribe ({ commit }, tribe) {
       commit('setCurrentTribe', tribe)
     },
@@ -71,8 +161,10 @@ export default function (apollo) {
       try {
         if (id === rootState.whoami.personal.groupId) {
           return {
-            groupId: rootState.whoami.personal.groupId,
-            ...rootState.whoami.personal.profile
+            id: rootState.whoami.personal.groupId,
+            admin: null,
+            private: [rootState.whoami.personal.profile],
+            public: [rootState.whoami.public.profile]
           }
         }
 
@@ -90,6 +182,24 @@ export default function (apollo) {
         return { ...res.data.tribe, members }
       } catch (err) {
         console.error('Something went wrong while fetching tribe: ', id)
+        console.error(err)
+      }
+    },
+    async loadTribe ({ getters, dispatch, state }, id) {
+      try {
+        if (state.currentTribe && state.currentTribe.id !== id) dispatch('resetCurrentTribe')
+
+        const tribe = await dispatch('getTribe', id)
+
+        // set the current tribe
+        dispatch('setCurrentTribe', tribe)
+
+        if (!getters.accessOptions.length) return
+
+        // set the default access
+        dispatch('setCurrentAccess', getters.accessOptions[0], { root: true })
+      } catch (err) {
+        console.error('Something went wrong while trying to load a tribe', id)
         console.error(err)
       }
     },

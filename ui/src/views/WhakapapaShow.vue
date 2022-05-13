@@ -191,7 +191,6 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import { ACCESS_ALL_MEMBERS, ACCESS_PRIVATE, ACCESS_KAITIAKI } from '@/lib/constants'
 
 export default {
   name: 'WhakapapaShow',
@@ -275,51 +274,9 @@ export default {
       ]
     }
   },
-  watch: {
-    async whakapapaView (view) {
-      if (view && view.recps) {
-        // get the tribe this record is encrypted to
-
-        const groupId = view.recps[0]
-
-        // if its your personal group
-        if (this.whoami.personal.groupId === groupId) {
-          this.accessOptions = [{
-            type: ACCESS_PRIVATE,
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id
-          }]
-        } else {
-          const tribe = await this.getTribe(view.recps[0])
-          const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
-
-          if (parentGroup) {
-            const profileId = (parentGroup.private[0] || parentGroup.public[0]).id
-
-            this.accessOptions = [{
-              type: ACCESS_KAITIAKI,
-              groupId,
-              profileId // community profileId
-            }]
-          } else {
-            const profileId = (tribe.private[0] || tribe.public[0]).id
-            this.accessOptions = [{
-              type: ACCESS_ALL_MEMBERS,
-              groupId,
-              profileId // community profileId
-            }]
-          }
-        }
-
-        this.setCurrentAccess(this.accessOptions[0])
-      }
-    }
-  },
-
   methods: {
-    ...mapActions(['setLoading', 'setCurrentAccess']),
+    ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
-    ...mapActions('tribe', ['getTribe']),
     ...mapActions('whakapapa', [
       'loadWhakapapaView', 'resetWhakapapaView',
       'saveWhakapapaView',

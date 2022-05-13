@@ -510,7 +510,6 @@ export default {
   props: {
     story: Object,
     editing: Boolean,
-    groupId: String,
     collection: Object
   },
   mixins: [
@@ -559,12 +558,17 @@ export default {
         this.$emit('update:story', formData)
       }
     },
-    async groupId (id) {
-      if (!id) return
+    'currentAccess.groupId': {
+      deep: true,
+      immediate: true,
+      async handler (id) {
+        if (!id) return
 
-      const storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
-      this.stories = storyRes.data.stories
-      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', id)
+        // TODO: move to vuex
+        const storyRes = await this.$apollo.query(getAllStories({ groupId: id }))
+        this.stories = storyRes.data.stories
+        this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', id)
+      }
     },
     form: {
       deep: true,
@@ -578,7 +582,7 @@ export default {
     if (this.editing) this.addContributor()
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess']),
     ...mapGetters('archive', ['showStory']),
     recordCounter () {
       if (this.totalCharLength > 4000) return this.totalCharLength
@@ -637,7 +641,7 @@ export default {
     async getSuggestions (storeAt, name) {
       if (!name) return
 
-      const suggestions = await this.findPersonByName({ name, type: 'person', groupId: this.groupId })
+      const suggestions = await this.findPersonByName({ name, type: 'person', groupId: this.currentAccess.groupId })
       this[storeAt] = suggestions
     },
     toggleDialog ($event, dialog) {

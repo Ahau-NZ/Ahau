@@ -39,7 +39,7 @@
 
     <v-spacer />
 
-    <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+    <v-col v-if="access && access.length" cols="auto" class="pb-0">
       <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
       <AvatarGroup
         style="position:relative; bottom:15px; right:15px"
@@ -65,8 +65,7 @@
 <script>
 import niho from '@/assets/niho.svg'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { getTribalProfile } from '@/lib/community-helpers.js'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CollectionTitleCard',
@@ -76,19 +75,12 @@ export default {
   props: {
     collection: Object
   },
-  async mounted () {
-    // populate access
-    const tribe = await this.getTribe(this.collection.recps[0])
-    // get the profile of the tribe
-    this.access = [getTribalProfile(tribe, this.whoami)]
-  },
-  data () {
-    return {
-      access: null
-    }
-  },
   computed: {
     ...mapGetters(['whoami']),
+    ...mapGetters('tribe', ['tribeProfile']),
+    access () {
+      return [this.tribeProfile].filter(Boolean)
+    },
     image () {
       // if there is an image return it
       if (
@@ -101,9 +93,6 @@ export default {
       // otherwise return a default one
       return niho
     }
-  },
-  methods: {
-    ...mapActions('tribe', ['getTribe'])
   }
 }
 </script>

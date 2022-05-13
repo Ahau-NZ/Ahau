@@ -103,29 +103,29 @@
           </template>
         </ProfileCard>
       </template>
-      <ProfileCard v-if="!myProfile" title="Kaitiaki" class="mt-0 px-0">
+      <ProfileCard v-if="!myProfile && kaitiaki.length" title="Kaitiaki" class="mt-0 px-0">
         <template v-slot:content>
           <div>
-            <v-row  v-for="({ profile: kaitiaki }, i) in profile.kaitiaki" :key="i" class="justify-center align-center ma-0 ml-4">
+            <v-row  v-for="{ profile } in kaitiaki" :key="profile.id" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="profile.avatarImage" :alt="profile.preferredName" />
               </v-col>
               <v-col  class="py-0">
-                <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
+                <p style="color:black;">{{ getDisplayName(profile) }}</p>
               </v-col>
             </v-row>
           </div>
         </template>
       </ProfileCard>
 
-      <ProfileCard v-if="profile.type === 'community' && !nonMember" title="Members">
+      <ProfileCard v-if="profile.type === 'community' && !nonMember && members.length" title="Members">
         <template v-slot:content>
-          <v-row v-for="member in members" :key="member.id" class="justify-center align-center ma-0 ml-4">
+          <v-row v-for="profile in members" :key="profile.id" class="justify-center align-center ma-0 ml-4">
             <v-col cols="2" class="pt-0 pl-0">
-              <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" clickable @click="openProfile(member)"/>
+              <Avatar :size="mobile ? '50px' : '40px'" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" clickable @click="openProfile(profile)"/>
             </v-col>
             <v-col class="py-0">
-              <p style="color:black;">{{ getDisplayName(member) }}</p>
+              <p style="color:black;">{{ getDisplayName(profile) }}</p>
             </v-col>
           </v-row>
         </template>
@@ -155,8 +155,7 @@ export default {
     SkeletonLoader
   },
   props: {
-    profile: Object,
-    tribe: Object
+    profile: Object
   },
   async beforeMount () {
     await this.getTribes()
@@ -166,7 +165,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['tribes', 'tribeMembers', 'tribeKaitiaki']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id
     },
@@ -186,12 +185,20 @@ export default {
       return Boolean(this.profile && this.profile.id)
     },
     members () {
-      if (!this.tribe.members) return
-      return this.tribe.members
-        .filter((member) => {
-          return !this.profile.authors.some(kaitiaki => {
+      if (!this.tribeMembers) return []
+      return this.tribeMembers
+        .filter(member => {
+          return !this.tribeKaitiaki.some(kaitiaki => {
             return kaitiaki.feedId === member.feedId
           })
+        })
+    },
+    kaitiaki () {
+      if (!this.tribeKaitiaki) return []
+
+      return this.tribeKaitiaki
+        .filter(kaitiaki => {
+          return kaitiaki && kaitiaki.profile // doesnt return a profile sometimes e.g. someone deletes theirs
         })
     }
   },

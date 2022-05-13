@@ -110,8 +110,8 @@
 
       </v-col>
     </template>
-    <template v-slot:before-actions>
-      <AccessButton v-if="currentAccess" :accessOptions="[currentAccess]" type="person" disabled/>
+    <template v-if="currentAccess" v-slot:before-actions>
+      <AccessButton type="person" :accessOptions="[currentAccess]"  disabled/>
     </template>
   </Dialog>
 </template>

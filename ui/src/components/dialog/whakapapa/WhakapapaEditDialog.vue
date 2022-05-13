@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 
@@ -98,7 +98,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { RULES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import { RULES } from '@/lib/constants'
 
 function setDefaultData (view) {
   return {
@@ -128,50 +128,12 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      },
-      accessOptions: []
-    }
-  },
-  async mounted () {
-    const groupId = this.view.recps[0]
-
-    // if its your personal group
-    if (this.whoami.personal.groupId === groupId) {
-      this.accessOptions = [{
-        type: ACCESS_PRIVATE,
-        groupId: this.whoami.personal.groupId,
-        profileId: this.whoami.personal.profile.id
-      }]
-    } else {
-      // get the tribe this record is encrypted to
-      const tribe = await this.getTribe(groupId)
-
-      const parentGroup = this.tribes.find(otherTribe => otherTribe.admin && otherTribe.admin.id === groupId)
-
-      if (parentGroup) {
-        const profileId = (parentGroup.private && parentGroup.private.length ? parentGroup.private[0] : parentGroup.public[0]).id
-        this.accessOptions = [{
-          type: ACCESS_KAITIAKI,
-          groupId,
-          profileId // community profileId
-        }]
-      } else {
-        const profileId = (tribe.private && tribe.private.length ? tribe.private[0] : tribe.public[0]).id
-        this.accessOptions = [
-          {
-            type: ACCESS_ALL_MEMBERS,
-            groupId,
-            profileId // community profileId
-          }
-        ]
       }
     }
-
-    this.setCurrentAccess(this.accessOptions[0])
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['tribes', 'accessOptions']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -191,8 +153,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setCurrentAccess']),
-    ...mapActions('tribe', ['getTribe']),
     cordovaBackButton () {
       this.close()
     },

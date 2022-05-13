@@ -9,7 +9,6 @@
         ref="recordForm"
         :editing="editing"
         :story.sync="formData"
-        :groupId="currentAccess && currentAccess.groupId"
         :collection="collection"
       />
       <v-col align="center">
@@ -20,20 +19,19 @@
       </v-col>
     </template>
 
-    <template v-if="currentAccess" v-slot:before-actions>
-      <AccessButton :accessOptions="accessOptions" @access="setCurrentAccess" :disabled="editing" type="story" />
+    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
+      <AccessButton type="story" :accessOptions="accessOptions" :disabled="editing" />
     </template>
   </Dialog>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS } from '@/lib/constants'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
@@ -54,55 +52,20 @@ export default {
   },
   data () {
     return {
-      tribe: null,
       formData: setDefaultStory(this.story),
       profile: {},
-      initial: false,
-      accessOptions: []
+      initial: false
     }
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile']
     })
   ],
   mounted () {
     this.initial = true
   },
   watch: {
-    tribe: {
-      deep: true,
-      immediate: true,
-      handler (tribe, oldTribe) {
-        if (this.whoami.personal.groupId === this.$route.params.tribeId) {
-          this.accessOptions = [{
-            type: ACCESS_PRIVATE,
-            groupId: this.whoami.personal.groupId,
-            profileId: this.whoami.personal.profile.id
-          }]
-        } // eslint-disable-line
-        else {
-          if (!tribe) return
-
-          const profileId = (tribe.private[0] || tribe.public[0]).id
-          this.accessOptions = [
-            {
-              type: ACCESS_ALL_MEMBERS,
-              groupId: tribe.id,
-              profileId // community profileId
-            }
-            /* NOTE - currently don't have kaitiaki-only archives set up */
-            // {
-            //   type: ACCESS_KAITIAKI,
-            //   groupId: tribe.admin.id,
-            //   profileId // community profileId
-            // }
-          ]
-        }
-
-        this.setCurrentAccess(this.accessOptions[0])
-      }
-    },
     profile (profile) {
       if (!profile.id || this.editing) return
 
@@ -131,12 +94,12 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    ...mapGetters('tribe', ['accessOptions']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
     ...mapActions('profile', ['getProfile']),
     close () {

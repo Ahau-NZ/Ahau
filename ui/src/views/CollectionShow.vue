@@ -69,7 +69,6 @@ import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
 import { saveStoryMixin } from '@/mixins/story-mixins.js'
-import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 
 export default {
   name: 'CollectionShow',
@@ -115,17 +114,6 @@ export default {
     }
   },
   watch: {
-    async collection (collection) {
-      if (!collection.recps || !collection.recps.length) return
-
-      const tribe = await this.getTribe(collection.recps[0])
-      const access = {
-        type: ACCESS_ALL_MEMBERS,
-        groupId: tribe.id,
-        profileId: tribe.private[0].id
-      }
-      this.setCurrentAccess(access)
-    },
     recordCount () {
       if (this.recordCount !== this.collection.recordCount) {
         const input = {
@@ -137,10 +125,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setCurrentAccess']),
     ...mapActions('archive', ['setCurrentStory', 'toggleShowStory', 'setShowArtefact']),
     ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
-    ...mapActions('tribe', ['getTribe']),
     editCollection () {
       this.editing = true
       this.dialog = 'edit-collection'

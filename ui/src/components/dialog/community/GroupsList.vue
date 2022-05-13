@@ -95,8 +95,7 @@ export default {
   props: {
     profile: Object,
     formData: Object,
-    mobile: Boolean,
-    tribe: Object
+    mobile: Boolean
   },
   data () {
     return {
@@ -134,7 +133,7 @@ export default {
     // NOTE: im doing this because the tribe comes from a component which is far up, rather than
     // going through all the components to get there, i'll just reload it locally
     async loadParentGroup () {
-      this.parentGroup = await this.getTribe(this.tribe.id)
+      this.parentGroup = await this.getTribe(this.$route.params.tribeId)
     },
     // async loadSubGroups () {
     //   this.subGroups = await this.getSubGroups(this.tribe.id)
