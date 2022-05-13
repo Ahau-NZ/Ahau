@@ -24,7 +24,7 @@
       </v-col>
 
       <!-- right hand side of page -->
-      <v-col cols="12" md="2">
+      <v-col cols="12" md="2" :class="mobile ? 'px-6' : 'py-0 pr-8 pl-4 mt-7'">
         <PatakaList :style="customStyle"/>
       </v-col>
     </v-row>

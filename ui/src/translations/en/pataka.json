@@ -3,7 +3,7 @@
   "title": "Pātaka",
   "intro":"Connect to a Pataka to backup your profile and connect with your tribes",  
   "code":"Connect with Pātaka Code",
-  "connectPataka": "Connect Pātaka",
+  "connectPataka": "Join Network",
   "connectSuccess": "Successfully connected to Pātaka",
   "invalidCode": "Invalid code, please check the code and try again",
   "failConnection": "Failed to connect to Pātaka, please check your connection or try again later",
