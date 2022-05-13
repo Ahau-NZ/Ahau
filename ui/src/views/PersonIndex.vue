@@ -21,6 +21,8 @@
         :items="profiles"
         item-key="id"
 
+        :items-per-page="15"
+
         :loading="isLoading"
         :loading-text="t('loading')"
 
