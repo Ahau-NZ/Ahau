@@ -1,5 +1,12 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import pick from 'lodash.pick'
+
+const defaultTribeSettings = {
+  allowWhakapapaViews: true,
+  allowStories: true,
+  allowPersonsList: true
+}
 
 export default function (apollo) {
   const state = {
@@ -9,6 +16,16 @@ export default function (apollo) {
 
   const getters = {
     currentTribe: state => state.currentTribe,
+    tribeSettings: (state, getters) => {
+      const tribeProfile = getters.tribeProfile
+      if (!tribeProfile) return null
+
+      if (getters.isPersonalTribe) return defaultTribeSettings
+
+      // NOTE: this returns an empty object for tribes we
+      // arent apart of (public community profiles dont have these fields)
+      return pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+    },
     tribeProfile: (state, getters, rootState) => {
       const tribe = state.currentTribe
       if (!tribe) return null

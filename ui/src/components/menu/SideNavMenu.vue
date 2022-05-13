@@ -65,7 +65,7 @@
             </v-col>
           </v-btn>
         </v-col>-->
-        <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="isPersonalTribe || settings.allowStories" cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
@@ -82,7 +82,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="isPersonalTribe || settings.allowStories" cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect timeline -->
           <v-btn @click="setActive(TIMELINE)" light :fab="mobile" text>
           <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
@@ -101,7 +101,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col cols="3" md="12" v-if="showWhakapapa && (isPersonalTribe || settings.allowWhakapapaViews)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(WHAKAPAPA)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
@@ -118,7 +118,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" v-if="showPeopleList" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col cols="3" md="12" v-if="showPeopleList && (isPersonalTribe || settings.allowPersonsList)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(PERSON)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <PersonListIcon
@@ -201,6 +201,11 @@ export default {
   computed: {
     ...mapGetters(['storeDialog', 'notifications', 'whoami']),
     ...mapGetters('archive', ['showStory']),
+    ...mapGetters('tribe', ['tribeSettings', 'isPersonalTribe']),
+    settings () {
+      if (this.tribeSettings) return this.tribeSettings
+      return {}
+    },
     isCommunity () {
       return this.profile.type === 'community'
     },

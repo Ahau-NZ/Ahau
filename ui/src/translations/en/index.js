@@ -29,6 +29,7 @@ module.exports = {
   dialog: require('./dialog.json'),
   editNodeDialog: require('./edit-node-dialog.json'),
   reviewRegistration: require('./review-registration-dialog.json'),
+  tribeSettings: require('./tribe-settings.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),

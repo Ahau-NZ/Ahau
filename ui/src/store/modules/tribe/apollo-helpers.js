@@ -18,13 +18,17 @@ export const getTribe = ({
     query($id: String!) {
       tribe (id: $id){
         id 
-        private {
-          ...CommunityFragment
-        }
         public {
           ...CommunityFragment
         }
+        private {
+          ...CommunityFragment
 
+          # settings
+          allowWhakapapaViews
+          allowStories
+          allowPersonsList
+        }
         admin {
           id
         }
@@ -45,8 +49,12 @@ export const getTribes = ({
         }
         private {
           ...CommunityFragment
-        }
 
+          # settings
+          allowWhakapapaViews
+          allowStories
+          allowPersonsList
+        }
         admin {
           id
         }
@@ -69,6 +77,11 @@ const communityProfileAttrs = [
   'postCode',
   'phone',
   'email',
+
+  // for private only
+  'allowWhakapapaViews',
+  'allowStories',
+  'allowPersonsList',
 
   // for public only
   'joiningQuestions'

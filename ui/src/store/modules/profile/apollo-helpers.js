@@ -29,6 +29,11 @@ fragment CommunityProfileFields on Community {
     type
     label
   }
+
+  # settings
+  allowWhakapapaViews
+  allowStories
+  allowPersonsList
 }
 `
 
