@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-row>
-      <v-col :class="mobile ? 'px-6' : 'py-0 pr-8 pl-4 mt-0'">
+      <v-col>
         <v-divider v-if="mobile" light></v-divider>
-        <ProfileCard :title="t('title')" class="mt-7">
+        <ProfileCard :title="t('title')">
           <template v-slot:content>
             <div v-if="!patakas">
               <SkeletonLoader

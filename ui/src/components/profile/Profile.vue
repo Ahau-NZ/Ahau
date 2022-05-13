@@ -130,6 +130,8 @@
           </v-row>
         </template>
       </ProfileCard>
+
+      <PatakaList v-if="isPersonalTribe"/>
     </v-col>
   </v-row>
 </template>
@@ -142,6 +144,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
+import PatakaList from '@/components/community/PatakaList.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
 
@@ -152,7 +155,8 @@ export default {
     ProfileCard,
     ProfileInfoItem,
     Avatar,
-    SkeletonLoader
+    SkeletonLoader,
+    PatakaList
   },
   props: {
     profile: Object
@@ -165,7 +169,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapGetters('tribe', ['tribes', 'tribeMembers', 'tribeKaitiaki']),
+    ...mapGetters('tribe', ['tribes', 'tribeMembers', 'tribeKaitiaki', 'isPersonalTribe']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id
     },
