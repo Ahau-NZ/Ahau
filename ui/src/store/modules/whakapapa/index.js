@@ -684,24 +684,52 @@ export default function (apollo) {
       dispatch('setLoading', true, { root: true })
 
       const { recps } = whakapapaViewInput
-
       if (!recps) throw new Error('no recps found on the whakapapa input!')
 
-      // create a profile for each row in the csv
-      const { profiles, links } = await dispatch('bulkCreateProfiles', { rows, recps })
+      const length = rows.length
+      const totalProfiles = {}
+      const totalLinks = []
+      const chunkSize = 100
 
-      // create all the links from the profiles
-      await dispatch('bulkCreateLinks', { links, profiles, recps })
+      for (let i = 0; i < length; i += chunkSize) {
+        // show progress percentage
+        const percentage = Math.round((Object.keys(totalProfiles).length / length * 100) * 10) / 10 || true
+        dispatch('setLoading', percentage, { root: true })
+        // split out 100 profiles
+        const chunk = rows.slice(i, i + chunkSize)
+        // create profiles
+        const { profiles, links } = await dispatch('bulkCreateProfiles', { chunk, recps })
+        // add profiles to total obj
+        Object.assign(totalProfiles, profiles)
+        // add links to total links arr
+        totalLinks.push(...links)
+      }
+
+      // check if all profiles have been created
+      const objLength = Object.keys(totalProfiles).length
+      if (objLength === length) {
+        // show progress percentage
+        dispatch('setLoading', true, { root: true })
+        for (let i = 0; i < length; i += chunkSize) {
+          // show progress percentage
+          const percentage = Math.round((i / totalLinks.length * 100) * 10) / 10 || true
+          dispatch('setLoading', percentage, { root: true })
+          // split 100 links
+          const linksChunk = totalLinks.slice(i, i + chunkSize)
+          // create links
+          await dispatch('bulkCreateLinks', { linksChunk, totalProfiles, recps })
+        }
+      }
 
       // the first row is the focus
-      whakapapaViewInput.focus = profiles[rows[0].csvId]
+      whakapapaViewInput.focus = totalProfiles[rows[0].csvId]
 
       // create whakapapa with first person in the csv as the focus
       return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
     },
-    async bulkCreateProfiles ({ dispatch, rootGetters }, { rows, recps }) {
+    async bulkCreateProfiles ({ dispatch, rootGetters }, { chunk, recps }) {
       const profiles = {}
-      const links = rows
+      const links = chunk
         .map(row => row.link)
         .filter(Boolean)
 
@@ -710,11 +738,11 @@ export default function (apollo) {
         profiles = {
           [csvId]: profileId
         }
-
         links = [{ childCsvId, parentCsvId, relationshipType }]
       */
+
       const res = await Promise.all(
-        rows.map(async ({ csvId, profile }) => {
+        chunk.map(async ({ csvId, profile }, i) => {
           if (!profile) return
 
           profile.recps = recps
@@ -736,21 +764,21 @@ export default function (apollo) {
 
       return { profiles, links }
     },
-    async bulkCreateLinks ({ dispatch }, { recps, links, profiles }) {
+    async bulkCreateLinks ({ dispatch }, { recps, linksChunk, totalProfiles }) {
       await Promise.all(
-        links.map(link => {
+        linksChunk.map((link, i) => {
           const { parentCsvId, childCsvId, relationshipType } = link
 
           const relationship = {
             // get the parent and child's actual profileId
-            parent: profiles[parentCsvId],
-            child: profiles[childCsvId],
+            parent: totalProfiles[parentCsvId],
+            child: totalProfiles[childCsvId],
             recps
           }
 
           if (relationshipType === 'partner') return dispatch('createPartnerLink', relationship)
 
-          // TODO: check if this is important
+          // // TODO: check if this is important
           if (relationshipType !== '' && relationshipType !== null) relationship.relationshipType = relationshipType
 
           return dispatch('createChildLink', relationship)

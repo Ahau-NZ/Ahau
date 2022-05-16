@@ -40,6 +40,32 @@ const PERMITTED_CSV_COLUMNS = [
   'headerImage'
 ]
 
+const REQUIRED_CSV_COLUMNS = [
+  'preferredName',
+  'legalName',
+  'gender',
+  'relationshipType',
+  'birthOrder',
+  'bornAt',
+  'placeOfBirth',
+  'deceased',
+  'diedAt',
+  'placeOfDeath',
+  'buriedLocation',
+  'phone',
+  'email',
+  'address',
+  'city',
+  'postCode',
+  'country',
+  'profession',
+  'altNames',
+  'school',
+  'education',
+  'avatarImage',
+  'headerImage'
+]
+
 function importCsv (file) {
   return new Promise((resolve, reject) => {
     if (!file.name.endsWith('.csv')) { // check if file extension is csv
@@ -181,7 +207,7 @@ function parse (fileContent) {
     // validate the header column
     errors = [...headerColumnErrors(csv.columns), ...errors]
 
-    const maxCsvLength = 1000
+    const maxCsvLength = 10000
 
     if (csv.length > maxCsvLength) {
       const lengthError = 'Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon'
@@ -391,7 +417,7 @@ function isValidNumber (d) {
 function headerColumnErrors (headers) {
   const errors = []
 
-  const missingColumns = PERMITTED_CSV_COLUMNS.filter(d => {
+  const missingColumns = REQUIRED_CSV_COLUMNS.filter(d => {
     return !headers.includes(d)
   })
 
@@ -510,6 +536,7 @@ export {
   downloadCsv,
   schema,
   PERMITTED_CSV_COLUMNS,
+  REQUIRED_CSV_COLUMNS,
   exportImage,
   importImage
 }
