@@ -2,7 +2,7 @@
   <v-overlay opacity="0.8" :value="loadingState" :z-index="1">
     <v-progress-circular
       :value="value"
-      indeterminate
+      :indeterminate="isBoolean"
       size="84"
       width="6"
       color="#b12526"
@@ -20,13 +20,15 @@ export default {
   name: 'LoadingSpinner',
   computed: {
     ...mapGetters(['loadingState']),
+    isBoolean () {
+      return typeof this.loadingState === 'boolean'
+    },
     label () {
-      if (typeof this.loadingState === 'boolean') return ''
-
-      return this.loadingState
+      if (this.isBoolean) return ''
+      return this.loadingState + '%'
     },
     value () {
-      if (typeof this.loadingState === 'boolean') return null
+      if (this.isBoolean) return null
       return this.loadingState
     }
   }

@@ -69,7 +69,6 @@ test('header columns', t => {
   csv.parse(MISPELLED_COLUMNS)
     .catch(err => {
       t.deepEqual(err, [
-        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['parentNumber'] },
         { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['parentNumbe'] }
       ], 'returns error for wrong columns')
     })
