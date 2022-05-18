@@ -5,14 +5,34 @@
     :search-input.sync="searchString"
     :menu-props=" { light: true } "
     light
+    attach
     hide-selected
     hide-details
+    hide-no-data
     dense
     v-bind="customProps"
     @click:append="close()"
   >
     <template v-slot:item="data">
-      <v-list-item @click="setSearchNode(data.item, $event)">
+      <!--
+        Loading item in the list
+        NOTE: doing a custom item in the list instead of using built in append-item slot because
+        the other one had issues displaying an item when there were no items (it used the no-data slot)
+      -->
+      <v-list-item v-if="data.item.type === 'loading'">
+        <v-list-item-icon>
+          <v-progress-circular
+            indeterminate
+            color="#b12526"
+          />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ loadingText }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <!-- Profile in the list -->
+      <v-list-item v-else @click="setSearchNode(data.item, $event)">
         <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
         <v-list-item-content>
           <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
@@ -32,17 +52,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
+import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '../../lib/calculate-age'
-
-function normalizeString (name) {
-  if (isEmpty(name)) return ''
-  return name.toLowerCase().trim()
-}
 
 export default {
   name: 'SearchBar',
@@ -58,11 +71,16 @@ export default {
   },
   data () {
     return {
+      timer: undefined,
       searchString: '',
-      activeNode: null
+      activeNode: null,
+      suggestions: [],
+      isLoadingSuggestions: false
     }
   },
   computed: {
+    ...mapGetters('whakapapa', ['isInWhakapapa', 'isLoadingWhakapapa']),
+    ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('tree', ['descendants']),
     ...mapGetters('person', ['person']),
     ...mapGetters('table', ['tableFilter']),
@@ -86,7 +104,6 @@ export default {
           outlined: true,
           appendIcon: this.searchNodeId ? '' : 'mdi-magnify',
           placeholder: 'Search',
-          noDataText: 'no suggestions',
           rounded: true,
           readonly: this.searchNodeId !== '',
           class: 'searchbar-input',
@@ -94,42 +111,22 @@ export default {
         }
       }
     },
-    nodes () {
-      const search = normalizeString(this.searchString)
-
-      return this.descendants
-        .flatMap(node => [
-          this.person(node.data.id),
-          ...node.partners.map(node => this.person(node.data.id))
-        ])
-        .filter(d => { // d = minimalProfile here
-          if (!d) return false
-          const preferredName = normalizeString(d.preferredName)
-          const legalName = normalizeString(d.legalName)
-
-          // TODO 2022-02-11 mix this is disabled for the moment
-          // because nodes do not load all this data at the moment
-
-          // var altNameMatch = false
-          // const altNames = d.altNames
-          // if (altNames && altNames.length > 0) {
-          //   for (var i = 0; i < altNames.length; i++) {
-          //     const currAltName = normalizeString(altNames[i])
-          //     if (isEqual(currAltName, search) || currAltName.includes(search)) {
-          //       altNameMatch = true
-          //     }
-          //   }
-          // }
-          return (
-            isEqual(preferredName, search) || preferredName.includes(search) ||
-            isEqual(legalName, search) || legalName.includes(search) // ||
-            // altNameMatch
-          )
-        })
+    isLoading () {
+      return this.isLoadingWhakapapa || this.isLoadingSuggestions
+    },
+    loadingText () {
+      if (this.isLoadingWhakapapa) return 'Loading profiles in this whakapapa'
+      if (this.isLoadingSuggestions) return 'Searching for profiles'
+      return '' // shouldnt reach here
     },
     items () {
       if (this.isFilter) return []
-      return this.nodes
+      const suggestions = this.suggestions
+        .filter(person => this.isInWhakapapa(person.id))
+
+      if (this.isLoading) suggestions.push({ type: 'loading' })
+
+      return suggestions
     }
   },
   // Reset search string if filters are reset
@@ -137,14 +134,32 @@ export default {
     if (this.isFilter) this.$parent.$parent.$on('update', this.close)
   },
   watch: {
-    searchString (newValue) {
-      this.$emit('change', newValue)
+    async searchString (name) {
+      if (this.isFilter) {
+        this.$emit('change', name)
+        return
+      }
+
+      clearTimeout(this.timer)
+      this.setLoadingSuggestions(false)
+
+      if (!name || name.length <= 2) {
+        this.suggestions = []
+        return
+      }
+
+      this.setLoadingSuggestions(true)
+      this.timer = setTimeout(async () => {
+        this.suggestions = await this.findPersonsByNameWithinGroup(name)
+        this.setLoadingSuggestions(false)
+      }, 500)
     },
     reset (newVal) {
       if (newVal) this.searchString = ''
     }
   },
   methods: {
+    ...mapActions('person', ['findPersonsByNameWithinGroup']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },
@@ -161,22 +176,28 @@ export default {
     },
     clearSearchNodeId () {
       this.$emit('update:searchNodeId', '')
+    },
+    setLoadingSuggestions (isLoading) {
+      this.isLoadingSuggestions = isLoading
     }
   }
 }
 </script>
 
 <style>
-   .v-text-field.v-input--dense .v-input__append-inner .v-input__icon > .v-icon {
-     margin: 0px;
-   }
+.v-text-field.v-input--dense .v-input__append-inner .v-input__icon > .v-icon {
+  margin: 0px;
+}
+
+.v-autocomplete__content.v-menu__content {
+  border-radius: 7px;
+}
 </style>
 
 <style scoped lang="scss">
-  .searchbar-input {
-    padding: 0;
-    margin: 0;
-    margin-top: -3px;
-  }
-
+.searchbar-input {
+  padding: 0;
+  margin: 0;
+  margin-top: -3px;
+}
 </style>

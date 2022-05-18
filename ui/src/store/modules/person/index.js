@@ -9,6 +9,8 @@ import {
   loadPersonList
 } from './apollo-helpers'
 
+import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
@@ -199,6 +201,24 @@ export default function (apollo) {
       if (rootState.dialog.dialog) {
         dispatch('setDialog', null, { root: true })
       }
+    },
+    async findPersonsByNameWithinGroup ({ dispatch, rootState }, name) {
+      const currentAccess = rootState.currentAccess
+      if (!currentAccess) return []
+
+      const { type, groupId } = currentAccess
+
+      let suggestions = []
+
+      if (type === ACCESS_ALL_MEMBERS) suggestions = await dispatch('findPersonByName', { name, groupId, type: 'person' })
+      if (type === ACCESS_KAITIAKI) suggestions = await dispatch('findPersonByName', { name, groupId, type: 'person/admin' })
+      if (type === ACCESS_PRIVATE) {
+        const source = await dispatch('findPersonByName', { name, groupId, type: 'person/source' })
+        const other = await dispatch('findPersonByName', { name, groupId, type: 'person' })
+        suggestions = [...source, ...other]
+      }
+
+      return suggestions
     },
     async findPersonByName (context, opts) {
       const { name, type, groupId } = opts

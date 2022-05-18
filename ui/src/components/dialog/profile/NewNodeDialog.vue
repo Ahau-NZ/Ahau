@@ -132,7 +132,7 @@ import AccessButton from '@/components/button/AccessButton.vue'
 import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import { parseInterval } from '@/lib/date-helpers.js'
-import { ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI, ACCESS_PRIVATE } from '@/lib/constants.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
 const isNotEmpty = (array) => array && array.length > 0
@@ -340,7 +340,7 @@ export default {
   methods: {
     ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['findPersonByName', 'getPerson']),
+    ...mapActions('person', ['findPersonByName', 'getPerson', 'findPersonsByNameWithinGroup']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       const index = this.quickAdd[selectedArray].findIndex(x => x.id === profile.id)
@@ -570,21 +570,6 @@ export default {
 
       // find persons in the group who arent an ancestor
       return this.findAndFilterSuggestions(name)
-    },
-    async findPersonsByNameWithinGroup (name) {
-      const { type, groupId } = this.currentAccess
-
-      let suggestions = []
-
-      if (type === ACCESS_ALL_MEMBERS) suggestions = await this.findPersonByName({ name, groupId, type: 'person' })
-      if (type === ACCESS_KAITIAKI) suggestions = await this.findPersonByName({ name, groupId, type: 'person/admin' })
-      if (type === ACCESS_PRIVATE) {
-        const source = await this.findPersonByName({ name, groupId, type: 'person/source' })
-        const other = await this.findPersonByName({ name, groupId, type: 'person' })
-        suggestions = [...source, ...other]
-      }
-
-      return suggestions
     },
     async findAndFilterSuggestions (name) {
       if (!name) {

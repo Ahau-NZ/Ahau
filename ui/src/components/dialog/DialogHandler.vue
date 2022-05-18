@@ -209,8 +209,7 @@ export default {
       'loadPersonFull',
       'updatePerson',
       'deletePerson',
-      'setSelectedProfileById',
-      'findPersonByName'
+      'setSelectedProfileById'
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
