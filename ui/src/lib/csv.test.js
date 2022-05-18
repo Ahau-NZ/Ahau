@@ -16,7 +16,7 @@ const ALL_COLUMNS = csv.PERMITTED_CSV_COLUMNS.join(',')
 const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city,avatarImage,headerImage'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
-const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education,avatarImage,headerImage'
+const MISPELLED_COLUMNS = 'parentNumber,number,preferredName,legalName,genda,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education,avatarImage,headerImage'
 
 // for parentNumber
 const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}
@@ -68,9 +68,11 @@ test('header columns', t => {
 
   csv.parse(MISPELLED_COLUMNS)
     .catch(err => {
-      t.deepEqual(err, [
-        { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['parentNumbe'] }
-      ], 'returns error for wrong columns')
+      t.deepEqual(err[1], {
+        row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['genda']
+      },
+      'returns error for wrong columns'
+      )
     })
 })
 

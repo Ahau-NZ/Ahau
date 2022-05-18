@@ -44,7 +44,6 @@ const REQUIRED_CSV_COLUMNS = [
   'preferredName',
   'legalName',
   'gender',
-  'relationshipType',
   'birthOrder',
   'bornAt',
   'placeOfBirth',
@@ -61,12 +60,10 @@ const REQUIRED_CSV_COLUMNS = [
   'profession',
   'altNames',
   'school',
-  'education',
-  'avatarImage',
-  'headerImage'
+  'education'
 ]
 
-function importCsv (file) {
+function importCsv (file, type) {
   return new Promise((resolve, reject) => {
     if (!file.name.endsWith('.csv')) { // check if file extension is csv
       reject(new Error('please upload a CSV file'))
@@ -78,14 +75,14 @@ function importCsv (file) {
     reader.onload = () => {
       const fileContent = reader.result
 
-      parse(fileContent)
+      parse(fileContent, type)
         .then(csv => resolve(csv))
         .catch(errs => reject(errs))
     }
   })
 }
 
-function parse (fileContent) {
+function parse (fileContent, type) {
   let count = 0
   let errors = []
 
@@ -162,8 +159,7 @@ function parse (fileContent) {
             relationshipType: d.relationshipType
           }
         }
-
-        if (seen.has(d.number)) return person
+        if (d.number && seen.has(d.number)) return person
 
         person.profile = {
           preferredName: d.preferredName,
@@ -205,12 +201,12 @@ function parse (fileContent) {
     }
 
     // validate the header column
-    errors = [...headerColumnErrors(csv.columns), ...errors]
+    errors = [...headerColumnErrors(csv.columns, type), ...errors]
 
     const maxCsvLength = 10000
 
     if (csv.length > maxCsvLength) {
-      const lengthError = 'Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon'
+      const lengthError = 'Max import file is currently set to 10,000 records. Please split your files into smaller records or to import larger files please contact info@ahau.io'
       errors = [{ row: 'N/A', field: 'row count', error: lengthError, value: '' }, ...errors] // make sure its the first error
     }
 
@@ -414,10 +410,12 @@ function isValidNumber (d) {
   }
   as given by d3.csvParse()
 */
-function headerColumnErrors (headers) {
+function headerColumnErrors (headers, type) {
   const errors = []
+  // if type, than we are importing from peoples list and we not need number, parentNumber, avatarImage, profileImage headers
+  const columns = type ? REQUIRED_CSV_COLUMNS : ['parentNumber', 'number', ...REQUIRED_CSV_COLUMNS]
 
-  const missingColumns = REQUIRED_CSV_COLUMNS.filter(d => {
+  const missingColumns = columns.filter(d => {
     return !headers.includes(d)
   })
 

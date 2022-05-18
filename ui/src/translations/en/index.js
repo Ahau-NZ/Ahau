@@ -47,5 +47,6 @@ module.exports = {
   instructionsStory: require('./instructions-story.json'),
   groups: require('./groups.json'),
   support: require('./support.json'),
-  button: require('./button.json')
+  button: require('./button.json'),
+  importPeopleForm: require('./import-csv.json')
 }

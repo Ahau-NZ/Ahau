@@ -30,6 +30,7 @@ export default function rootModule (apollo) {
         }
       },
       loading: false, // boolean
+      loadingLabel: '',
       loadingTimeout: 2 * SECOND,
       navComponent: 'profile',
 
@@ -68,6 +69,12 @@ export default function rootModule (apollo) {
 
         return state.loading
       },
+      loadingLabel: state => {
+        if (state.isRebuilding || (state.indexingSince &&
+          (Date.now() - state.indexingSince > state.loadingTimeout)
+        )) return 'Syncing...'
+        else return state.loadingLabel
+      },
       syncing: state => state.syncing,
       isKaitiaki: (state, getters) => {
         if (getters['tribe/isPersonalTribe']) return true
@@ -98,6 +105,9 @@ export default function rootModule (apollo) {
       },
       updateLoading (state, loading) {
         state.loading = loading
+      },
+      updateLoadingLabel (state, label) {
+        state.loadingLabel = label
       },
       updateIndexingData (state, { isIndexing, isRebuilding, percentageIndexed, percentageIndexedSinceStartup }) {
         if (!isIndexing && !isRebuilding) state.indexingSince = null
@@ -152,7 +162,11 @@ export default function rootModule (apollo) {
         commit('setCurrentAccess', access)
       },
       setLoading ({ commit }, loading) {
+        if (loading === false) commit('updateLoadingLabel', '')
         commit('updateLoading', loading)
+      },
+      setLoadingLabel ({ commit }, label) {
+        commit('updateLoadingLabel', label)
       },
       setIndexingData ({ commit }, data) {
         commit('updateIndexingData', data)

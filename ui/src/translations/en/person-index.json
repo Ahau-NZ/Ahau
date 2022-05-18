@@ -6,7 +6,7 @@
     "edit": "Edit"
   },
   "prop": {
-    "preferredName": "First name / known as",
+    "preferredName": "First name",
     "legalName": "Full name",
     "gender": "Gender",
     "aliveInterval": "Birth/Death",
@@ -26,7 +26,11 @@
     "buriedLocation": "Buried Location",
     "profession": "Profession",
     "education": "Education",
-    "school": "School"
+    "school": "School",
+    "dob": "Date of birth", 
+    "dod": "Date of passing",
+    "age": "Age"
+ 
   },
   "loading": "Loading profiles..."
 }
