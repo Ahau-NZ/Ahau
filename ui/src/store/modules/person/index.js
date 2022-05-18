@@ -141,7 +141,7 @@ export default function (apollo) {
         commit('tombstoneId', id)
         dispatch('whakapapa/removeLinksToProfile', id, { root: true })
         dispatch('alerts/showMessage', 'Person successfully deleted!', { root: true })
-        return res.data.saveProfile
+        return res.data.tombstoneProfileAndLinks
       } catch (err) {
         if (err.message.includes('whakapapa')) dispatch('alerts/showError', err.message, { root: true })
         else {

@@ -680,11 +680,12 @@ export default function (apollo) {
     },
 
     // create a whakapapa from rows containing a profile + link
-    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaViewInput, rows }) {
+    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaViewInput, rows, type }) {
       dispatch('setLoading', true, { root: true })
+      dispatch('setLoadingLabel', 'importing CSV...', { root: true })
 
       const { recps } = whakapapaViewInput
-      if (!recps) throw new Error('no recps found on the whakapapa input!')
+      if (!recps) throw new Error('no recps found on the import input!')
 
       const length = rows.length
       const totalProfiles = {}
@@ -695,6 +696,7 @@ export default function (apollo) {
         // show progress percentage
         const percentage = Math.round((Object.keys(totalProfiles).length / length * 100) * 10) / 10 || true
         dispatch('setLoading', percentage, { root: true })
+        dispatch('setLoadingLabel', 'creating profiles...', { root: true })
         // split out 100 profiles
         const chunk = rows.slice(i, i + chunkSize)
         // create profiles
@@ -702,14 +704,17 @@ export default function (apollo) {
         // add profiles to total obj
         Object.assign(totalProfiles, profiles)
         // add links to total links arr
-        totalLinks.push(...links)
+        if (links) totalLinks.push(...links)
       }
 
       // check if all profiles have been created
       const objLength = Object.keys(totalProfiles).length
-      if (objLength === length) {
+
+      if (objLength === length && totalLinks.length) {
         // show progress percentage
         dispatch('setLoading', true, { root: true })
+        dispatch('setLoadingLabel', 'adding family links...', { root: true })
+
         for (let i = 0; i < length; i += chunkSize) {
           // show progress percentage
           const percentage = Math.round((i / totalLinks.length * 100) * 10) / 10 || true
@@ -721,11 +726,16 @@ export default function (apollo) {
         }
       }
 
-      // the first row is the focus
-      whakapapaViewInput.focus = totalProfiles[rows[0].csvId]
-
-      // create whakapapa with first person in the csv as the focus
-      return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
+      // if from create whakapapa
+      if (!type) {
+        // the first row is the focus
+        whakapapaViewInput.focus = totalProfiles[rows[0].csvId]
+        // create whakapapa with first person in the csv as the focus
+        return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
+      }
+      else {
+        return totalProfiles
+      }
     },
     async bulkCreateProfiles ({ dispatch, rootGetters }, { chunk, recps }) {
       const profiles = {}
@@ -752,7 +762,10 @@ export default function (apollo) {
           }
 
           const profileId = await dispatch('person/createPerson', profile, { root: true })
-          profiles[csvId] = profileId
+
+          // importing from peoples list doesnt require a csvId we may not be building relaiotnships
+          if (csvId) profiles[csvId] = profileId
+          else profiles[i] = profileId
         })
       )
         .catch((err) => {

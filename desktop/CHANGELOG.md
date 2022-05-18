@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.11.1
+
+- Peoples list
+  - added function to import people into database with having relationships/parent information
+- Updated the progress circle to show progress and a label
+
 ## v2.10.0
 
 ### Features

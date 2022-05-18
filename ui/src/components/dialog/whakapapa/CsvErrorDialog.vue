@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="'Could not build whakapapa record'" :show="show" @close="close" :width="'720px'" :goBack="close">
+  <Dialog :title="title" :show="show" @close="close" :width="'720px'" :goBack="close">
 
     <template v-slot:content>
       <v-card-text class="pt-8">
@@ -38,7 +38,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 export default {
   props: {
     show: { type: Boolean, required: true },
-    errorMsgs: { type: Array }
+    errorMsgs: { type: Array },
+    type: { type: String }
   },
   name: 'CsvErrorDialog',
   data () {
@@ -61,6 +62,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    title () {
+      return this.type ? this.t('people') : this.t('whakapapa')
     }
   },
   methods: {
@@ -69,6 +73,9 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    t (key, vars) {
+      return this.$t('importPeopleForm.' + key, vars)
     }
   }
 }
