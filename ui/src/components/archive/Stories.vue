@@ -1,8 +1,11 @@
 <template>
   <div>
     <v-row v-show="!showStory">
-      <v-col cols="5" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
+      <v-col cols="4" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
+      </v-col>
+      <v-col cols="1 pa-0 mt-6 pl-4">
+        <TimelineButton v-if="!mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
       </v-col>
       <v-col
         v-if="stories.length > 0"
@@ -79,8 +82,9 @@
 
 <script>
 import StoryCard from '@/components/archive/StoryCard.vue'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import TimelineButton from '@/components/button/TimelineButton.vue'
 
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 
 export default {
@@ -88,14 +92,17 @@ export default {
   props: {
     stories: Array,
     title: String,
-    reload: Function
+    reload: Function,
+    timeline: Boolean
   },
   components: {
-    StoryCard
+    StoryCard,
+    TimelineButton
   },
   data () {
     return {
-      storySearchString: ''
+      storySearchString: '',
+      scrollPosition: 0
     }
   },
   watch: {
@@ -160,9 +167,6 @@ export default {
     setString (name) {
       if (isEmpty(name)) return ''
       return name.toLowerCase().trim()
-    },
-    toggleArchiveHelper () {
-      this.showArchiveHelper = !this.showArchiveHelper
     },
     toggleStory (story) {
       this.setCurrentStory(story)

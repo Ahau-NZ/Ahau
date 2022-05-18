@@ -20,13 +20,23 @@
             @click="showCurrentCollection"
           />
         </v-col>
-        <v-col cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
+        <v-col v-if="timeline" cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
+          <Timeline
+            :stories="filteredStories"
+            :reload="reload"
+            :timeline="timeline"
+            @save="processStory"
+            @toggleTimeline="toggleTimeline"
+          />
+        </v-col>
+        <v-col v-else cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
           <Stories
             :stories="filteredStories"
-            @save="processStory"
             :title="title"
             :reload="reload"
-            @toggleFilteredStories="toggleFilteredStories"
+            :timeline="timeline"
+            @save="processStory"
+            @toggleTimeline="toggleTimeline"
           />
         </v-col>
       </v-row>
@@ -66,6 +76,7 @@ import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import Stories from '@/components/archive/Stories.vue'
+import Timeline from '@/components/story/Timeline.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
 
@@ -95,7 +106,8 @@ export default {
     BigAddButton,
     VueContext,
     CollectionGroup,
-    Stories
+    Stories,
+    Timeline
   },
   data () {
     return {
@@ -105,7 +117,8 @@ export default {
       scrollPosition: 0,
       showArchiveHelper: false,
       showCollectionStories: false,
-      currentAccessProfile: {}
+      currentAccessProfile: {},
+      timeline: false
     }
   },
   beforeMount () {
@@ -177,6 +190,9 @@ export default {
           collectionId: id
         }
       })
+    },
+    toggleTimeline () {
+      this.timeline = !this.timeline
     },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper

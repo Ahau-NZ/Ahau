@@ -17,14 +17,24 @@
         </v-col>
       </v-row>
 
-      <!-- STORIES -->
-      <v-row>
+      <v-col v-if="timeline" cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
+          <Timeline
+            :stories="stories"
+            :reload="reload"
+            :timeline="timeline"
+            @save="processStory"
+            @toggleTimeline="toggleTimeline"
+          />
+        </v-col>
+      <v-row v-else>
         <v-col cols="12" class="px-0">
           <Stories
             :title="t('stories')"
             :stories="stories"
-            @save="processStory"
             :reload="reload"
+            :timeline="timeline"
+            @save="processStory"
+            @toggleTimeline="toggleTimeline"
           />
         </v-col>
       </v-row>
@@ -62,6 +72,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import Stories from '../components/archive/Stories.vue'
+import Timeline from '../components/story/Timeline.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
@@ -81,13 +92,15 @@ export default {
     NewCollectionDialog,
     DeleteCollectionDialog,
     NewRecordDialog,
-    CollectionTitleCard
+    CollectionTitleCard,
+    Timeline
   },
   data () {
     return {
       collection: null,
       dialog: false,
-      editing: false
+      editing: false,
+      timeline: false
     }
   },
   async mounted () {
@@ -127,6 +140,9 @@ export default {
   methods: {
     ...mapActions('archive', ['setCurrentStory', 'toggleShowStory', 'setShowArtefact']),
     ...mapActions('collection', ['getCollection', 'updateCollection', 'deleteCollection']),
+    toggleTimeline () {
+      this.timeline = !this.timeline
+    },
     editCollection () {
       this.editing = true
       this.dialog = 'edit-collection'

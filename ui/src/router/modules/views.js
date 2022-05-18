@@ -7,7 +7,6 @@ import CollectionShow from '@/views/CollectionShow.vue'
 
 import Profile from '@/components/profile/Profile.vue' // this is ProfileShow
 import Archive from '@/components/archive/Archive.vue'
-import Timeline from '@/components/story/Timeline.vue'
 
 import PersonIndex from '@/views/PersonIndex.vue'
 
@@ -37,11 +36,10 @@ const EmptyRouterComponent = {
      /tribe/:tribeId/person
      /tribe/:tribeId/archive
      /tribe/:tribeId/collection
-     /tribe/:tribeId/timeline
      /tribe/:tribeId/story
 
-     // NOTE for archive, collection, timeline, story etc can provide params
-     // to filter the records by e.g  /tribe/:tribeId/timeline?profileId=%mixId
+     // NOTE for archive, collection, story etc can provide params
+     // to filter the records by e.g  /tribe/:tribeId/archive?profileId=%mixId
 */
 
 export default [
@@ -85,7 +83,6 @@ function sharedRoutes (type) {
       name: `${type}/collection`,
       component: CollectionShow
     },
-    { path: 'timeline', name: `${type}/timeline`, component: Timeline, props: true }, // Timeline
     { path: 'whakapapa', name: `${type}/whakapapa`, component: WhakapapaIndex, props: true },
     { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow }
     // TODO change "name" to be 'whakapapaShow'
