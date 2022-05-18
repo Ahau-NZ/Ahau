@@ -3,9 +3,10 @@
 ## v2.11.1
 
 - Peoples list
-  - added function to import people into database with having relationships/parent information
+  - added feature to import people into database with having relationships/parent information
+  - added feature to export people from database to csv
 - Updated the progress circle to show progress and a label
-- Moved timeline navigation from side menu into Stories 
+- Moved timeline navigation from side menu into Stories
 
 ## v2.10.0
 
