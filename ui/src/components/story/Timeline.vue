@@ -1,10 +1,32 @@
 <template>
-  <div class="px-2">
+  <div class="">
     <div v-if="showStory" :class="{'showOverlay': showStory && !mobile}"></div>
-
-    <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4 pt-2">
-       {{ t('timeline') }}
+    <v-row v-show="!showStory">
+      <v-col cols="4" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
+        {{ t('timeline') }}
+      </v-col>
+      <v-col cols="1 pa-0 mt-6 pl-4">
+        <TimelineButton v-if="!mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
+      </v-col>
+      <v-col
+        v-if="filteredStories && filteredStories.length"
+        cols="12" md="4" class="mr-auto pa-0 mt-6"
+      >
+        <v-combobox
+          v-model="storySearchString"
+          :search-input.sync="storySearchString"
+          :menu-props=" { light: true } "
+          light
+          hide-selected
+          hide-details
+          dense
+          v-bind="customProps"
+        >
+        </v-combobox>
+        <!-- Turning this off for now -->
+        <!-- <v-btn @click="toggleFilteredStories" fab x-small color="#241023">
+        <v-icon color="white" >mdi-information</v-icon>
+        </v-btn> -->
       </v-col>
     </v-row>
 
@@ -17,10 +39,11 @@
         <div v-else>
           <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
             <StoryCard
-              @updateDialog="updateDialog($event)"
               :fullStory="true"
               :story.sync="currentStory"
-              @submit="saveStory($event)"
+              :reload="reload"
+              @updateDialog="updateDialog($event)"
+              @submit="$emit('save', $event)"
               @close="toggleStory($event)"
             />
           </v-row>
@@ -62,30 +85,39 @@
 import TimelineCard from '@/components/story/TimelineCard'
 import StoryCard from '@/components/archive/StoryCard.vue'
 import isEmpty from 'lodash.isempty'
+import TimelineButton from '@/components/button/TimelineButton.vue'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
+// import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'StoryTimeline',
+  props: {
+    stories: Array,
+    title: String,
+    reload: Function,
+    timeline: Boolean
+  },
   components: {
     TimelineCard,
-    StoryCard
+    StoryCard,
+    TimelineButton
   },
-  mixins: [
-    saveStoryMixin,
-    storiesApolloMixin,
-    mapProfileMixins({
-      mapApollo: ['profile']
-    })
-  ],
+  // mixins: [
+  //   saveStoryMixin,
+  //   storiesApolloMixin,
+  //   mapProfileMixins({
+  //     mapApollo: ['profile']
+  //   })
+  // ],
   data () {
     return {
-      profile: {},
-      stories: null,
-      scrollPosition: 0
+      // profile: {},
+      // stories: null,
+      scrollPosition: 0,
+      storySearchString: ''
     }
   },
   watch: {
@@ -102,23 +134,86 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    // ...mapGetters(['whoami']),
     ...mapGetters('archive', ['showStory', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
+    customProps () {
+      return {
+        outlined: true,
+        appendIcon: '',
+        placeholder: 'Search',
+        noDataText: 'no suggestions',
+        header: null,
+        style: 'background-color: white; border-radius: 10px;'
+      }
+    },
     filteredStories () {
       if (!this.stories) return null
-      return this.stories.filter(story => !isEmpty(story.timeInterval))
+      const filteredStories = this.stories.filter(story => !isEmpty(story.timeInterval))
+      if (this.storySearchString) {
+        return filteredStories.filter(story => {
+          const search = this.setString(this.storySearchString)
+          const title = this.setString(story.title)
+          const location = this.setString(story.location)
+
+          let mentionsMatch = false
+          story.mentions.forEach(mention => {
+            mentionsMatch = this.storyProfileMatchesSearch(mention.profile, search)
+          })
+
+          let contributorsMatch = false
+          story.contributors.forEach(contributor => {
+            contributorsMatch = this.storyProfileMatchesSearch(contributor.profile, search)
+          })
+
+          return (
+            title.includes(search) ||
+            mentionsMatch ||
+            location.includes(search) ||
+            contributorsMatch
+          )
+        })
+      } else return filteredStories
     }
   },
   methods: {
+    ...mapMutations(['updateDialog']),
     ...mapActions(['setDialog']),
+    ...mapActions('archive', ['setCurrentStory', 'toggleShowStory']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
     },
+    toggleStory (story) {
+      this.setCurrentStory(story)
+      this.toggleShowStory()
+      this.setDialog(null)
+    },
+    storyProfileMatchesSearch (mention, search) {
+      const mentionPreferredName = this.setString(mention.preferredName)
+      const mentionLegalName = this.setString(mention.legalName)
+
+      let altNameMatch = false
+      if (mention.altNames && mention.altNames.length > 0) {
+        mention.altNames.forEach(alt => {
+          const currName = this.setString(alt)
+          if (currName.includes(search)) altNameMatch = true
+        })
+      }
+
+      return (
+        mentionPreferredName.includes(search) ||
+        mentionLegalName.includes(search) ||
+        altNameMatch
+      )
+    },
     t (key, vars) {
       return this.$t('timeline.' + key, vars)
+    },
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
     }
   }
 }

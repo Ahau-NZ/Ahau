@@ -167,7 +167,7 @@ export default {
 
       if (type === 'personIndex' && this.isKaitiaki && this.tribeSettings.allowPersonsList) return
       if (component === 'whakapapa' && this.tribeSettings.allowWhakapapaViews) return
-      if ((component === 'archive' || component === 'timeline') && this.tribeSettings.allowStories) return
+      if ((component === 'archive') && this.tribeSettings.allowStories) return
 
       // not allowed on this route, so we redirect it to the profile
       this.$router.push({

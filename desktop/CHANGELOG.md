@@ -5,6 +5,7 @@
 - Peoples list
   - added function to import people into database with having relationships/parent information
 - Updated the progress circle to show progress and a label
+- Moved timeline navigation from side menu into Stories 
 
 ## v2.10.0
 
