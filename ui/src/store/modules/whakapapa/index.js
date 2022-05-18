@@ -71,6 +71,8 @@ export default function (apollo) {
     viewChanges: defaultViewChanges(),
     lastView: defaultView(),
 
+    activeQueryCount: 0,
+
     childLinks: {
       // [parentId]: {
       //   [childId]: relationshipType
@@ -90,6 +92,7 @@ export default function (apollo) {
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.viewChanges.showExtendedFamily),
     autoCollapse: state => state.viewChanges.autoCollapse,
+    isLoadingWhakapapa: state => state.activeQueryCount > 0,
     recordCount: (state, getters) => {
       const queue = [state.view.focus]
       const profiles = new Set([])
@@ -190,6 +193,18 @@ export default function (apollo) {
         ...Object.keys(state.partnerLinks[partnerId] || {}),
         ...Object.keys(state.partnerLinks).filter(partnerA => state.partnerLinks[partnerA][partnerId])
       ]
+    },
+    isInWhakapapa: (state, getters) => (id) => {
+      const childLinks = state.childLinks[id]
+      if (childLinks) return true
+
+      const parentIds = getters.getRawParentIds(id)
+      if (parentIds && parentIds.length) return true
+
+      const partnerIds = getters.getRawPartnerIds(id)
+      if (partnerIds && partnerIds.length) return true
+
+      return false
     },
     // TODO 2022-04-11 mix
     // consider splitting out vuex/links + vuex/whakapapa then we could just have getChildIds for each!
@@ -444,6 +459,10 @@ export default function (apollo) {
         state.partnerLinks[partnerA] = newLinks
       }
     },
+    modifyActiveQueryCount (state, number) {
+      if (!number) return
+      state.activeQueryCount = state.activeQueryCount + number
+    },
 
     setAutoCollapse (state, autoCollapse) {
       state.viewChanges.autoCollapse = autoCollapse
@@ -516,8 +535,10 @@ export default function (apollo) {
         return []
       }
     },
-    async getFamilyLinks ({ rootGetters }, opts = {}) {
+    async getFamilyLinks ({ commit, rootGetters }, opts = {}) {
       const { profileId, extended = true } = opts
+
+      commit('modifyActiveQueryCount', 1)
       try {
         const res = await apollo.query(getFamilyLinks(profileId, extended))
         if (res.errors) throw new Error(res.errors)
@@ -528,6 +549,7 @@ export default function (apollo) {
           !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
         )
 
+        commit('modifyActiveQueryCount', -1)
         return {
           childLinks: childLinks.filter(isNotTombstoned),
           partnerLinks: partnerLinks.filter(isNotTombstoned)
@@ -536,6 +558,7 @@ export default function (apollo) {
       catch (err) {
         console.error('error getting family links', err)
         // TODO error alert message
+        commit('modifyActiveQueryCount', -1)
         return { childLinks: [], partnerLinks: [] }
       }
     },
