@@ -532,6 +532,7 @@ export {
   convertDate,
   parse,
   downloadCsv,
+  mapNodeToCsvRow,
   schema,
   PERMITTED_CSV_COLUMNS,
   REQUIRED_CSV_COLUMNS,

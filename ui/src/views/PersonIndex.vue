@@ -51,11 +51,10 @@
             <v-icon>mdi-file-upload</v-icon>
             <span class="pl-2">upload csv</span>
           </v-btn>
-          <!-- TODO -->
-          <!-- <v-btn small rounded outlined color="#2f4f4f" class="mx-4" elevation="0">
+          <v-btn small rounded outlined color="#2f4f4f" class="mx-4" elevation="0" @click="downloadCsv">
             <v-icon>mdi-file-download</v-icon>
             <span class="pl-2">download csv</span>
-          </v-btn> -->
+          </v-btn>
         </div>
     </v-card>
 
@@ -97,6 +96,8 @@ import isEmpty from 'lodash.isempty'
 import { getDisplayName, mergeAdminProfile } from '@/lib/person-helpers.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
+import { csvFormat } from 'd3'
+import { mapNodeToCsvRow } from '@/lib/csv.js'
 
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
@@ -313,6 +314,16 @@ export default {
     },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
+    },
+    downloadCsv () {
+      const profiles = this.profiles.map(profile => mapNodeToCsvRow(profile))
+      const csv = csvFormat(profiles)
+
+      const hiddenElement = document.createElement('a')
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+      hiddenElement.target = '_blank'
+      hiddenElement.download = 'people.csv'
+      hiddenElement.click()
     }
   }
 }
