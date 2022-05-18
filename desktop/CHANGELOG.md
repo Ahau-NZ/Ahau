@@ -1,12 +1,45 @@
 # Changelog | Ahau desktop
 
-## v2.11.1
+## v2.12.0
+
+### Features
 
 - Peoples list
   - added feature to import people into database with having relationships/parent information
   - added feature to export people from database to csv
+  - can now click on a row to view that person
+  - changed the default rows to show more
 - Updated the progress circle to show progress and a label
 - Moved timeline navigation from side menu into Stories
+- Added connected patakas to your profile page
+- Changed the connect pataka text to join network
+- Toggling community features
+  - Kaitiaki can now turn on/off features including archive, whakapapa, persons list
+- Changed edit profile button to "tribe settings" when in a tribe, or "account settings" when on your profile
+- More translations
+- Search Bar
+  - changed the search bar in the whakapapa to search the database instead of the tree
+
+### Bug Fixes
+
+- fix bug where it would hide kaitiaki-only buttons because the calculation was wrong
+- fix bug where you couldnt search for collections when creating/updating a story
+- fix bug where it was creating duplicate profiles when editing an admin profile
+- fix bug where migrations were sometimes failing, preventing someone from using the app
+
+## v2.11.0
+
+### Features
+
+- Peoples list
+  - can now delete a person from the persons list
+- More translations
+
+### Bug Fixes
+
+- fix persons list icon and text for different screen sizes
+- fix incorrect text in the DeleteNodeDialog
+- fix bug where you couldnt edit education or school from the SideNodeDialog
 
 ## v2.10.0
 
@@ -21,7 +54,7 @@
     - searchable
     - edit dialog
 
-### Fixes
+### Bug Fixes
 
 - registration form
     - fixes ui for joining questions
