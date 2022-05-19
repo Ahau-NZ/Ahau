@@ -18,7 +18,8 @@ import calculateAge from '../../../lib/calculate-age'
 export default function () {
   const state = {
     mouseEvent: null,
-    hoveredProfileId: null
+    hoveredProfileId: null,
+    searchedProfileId: null
   }
 
   // we need to know the x/y of each drawn profile (d3 nodes + partners),
@@ -28,6 +29,7 @@ export default function () {
   const getters = {
     mouseEvent: state => state.mouseEvent,
     hoveredProfileId: state => state.hoveredProfileId,
+    searchedProfileId: state => state.searchedProfileId,
 
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
@@ -185,6 +187,9 @@ export default function () {
     },
     setHoveredProfileId (state, id) {
       state.hoveredProfileId = id
+    },
+    setSearchedProfileId (state, id) {
+      state.searchedProfileId = id
     }
   }
 
@@ -194,6 +199,9 @@ export default function () {
     },
     setHoveredProfileId ({ commit }, id) {
       commit('setHoveredProfileId', id)
+    },
+    setSearchedProfileId ({ commit }, id) {
+      commit('setSearchedProfileId', id)
     }
   }
 

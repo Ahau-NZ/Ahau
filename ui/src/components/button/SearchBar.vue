@@ -63,7 +63,6 @@ export default {
     Avatar
   },
   props: {
-    searchNodeId: String,
     isFilter: Boolean,
     searchNodeName: String,
     reset: Boolean,
@@ -81,7 +80,7 @@ export default {
   computed: {
     ...mapGetters('whakapapa', ['isInWhakapapa', 'isLoadingWhakapapa']),
     ...mapGetters('tribe', ['currentTribe']),
-    ...mapGetters('tree', ['descendants']),
+    ...mapGetters('tree', ['descendants', 'searchedProfileId']),
     ...mapGetters('person', ['person']),
     ...mapGetters('table', ['tableFilter']),
 
@@ -102,10 +101,10 @@ export default {
       } else {
         return {
           outlined: true,
-          appendIcon: this.searchNodeId ? '' : 'mdi-magnify',
+          appendIcon: this.searchedProfileId ? '' : 'mdi-magnify',
           placeholder: 'Search',
           rounded: true,
-          readonly: this.searchNodeId !== '',
+          readonly: this.searchedProfileId !== null,
           class: 'searchbar-input',
           solo: true
         }
@@ -160,6 +159,7 @@ export default {
   },
   methods: {
     ...mapActions('person', ['findPersonsByNameWithinGroup']),
+    ...mapActions('tree', ['setSearchedProfileId']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },
@@ -170,12 +170,12 @@ export default {
     setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.activeNode = data
+
+      this.setSearchedProfileId(data.id)
+
+      // TODO: derive these from searchProfileId
       this.$emit('update:searchNodeName', data.preferredName || data.legalName)
-      this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
-    },
-    clearSearchNodeId () {
-      this.$emit('update:searchNodeId', '')
     },
     setLoadingSuggestions (isLoading) {
       this.isLoadingSuggestions = isLoading

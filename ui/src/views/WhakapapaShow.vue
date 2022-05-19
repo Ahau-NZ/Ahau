@@ -36,16 +36,14 @@
       <v-row v-if="!mobile" class="select">
         <div class="icon-search">
           <SearchBar
-            v-if="!searchNodeId"
+            v-if="!searchedProfileId"
             :searchFilter="false"
-            :searchNodeId.sync="searchNodeId"
             :searchNodeName.sync="searchNodeName"
             @close="clickedOffSearch()"
             @searchNode="setSearchNode($event)"
           />
           <SearchBarNode
             v-else
-            :searchNodeId.sync="searchNodeId"
             :searchNodeName="searchNodeName"
           />
         </div>
@@ -89,15 +87,13 @@
           </template>
           <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
             <SearchBar
-              v-if="!searchNodeId"
-              :searchNodeId.sync="searchNodeId"
+              v-if="!searchedProfileId"
               :searchNodeName.sync="searchNodeName"
               @searchNode="setSearchNode($event)"
               @close="clickedOffSearch()"
             />
             <SearchBarNode
               v-else
-              :searchNodeId.sync="searchNodeId"
               :searchNodeName="searchNodeName"
             />
           </div>
@@ -124,7 +120,6 @@
 
         :class="mobile? 'mobile-tree':'tree'"
 
-        :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         @change-focus="setFocusToAncestorOf($event)"
@@ -134,7 +129,6 @@
           ref="table"
 
           :download.sync="download"
-          :searchNodeId="searchNodeId"
           :searchNodeEvent="searchNodeEvent"
         />
       </div>
@@ -219,7 +213,7 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
-      searchNodeId: '',
+
       searchNodeEvent: null,
       showWhakapapaHelper: false,
       // the record which defines the starting point for a tree (the 'focus')
@@ -245,7 +239,7 @@ export default {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView']),
-    ...mapGetters('tree', ['getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

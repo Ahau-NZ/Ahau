@@ -67,7 +67,6 @@ import settings from '@/lib/link.js'
 export default {
   name: 'WhakapapaTree',
   props: {
-    searchNodeId: String,
     getRelatives: Function,
     showAvatars: Boolean
   },
@@ -110,7 +109,7 @@ export default {
 
   computed: {
     ...mapGetters('whakapapa', ['whakapapaView', 'recordCount']),
-    ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     radius () {
       return settings.radius
     },
@@ -143,7 +142,7 @@ export default {
     }
   },
   watch: {
-    searchNodeId (id) {
+    searchedProfileId (id) {
       if (id === '') return null
 
       const node = this.getNode(id) || this.getPartnerNode(id)

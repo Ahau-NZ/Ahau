@@ -3,7 +3,7 @@
     v-model="displayString"
     :menu-props=" { light: true } "
     append-icon="mdi-close"
-    @click:append="clearSearchNodeId()"
+    @click:append="setSearchedProfileId(null)"
     rounded
     outlined
     light
@@ -18,18 +18,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 
 export default {
   name: 'SearchBarNode',
-  components: {
-  },
   props: {
-    searchNodeId: String,
+    // TODO: derive from searchedProfileId
     searchNodeName: String
   },
   data () {
     return {
-      searchString: '',
       activeNode: null
     }
   },
@@ -39,9 +37,7 @@ export default {
     }
   },
   methods: {
-    clearSearchNodeId () {
-      this.$emit('update:searchNodeId', '')
-    }
+    ...mapActions('tree', ['setSearchedProfileId'])
   }
 }
 </script>
