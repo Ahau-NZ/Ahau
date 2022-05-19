@@ -64,7 +64,6 @@ export default {
   },
   props: {
     isFilter: Boolean,
-    searchNodeName: String,
     reset: Boolean,
     buttonGroup: Boolean
   },
@@ -167,14 +166,11 @@ export default {
       if (this.isFilter) this.searchString = ''
       else this.$emit('close')
     },
-    setSearchNode (data, event) {
+    async setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.activeNode = data
 
-      this.setSearchedProfileId(data.id)
-
-      // TODO: derive these from searchProfileId
-      this.$emit('update:searchNodeName', data.preferredName || data.legalName)
+      await this.setSearchedProfileId(data.id)
       this.$emit('searchNode', event)
     },
     setLoadingSuggestions (isLoading) {

@@ -35,17 +35,12 @@
 
       <v-row v-if="!mobile" class="select">
         <div class="icon-search">
-          <SearchBar
-            v-if="!searchedProfileId"
+          <SearchBar v-if="!searchedProfileId"
             :searchFilter="false"
-            :searchNodeName.sync="searchNodeName"
-            @close="clickedOffSearch()"
-            @searchNode="setSearchNode($event)"
+            @close="clickedOffSearch"
+            @searchNode="setSearchNode"
           />
-          <SearchBarNode
-            v-else
-            :searchNodeName="searchNodeName"
-          />
+          <SearchBarNode v-else />
         </div>
         <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -86,16 +81,11 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
-            <SearchBar
-              v-if="!searchedProfileId"
-              :searchNodeName.sync="searchNodeName"
-              @searchNode="setSearchNode($event)"
-              @close="clickedOffSearch()"
+            <SearchBar v-if="!searchedProfileId"
+              @searchNode="setSearchNode"
+              @close="clickedOffSearch"
             />
-            <SearchBarNode
-              v-else
-              :searchNodeName="searchNodeName"
-            />
+            <SearchBarNode v-else />
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search" />
@@ -224,7 +214,6 @@ export default {
       },
 
       download: false,
-      searchNodeName: '',
       showAvatars: true
     }
   },

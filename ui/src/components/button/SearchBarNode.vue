@@ -18,22 +18,19 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'SearchBarNode',
-  props: {
-    // TODO: derive from searchedProfileId
-    searchNodeName: String
-  },
   data () {
     return {
       activeNode: null
     }
   },
   computed: {
+    ...mapGetters('tree', ['searchedProfileName']),
     displayString () {
-      return 'Selected: ' + this.searchNodeName
+      return 'Selected: ' + this.searchedProfileName
     }
   },
   methods: {
