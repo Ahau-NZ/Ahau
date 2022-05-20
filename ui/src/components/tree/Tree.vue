@@ -143,7 +143,7 @@ export default {
   },
   watch: {
     searchedProfileId (id) {
-      if (id === '') return null
+      if (!id) return
 
       const node = this.getNode(id) || this.getPartnerNode(id)
       if (!node) return

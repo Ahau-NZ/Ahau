@@ -27,10 +27,6 @@
               isFilter
               :reset="reset"
             />
-            <!-- <SearchBar
-              @change="updateTableFilter({ type: 'name', value: $event})"
-              isFilter
-            /> -->
           </v-col>
         </v-row>
         <v-row>

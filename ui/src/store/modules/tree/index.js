@@ -30,16 +30,6 @@ export default function () {
     mouseEvent: state => state.mouseEvent,
     hoveredProfileId: state => state.hoveredProfileId,
     searchedProfileId: state => state.searchedProfileId,
-    searchedProfileName: (state, getters, rootState, rootGetters) => {
-      const profileId = state.searchedProfileId
-
-      if (!profileId) return ''
-
-      const person = rootGetters['person/person'](profileId)
-      if (!person) return ''
-
-      return person.preferredName || person.legalName || ''
-    },
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
@@ -209,13 +199,8 @@ export default function () {
     setHoveredProfileId ({ commit }, id) {
       commit('setHoveredProfileId', id)
     },
-    async setSearchedProfileId ({ rootGetters, commit, dispatch }, id) {
+    async setSearchedProfileId ({ commit }, id) {
       commit('setSearchedProfileId', id)
-
-      if (!id) return
-
-      const person = rootGetters['person/person'](id)
-      if (!person) await dispatch('person/loadPersonMinimal', id, { root: true })
     }
   }
 

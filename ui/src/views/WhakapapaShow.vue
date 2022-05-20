@@ -35,11 +35,10 @@
 
       <v-row v-if="!mobile" class="select">
         <div class="icon-search">
-          <SearchBar v-if="!searchedProfileId"
+          <SearchBar
             :searchFilter="false"
             @close="clickedOffSearch"
           />
-          <SearchBarNode v-else />
         </div>
         <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -80,10 +79,9 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
-            <SearchBar v-if="!searchedProfileId"
+            <SearchBar
               @close="clickedOffSearch"
             />
-            <SearchBarNode v-else />
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search" />
@@ -163,7 +161,6 @@ import InfoButton from '@/components/button/InfoButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
-import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -179,7 +176,6 @@ export default {
     TableButton,
     InfoButton,
     SearchBar,
-    SearchBarNode,
     SearchButton,
     SearchFilterButton,
     HelpButton,

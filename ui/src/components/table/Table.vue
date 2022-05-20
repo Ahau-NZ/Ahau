@@ -210,7 +210,6 @@ export default {
       if (this.tableFlatten) return 300
       return 350
     },
-    // TODO: move to vuex getter
     pathNode () {
       if (!this.searchedProfileId) return null
       return this.descendants

@@ -3,7 +3,7 @@
     v-model="searchString"
     :items="items"
     :search-input.sync="searchString"
-    :menu-props=" { light: true } "
+    :menu-props=" { light: true, closeOnContentClick: true } "
     light
     attach
     hide-selected
@@ -11,7 +11,7 @@
     hide-no-data
     dense
     v-bind="customProps"
-    @click:append="close()"
+    @click:append="close"
   >
     <template v-slot:item="data">
       <!--
@@ -71,7 +71,6 @@ export default {
     return {
       timer: undefined,
       searchString: '',
-      activeNode: null,
       suggestions: [],
       isLoadingSuggestions: false
     }
@@ -82,6 +81,10 @@ export default {
     ...mapGetters('tree', ['descendants', 'searchedProfileId']),
     ...mapGetters('person', ['person']),
     ...mapGetters('table', ['tableFilter']),
+
+    hasSelection () {
+      return Boolean(this.searchedProfileId)
+    },
 
     customProps () {
       if (this.isFilter) {
@@ -100,10 +103,10 @@ export default {
       } else {
         return {
           outlined: true,
-          appendIcon: this.searchedProfileId ? '' : 'mdi-magnify',
+          appendIcon: this.hasSelection ? 'mdi-close' : 'mdi-magnify',
           placeholder: 'Search',
           rounded: true,
-          readonly: this.searchedProfileId !== null,
+          readonly: this.hasSelection,
           class: 'searchbar-input',
           solo: true
         }
@@ -164,13 +167,14 @@ export default {
     },
     close () {
       if (this.isFilter) this.searchString = ''
-      else this.$emit('close')
+      else if (this.hasSelection) {
+        this.setSearchedProfileId(null)
+        this.searchString = ''
+      } else this.$emit('close')
     },
     async setSearchNode (data, e) {
-      this.searchString = data.preferredName
-      this.activeNode = data
-
       await this.setSearchedProfileId(data.id)
+      this.searchString = 'Selected: ' + data.preferredName || data.legalName || ''
       this.setMouseEvent(e)
     },
     setLoadingSuggestions (isLoading) {
