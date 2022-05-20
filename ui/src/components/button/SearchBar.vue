@@ -3,7 +3,7 @@
     v-model="searchString"
     :items="items"
     :search-input.sync="searchString"
-    :menu-props=" { light: true } "
+    :menu-props=" { light: true, closeOnContentClick: true } "
     light
     attach
     hide-selected
@@ -11,7 +11,7 @@
     hide-no-data
     dense
     v-bind="customProps"
-    @click:append="close()"
+    @click:append="close"
   >
     <template v-slot:item="data">
       <!--
@@ -63,9 +63,7 @@ export default {
     Avatar
   },
   props: {
-    searchNodeId: String,
     isFilter: Boolean,
-    searchNodeName: String,
     reset: Boolean,
     buttonGroup: Boolean
   },
@@ -73,7 +71,6 @@ export default {
     return {
       timer: undefined,
       searchString: '',
-      activeNode: null,
       suggestions: [],
       isLoadingSuggestions: false
     }
@@ -81,9 +78,13 @@ export default {
   computed: {
     ...mapGetters('whakapapa', ['isInWhakapapa', 'isLoadingWhakapapa']),
     ...mapGetters('tribe', ['currentTribe']),
-    ...mapGetters('tree', ['descendants']),
+    ...mapGetters('tree', ['descendants', 'searchedProfileId']),
     ...mapGetters('person', ['person']),
     ...mapGetters('table', ['tableFilter']),
+
+    hasSelection () {
+      return Boolean(this.searchedProfileId)
+    },
 
     customProps () {
       if (this.isFilter) {
@@ -102,10 +103,10 @@ export default {
       } else {
         return {
           outlined: true,
-          appendIcon: this.searchNodeId ? '' : 'mdi-magnify',
+          appendIcon: this.hasSelection ? 'mdi-close' : 'mdi-magnify',
           placeholder: 'Search',
           rounded: true,
-          readonly: this.searchNodeId !== '',
+          readonly: this.hasSelection,
           class: 'searchbar-input',
           solo: true
         }
@@ -160,22 +161,21 @@ export default {
   },
   methods: {
     ...mapActions('person', ['findPersonsByNameWithinGroup']),
+    ...mapActions('tree', ['setSearchedProfileId', 'setMouseEvent']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },
     close () {
       if (this.isFilter) this.searchString = ''
-      else this.$emit('close')
+      else if (this.hasSelection) {
+        this.setSearchedProfileId(null)
+        this.searchString = ''
+      } else this.$emit('close')
     },
-    setSearchNode (data, event) {
-      this.searchString = data.preferredName
-      this.activeNode = data
-      this.$emit('update:searchNodeName', data.preferredName || data.legalName)
-      this.$emit('update:searchNodeId', data.id)
-      this.$emit('searchNode', event)
-    },
-    clearSearchNodeId () {
-      this.$emit('update:searchNodeId', '')
+    async setSearchNode (data, e) {
+      await this.setSearchedProfileId(data.id)
+      this.searchString = 'Selected: ' + data.preferredName || data.legalName || ''
+      this.setMouseEvent(e)
     },
     setLoadingSuggestions (isLoading) {
       this.isLoadingSuggestions = isLoading

@@ -148,10 +148,6 @@ import { mapNodesToCsv } from '@/lib/csv.js'
 export default {
   name: 'WhakapapaTable',
   props: {
-    searchNodeId: String,
-    searchNodeEvent: {
-      required: false
-    },
     download: Boolean
   },
   data () {
@@ -203,6 +199,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('tree', ['searchedProfileId', 'mouseEvent']),
     ...mapGetters('whakapapa', ['whakapapaView', 'getPartnerIds']),
     ...mapGetters('table', ['descendants', 'descendantLinks', 'tableFilter', 'tableSort', 'tableFlatten']),
     ...mapGetters('person', ['person']),
@@ -214,10 +211,10 @@ export default {
       return 350
     },
     pathNode () {
-      if (this.searchNodeId === '') return null
+      if (!this.searchedProfileId) return null
       return this.descendants
         .find(d => {
-          return d.data.id === this.searchNodeId
+          return d.data.id === this.searchedProfileId
         })
     },
     // table height based on number of nodes on table
@@ -333,11 +330,11 @@ export default {
         this.setSortOnField(this.tableSort.value)
       }
     },
-    searchNodeEvent () {
-      if (!this.searchNodeId) return
+    mouseEvent () {
+      if (!this.searchedProfileId) return
 
       const node = this.descendants
-        .some(d => d.data.id === this.searchNodeId)
+        .find(d => d.data.id === this.searchedProfileId)
 
       if (node) this.centerNode(node)
     },
@@ -393,7 +390,7 @@ export default {
         return 'fill:cadetblue'
       } else if (age !== null && age < 2) {
         return 'fill:yellow'
-      } else if (data.id === this.searchNodeId) {
+      } else if (data.id === this.searchedProfileId) {
         return 'fill:red'
       } else return 'fill:lightblue'
     },

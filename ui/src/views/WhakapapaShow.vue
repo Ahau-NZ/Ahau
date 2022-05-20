@@ -36,17 +36,8 @@
       <v-row v-if="!mobile" class="select">
         <div class="icon-search">
           <SearchBar
-            v-if="!searchNodeId"
             :searchFilter="false"
-            :searchNodeId.sync="searchNodeId"
-            :searchNodeName.sync="searchNodeName"
-            @close="clickedOffSearch()"
-            @searchNode="setSearchNode($event)"
-          />
-          <SearchBarNode
-            v-else
-            :searchNodeId.sync="searchNodeId"
-            :searchNodeName="searchNodeName"
+            @close="clickedOffSearch"
           />
         </div>
         <div class="icon-button">
@@ -89,16 +80,7 @@
           </template>
           <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
             <SearchBar
-              v-if="!searchNodeId"
-              :searchNodeId.sync="searchNodeId"
-              :searchNodeName.sync="searchNodeName"
-              @searchNode="setSearchNode($event)"
-              @close="clickedOffSearch()"
-            />
-            <SearchBarNode
-              v-else
-              :searchNodeId.sync="searchNodeId"
-              :searchNodeName="searchNodeName"
+              @close="clickedOffSearch"
             />
           </div>
           <div v-else  class="icon-button">
@@ -124,7 +106,6 @@
 
         :class="mobile? 'mobile-tree':'tree'"
 
-        :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         @change-focus="setFocusToAncestorOf($event)"
@@ -132,10 +113,7 @@
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
           ref="table"
-
           :download.sync="download"
-          :searchNodeId="searchNodeId"
-          :searchNodeEvent="searchNodeEvent"
         />
       </div>
     </v-container>
@@ -183,7 +161,6 @@ import InfoButton from '@/components/button/InfoButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
-import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -199,7 +176,6 @@ export default {
     TableButton,
     InfoButton,
     SearchBar,
-    SearchBarNode,
     SearchButton,
     SearchFilterButton,
     HelpButton,
@@ -219,8 +195,7 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
-      searchNodeId: '',
-      searchNodeEvent: null,
+
       showWhakapapaHelper: false,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -230,7 +205,6 @@ export default {
       },
 
       download: false,
-      searchNodeName: '',
       showAvatars: true
     }
   },
@@ -245,7 +219,7 @@ export default {
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView']),
-    ...mapGetters('tree', ['getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -424,9 +398,6 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
-    },
-    setSearchNode (event) {
-      this.searchNodeEvent = event
     }
   },
   destroyed () {

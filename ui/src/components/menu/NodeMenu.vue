@@ -34,7 +34,7 @@ export default {
     ...mapGetters(['whoami']),
     ...mapGetters('person', ['person', 'selectedProfile']),
     ...mapGetters('whakapapa', ['whakapapaView', 'focus']),
-    ...mapGetters('tree', ['mouseEvent']),
+    ...mapGetters('tree', ['mouseEvent', 'searchedProfileId']),
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
     },
@@ -105,6 +105,7 @@ export default {
   watch: {
     mouseEvent (e) {
       this.updateDialog(null, null)
+      if (this.searchedProfileId) return
       this.open(e)
     }
   },
