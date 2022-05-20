@@ -5,6 +5,7 @@ import uniqby from 'lodash.uniqby'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
+import FindPathToRoot from './lib/find-path-to-root'
 
 import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
@@ -111,6 +112,8 @@ export default function (apollo) {
 
       return profiles.size
     },
+
+    findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
 
     /* getter methods */
     isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),

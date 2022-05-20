@@ -76,7 +76,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('whakapapa', ['isInWhakapapa', 'isLoadingWhakapapa']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'isInWhakapapa', 'isLoadingWhakapapa']),
     ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('tree', ['descendants', 'searchedProfileId']),
     ...mapGetters('person', ['person']),
