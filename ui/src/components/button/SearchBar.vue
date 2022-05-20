@@ -158,7 +158,7 @@ export default {
   },
   methods: {
     ...mapActions('person', ['findPersonsByNameWithinGroup']),
-    ...mapActions('tree', ['setSearchedProfileId']),
+    ...mapActions('tree', ['setSearchedProfileId', 'setMouseEvent']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },
@@ -166,12 +166,12 @@ export default {
       if (this.isFilter) this.searchString = ''
       else this.$emit('close')
     },
-    async setSearchNode (data, event) {
+    async setSearchNode (data, e) {
       this.searchString = data.preferredName
       this.activeNode = data
 
       await this.setSearchedProfileId(data.id)
-      this.$emit('searchNode', event)
+      this.setMouseEvent(e)
     },
     setLoadingSuggestions (isLoading) {
       this.isLoadingSuggestions = isLoading

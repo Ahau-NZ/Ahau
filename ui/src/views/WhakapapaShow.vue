@@ -38,7 +38,6 @@
           <SearchBar v-if="!searchedProfileId"
             :searchFilter="false"
             @close="clickedOffSearch"
-            @searchNode="setSearchNode"
           />
           <SearchBarNode v-else />
         </div>
@@ -82,7 +81,6 @@
           </template>
           <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
             <SearchBar v-if="!searchedProfileId"
-              @searchNode="setSearchNode"
               @close="clickedOffSearch"
             />
             <SearchBarNode v-else />
@@ -117,9 +115,7 @@
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
           ref="table"
-
           :download.sync="download"
-          :searchNodeEvent="searchNodeEvent"
         />
       </div>
     </v-container>
@@ -204,7 +200,6 @@ export default {
       search: false,
       searchFilter: false,
 
-      searchNodeEvent: null,
       showWhakapapaHelper: false,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -407,9 +402,6 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
-    },
-    setSearchNode (event) {
-      this.searchNodeEvent = event
     }
   },
   destroyed () {

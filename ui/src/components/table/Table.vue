@@ -148,9 +148,6 @@ import { mapNodesToCsv } from '@/lib/csv.js'
 export default {
   name: 'WhakapapaTable',
   props: {
-    searchNodeEvent: {
-      required: false
-    },
     download: Boolean
   },
   data () {
@@ -202,7 +199,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('tree', ['searchedProfileId']),
+    ...mapGetters('tree', ['searchedProfileId', 'mouseEvent']),
     ...mapGetters('whakapapa', ['whakapapaView', 'getPartnerIds']),
     ...mapGetters('table', ['descendants', 'descendantLinks', 'tableFilter', 'tableSort', 'tableFlatten']),
     ...mapGetters('person', ['person']),
@@ -334,11 +331,11 @@ export default {
         this.setSortOnField(this.tableSort.value)
       }
     },
-    searchNodeEvent () {
+    mouseEvent () {
       if (!this.searchedProfileId) return
 
       const node = this.descendants
-        .some(d => d.data.id === this.searchedProfileId)
+        .find(d => d.data.id === this.searchedProfileId)
 
       if (node) this.centerNode(node)
     },
