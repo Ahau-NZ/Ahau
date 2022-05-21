@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="isKaitiaki" fluid class="px-2 peoples-list" style="margin-top: 64px" >
+  <v-container v-if="isKaitiaki" fluid class="px-2 peoples-list" style="margin-top: 64px;max-height:80vh" >
     <v-card light flat>
       <v-card-title>
         {{ t('title') }}
@@ -14,11 +14,14 @@
           class="pt-0"
           @input="handleSearchInput"
         />
+        <v-icon @click="toggleSettings" class="ml-6">mdi-cog</v-icon>
       </v-card-title>
 
       <v-data-table
-        :headers="headers"
-        :items="profiles"
+        :headers="activeHeaders"
+        fixed-header
+        height="calc(100vh - 205px)"
+        :items="filteredProfiles"
         item-key="id"
         :items-per-page="15"
         :loading="isLoading"
@@ -29,9 +32,15 @@
           itemsPerPageOptions: [15, 50, 100, -1],
           }"
         light
-        class="mt-10"
         @click:row="handleShow"
       >
+        <template v-if="hiddenColumns" v-slot:header.actions>
+          <v-icon>mdi-eye-off</v-icon> {{hiddenColumns}}
+        </template>
+        <!-- Handle profile image -->
+        <template v-slot:item.image="{ item }" >
+          <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
+        </template>
         <!-- Handle max description charachters -->
         <template v-slot:item.description="{ item }" >
           <span class="description">{{item.description}}</span>
@@ -86,6 +95,13 @@
       @submit="importCsv"
       @close="showImportDialog = false"
     />
+    <FilterMenu
+      :isList="true"
+      :show="settingsPanel"
+      :headers.sync="headers"
+      @close="toggleSettings()"
+      @toggleAvatars="toggleShowAvatars()"
+    />
   </v-container>
 </template>
 
@@ -93,69 +109,78 @@
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import isEmpty from 'lodash.isempty'
-import { getDisplayName, mergeAdminProfile } from '@/lib/person-helpers.js'
+import { mergeAdminProfile } from '@/lib/person-helpers.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
+import { determineFilter } from '@/lib/filters.js'
 
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
+import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
+import Avatar from '@/components/Avatar.vue'
 
 export default {
   name: 'PersonIndex',
   components: {
     SideNodeDialog,
     RemovePersonDialog,
-    ImportPeopleDialog
+    ImportPeopleDialog,
+    FilterMenu,
+    Avatar
   },
   data () {
-    const header = (key, width) => ({
+    const header = (key, width, show, disableSort) => ({
       value: key,
       text: this.t('prop.' + key),
       align: 'center',
-      width: width || 'auto'
+      width: width || 'auto',
+      show: show,
+      sortable: !disableSort
     })
 
     return {
       headers: [
-        header('preferredName', '120px'),
-        header('legalName', '150px'),
-        header('altNames', '150px'),
-        header('gender', '100px'),
-        header('description', '200px'),
-        header('age', '80px'),
-        header('dob', '150px'),
-        header('dod', '150px'),
+        header('image', '80px', true, true),
+        header('preferredName', '120px', true),
+        header('legalName', '150px', true),
+        header('altNames', '150px', true),
+        header('gender', '100px', true),
+        header('description', '200px', false),
+        header('age', '80px', true),
+        header('dob', '150px', true),
+        header('dod', '150px', false),
 
-        header('phone', '100px'), //   admin
-        header('email', '100px'), //   admin
-        header('address', '200px'), // admin
-        header('city', '100px'),
-        header('country', '100px'),
-        header('postCode', '100px'),
+        header('phone', '100px', true), //   admin
+        header('email', '100px', true), //   admin
+        header('address', '200px', true), // admin
+        header('city', '100px', true),
+        header('country', '100px', true),
+        header('postCode', '100px', true, true),
 
-        header('placeOfBirth', '100px'),
-        header('birthOrder', '100px'),
-        header('placeOfDeath', '100px'),
-        header('buriedLocation', '100px'),
-        header('profession', '100px'),
-        header('education', '150px'),
-        header('school', '150px'),
+        header('placeOfBirth', '100px', false),
+        header('birthOrder', '100px', false),
+        header('placeOfDeath', '100px', false),
+        header('buriedLocation', '100px', false),
+        header('profession', '100px', true),
+        header('education', '150px', true),
+        header('school', '150px', true),
 
-        { value: 'actions', text: '', align: 'end', width: '100px' } // this.t('action.edit')
+        { value: 'actions', align: 'end', width: '100px', show: true, sortable: false } // this.t('action.edit')
       ],
       moreDetails: [
         // avatarImage?
       ],
       isLoading: false,
-      profiles: [],
+      profilesIndex: [],
       showEditor: false,
       isEditing: false,
       showDelete: false,
       search: '',
-      showImportDialog: false
+      showImportDialog: false,
+      settingsPanel: false
     }
   },
   async mounted () {
@@ -171,8 +196,12 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
-    ...mapGetters('person', ['person', 'selectedProfileId']),
+    ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
     ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('table', ['tableFilter']),
+    activeHeaders () {
+      return this.headers.filter(h => h.show)
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -180,6 +209,12 @@ export default {
       if (!this.selectedProfileId) return null
 
       return this.person(this.selectedProfileId)
+    },
+    filteredProfiles () {
+      return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
+    },
+    hiddenColumns () {
+      return this.headers.length - this.activeHeaders.length - 1
     }
   },
   methods: {
@@ -187,7 +222,9 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading']),
-    getDisplayName,
+    toggleSettings () {
+      this.settingsPanel = !this.settingsPanel
+    },
     async importCsv (csv) {
       this.showImportDialog = false
       const whakapapaViewInput = { recps: [this.currentAccess.groupId] }
@@ -205,8 +242,9 @@ export default {
     async loadData () {
       this.isLoading = true
       const { tribeId } = this.$route.params
-      const profiles = await this.loadPersonList({ type: 'group', tribeId })
-      this.profiles = await profiles.map(profile => {
+      if (!this.profilesArr.length) await this.loadPersonList({ type: 'group', tribeId })
+      else this.loadPersonList({ type: 'group', tribeId })
+      this.profilesIndex = this.profilesArr.map(profile => {
         if (profile.aliveInterval) {
           profile.dob = this.computeDate('dob', profile.aliveInterval)
           profile.dod = this.computeDate('dod', profile.aliveInterval)
@@ -223,7 +261,6 @@ export default {
         if (Array.isArray(value)) {
           return value.some(v => v.toString().toLocaleLowerCase().includes(_search))
         }
-
         return value.toString().toLocaleLowerCase().includes(_search)
       })
     },

@@ -124,6 +124,7 @@ query($type: String!, $tribeId: String!) {
     legalName
     altNames
     description
+    deceased
     avatarImage { uri }
     gender
     aliveInterval
@@ -143,6 +144,7 @@ query($type: String!, $tribeId: String!) {
       legalName
       altNames
       description
+      deceased
       avatarImage { uri }
       gender
       aliveInterval

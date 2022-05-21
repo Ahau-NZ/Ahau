@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="appStyle">
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
 
     <!-- Sizes your content based upon application components -->
@@ -150,6 +150,10 @@ export default {
     displayAppbar () {
       if (this.$route.name === 'login') return false
       else return true
+    },
+    appStyle () {
+      if (this.$route.name === 'personIndex') return 'overflow-y: clip'
+      return ''
     }
   },
   methods: {

@@ -10,6 +10,7 @@
     "legalName": "Full name",
     "gender": "Gender",
     "aliveInterval": "Birth/Death",
+    "image" : "Image",
 
     "phone": "Phone",
     "email": "Email",

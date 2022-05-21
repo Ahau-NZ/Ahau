@@ -6,7 +6,7 @@
         {{ t('timeline') }}
       </v-col>
       <v-col cols="1 pa-0 mt-6 pl-4">
-        <TimelineButton v-if="!mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
+        <TimelineButton v-if="filteredStories && filteredStories.length && !mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
       </v-col>
       <v-col
         v-if="filteredStories && filteredStories.length"

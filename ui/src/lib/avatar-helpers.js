@@ -5,6 +5,7 @@ import wahine from '@/assets/wahine.svg'
 import tama from '@/assets/tama.svg'
 import kotiro from '@/assets/kotiro.svg'
 import account from '@/assets/account-2.svg'
+import account2 from '@/assets/account-fill.svg'
 
 import whakapapa from '@/assets/whakapapa.svg'
 import whakapapaPng from '@/assets/whakapapa.png'
@@ -12,7 +13,7 @@ import whakapapaPng from '@/assets/whakapapa.png'
 import calculateAge from './calculate-age'
 import { isCordova } from './cordova-helpers'
 
-function defaultImage (isView, aliveInterval, gender, noAvatar) {
+function defaultImage (isView, aliveInterval, gender, noAvatar, isNode) {
   if (isView) {
     if (isCordova()) return whakapapaPng
 
@@ -35,9 +36,9 @@ function defaultImage (isView, aliveInterval, gender, noAvatar) {
           return tane
       }
     case 'other':
-      return account
+      return isNode ? account2 : account
     case 'unknown':
-      return account
+      return isNode ? account2 : account
     case 'female':
       switch (true) {
         case age === null:
@@ -50,7 +51,7 @@ function defaultImage (isView, aliveInterval, gender, noAvatar) {
           return wahine
       }
     default:
-      return account
+      return isNode ? account2 : account
   }
 }
 

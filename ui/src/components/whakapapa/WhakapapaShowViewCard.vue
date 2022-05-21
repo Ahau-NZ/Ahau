@@ -3,7 +3,8 @@
     light
     outlined
     :ripple="false"
-    class="mt-5"
+    class="mt-2"
+    style="#fefefed6"
   >
     <!-- Whakapapa Image and Title -->
     <v-container fluid class="py-0">

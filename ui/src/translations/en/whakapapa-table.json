@@ -1,5 +1,5 @@
 {
-  "applyTableFilters": "Refine",
+  "settings": "Settings",
   "name": "Preferred name",
   "location": "Location",
   "skills": "Skills",
@@ -33,6 +33,6 @@
   "view": "View controls",
   "avatars": "Show profile photos",
   "parents": "Show extended family",
-  "autoCollapse": "Auto-collapse nodes",
+  "autoCollapse": "Expand all family lines",
   "default": "revert to default settings"
 }

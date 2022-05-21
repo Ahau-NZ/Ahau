@@ -11,6 +11,8 @@ import {
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
+let count = 0
+
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
@@ -18,11 +20,14 @@ export default function (apollo) {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
-    tombstoned: new Set()
+    profilesArr: [],
+    tombstoned: new Set(),
+    isLoading: false
   }
 
   const getters = {
     person: state => (profileId) => state.profiles[profileId],
+    profilesArr: state => state.profilesArr,
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
@@ -49,7 +54,8 @@ export default function (apollo) {
 
       return getters.personPlusFamily(state.selectedProfileId)
     },
-    isTombstoned: state => (profileId) => state.tombstoned.has(profileId)
+    isTombstoned: state => (profileId) => state.tombstoned.has(profileId),
+    isLoadingProfiles: state => state.isLoading
   }
 
   const mutations = {
@@ -61,6 +67,12 @@ export default function (apollo) {
     },
     tombstoneId (state, profileId) {
       state.tombstoned.add(profileId)
+    },
+    setLoading (state, status) {
+      if (state.isLoading !== status) state.isLoading = status
+    },
+    setProfiles (state, profiles) {
+      state.profilesArr = profiles
     }
   }
 
@@ -158,13 +170,28 @@ export default function (apollo) {
 
     async loadPersonMinimal ({ state, dispatch, commit }, profileId) {
       if (state.tombstoned.has(profileId)) return
+      count++
+      commit('setLoading', count > 0)
 
-      const profile = await dispatch('getPersonMinimal', profileId)
-      if (profile.tombstone) {
-        commit('tombstoneId', profileId)
-        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-      } // eslint-disable-line
-      else commit('setPerson', profile)
+      try {
+        const profile = await dispatch('getPersonMinimal', profileId)
+        if (profile.tombstone) {
+          commit('tombstoneId', profileId)
+          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+          count--
+          commit('setLoading', count > 0)
+        } // eslint-disable-line
+        else commit('setPerson', profile)
+        count--
+        commit('setLoading', count > 0)
+        return profile
+      } catch (err) {
+        console.error('error loading profile', err)
+        // TODO error alert message
+        count--
+        commit('setLoading', count > 0)
+        return {}
+      }
     },
     async loadPersonFull ({ state, dispatch, commit }, profileId) {
       if (state.tombstoned.has(profileId)) return
@@ -241,14 +268,16 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonList (context, { type, tribeId }) {
+    async loadPersonList ({ commit }, { type, tribeId }) {
       try {
         const res = await apollo.query(loadPersonList(type, tribeId))
 
         if (res.errors) throw res.errors
-
-        return res.data.listPerson
-          .map(mergeAdminProfile)
+        const profiles = res.data.listPerson.map(mergeAdminProfile)
+        commit('setProfiles', profiles)
+        profiles.forEach(profile => {
+          commit('setPerson', profile)
+        })
       } catch (err) {
         console.error('Something went wrong while trying to load person list for group: ' + tribeId)
         console.error(err)
