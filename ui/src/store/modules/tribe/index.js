@@ -202,9 +202,13 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadTribe ({ getters, dispatch, state }, id) {
+    async loadTribe ({ getters, dispatch, state, commit }, id) {
+      console.log('loading tribe')
       try {
-        if (state.currentTribe && state.currentTribe.id !== id) dispatch('resetCurrentTribe')
+        if (state.currentTribe && state.currentTribe.id !== id) {
+          dispatch('resetCurrentTribe')
+          commit('person/resetProfiles', null, { root: true })
+        }
 
         const tribe = await dispatch('getTribe', id)
 

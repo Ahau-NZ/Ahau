@@ -5,7 +5,7 @@
         {{ title }}
       </v-col>
       <v-col cols="1 pa-0 mt-6 pl-4">
-        <TimelineButton v-if="stories.length > 0 && !mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
+        <TimelineButton v-if="timelineStories.length && !mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
       </v-col>
       <v-col
         v-if="stories.length > 0"
@@ -158,6 +158,9 @@ export default {
           contributorsMatch
         )
       })
+    },
+    timelineStories () {
+      return this.filteredStories.filter(story => !isEmpty(story.timeInterval))
     }
   },
   methods: {

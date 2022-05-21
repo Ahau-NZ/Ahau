@@ -73,6 +73,10 @@ export default function (apollo) {
     },
     setProfiles (state, profiles) {
       state.profilesArr = profiles
+    },
+    resetProfiles (state) {
+      state.profilesArr = []
+      state.profiles = {}
     }
   }
 
