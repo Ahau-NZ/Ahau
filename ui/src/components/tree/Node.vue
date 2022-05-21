@@ -1,5 +1,6 @@
 <template>
   <g
+    v-if="profile"
     class="node"
     :style="position"
     @mouseover="setHover(true)"
@@ -32,14 +33,8 @@
         :cy="radius"
         :r="radius + 4"
       />
-      <!--
-        keen to get rid of background circle, but to do this need to change the color
-        of the default avatar (which is white)
-
-        <circle v-if="!imageSrc && profile.deceased"
-      -->
       <circle v-if="!imageSrc"
-        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
+        :style="{ fill: 'white'}"
         :cx="radius"
         :cy="radius"
         :r="radius"
@@ -57,7 +52,6 @@
         @click="openMenu"
       />
     </g>
-
     <g v-if="hasUndrawnAscendants" :style="dotsAboveNode">
       <text> ... </text>
     </g>
@@ -110,26 +104,33 @@ export default {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
       },
-      radius: this.isPartner ? PARTNER_RADIUS : RADIUS
+      radius: this.isPartner ? PARTNER_RADIUS : RADIUS,
+      staticProfile: null
     }
   },
-  mounted () {
-    this.loadPersonMinimal(this.profileId)
+  async mounted () {
+    this.staticProfile = this.person(this.profileId) || await this.loadPersonMinimal(this.profileId)
   },
   computed: {
-    ...mapGetters('person', ['person', 'selectedProfileId']),
+    ...mapGetters('person', ['person', 'selectedProfileId', 'isLoadingProfiles']),
     ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
     ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode']),
-    profile () {
-      return this.person(this.profileId) || {}
-    },
     isCollapsed () {
+      if (this.isLoadingProfiles) return
       return this.isCollapsedNode(this.profileId)
     },
     isSelected () {
       return this.selectedProfileId === this.profileId
     },
+    profile () {
+      if (this.isLoadingProfiles) {
+        return this.staticProfile
+      } else {
+        return this.person(this.profileId)
+      }
+    },
     isDuplicate () {
+      if (this.isLoadingProfiles) return
       const rule = this.getImportantRelationship(this.profileId)
       if (!rule) return false
       return rule.other.length > 1
@@ -137,6 +138,7 @@ export default {
       // Idea - make a getAllNodes + getAllParterNodes (which doesn't just find the first)
     },
     hasUndrawnSubtree () {
+      if (this.isLoadingProfiles) return
       if (this.isCollapsed) {
         const undrawnDescendants = this.getRawChildIds(this.profileId)
           .filter(id => !this.getNode(id))
@@ -148,10 +150,10 @@ export default {
           .length > 0
         if (undrawnPartners) return true
       }
-
       return false
     },
     hasUndrawnAscendants () {
+      if (this.isLoadingProfiles) return
       return this.getParentIds(this.profileId)
         .filter(id => !this.getNode(id) && !this.getPartnerNode(id))
         .length > 0
@@ -159,10 +161,10 @@ export default {
     showMenuButton () {
       // if (this.isPartner) return false
       if (this.isCollapsed) return false
-
       return this.hoveredProfileId === this.profileId
     },
     hasAncestors () {
+      if (this.isLoadingProfiles) return
       return (
         this.getParentIds(this.profileId) > 0 ||
         (this.profile.parents && this.profile.parents.length > 0)
@@ -199,8 +201,8 @@ export default {
     },
     avatarStyle () {
       return this.profile.deceased
-        ? { filter: 'grayscale(1) sepia(0.2)' }
-        : {}
+        ? { filter: 'grayscale(1) sepia(0.2)', opacity: '0.4' }
+        : ''
     },
     dotsUnderNode () {
       // centers the three dots underneath a nodes name
@@ -238,7 +240,7 @@ export default {
     ...mapActions('tree', ['setMouseEvent', 'setHoveredProfileId']),
     ...mapActions('person', ['loadPersonMinimal', 'setSelectedProfileById']),
     defaultImage () {
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender, false, true)
     },
     openMenu (e) {
       this.setMouseEvent(e)

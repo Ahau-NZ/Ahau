@@ -33,8 +33,18 @@
         @more-info="updateDialog('whakapapa-view', null)"
       />
 
-      <v-row v-if="!mobile" class="select">
-        <div class="icon-search">
+      <v-row class="select mt-4" v-if="isLoadingProfiles || isLoadingWhakapapa">
+        <v-progress-circular
+          indeterminate
+          :width="2"
+          color="#b12526"
+          class="pa-4"
+        />
+        <p class="overline pl-4" style="color:#b12526">{{isLoadingProfiles ? 'loading profiles...' : 'loading connections...'}}</p>
+      </v-row>
+      <v-expand-transition v-else-if="!mobile">
+        <v-row class="select">
+          <div class="icon-search">
           <SearchBar
             :searchFilter="false"
             @close="clickedOffSearch"
@@ -56,51 +66,63 @@
         <div class="icon-button">
           <HelpButton />
         </div>
-      </v-row>
+        </v-row>
+      </v-expand-transition>
       <!-- speed dial menu for mobile -->
-      <v-card v-if="mobile" id="speeddial">
-        <v-speed-dial
-          v-model="fab"
-          right
-          direction="bottom"
-          transition="slide-y-transition"
-          fixed
-        >
-          <template v-slot:activator>
-            <v-btn
-              v-model="fab"
-              color="black"
-              dark
-              fab
-              x-small
-            >
-              <v-icon v-if="fab">mdi-close</v-icon>
-              <v-icon v-else>mdi-hexagon-multiple</v-icon>
-            </v-btn>
-          </template>
-          <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
-            <SearchBar
-              @close="clickedOffSearch"
-            />
-          </div>
-          <div v-else  class="icon-button">
-            <SearchButton  @click.stop :search.sync="search" />
-          </div>
-          <div v-if="whakapapaView.table" class="icon-button">
-            <SearchFilterButton :searchFilter.sync="searchFilter"/>
-          </div>
-          <div class="icon-button">
-            <TableButton :table="whakapapaView.table" @table="toggleTable()" />
-          </div>
-          <div class="icon-button">
-            <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
-            <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
-          </div>
-          <div class="icon-button">
-            <HelpButton />
-          </div>
-        </v-speed-dial>
-      </v-card>
+      <v-expand-transition v-else-if="mobile">
+        <v-card id="speeddial">
+          <v-speed-dial
+            v-model="fab"
+            right
+            direction="bottom"
+            transition="slide-y-transition"
+            fixed
+          >
+            <template v-slot:activator>
+              <v-btn
+                v-model="fab"
+                color="black"
+                dark
+                fab
+                x-small
+              >
+                <v-icon v-if="fab">mdi-close</v-icon>
+                <v-icon v-else>mdi-hexagon-multiple</v-icon>
+              </v-btn>
+            </template>
+            <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
+              <SearchBar
+                v-if="!searchNodeId"
+                :searchNodeId.sync="searchNodeId"
+                :searchNodeName.sync="searchNodeName"
+                @searchNode="setSearchNode($event)"
+                @close="clickedOffSearch()"
+              />
+              <SearchBarNode
+                v-else
+                :searchNodeId.sync="searchNodeId"
+                :searchNodeName="searchNodeName"
+              />
+            </div>
+            <div v-else  class="icon-button">
+              <SearchButton  @click.stop :search.sync="search" />
+            </div>
+            <div v-if="whakapapaView.table" class="icon-button">
+              <SearchFilterButton :searchFilter.sync="searchFilter"/>
+            </div>
+            <div class="icon-button">
+              <TableButton :table="whakapapaView.table" @table="toggleTable()" />
+            </div>
+            <div class="icon-button">
+              <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
+              <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+            </div>
+            <div class="icon-button">
+              <HelpButton />
+            </div>
+          </v-speed-dial>
+        </v-card>
+      </v-expand-transition>
       <Tree
         v-if="whakapapaView.tree"
 
@@ -216,9 +238,9 @@ export default {
 
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
-    ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles']),
     ...mapGetters('tribe', ['tribes']),
-    ...mapGetters('whakapapa', ['whakapapaView']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
     mobile () {
       return this.$vuetify.breakpoint.xs

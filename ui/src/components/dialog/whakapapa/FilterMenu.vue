@@ -2,7 +2,7 @@
   <transition appear name="right">
     <v-navigation-drawer
       :style="mobile ? 'top: 0px;' : 'top: 64px;'"
-      :absolute="mobile"
+      absolute
       :fixed="!mobile"
       :right="!mobile"
       light
@@ -15,18 +15,18 @@
       <v-card light height="90%" class="text-center" flat>
 
         <!-- Table -->
-        <v-container v-if="isTable" class="black--text">
+        <v-container v-if="isTable || isList" class="black--text">
           <v-row class="justify-end">
             <v-btn icon class="mr-3">
               <v-icon @click="close" color="secondary">mdi-close</v-icon>
             </v-btn>
           </v-row>
           <v-col cols="12 overline" align="start" class="mt-n10 mb-2">
-            <h1>{{ t('applyTableFilters') }}</h1>
+            <h1>{{ t('settings') }}</h1>
           </v-col>
           <FilterInput :reset="resetData" @whakapapa="toggleWhakapapa()"/>
-          <SortInput :reset="resetData"  @whakapapa="toggleWhakapapa()"/>
-          <OptionsInput :reset="resetData"/>
+          <SortInput v-if="!isList" :reset="resetData"  @whakapapa="toggleWhakapapa()"/>
+          <OptionsInput :reset="resetData" :isList="isList" :headers.sync="headers"/>
 
           <!-- Hide Deceased -->
           <v-list-item class="py-4">
@@ -39,7 +39,7 @@
           </v-list-item>
 
           <!-- Hide WhakapapaLinks -->
-          <v-list-item class="pb-4">
+          <v-list-item v-if="!isList" class="pb-4">
             <v-list-item-content>
               <v-list-item-title align="start" v-text="'Show whakapapa'"/>
             </v-list-item-content>
@@ -68,7 +68,7 @@
             </v-btn>
           </v-row>
           <v-col cols="12 overline" align="start" class="mt-n10 mb-2">
-            <h1>{{ t('applyTableFilters') }}</h1>
+            <h1>{{ t('settings') }}</h1>
           </v-col>
           <!-- Toggle names only -->
           <v-list-item class="py-4">
@@ -95,7 +95,7 @@
               <v-list-item-title align="start" v-text=" t('autoCollapse')"/>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model='autoCollapse' @change='setAutoCollapse($event)' />
+              <v-switch v-model='autoCollapse' @change='toggleAutoCollapse($event)' :disabled="autoCollapse"/>
             </v-list-item-action>
           </v-list-item>
 
@@ -128,7 +128,9 @@ export default {
   },
   props: {
     show: { type: Boolean, default: false },
-    isTable: { type: Boolean, default: false }
+    isTable: { type: Boolean, default: false },
+    isList: { type: Boolean, default: false },
+    headers: { type: Array }
   },
   data () {
     return {
@@ -137,7 +139,7 @@ export default {
       showWhakapapa: false,
 
       showAvatars: true,
-      autoCollapse: true,
+      autoCollapse: false,
       showExtendedFamily: false
     }
   },
@@ -172,6 +174,10 @@ export default {
     ...mapActions('table', ['toggleTableFlatten', 'resetTableFilters', 'updateTableFilter']),
     toggleWhakapapa () {
       if (this.whakapapa) this.whakapapa = false
+    },
+    toggleAutoCollapse (e) {
+      this.setAutoCollapse(!e)
+      this.close()
     },
     close () {
       this.$emit('close')

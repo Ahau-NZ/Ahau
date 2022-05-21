@@ -733,10 +733,7 @@ export default function (apollo) {
         if (links) totalLinks.push(...links)
       }
 
-      // check if all profiles have been created
-      const objLength = Object.keys(totalProfiles).length
-
-      if (objLength === length && totalLinks.length) {
+      if (totalLinks.length) {
         // show progress percentage
         dispatch('setLoading', true, { root: true })
         dispatch('setLoadingLabel', 'adding family links...', { root: true })
@@ -786,7 +783,6 @@ export default function (apollo) {
           profile.authors = {
             add: ['*']
           }
-
           const profileId = await dispatch('person/createPerson', profile, { root: true })
 
           // importing from peoples list doesnt require a csvId we may not be building relaiotnships

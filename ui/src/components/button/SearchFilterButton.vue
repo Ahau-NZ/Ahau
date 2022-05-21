@@ -2,10 +2,10 @@
   <v-tooltip bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click.stop="$emit('update:searchFilter', true)" fab x-small color="#12355b">
-          <v-icon> mdi-filter-variant </v-icon>
+          <v-icon> mdi-cog </v-icon>
         </v-btn>
     </template>
-    <span>{{ t('refine') }}</span>
+    <span>{{ t('settings') }}</span>
   </v-tooltip>
 </template>
 

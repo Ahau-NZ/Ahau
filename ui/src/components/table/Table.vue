@@ -141,6 +141,7 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { mergeAdminProfile } from '@/lib/person-helpers.js'
+import { determineFilter } from '@/lib/filters.js'
 
 import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
@@ -241,7 +242,7 @@ export default {
             }
           }
         })
-        .filter(d => this.determineFilter(d))
+        .filter(d => determineFilter(d, this.tableFilter))
 
       if (this.sortActive) {
         nodes
@@ -407,10 +408,6 @@ export default {
         children: _children
       })
     },
-    setString (name) {
-      if (isEmpty(name)) return ''
-      return name.toLowerCase().trim()
-    },
     altNames (altArray) {
       if (isEmpty(altArray)) return ''
       return altArray.join(', ')
@@ -574,81 +571,6 @@ export default {
         top: elementPos,
         behavior: 'smooth'
       })
-    },
-    // TODO: move these filters into table vuex
-    determineFilter (node) {
-      if (this.tableFilter.deceased && node.data.deceased) return false
-
-      return (
-        this.nameMatchesFilter(node) &&
-        this.locationMatchesFilter(node) &&
-        this.skillsMatchesFilter(node) &&
-        this.filterByAge(node)
-      )
-    },
-    nameMatchesFilter (node) {
-      if (!this.tableFilter.name) return true
-
-      const search = this.setString(this.tableFilter.name)
-      const preferredName = this.setString(node.data.preferredName)
-      const legalName = this.setString(node.data.legalName)
-
-      return preferredName.includes(search) ||
-            legalName.includes(search) ||
-            this.findAltNameMatch(search, node.data.altNames)
-    },
-    findAltNameMatch (filterString, altNames) {
-      let altNameFound = false
-
-      if (altNames && altNames.length > 0) {
-        for (let i = 0; i < altNames.length; i++) {
-          const currAltName = this.setString(altNames[i])
-          if (currAltName.includes(filterString)) altNameFound = true
-        }
-      }
-      return altNameFound
-    },
-    locationMatchesFilter (node) {
-      if (!this.tableFilter.location) return true
-
-      const search = this.setString(this.tableFilter.location)
-      const address = this.setString(node.data.address)
-      const city = this.setString(node.data.city)
-      const postCode = this.setString(node.data.postCode)
-      const country = this.setString(node.data.country)
-
-      return address.includes(search) ||
-            city.includes(search) ||
-            postCode.includes(search) ||
-            country.includes(search)
-    },
-    skillsMatchesFilter (node) {
-      if (!this.tableFilter.skills) return true
-
-      const skills = node.data.education
-      const profession = this.setString(node.data.profession)
-      const search = this.setString(this.tableFilter.skills)
-      let skillFound = false
-
-      if (skills && skills.length && skills[0] !== '') {
-        for (let i = 0; i < skills.length; i++) {
-          const currSkill = this.setString(skills[i])
-          if (currSkill.includes(search)) skillFound = true
-        }
-      }
-
-      return skillFound || profession.includes(search)
-    },
-    filterByAge (node) {
-      if (!(this.tableFilter.age.max < 150)) return true
-
-      const min = this.tableFilter.age.min
-      const max = this.tableFilter.age.max
-
-      const nodeAge = calculateAge(node.data.aliveInterval)
-      if (!nodeAge) return false
-      if (nodeAge >= min && nodeAge <= max) return true
-      else return false
     },
     updateDialog ($event) {
       this.$emit('open', $event)

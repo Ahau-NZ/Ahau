@@ -1,6 +1,6 @@
 <template>
   <v-icon v-bind="customProps" >
-    mdi-account-multiple
+    mdi-account-group
   </v-icon>
 </template>
 
