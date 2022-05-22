@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 
@@ -232,16 +232,15 @@ export default {
   },
   async mounted () {
     window.scrollTo(0, 0)
-
     this.loadWhakapapaView(this.$route.params.whakapapaId)
   },
-
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
+    ...mapState('whakapapa', ['childLinks']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

@@ -22,6 +22,14 @@ const MIN_LOADED_PROFILES = 10
 const FALLBACK_CHILD_REL = 'birth'
 const FALLBACK_PARTNER_REL = 'partners'
 
+const defaultViewChanges = () => ({
+  focus: null, // can temporarily over-ride the saved view.focus
+  autoCollapse: true,
+  collapsed: { // maps node.data.id to Boolean (default false)
+  },
+  showExtendedFamily: false
+})
+
 const defaultView = () => ({
   name: 'Loading...',
   description: '',
@@ -44,15 +52,8 @@ const defaultView = () => ({
 
   // settings
   tree: true,
-  table: false
-})
-
-const defaultViewChanges = () => ({
-  focus: null, // can temporarily over-ride the saved view.focus
-  autoCollapse: true,
-  collapsed: { // maps node.data.id to Boolean (default false)
-  },
-  showExtendedFamily: false
+  table: false,
+  viewChanges: defaultViewChanges()
 })
 
 // vuex/whakapapa is about creating a whakapapa graph and what should be in it.
@@ -69,8 +70,11 @@ const defaultViewChanges = () => ({
 export default function (apollo) {
   const state = {
     view: defaultView(),
-    viewChanges: defaultViewChanges(),
     lastView: defaultView(),
+    // a store to save previous whakapapa sessions
+    views: {
+      // [viewId]: { view }
+    },
 
     activeQueryCount: 0,
 
@@ -83,16 +87,17 @@ export default function (apollo) {
       // [partnerA]: {
       //   [partnerB]: relationshipType
       // }
-    }
+    },
+    loaded: new Set()
   }
 
   const getters = {
     whakapapaView: state => state.view,
     lastWhakapapaView: state => state.lastView,
-    focus: state => state.viewChanges.focus || state.view.focus,
+    focus: state => state.view.viewChanges.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
-    showExtendedFamily: state => Boolean(state.viewChanges.showExtendedFamily),
-    autoCollapse: state => state.viewChanges.autoCollapse,
+    showExtendedFamily: state => Boolean(state.view.viewChanges.showExtendedFamily),
+    autoCollapse: state => state.view.viewChanges.autoCollapse,
     isLoadingWhakapapa: state => state.activeQueryCount > 0,
     recordCount: (state, getters) => {
       const queue = [state.view.focus]
@@ -116,7 +121,7 @@ export default function (apollo) {
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
 
     /* getter methods */
-    isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),
+    isCollapsedNode: state => (id) => Boolean(state.view.viewChanges.collapsed[id]),
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: (state, getters) => (targetId) => {
       const rule = state.view.importantRelationships[targetId]
@@ -315,7 +320,6 @@ export default function (apollo) {
         children: getters.getChildIds(parentId)
           .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
           .map(childId => {
-            // console.log('recursing', childId)
             return getters.buildNestedDescendants(childId, { lineage: new Set(lineage) })
             // we create a new "lineage", so that each branching of the tree can record
             // it's own lineage of people, allowing duplicate profiles across branches
@@ -347,7 +351,7 @@ export default function (apollo) {
 
   const mutations = {
     setView (state, view) {
-      state.lastView = state.view
+      Vue.set(state.views, state.view.id, state.view)
 
       // convert the importantRelationships to an easier lookup
       if (Array.isArray(view.importantRelationships)) {
@@ -359,37 +363,31 @@ export default function (apollo) {
           {}
         )
       }
-
+      view.viewChanges = defaultViewChanges()
       // set the tree settings to display the tree by default
-      view.tree = state.lastView ? state.lastView.tree : true
-      view.table = state.lastView ? !state.lastView.tree : false
-
-      state.view = view
+      view.tree = state.view.tree ? state.view.tree : true
+      view.table = state.view.tree ? !state.view.tree : false
+      // if whakapapa has aready been loaded, load previous settings
+      state.view = state.views[view.id] || view
     },
     setViewFocus (state, profileId) {
-      state.viewChanges.focus = profileId
+      state.view.viewChanges.focus = profileId
     },
     toggleViewMode (state) {
       state.view.tree = !state.view.tree
       state.view.table = !state.view.tree
     },
     setExtendedFamily (state, bool = false) {
-      state.viewChanges.showExtendedFamily = bool
+      state.view.viewChanges.showExtendedFamily = bool
     },
     setNodeCollapsed (state, { nodeId, isCollapsed }) {
-      Vue.set(state.viewChanges.collapsed, nodeId, isCollapsed)
+      Vue.set(state.view.viewChanges.collapsed, nodeId, isCollapsed)
     },
     resetWhakapapaView (state) {
-      state.lastView = state.view
+      // Preserve state of previously opened sessions for reentry
+      Vue.set(state.views, state.view.id, state.view)
       state.view = defaultView()
-      state.viewChanges = defaultViewChanges()
-
-      // NOTE 2022-03-07 mix
-      // wiping all links slows down graph reload, but not by much with depth-limited loading
-      // ALT idea:
-      // give Node.vue node.depth, then have a mounted hook or similar collapse the node if needed
-      state.childLinks = {}
-      state.partnerLinks = {}
+      state.loaded = new Set()
     },
 
     // methods for manipulating whakapapa links
@@ -468,10 +466,10 @@ export default function (apollo) {
     },
 
     setAutoCollapse (state, autoCollapse) {
-      state.viewChanges.autoCollapse = autoCollapse
+      state.view.viewChanges.autoCollapse = autoCollapse
     },
     resetCollapsed (state) {
-      state.viewChanges.collapsed = {}
+      state.view.viewChanges.collapsed = {}
     }
   }
 
@@ -489,11 +487,18 @@ export default function (apollo) {
     async setExtendedFamily ({ commit }, extended) {
       commit('setExtendedFamily', extended)
     },
-    toggleNodeCollapse ({ state, commit }, nodeId) {
+    toggleNodeCollapse ({ state, commit, dispatch }, nodeId) {
+      const currentState = state.view.viewChanges.collapsed[nodeId]
       commit('setNodeCollapsed', {
         nodeId,
-        isCollapsed: !state.viewChanges.collapsed[nodeId]
+        isCollapsed: !currentState
       })
+      if (currentState) {
+        const childIds = state.childLinks[nodeId]
+        Object.keys(childIds).forEach((key) => {
+          dispatch('loadDescendants', { profileId: key, depth: 1 })
+        })
+      }
     },
     addLinks ({ commit }, links) {
       commit('addLinks', links)
@@ -584,14 +589,13 @@ export default function (apollo) {
       const {
         profileId,
         isLoadingFocus = opts.profileId === getters.focus, // if this load orginates from the focus
-        depth: lastDepth, // how many more generations we want to display. Can be empty
-        loaded = new Set() // which profiles we've already loaded/ processed
+        depth: lastDepth // how many more generations we want to display. Can be empty
       } = opts
-      if (!profileId || loaded.has(profileId)) return
+      // if profile is already been loaded from previous session we dont need to load it again
+      if (!profileId || state.loaded.has(profileId) || state.childLinks[profileId]) return
 
       const depth = (lastDepth != null) ? lastDepth - 1 : null
-      loaded.add(profileId)
-
+      state.loaded.add(profileId)
       const { childLinks, partnerLinks } = await dispatch('getFamilyLinks', { profileId, extended: true })
 
       // NOTE we get extended family links in every case right now (extended: true)
@@ -620,7 +624,7 @@ export default function (apollo) {
         // dont collapse a node who doesnt have descendants and partners
         if (!childIds.length && !partnerLinks.length) commit('setNodeCollapsed', { nodeId: profileId, isCollapsed: false })
 
-        if (shouldCollapseChildren(loaded.size, depth, isLoadingFocus)) {
+        if (shouldCollapseChildren(state.loaded.size, depth, isLoadingFocus)) {
           childIds.forEach(childId => {
             commit('setNodeCollapsed', { nodeId: childId, isCollapsed: true })
           })
@@ -635,7 +639,10 @@ export default function (apollo) {
 
       // recurse through children
       childIds.forEach(childId => {
-        dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth, loaded })
+        // only load mroe nodes for those that arent collapsed
+        if (!getters.isCollapsedNode(profileId)) {
+          dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth })
+        }
       })
     },
     async saveWhakapapaView ({ commit, dispatch }, input) {
