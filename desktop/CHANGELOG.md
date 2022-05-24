@@ -1,19 +1,29 @@
 # Changelog | Ahau desktop
 
+## v2.14.0
+
+### Features
+
+- tree search bar
+  - uncollapses all nodes from the root/focus node to the searched profile
+  - highlights the path
 
 ## v2.13.0
 ### Features
+
 * added images and multiple filter and toggle columns on peoples list
 * removed the background color on the whakapapa icons
 * added a loader whakapapa show when loading profiles and connections
 * added a loader in place of the node menu on a person when a whakapapa is still loading. This limits what a user can do when a graph is still loading and will prevent the graph trying to make changes while loading
 
 ### Fixes
+
 * removed the toggle timeline/archive button when there are no stories
 * fixed a csv import bug where the where it was importing properly if a person was in the csv more than once
 * changed how we get and load the node profiles in a graph to speed up whakapapa loading
 
 ### Changes
+
 * disabled the scroll on peoples list
 * moved table filters to a lib so i could use the filter functionality in the peoples list
 * added all profiles to store to enable faster loading of whakapapas
