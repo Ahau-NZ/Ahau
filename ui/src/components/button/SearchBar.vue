@@ -1,6 +1,7 @@
 <template>
   <v-combobox
-    v-model="searchString"
+    :value="displayText"
+    @input="event => searchString = event.target.value"
     :items="items"
     :search-input.sync="searchString"
     :menu-props=" { light: true, closeOnContentClick: true } "
@@ -85,7 +86,20 @@ export default {
     hasSelection () {
       return Boolean(this.searchedProfileId)
     },
+    displayText () {
+      if (!this.hasSelection) return this.searchString
+      return (
+        'Selected: ' + (this.searchedProfile && (this.searchedProfile.preferredName || this.searchedProfile.legalName))) ||
+        this.searchString
+    },
+    searchedProfile () {
+      if (!this.hasSelection) return null
+      const profile = this.person(this.searchedProfileId)
+      if (!profile) this.loadPersonMinimal(this.searchedProfileId)
+      // HACK - make sure profile is loaded
 
+      return profile
+    },
     customProps () {
       if (this.isFilter) {
         return {
@@ -160,7 +174,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('person', ['findPersonsByNameWithinGroup']),
+    ...mapActions('person', ['findPersonsByNameWithinGroup', 'loadPersonMinimal']),
     ...mapActions('tree', ['setSearchedProfileId', 'setMouseEvent']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
@@ -172,9 +186,8 @@ export default {
         this.searchString = ''
       } else this.$emit('close')
     },
-    async setSearchNode (data, e) {
-      await this.setSearchedProfileId(data.id)
-      this.searchString = 'Selected: ' + data.preferredName || data.legalName || ''
+    setSearchNode (data, e) {
+      this.setSearchedProfileId(data.id)
       this.setMouseEvent(e)
     },
     setLoadingSuggestions (isLoading) {

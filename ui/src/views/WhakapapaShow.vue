@@ -45,10 +45,7 @@
       <v-expand-transition v-else-if="!mobile">
         <v-row class="select">
           <div class="icon-search">
-          <SearchBar
-            :searchFilter="false"
-            @close="clickedOffSearch"
-          />
+          <SearchBar @close="clickedOffSearch" />
         </div>
         <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -91,18 +88,7 @@
               </v-btn>
             </template>
             <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
-              <SearchBar
-                v-if="!searchNodeId"
-                :searchNodeId.sync="searchNodeId"
-                :searchNodeName.sync="searchNodeName"
-                @searchNode="setSearchNode($event)"
-                @close="clickedOffSearch()"
-              />
-              <SearchBarNode
-                v-else
-                :searchNodeId.sync="searchNodeId"
-                :searchNodeName="searchNodeName"
-              />
+              <SearchBar @close="clickedOffSearch" />
             </div>
             <div v-else  class="icon-button">
               <SearchButton  @click.stop :search.sync="search" />
@@ -241,7 +227,7 @@ export default {
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
-    ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
+    ...mapGetters('tree', ['getNode', 'getPartnerNode']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

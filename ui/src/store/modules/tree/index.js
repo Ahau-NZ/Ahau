@@ -199,7 +199,7 @@ export default function () {
     setHoveredProfileId ({ commit }, id) {
       commit('setHoveredProfileId', id)
     },
-    async setSearchedProfileId ({ commit }, id) {
+    setSearchedProfileId ({ commit }, id) {
       commit('setSearchedProfileId', id)
     }
   }
