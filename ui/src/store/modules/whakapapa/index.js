@@ -114,9 +114,16 @@ export default function (apollo) {
     },
 
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
+    pathToRoot (_, getters, __, rootGetters) {
+      return getters.findPathToRoot(rootGetters['tree/searchedProfileId'])
+    },
 
     /* getter methods */
-    isCollapsedNode: state => (id) => Boolean(state.viewChanges.collapsed[id]),
+    isCollapsedNode: (state, getters) => (id) => {
+      const path = getters.pathToRoot
+      if (path && path.length && path.includes(id)) return false
+      return Boolean(state.viewChanges.collapsed[id])
+    },
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: (state, getters) => (targetId) => {
       const rule = state.view.importantRelationships[targetId]
