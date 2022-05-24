@@ -23,55 +23,65 @@
       </v-col>
     </v-row>
     <v-row :class="mobile && 'pt-6'">
-      <v-data-table
-        :headers="activeHeaders"
-        fixed-header
-        height="calc(100vh - 335px)"
-        :items="filteredProfiles"
-        item-key="id"
-        :items-per-page="15"
-        :loading="isLoading"
-        :loading-text="t('loading')"
-        :search="search"
-        :customFilter="searchFilter"
-        :footer-props="{
-          itemsPerPageOptions: [15, 50, 100, -1],
-          }"
-        light
+      <v-col>
+        <v-data-table
+          :headers="activeHeaders"
+          fixed-header
+          height="calc(100vh - 255px)"
+          :items="filteredProfiles"
+          item-key="id"
+          :items-per-page="15"
+          :loading="isLoading"
+          :loading-text="t('loading')"
+          :search="search"
+          :customFilter="searchFilter"
+          :footer-props="{
+            itemsPerPageOptions: [15, 50, 100, -1],
+            }"
+          light
 
-        @click:row="handleShow"
-      >
-        <template v-if="hiddenColumns" v-slot:header.actions>
-          <v-icon>mdi-eye-off</v-icon> {{hiddenColumns}}
-        </template>
-        <!-- Handle profile image -->
-        <template v-slot:item.image="{ item }" >
-          <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
-        </template>
-        <!-- Handle max description charachters -->
-        <template v-slot:item.description="{ item }" >
-          <span class="description">{{item.description}}</span>
-        </template>
-        <!-- Handle table actions -->
-        <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="handleEdit(item)" >
-            mdi-pencil
-          </v-icon>
-          <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-data-table>
-      <div :id="mobile ? '' : 'table-buttons'">
-        <v-btn small rounded outlined color="#383838" elevation="0" class="mx-md-2" @click="showImportDialog = true">
-          <v-icon>mdi-file-upload</v-icon>
-          <span class="pl-2">upload csv</span>
-        </v-btn>
-        <v-btn small rounded outlined color="#2f4f4f" class="mx-md-4" elevation="0" @click="downloadCsv">
-          <v-icon>mdi-file-download</v-icon>
-          <span class="pl-2">download csv</span>
-        </v-btn>
-      </div>
+          @click:row="handleShow"
+        >
+          <template v-if="hiddenColumns" v-slot:header.actions>
+            <v-icon>mdi-eye-off</v-icon> {{hiddenColumns}}
+          </template>
+          <!-- Handle profile image -->
+          <template v-slot:item.image="{ item }" >
+            <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
+          </template>
+          <!-- Handle max description charachters -->
+          <template v-slot:item.description="{ item }" >
+            <span class="description">{{item.description}}</span>
+          </template>
+          <!-- Handle table actions -->
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="handleEdit(item)" >
+              mdi-pencil
+            </v-icon>
+            <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
+              mdi-delete
+            </v-icon>
+          </template>
+
+          <template v-slot:footer>
+            <div :style="{
+              position: 'relative',
+              bottom: mobile ? '' : '-48px'
+            }"
+              :class="mobile && 'py-5 justify-center'"
+            >
+              <v-btn :block="mobile" class="my-2 mx-md-2" small rounded outlined color="#383838"  elevation="0"  @click="showImportDialog = true">
+                <v-icon>mdi-file-upload</v-icon>
+                <span class="pl-2">upload csv</span>
+              </v-btn>
+              <v-btn small :block="mobile" class="my-2 mx-md-2" rounded outlined color="#2f4f4f" elevation="0" @click="downloadCsv">
+                <v-icon>mdi-file-download</v-icon>
+                <span class="pl-2">download csv</span>
+              </v-btn>
+            </div>
+          </template>
+        </v-data-table>
+      </v-col>
     </v-row>
 
     <SideNodeDialog v-if="showEditor && selectedProfileId"
@@ -383,11 +393,5 @@ export default {
 
 .v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
   vertical-align: top;
-}
-
-#table-buttons {
-  position: relative;
-  top: -40px;
-  max-width: 50%
 }
 </style>
