@@ -8,6 +8,7 @@ export function Getters (state) {
 
   const getterNames = Object.keys(getters)
     .filter(getterName => !['pathToRoot'].includes(getterName))
+
   let count = 0
 
   while (getterNames.length) {

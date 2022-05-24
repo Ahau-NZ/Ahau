@@ -114,13 +114,13 @@ export default {
   computed: {
     ...mapGetters('person', ['person', 'selectedProfileId', 'isLoadingProfiles']),
     ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
-    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     isCollapsed () {
       if (this.isLoadingProfiles) return
       return this.isCollapsedNode(this.profileId)
     },
     isSelected () {
-      return this.selectedProfileId === this.profileId
+      return this.selectedProfileId === this.profileId || this.searchedProfileId === this.profileId
     },
     profile () {
       if (this.isLoadingProfiles) {

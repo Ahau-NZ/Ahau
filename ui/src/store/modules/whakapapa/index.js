@@ -114,8 +114,10 @@ export default function (apollo) {
     },
 
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
-    pathToRoot (_, getters, __, rootGetters) {
-      return getters.findPathToRoot(rootGetters['tree/searchedProfileId'])
+    pathToRoot: (state, getters, rootState, rootGetters) => {
+      const id = rootGetters['tree/searchedProfileId']
+      if (!id) return []
+      return getters.findPathToRoot(id)
     },
 
     /* getter methods */
