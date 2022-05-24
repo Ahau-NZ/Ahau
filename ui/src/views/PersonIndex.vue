@@ -1,26 +1,32 @@
 <template>
-  <v-container v-if="isKaitiaki" fluid class="px-2 peoples-list" style="margin-top: 64px;max-height:80vh" >
-    <v-card light flat>
-      <v-card-title>
-        {{ t('title') }}
-        <v-spacer></v-spacer>
+  <v-container v-if="isKaitiaki" fluid class="px-2 pt-8 peoples-list" style="margin-top: 64px;max-height:80vh;">
+    <v-row class="d-flex justify-end" align-items="right" no-gutters>
+      <v-col cols="12" md="auto" class="headliner black--text pl-2" :class="mobile && 'mb-6'">
+        {{ t('title')}}
+      </v-col>
+      <v-spacer v-if="!mobile" />
+      <v-col class="d-flex justify-end d-inline">
         <v-text-field
+          light
           append-icon="mdi-magnify"
           :label="t('action.search')"
           single-line
           hide-details
-          style="max-width: 20rem;"
+          outlined
+          rounded
+          dense
+          :style="{ 'max-width': '20rem' }"
           ref="search"
-          class="pt-0"
           @input="handleSearchInput"
         />
-        <v-icon @click="toggleSettings" class="ml-6">mdi-cog</v-icon>
-      </v-card-title>
-
+        <v-icon color="blue-grey" class="px-3" @click="toggleSettings">mdi-cog</v-icon>
+      </v-col>
+    </v-row>
+    <v-row :class="mobile && 'pt-6'">
       <v-data-table
         :headers="activeHeaders"
         fixed-header
-        height="calc(100vh - 205px)"
+        height="calc(100vh - 335px)"
         :items="filteredProfiles"
         item-key="id"
         :items-per-page="15"
@@ -32,6 +38,7 @@
           itemsPerPageOptions: [15, 50, 100, -1],
           }"
         light
+
         @click:row="handleShow"
       >
         <template v-if="hiddenColumns" v-slot:header.actions>
@@ -55,17 +62,17 @@
           </v-icon>
         </template>
       </v-data-table>
-        <div id="table-buttons">
-          <v-btn small rounded outlined color="#383838" elevation="0" class="mx-2" @click="showImportDialog = true">
-            <v-icon>mdi-file-upload</v-icon>
-            <span class="pl-2">upload csv</span>
-          </v-btn>
-          <v-btn small rounded outlined color="#2f4f4f" class="mx-4" elevation="0" @click="downloadCsv">
-            <v-icon>mdi-file-download</v-icon>
-            <span class="pl-2">download csv</span>
-          </v-btn>
-        </div>
-    </v-card>
+      <div :id="mobile ? '' : 'table-buttons'">
+        <v-btn small rounded outlined color="#383838" elevation="0" class="mx-md-2" @click="showImportDialog = true">
+          <v-icon>mdi-file-upload</v-icon>
+          <span class="pl-2">upload csv</span>
+        </v-btn>
+        <v-btn small rounded outlined color="#2f4f4f" class="mx-md-4" elevation="0" @click="downloadCsv">
+          <v-icon>mdi-file-download</v-icon>
+          <span class="pl-2">download csv</span>
+        </v-btn>
+      </div>
+    </v-row>
 
     <SideNodeDialog v-if="showEditor && selectedProfileId"
       :show="showEditor"
@@ -132,15 +139,16 @@ export default {
     Avatar
   },
   data () {
-    const header = (key, width, show, disableSort) => ({
-      value: key,
-      text: this.t('prop.' + key),
-      align: 'center',
-      width: width || 'auto',
-      show: show,
-      sortable: !disableSort
-    })
-
+    const header = (key, width, show, disableSort) => {
+      return {
+        value: key,
+        text: this.t('prop.' + key),
+        align: 'center',
+        width: width || 'auto',
+        show: show,
+        sortable: !disableSort
+      }
+    }
     return {
       headers: [
         header('image', '80px', true, true),
@@ -169,9 +177,6 @@ export default {
         header('school', '150px', true),
 
         { value: 'actions', align: 'end', width: '100px', show: true, sortable: false } // this.t('action.edit')
-      ],
-      moreDetails: [
-        // avatarImage?
       ],
       isLoading: false,
       profilesIndex: [],
@@ -203,7 +208,7 @@ export default {
       return this.headers.filter(h => h.show)
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     selectedProfile () {
       if (!this.selectedProfileId) return null

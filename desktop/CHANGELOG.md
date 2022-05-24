@@ -15,6 +15,9 @@
 ### Improvements
 
 - show timeline button on mobile
+Persons list
+  - improve ui for mobile
+  - update search bar and title to be consistent with existing styling
 
 ## v2.13.0
 
