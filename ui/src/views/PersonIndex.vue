@@ -257,8 +257,9 @@ export default {
     async loadData () {
       this.isLoading = true
       const { tribeId } = this.$route.params
-      if (!this.profilesArr.length) await this.loadPersonList({ type: 'group', tribeId })
-      else this.loadPersonList({ type: 'group', tribeId })
+
+      await this.loadPersonList({ type: 'group', tribeId })
+
       this.profilesIndex = this.profilesArr.map(profile => {
         if (profile.aliveInterval) {
           profile.dob = this.computeDate('dob', profile.aliveInterval)
@@ -267,6 +268,7 @@ export default {
         }
         return profile
       })
+
       this.isLoading = false
     },
     searchFilter (value, search, item) {
@@ -316,7 +318,7 @@ export default {
       const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
       const search = this.search
       this.search = ''
-      this.profiles = this.profiles.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
+      this.profilesIndex = this.profilesIndex.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
       this.search = search
       this.isLoading = false
     },
@@ -331,7 +333,7 @@ export default {
       const updateId = await this.deletePerson({ id: this.selectedProfileId })
 
       // handle removing the profile from the list
-      if (updateId) this.profiles = this.profiles.filter(profile => profile.id !== this.selectedProfileId)
+      if (updateId) this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
 
       this.setSelectedProfileId(null)
     },
@@ -368,7 +370,7 @@ export default {
       return this.$t('months.' + key, vars)
     },
     downloadCsv () {
-      const profiles = this.profiles.map(profile => mapNodeToCsvRow(profile))
+      const profiles = this.profilesIndex.map(profile => mapNodeToCsvRow(profile))
       const csv = csvFormat(profiles)
 
       const hiddenElement = document.createElement('a')
