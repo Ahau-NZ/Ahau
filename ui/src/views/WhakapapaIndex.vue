@@ -32,12 +32,15 @@
           {{ t('noWhakapapaFound') }}
         </div>
         <div v-else>
-          <div v-for="view in views" :key="view.id">
-            <v-row dense class="mb-2">
-              <v-col cols="12" md="10">
-                <WhakapapaViewCard :view="view" cropDescription :tribeId="$route.params.tribeId" />
-              </v-col>
-            </v-row>
+          <CollectionGroup v-if="mobile" :collections="views" @click="goWhakapapaShow"/>
+          <div v-else>
+            <div v-for="view in views" :key="view.id">
+              <v-row dense class="mb-2">
+                <v-col cols="12" md="10">
+                  <WhakapapaViewCard :view="view" cropDescription :tribeId="$route.params.tribeId" />
+                </v-col>
+              </v-row>
+            </div>
           </div>
         </div>
       </v-col>
@@ -50,12 +53,15 @@
         <v-row class=" pb-3">
           <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${profile.preferredName} -- ${t('adminWhakapapaRecords')}`}}</p>
         </v-row>
-        <div v-for="view in adminViews" :key="view.id">
-          <v-row dense class="mb-2">
-            <v-col cols="12" md="10">
-              <WhakapapaViewCard :view="view" cropDescription :tribeId="adminGroupId" />
-            </v-col>
-          </v-row>
+        <CollectionGroup v-if="mobile" :collections="adminViews" @click="goWhakapapaShow"/>
+        <div v-else>
+          <div v-for="view in adminViews" :key="view.id">
+            <v-row dense class="mb-2">
+              <v-col cols="12" md="10">
+                <WhakapapaViewCard :view="view" cropDescription :tribeId="adminGroupId" />
+              </v-col>
+            </v-row>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -91,11 +97,21 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
+import CollectionGroup from '../components/archive/CollectionGroup.vue'
 
 export default {
   name: 'WhakapapaIndex',
   props: {
     profile: Object
+  },
+  components: {
+    WhakapapaViewCard,
+    NewViewDialog,
+    NewNodeDialog,
+    WhakapapaListHelper,
+    BigAddButton,
+    SkeletonLoader,
+    CollectionGroup
   },
   data () {
     return {
@@ -141,6 +157,15 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
+    goWhakapapaShow (view) {
+      this.$router.push({
+        name: this.$route.name + '/:whakapapaId',
+        params: {
+          tribeId: view.recps[0],
+          whakapapaId: view.id
+        }
+      })
+    },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
@@ -243,14 +268,6 @@ export default {
         return false
       }
     }
-  },
-  components: {
-    WhakapapaViewCard,
-    NewViewDialog,
-    NewNodeDialog,
-    WhakapapaListHelper,
-    BigAddButton,
-    SkeletonLoader
   }
 }
 </script>

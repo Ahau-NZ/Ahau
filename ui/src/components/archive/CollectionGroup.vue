@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row>
+    <v-row v-if="title">
       <v-col cols="10" class="sub-headliner black--text pa-0 pl-6 pb-2">
-        {{ t('collections' )}}
+        {{ title }}
       </v-col>
     </v-row>
     <v-row v-if="collections && collections.length > 0">
@@ -78,6 +78,7 @@ import Collection from './Collection.vue'
 export default {
   name: 'CollectionGroup',
   props: {
+    title: String,
     collections: Array
   },
   components: { Collection },
