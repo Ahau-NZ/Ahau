@@ -385,6 +385,7 @@ export default function (apollo) {
     },
     resetWhakapapaView (state) {
       // Preserve state of previously opened sessions for reentry
+      state.view.viewChanges.focus = null
       Vue.set(state.views, state.view.id, state.view)
       state.view = defaultView()
       state.loaded = new Set()

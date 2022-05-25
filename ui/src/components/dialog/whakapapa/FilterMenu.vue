@@ -101,7 +101,7 @@
 
           <v-row>
             <v-col cols="12" class="mt-10">
-              <v-btn @click="resetTree" text large color="red" :class="mobile ? 'ml-10':'pl-5'">
+              <v-btn outlined @click="resetTree" text large color="red" :class="mobile ? 'ml-10':'pl-5'">
                 {{ t('default') }}
               </v-btn>
             </v-col>
