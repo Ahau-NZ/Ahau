@@ -44,6 +44,7 @@
                   <v-list-item-action>
                     <v-checkbox
                       v-model="item.show"
+                      :disabled="isLastHeader(item)"
                       color="accent-4"
                     ></v-checkbox>
                   </v-list-item-action>
@@ -62,13 +63,11 @@
 
 export default {
   name: 'OptionsInput',
-  components: {
-
-  },
   props: {
     reset: Boolean,
     isList: Boolean,
-    headers: Array
+    headers: Array,
+    activeHeaders: Array
   },
   data () {
     return {
@@ -94,6 +93,11 @@ export default {
     },
     t (key, vars) {
       return this.$t('whakapapaTable.' + key, vars)
+    },
+    isLastHeader (header) {
+      if (!this.activeHeaders) return false
+
+      return this.activeHeaders.length === 2 && this.activeHeaders.some(aHeader => aHeader.value === header.value)
     }
   }
 }

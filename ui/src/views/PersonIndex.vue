@@ -43,7 +43,7 @@
           @click:row="handleShow"
         >
           <template v-if="hiddenColumns" v-slot:header.actions>
-            <v-icon>mdi-eye-off</v-icon> {{hiddenColumns}}
+            <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
           <template v-slot:item.image="{ item }" >
@@ -115,6 +115,7 @@
     <FilterMenu
       :isList="true"
       :show="settingsPanel"
+      :activeHeaders="activeHeaders"
       :headers.sync="headers"
       @close="toggleSettings()"
       @toggleAvatars="toggleShowAvatars()"
@@ -229,7 +230,7 @@ export default {
       return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
     },
     hiddenColumns () {
-      return this.headers.length - this.activeHeaders.length - 1
+      return this.headers.length - this.activeHeaders.length
     }
   },
   methods: {
