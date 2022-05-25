@@ -18,6 +18,8 @@
 Persons list
   - improve ui for mobile
   - update search bar and title to be consistent with existing styling
+WhakapapaIndex
+  - update the whakapapa cards to be the same as the collection cards when on mobile
 
 ## v2.13.0
 

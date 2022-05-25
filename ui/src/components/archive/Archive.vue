@@ -16,6 +16,7 @@
       <v-row :class="mobile ? '':'mt-4'">
         <v-col v-if="allowCollections" v-show="!showStory" cols="12" class="pl-2 pb-0">
           <CollectionGroup
+            title="Collections"
             :collections="collections"
             @click="showCurrentCollection"
           />

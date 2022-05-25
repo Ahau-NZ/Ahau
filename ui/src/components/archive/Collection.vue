@@ -21,9 +21,9 @@
           <div class="small-text">{{ collection.description || 'No Description' }}</div>
         </v-col>
         <v-col v-if="collection.recordCount" cols="5" class="small-text grey--text py-2">
-          Records: {{ collection.recordCount }}
+          {{ countText }}
         </v-col>
-        <v-col cols="7" class="small-text grey--text py-2 pb-4">
+        <v-col v-if="submissionDate" cols="7" class="small-text grey--text py-2 pb-4">
           Updated: {{ submissionDate }}
         </v-col>
         <v-col cols="12" class="small-text grey--text py-0" >
@@ -49,7 +49,13 @@ export default {
       return niho
     },
     submissionDate () {
+      if (!this.collection.submissionDate) return
       return formatSubmissionDate(this.collection.submissionDate, this.monthTranslations)
+    },
+    countText () {
+      if (this.collection.type === 'collection') return 'Records: ' + this.collection.recordCount
+
+      return `${this.collection.recordCount} ${this.collection.recordCount === 1 ? 'person' : 'people'}`
     }
   },
   methods: {
