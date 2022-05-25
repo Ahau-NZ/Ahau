@@ -35,15 +35,15 @@
       <!-- Profile in the list -->
       <v-list-item v-else @click="setSearchNode(data.item, $event)">
         <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
-        <v-list-item-content>
+        <v-list-item-content v-if="data.item.preferredName">
           <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
           <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-content>
+        <v-list-item-content v-if="data.item.legalName">
           <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
           <v-list-item-subtitle>Legal name</v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-list-item-action v-if="age(data.item.aliveInterval)">
           <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
           <v-list-item-subtitle>Age</v-list-item-subtitle>
         </v-list-item-action>
