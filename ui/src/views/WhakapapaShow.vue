@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 
@@ -240,7 +240,6 @@ export default {
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode', 'searchedProfileId']),
-    ...mapState('whakapapa', ['childLinks']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

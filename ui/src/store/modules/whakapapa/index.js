@@ -640,10 +640,7 @@ export default function (apollo) {
 
       // recurse through children
       childIds.forEach(childId => {
-        // only load mroe nodes for those that arent collapsed
-        if (!getters.isCollapsedNode(profileId)) {
-          dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth })
-        }
+        dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth })
       })
     },
     async saveWhakapapaView ({ commit, dispatch }, input) {
