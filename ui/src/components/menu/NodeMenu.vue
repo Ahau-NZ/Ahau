@@ -103,10 +103,12 @@ export default {
     }
   },
   watch: {
-    mouseEvent (e) {
-      this.updateDialog(null, null)
-      if (this.searchedProfileId) return
-      this.open(e)
+    mouseEvent: {
+      deep: true,
+      handler (e) {
+        this.updateDialog(null, null)
+        this.open(e)
+      }
     }
   },
   methods: {

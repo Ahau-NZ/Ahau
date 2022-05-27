@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-row v-show="!showStory">
-      <v-col cols="4" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
+      <v-col cols="4" :align-self="mobile ? 'center' : 'end'" class="sub-headliner black--text pa-0 pl-4 pt-2">
         {{ title }}
       </v-col>
-      <v-col cols="1 pa-0 mt-6 pl-4">
-        <TimelineButton v-if="timelineStories.length && !mobile" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
+      <v-col cols="1" :class="`pa-0 pl-4 ${mobile ? '' : 'mt-6'}`">
+        <TimelineButton v-if="timelineStories.length" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
       </v-col>
       <v-col
         v-if="stories.length > 0"

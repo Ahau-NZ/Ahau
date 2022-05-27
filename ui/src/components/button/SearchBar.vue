@@ -1,6 +1,7 @@
 <template>
   <v-combobox
-    v-model="searchString"
+    :value="displayText"
+    @input="event => searchString = event.target.value"
     :items="items"
     :search-input.sync="searchString"
     :menu-props=" { light: true, closeOnContentClick: true } "
@@ -34,15 +35,15 @@
       <!-- Profile in the list -->
       <v-list-item v-else @click="setSearchNode(data.item, $event)">
         <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
-        <v-list-item-content>
+        <v-list-item-content v-if="data.item.preferredName">
           <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
           <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-content>
+        <v-list-item-content v-if="data.item.legalName">
           <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
           <v-list-item-subtitle>Legal name</v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-list-item-action v-if="age(data.item.aliveInterval)">
           <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
           <v-list-item-subtitle>Age</v-list-item-subtitle>
         </v-list-item-action>
@@ -85,7 +86,20 @@ export default {
     hasSelection () {
       return Boolean(this.searchedProfileId)
     },
+    displayText () {
+      if (!this.hasSelection) return this.searchString
+      return (
+        'Selected: ' + (this.searchedProfile && (this.searchedProfile.preferredName || this.searchedProfile.legalName))) ||
+        this.searchString
+    },
+    searchedProfile () {
+      if (!this.hasSelection) return null
+      const profile = this.person(this.searchedProfileId)
+      if (!profile) this.loadPersonMinimal(this.searchedProfileId)
+      // HACK - make sure profile is loaded
 
+      return profile
+    },
     customProps () {
       if (this.isFilter) {
         return {
@@ -160,7 +174,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('person', ['findPersonsByNameWithinGroup']),
+    ...mapActions('person', ['findPersonsByNameWithinGroup', 'loadPersonMinimal']),
     ...mapActions('tree', ['setSearchedProfileId', 'setMouseEvent']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
@@ -172,9 +186,8 @@ export default {
         this.searchString = ''
       } else this.$emit('close')
     },
-    async setSearchNode (data, e) {
-      await this.setSearchedProfileId(data.id)
-      this.searchString = 'Selected: ' + data.preferredName || data.legalName || ''
+    setSearchNode (data, e) {
+      this.setSearchedProfileId(data.id)
       this.setMouseEvent(e)
     },
     setLoadingSuggestions (isLoading) {

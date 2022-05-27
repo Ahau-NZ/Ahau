@@ -1,5 +1,5 @@
 <template>
-  <path :d="link.d" :style="style"/>
+  <path :d="link.d" :style="style" />
 </template>
 
 <script>
@@ -11,12 +11,24 @@ export default {
     link: {
       type: Object,
       required: true
-    }
+    },
+    highlight: Boolean
   },
   computed: {
     ...mapGetters('tree', ['hoveredProfileId']),
+    hasHoveredParent () {
+      if (this.link.parent === this.hoveredProfileId) return true
+      if (this.link.parents) {
+        if (this.link.parents[0] === this.hoveredProfileId) return true
+        if (this.link.parents[1] === this.hoveredProfileId) return true
+      }
+      return false
+    },
+    isHighlighted () {
+      return this.hasHoveredParent || this.highlight
+    },
     style () {
-      if (hasHoveredParent(this.link, this.hoveredProfileId)) {
+      if (this.isHighlighted) {
         return {
           ...this.link.style,
           stroke: '#c72e19',
@@ -27,15 +39,6 @@ export default {
       return this.link.style
     }
   }
-}
-
-function hasHoveredParent (link, hoveredProfileId) {
-  if (link.parent === hoveredProfileId) return true
-  if (link.parents) {
-    if (link.parents[0] === hoveredProfileId) return true
-    if (link.parents[1] === hoveredProfileId) return true
-  }
-  return false
 }
 
 </script>

@@ -1,6 +1,6 @@
 export default function FindPathToRoot (getters) {
-  const getParentIds = getters.getRawParentIds
-  const getPartnerIds = getters.getRawPartnerIds
+  const getParentIds = getters['whakapapa/getRawParentIds']
+  const getPartnerIds = getters['whakapapa/getRawPartnerIds']
 
   function findAncestors (start, end, profileIds) {
     if (start === end) {
@@ -42,7 +42,7 @@ export default function FindPathToRoot (getters) {
 
   return function findPathToRoot (start) {
     const profileIds = new Set()
-    const end = getters.whakapapaView.focus
+    const end = getters['whakapapa/whakapapaView'].focus
 
     if (findAncestors(start, end, profileIds)) profileIds.add(start)
     else if (findPartnerAncestors(start, end, profileIds)) profileIds.add(start)

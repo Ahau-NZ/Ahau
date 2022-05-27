@@ -1,71 +1,88 @@
 <template>
-  <v-container v-if="isKaitiaki" fluid class="px-2 peoples-list" style="margin-top: 64px;max-height:80vh" >
-    <v-card light flat>
-      <v-card-title>
-        {{ t('title') }}
-        <v-spacer></v-spacer>
+  <v-container v-if="isKaitiaki" fluid class="px-2 pt-8 peoples-list" style="margin-top: 64px;max-height:80vh;">
+    <v-row class="d-flex justify-end" align-items="right" no-gutters>
+      <v-col cols="12" md="auto" class="headliner black--text pl-2" :class="mobile && 'mb-6'">
+        {{ t('title')}}
+      </v-col>
+      <v-spacer v-if="!mobile" />
+      <v-col class="d-flex justify-end d-inline">
         <v-text-field
+          light
           append-icon="mdi-magnify"
           :label="t('action.search')"
           single-line
           hide-details
-          style="max-width: 20rem;"
+          outlined
+          rounded
+          dense
+          :style="{ 'max-width': '20rem' }"
           ref="search"
-          class="pt-0"
           @input="handleSearchInput"
         />
-        <v-icon @click="toggleSettings" class="ml-6">mdi-cog</v-icon>
-      </v-card-title>
+        <v-icon color="blue-grey" class="px-3" @click="toggleSettings">mdi-cog</v-icon>
+      </v-col>
+    </v-row>
+    <v-row :class="mobile && 'pt-6'">
+      <v-col>
+        <v-data-table
+          :headers="activeHeaders"
+          fixed-header
+          height="calc(100vh - 255px)"
+          :items="filteredProfiles"
+          item-key="id"
+          :items-per-page="15"
+          :loading="isLoading"
+          :loading-text="t('loading')"
+          :search="search"
+          :customFilter="searchFilter"
+          :footer-props="{
+            itemsPerPageOptions: [15, 50, 100, -1],
+            }"
+          light
 
-      <v-data-table
-        :headers="activeHeaders"
-        fixed-header
-        height="calc(100vh - 205px)"
-        :items="filteredProfiles"
-        item-key="id"
-        :items-per-page="15"
-        :loading="isLoading"
-        :loading-text="t('loading')"
-        :search="search"
-        :customFilter="searchFilter"
-        :footer-props="{
-          itemsPerPageOptions: [15, 50, 100, -1],
-          }"
-        light
-        @click:row="handleShow"
-      >
-        <template v-if="hiddenColumns" v-slot:header.actions>
-          <v-icon>mdi-eye-off</v-icon> {{hiddenColumns}}
-        </template>
-        <!-- Handle profile image -->
-        <template v-slot:item.image="{ item }" >
-          <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
-        </template>
-        <!-- Handle max description charachters -->
-        <template v-slot:item.description="{ item }" >
-          <span class="description">{{item.description}}</span>
-        </template>
-        <!-- Handle table actions -->
-        <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="handleEdit(item)" >
-            mdi-pencil
-          </v-icon>
-          <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-data-table>
-        <div id="table-buttons">
-          <v-btn small rounded outlined color="#383838" elevation="0" class="mx-2" @click="showImportDialog = true">
-            <v-icon>mdi-file-upload</v-icon>
-            <span class="pl-2">upload csv</span>
-          </v-btn>
-          <v-btn small rounded outlined color="#2f4f4f" class="mx-4" elevation="0" @click="downloadCsv">
-            <v-icon>mdi-file-download</v-icon>
-            <span class="pl-2">download csv</span>
-          </v-btn>
-        </div>
-    </v-card>
+          @click:row="handleShow"
+        >
+          <template v-if="hiddenColumns" v-slot:header.actions>
+            <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
+          </template>
+          <!-- Handle profile image -->
+          <template v-slot:item.image="{ item }" >
+            <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
+          </template>
+          <!-- Handle max description charachters -->
+          <template v-slot:item.description="{ item }" >
+            <span class="description">{{item.description}}</span>
+          </template>
+          <!-- Handle table actions -->
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="handleEdit(item)" >
+              mdi-pencil
+            </v-icon>
+            <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
+              mdi-delete
+            </v-icon>
+          </template>
+
+          <template v-slot:footer>
+            <div :style="{
+              position: 'relative',
+              bottom: mobile ? '' : '-48px'
+            }"
+              :class="mobile && 'py-5 justify-center'"
+            >
+              <v-btn :block="mobile" class="my-2 mx-md-2" small rounded outlined color="#383838"  elevation="0"  @click="showImportDialog = true">
+                <v-icon>mdi-file-upload</v-icon>
+                <span class="pl-2">upload csv</span>
+              </v-btn>
+              <v-btn small :block="mobile" class="my-2 mx-md-2" rounded outlined color="#2f4f4f" elevation="0" @click="downloadCsv">
+                <v-icon>mdi-file-download</v-icon>
+                <span class="pl-2">download csv</span>
+              </v-btn>
+            </div>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
 
     <SideNodeDialog v-if="showEditor && selectedProfileId"
       :show="showEditor"
@@ -98,6 +115,7 @@
     <FilterMenu
       :isList="true"
       :show="settingsPanel"
+      :activeHeaders="activeHeaders"
       :headers.sync="headers"
       @close="toggleSettings()"
       @toggleAvatars="toggleShowAvatars()"
@@ -132,15 +150,16 @@ export default {
     Avatar
   },
   data () {
-    const header = (key, width, show, disableSort) => ({
-      value: key,
-      text: this.t('prop.' + key),
-      align: 'center',
-      width: width || 'auto',
-      show: show,
-      sortable: !disableSort
-    })
-
+    const header = (key, width, show, disableSort) => {
+      return {
+        value: key,
+        text: this.t('prop.' + key),
+        align: 'center',
+        width: width || 'auto',
+        show: show,
+        sortable: !disableSort
+      }
+    }
     return {
       headers: [
         header('image', '80px', true, true),
@@ -169,9 +188,6 @@ export default {
         header('school', '150px', true),
 
         { value: 'actions', align: 'end', width: '100px', show: true, sortable: false } // this.t('action.edit')
-      ],
-      moreDetails: [
-        // avatarImage?
       ],
       isLoading: false,
       profilesIndex: [],
@@ -203,7 +219,7 @@ export default {
       return this.headers.filter(h => h.show)
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     selectedProfile () {
       if (!this.selectedProfileId) return null
@@ -214,7 +230,7 @@ export default {
       return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
     },
     hiddenColumns () {
-      return this.headers.length - this.activeHeaders.length - 1
+      return this.headers.length - this.activeHeaders.length
     }
   },
   methods: {
@@ -242,8 +258,9 @@ export default {
     async loadData () {
       this.isLoading = true
       const { tribeId } = this.$route.params
-      if (!this.profilesArr.length) await this.loadPersonList({ type: 'group', tribeId })
-      else this.loadPersonList({ type: 'group', tribeId })
+
+      await this.loadPersonList({ type: 'group', tribeId })
+
       this.profilesIndex = this.profilesArr.map(profile => {
         if (profile.aliveInterval) {
           profile.dob = this.computeDate('dob', profile.aliveInterval)
@@ -252,6 +269,7 @@ export default {
         }
         return profile
       })
+
       this.isLoading = false
     },
     searchFilter (value, search, item) {
@@ -301,7 +319,7 @@ export default {
       const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
       const search = this.search
       this.search = ''
-      this.profiles = this.profiles.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
+      this.profilesIndex = this.profilesIndex.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
       this.search = search
       this.isLoading = false
     },
@@ -316,7 +334,7 @@ export default {
       const updateId = await this.deletePerson({ id: this.selectedProfileId })
 
       // handle removing the profile from the list
-      if (updateId) this.profiles = this.profiles.filter(profile => profile.id !== this.selectedProfileId)
+      if (updateId) this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
 
       this.setSelectedProfileId(null)
     },
@@ -353,7 +371,7 @@ export default {
       return this.$t('months.' + key, vars)
     },
     downloadCsv () {
-      const profiles = this.profiles.map(profile => mapNodeToCsvRow(profile))
+      const profiles = this.profilesIndex.map(profile => mapNodeToCsvRow(profile))
       const csv = csvFormat(profiles)
 
       const hiddenElement = document.createElement('a')
@@ -378,11 +396,5 @@ export default {
 
 .v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
   vertical-align: top;
-}
-
-#table-buttons {
-  position: relative;
-  top: -40px;
-  max-width: 50%
 }
 </style>

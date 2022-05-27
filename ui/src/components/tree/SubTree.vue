@@ -12,7 +12,10 @@
         - partners
         - children
     -->
-    <Link v-for="link in links" :link="link" :key="link.key"/>
+
+    <Link v-for="link in normalLinks" :link="link" :key="link.key"/>
+    <!-- NOTE: we need to draw highlighted links after normal links in order for them to be drawn above -->
+    <Link v-for="link in higlightedLinks" :link="link" highlight :key="link.key"/>
 
     <!-- partners -->
     <Node v-for="partner in partners" :key="`partner-${partner.data.id}`"
@@ -69,12 +72,19 @@ export default {
     links: Array,
     showAvatars: Boolean
   },
-  computed: {
-    ...mapGetters('tree', ['secondaryLinks'])
-  },
   components: {
     Node,
     Link
+  },
+  computed: {
+    ...mapGetters('whakapapa', ['pathToRoot']),
+    ...mapGetters('tree', ['secondaryLinks']),
+    higlightedLinks () {
+      return this.links.filter(link => this.pathToRoot.includes(link.child))
+    },
+    normalLinks () {
+      return this.links.filter(link => !this.pathToRoot.includes(link.child))
+    }
   }
 }
 

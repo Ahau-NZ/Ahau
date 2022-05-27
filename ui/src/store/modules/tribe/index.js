@@ -203,7 +203,6 @@ export default function (apollo) {
       }
     },
     async loadTribe ({ getters, dispatch, state, commit }, id) {
-      console.log('loading tribe')
       try {
         if (state.currentTribe && state.currentTribe.id !== id) {
           dispatch('resetCurrentTribe')

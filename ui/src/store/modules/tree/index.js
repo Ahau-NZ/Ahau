@@ -14,6 +14,7 @@ import {
 
 import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE, COUSIN_SPACE } from './constants'
 import calculateAge from '../../../lib/calculate-age'
+import FindPathToRoot from '../whakapapa/lib/find-path-to-root'
 
 export default function () {
   const state = {
@@ -199,7 +200,10 @@ export default function () {
     setHoveredProfileId ({ commit }, id) {
       commit('setHoveredProfileId', id)
     },
-    async setSearchedProfileId ({ commit }, id) {
+    setSearchedProfileId ({ commit, dispatch, rootGetters }, id) {
+      // expand profiles to path
+      const path = FindPathToRoot(rootGetters)(id)
+      dispatch('whakapapa/openPath', path, { root: true })
       commit('setSearchedProfileId', id)
     }
   }

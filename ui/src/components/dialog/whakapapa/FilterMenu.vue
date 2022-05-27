@@ -26,7 +26,7 @@
           </v-col>
           <FilterInput :reset="resetData" @whakapapa="toggleWhakapapa()"/>
           <SortInput v-if="!isList" :reset="resetData"  @whakapapa="toggleWhakapapa()"/>
-          <OptionsInput :reset="resetData" :isList="isList" :headers.sync="headers"/>
+          <OptionsInput :reset="resetData" :isList="isList" :headers.sync="headers" :activeHeaders="activeHeaders" />
 
           <!-- Hide Deceased -->
           <v-list-item class="py-4">
@@ -127,10 +127,11 @@ export default {
     OptionsInput
   },
   props: {
-    show: { type: Boolean, default: false },
-    isTable: { type: Boolean, default: false },
-    isList: { type: Boolean, default: false },
-    headers: { type: Array }
+    show: Boolean,
+    isTable: Boolean,
+    isList: Boolean,
+    headers: Array,
+    activeHeaders: Array
   },
   data () {
     return {

@@ -5,7 +5,7 @@ import uniqby from 'lodash.uniqby'
 
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
-import FindPathToRoot from './lib/find-path-to-root'
+// import FindPathToRoot from './lib/find-path-to-root'
 
 import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
@@ -88,7 +88,8 @@ export default function (apollo) {
       //   [partnerB]: relationshipType
       // }
     },
-    loaded: new Set()
+    loaded: new Set(),
+    path: []
   }
 
   const getters = {
@@ -118,10 +119,20 @@ export default function (apollo) {
       return profiles.size
     },
 
-    findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
+    // findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
+    // pathToRoot: (state, getters, rootState, rootGetters) => {
+    //   const id = rootGetters['tree/searchedProfileId']
+    //   if (!id) return []
+    //   return getters.findPathToRoot(id)
+    // },
+    pathToRoot: state => state.path,
 
     /* getter methods */
-    isCollapsedNode: state => (id) => Boolean(state.view.viewChanges.collapsed[id]),
+    isCollapsedNode: (state, getters) => (id) => {
+      // const path = getters.pathToRoot
+      // if (path && path.length && path.includes(id)) return false
+      return Boolean(state.view.viewChanges.collapsed[id])
+    },
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: (state, getters) => (targetId) => {
       const rule = state.view.importantRelationships[targetId]
@@ -471,12 +482,26 @@ export default function (apollo) {
     },
     resetCollapsed (state) {
       state.view.viewChanges.collapsed = {}
+    },
+    setPath (state, path) {
+      state.path = path
     }
   }
 
   const actions = {
-    resetWhakapapaView ({ commit }) {
+    openPath ({ commit }, path) {
+      console.log('path: ', path)
+      path.forEach(link => {
+        commit('setNodeCollapsed', {
+          nodeId: link,
+          isCollapsed: false
+        })
+      })
+      commit('setPath', path)
+    },
+    resetWhakapapaView ({ commit, dispatch }) {
       commit('resetWhakapapaView')
+      dispatch('tree/setSearchedProfileId', null, { root: true })
     },
     setViewFocus ({ commit, dispatch, getters }, id) {
       commit('setViewFocus', id)
@@ -489,17 +514,10 @@ export default function (apollo) {
       commit('setExtendedFamily', extended)
     },
     toggleNodeCollapse ({ state, commit, dispatch }, nodeId) {
-      const currentState = state.view.viewChanges.collapsed[nodeId]
       commit('setNodeCollapsed', {
         nodeId,
-        isCollapsed: !currentState
+        isCollapsed: !state.view.viewChanges.collapsed[nodeId]
       })
-      if (currentState) {
-        const childIds = state.childLinks[nodeId]
-        Object.keys(childIds).forEach((key) => {
-          dispatch('loadDescendants', { profileId: key, depth: 1 })
-        })
-      }
     },
     addLinks ({ commit }, links) {
       commit('addLinks', links)
