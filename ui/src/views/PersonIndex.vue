@@ -6,6 +6,9 @@
       </v-col>
       <v-spacer v-if="!mobile" />
       <v-col class="d-flex justify-end d-inline">
+        <v-icon color="blue-grey" class="mx-3" @click="addPerson">mdi-account-plus</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="loadData(true)">mdi-refresh</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="toggleSettings">mdi-cog</v-icon>
         <v-text-field
           light
           append-icon="mdi-magnify"
@@ -19,7 +22,6 @@
           ref="search"
           @input="handleSearchInput"
         />
-        <v-icon color="blue-grey" class="px-3" @click="toggleSettings">mdi-cog</v-icon>
       </v-col>
     </v-row>
     <v-row :class="mobile && 'pt-6'">
@@ -124,7 +126,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import debounce from 'lodash.debounce'
 import isEmpty from 'lodash.isempty'
 import { mergeAdminProfile } from '@/lib/person-helpers.js'
@@ -208,6 +210,18 @@ export default {
   watch: {
     async isKaitiaki (isKaitiaki) {
       if (isKaitiaki) await this.loadData()
+    },
+    selectedProfile (profile) {
+      if (profile && !this.profilesIndex.some(a => a.id === profile.id)) {
+        const newProfile = mergeAdminProfile(profile)
+        if (newProfile.aliveInterval) {
+          newProfile.dob = this.computeDate('dob', newProfile.aliveInterval)
+          newProfile.dod = this.computeDate('dod', newProfile.aliveInterval)
+          newProfile.age = this.age(newProfile.aliveInterval)
+        }
+        this.setProfile(newProfile)
+        return this.profilesIndex.unshift(newProfile)
+      }
     }
   },
   computed: {
@@ -215,6 +229,7 @@ export default {
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('table', ['tableFilter']),
+    ...mapMutations('person', ['setProfile']),
     activeHeaders () {
       return this.headers.filter(h => h.show)
     },
@@ -237,7 +252,15 @@ export default {
     ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
-    ...mapActions(['setLoading']),
+    ...mapActions(['setLoading', 'setDialog']),
+    addPerson () {
+      console.log('setDialog')
+      this.setDialog({
+        active: 'new-node',
+        type: 'person',
+        source: null
+      })
+    },
     toggleSettings () {
       this.settingsPanel = !this.settingsPanel
     },
@@ -255,11 +278,11 @@ export default {
     t (key) {
       return this.$t('personIndex.' + key)
     },
-    async loadData () {
+    async loadData (refresh) {
       this.isLoading = true
       const { tribeId } = this.$route.params
-
-      await this.loadPersonList({ type: 'group', tribeId })
+      // if dont have the profiles, wait for them to load before showing them
+      if (!this.profilesArr.length || refresh) await this.loadPersonList({ type: 'group', tribeId })
 
       this.profilesIndex = this.profilesArr.map(profile => {
         if (profile.aliveInterval) {

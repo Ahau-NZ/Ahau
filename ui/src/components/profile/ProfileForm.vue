@@ -355,6 +355,7 @@
             <v-col cols="12" class="px-0">
               <v-divider class="py-2"/>
               <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
+              <span class="pa-0 pl-2 ma-0" style="font-style:italic">({{ t('kaitiakiOnly') }})</span>
             </v-col>
             <!-- Email -->
             <v-col :cols="sideViewCols" class="pa-1">

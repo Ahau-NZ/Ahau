@@ -20,7 +20,7 @@
       :title="t('newNodeTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
       :type="dialogType"
       withView
-      @create="addPerson($event)"
+      @create="addPerson($event, dialogType)"
       @close="close"
     />
     <!-- TODO: this doesnt appear to be used by anything here! -->
@@ -86,7 +86,10 @@
       :title="t('whakapapaRegistryTitle')"
       @close="close"
     />
-    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
+    <ComingSoonDialog
+      v-if="isActive('coming-soon')"
+      :show="isActive('coming-soon')" @close="close"
+    />
   </div>
 </template>
 
@@ -112,7 +115,7 @@ import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -209,7 +212,7 @@ export default {
       'loadPersonFull',
       'updatePerson',
       'deletePerson',
-      'setSelectedProfileById'
+      'setSelectedProfileId'
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
@@ -221,6 +224,7 @@ export default {
       'removeLinksToProfile',
       'deleteProfileFromImportantRelationships'
     ]),
+    ...mapMutations('person', ['setProfile']),
     isActive (type) {
       return (type === this.dialog || type === this.storeDialog)
     },
@@ -275,7 +279,7 @@ export default {
         })
       }
     },
-    async addPerson (input) {
+    async addPerson (input, type) {
       // if moveDup is in input than add duplink
       if ('moveDup' in input) {
         await this.addImportantRelationship(input)
@@ -291,6 +295,10 @@ export default {
 
       const isNewProfile = !input.id
       if (isNewProfile) id = await this.createNewPerson(input)
+      if (type && type === 'person') {
+        // setSelectedProfile to trigger personIndex watcher and load person
+        return await this.setSelectedProfileId(id)
+      }
 
       const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
       if (isIgnoredProfile) await this.removeIgnoredProfile(id)
@@ -547,7 +555,7 @@ export default {
         }
       }
 
-      this.setSelectedProfileById(null)
+      this.setSelectedProfileId(null)
     },
     async processDeletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
@@ -566,7 +574,7 @@ export default {
       } else {
         this.removeLinksToProfile(this.selectedProfile.id)
       }
-      this.setSelectedProfileById(null)
+      this.setSelectedProfileId(null)
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)

@@ -30,6 +30,7 @@
         :md="isWhakapapaShow ? '12' : '10'"
         :lg="isWhakapapaShow ? '100p' : '80p'"
         :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
+        style="z-index:1"
       >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">

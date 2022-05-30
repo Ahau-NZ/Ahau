@@ -48,35 +48,6 @@
           </v-row>
 
           <v-row v-if="isEditing">
-            <!-- Displays delete profile button (if editing and allowed to delete) -->
-            <v-col cols="12" sm="auto" v-if="isDeletable">
-              <v-btn
-                @click="$emit('delete')"
-                align="center"
-                color="white"
-                text
-                class="secondary--text"
-              >
-                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
-              </v-btn>
-            </v-col>
-
-            <!-- Displays the save/cancel buttons when editing the profile -->
-            <v-col
-              cols="12"
-              :align="mobile ? '' : 'right'"
-              class="pt-0 d-flex justify-space-between"
-            >
-              <v-btn @click="cancel" text large fab class="secondary--text">
-                {{ t('cancel') }}
-              </v-btn>
-              <v-btn @click="submit" text large fab class="blue--text" color="blue">
-                {{ t('save') }}
-              </v-btn>
-            </v-col>
-          </v-row>
-
-          <v-row v-if="isEditing">
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'">
               <v-divider/>
             </v-col>
@@ -107,6 +78,35 @@
                 @updateLink="updateChildLink"
                 @removeLink="deleteChildLink"
               />
+            </v-col>
+          </v-row>
+
+          <v-row v-if="isEditing">
+            <!-- Displays delete profile button (if editing and allowed to delete) -->
+            <v-col cols="12" sm="auto" v-if="isDeletable">
+              <v-btn
+                @click="$emit('delete')"
+                align="center"
+                color="white"
+                text
+                class="secondary--text"
+              >
+                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
+              </v-btn>
+            </v-col>
+
+            <!-- Displays the save/cancel buttons when editing the profile -->
+            <v-col
+              cols="12"
+              :align="mobile ? '' : 'right'"
+              class="pt-0 d-flex justify-space-between"
+            >
+              <v-btn @click="cancel" text large fab class="secondary--text">
+                {{ t('cancel') }}
+              </v-btn>
+              <v-btn @click="submit" text large fab class="blue--text" color="blue">
+                {{ t('save') }}
+              </v-btn>
             </v-col>
           </v-row>
 

@@ -71,8 +71,11 @@ export default function (apollo) {
     setLoading (state, status) {
       if (state.isLoading !== status) state.isLoading = status
     },
-    setProfiles (state, profiles) {
+    setProfilesArr (state, profiles) {
       state.profilesArr = profiles
+    },
+    setProfile (state, profile) {
+      state.profilesArr.unshift(profile)
     },
     resetProfiles (state) {
       state.profilesArr = []
@@ -205,7 +208,9 @@ export default function (apollo) {
         commit('tombstoneId', profileId)
         dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
       } // eslint-disable-line
-      else commit('setPerson', profile)
+      else {
+        commit('setPerson', profile)
+      }
       return profile
     },
     async setSelectedProfileById ({ dispatch }, id) {
@@ -278,7 +283,7 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
         const profiles = res.data.listPerson.map(mergeAdminProfile)
-        commit('setProfiles', profiles)
+        commit('setProfilesArr', profiles)
         profiles.forEach(profile => {
           commit('setPerson', profile)
         })

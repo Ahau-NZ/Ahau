@@ -1,7 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+  <Dialog :show="show" :title="noRelationship ? noRelationshipTitle : title" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
+    :hideActions="noRelationship && hasSelection"
   >
 
     <!-- Content Slot -->
@@ -17,6 +18,7 @@
           :displayName="getDisplayName(selectedProfile)"
           :isDuplicate="isDuplicate"
           :moveDup.sync="moveDup"
+          :fullForm="true"
         >
 
           <!-- Slot = Search -->
@@ -110,7 +112,7 @@
 
       </v-col>
     </template>
-    <template v-if="currentAccess" v-slot:before-actions>
+    <template v-if="currentAccess && !noRelationship" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="[currentAccess]"  disabled/>
     </template>
   </Dialog>
@@ -134,7 +136,7 @@ import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, s
 import { parseInterval } from '@/lib/date-helpers.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
-const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
+const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0
 
 export default {
@@ -254,8 +256,12 @@ export default {
     ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('tribe', ['currentTribe']),
+    noRelationship () {
+      return this.type === 'person'
+    },
     allowRelationships () {
-      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
+      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null) && this.type !== 'person'
     },
     isWhakapapaIndex () {
       return ['community/whakapapa', 'person/whakapapa'].includes(this.$route.name)
@@ -335,6 +341,9 @@ export default {
       })
 
       return submission
+    },
+    noRelationshipTitle () {
+      return this.hasSelection ? this.t('existingPerson') : this.t('addPerson')
     }
   },
   methods: {
@@ -492,7 +501,6 @@ export default {
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }
-
       this.$emit('create', submission)
       this.close()
     },
@@ -580,11 +588,11 @@ export default {
       const rawSuggestions = await this.findPersonByName({
         name,
         type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
-        groupId: this.whakapapaView.recps[0]
+        groupId: this.whakapapaView.recps ? this.whakapapaView.recps[0] : this.currentTribe.id
       })
       // reset the ancestors array
       this.ancestors = []
-      await this.loadPersonsAncestors(this.selectedProfile.id) // Get the ancestors of the current node
+      if (!this.noRelationship) await this.loadPersonsAncestors(this.selectedProfile.id) // Get the ancestors of the current node
 
       return rawSuggestions
         .filter(person => {
@@ -595,7 +603,7 @@ export default {
             !this.ancestors.some(ancestorId => ancestorId === person.id) &&
 
             // dont suggest direct descendants already in the tree
-            !this.selectedProfile.children.some(child => child.id === person.id)
+            !this.selectedProfile?.children.some(child => child.id === person.id)
           )
         })
     },

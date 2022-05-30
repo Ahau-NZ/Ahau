@@ -53,5 +53,6 @@
     "cancel":"Cancel",
     "save":"Save"
   },
-  "dataDescription": "Description"
+  "dataDescription": "Description",
+  "kaitiakiOnly": "Kaitiaki only"
 }
