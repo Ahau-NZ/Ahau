@@ -7,6 +7,7 @@
 - tree search bar
   - uncollapses all nodes from the root/focus node to the searched profile
   - highlights the path
+- can add person from database view
 
 ## Bug Fixes
 

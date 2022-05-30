@@ -490,7 +490,6 @@ export default function (apollo) {
 
   const actions = {
     openPath ({ commit }, path) {
-      console.log('path: ', path)
       path.forEach(link => {
         commit('setNodeCollapsed', {
           nodeId: link,
