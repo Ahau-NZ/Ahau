@@ -112,7 +112,7 @@
 
       </v-col>
     </template>
-    <template v-if="currentAccess && !noRelationship" v-slot:before-actions>
+    <template v-if="currentAccess && !isPersonIndex" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="[currentAccess]"  disabled/>
     </template>
   </Dialog>
@@ -257,6 +257,9 @@ export default {
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['currentTribe']),
+    isPersonIndex () {
+      return this.$route.name === 'personIndex'
+    },
     noRelationship () {
       return this.type === 'person'
     },
