@@ -34,6 +34,7 @@
   "updateCommunity":"Successfully updated the community",
   "failUpdateCommunity": "Something went wrong when saving the tribe",
   "profileUpdated": "Profile updated",
+  "profileAdded": "Profile added",
   "communityDeleted": "Community successfully deleted",
   "failCommunityDeleted": "Something went wrong while trying to delete the community",
   "requestSent": "Request successfully sent"

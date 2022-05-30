@@ -615,7 +615,7 @@ export default {
 
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
-      this.$emit('saved')
+      this.$root.$emit('PersonListSave')
     },
     toggleNew (type) {
       this.$emit('new', type)

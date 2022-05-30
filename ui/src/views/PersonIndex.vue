@@ -86,7 +86,7 @@
       </v-col>
     </v-row>
 
-    <SideNodeDialog v-if="showEditor && selectedProfileId"
+    <!-- <SideNodeDialog v-if="showEditor && selectedProfileId"
       :show="showEditor"
       :profileId="selectedProfileId"
 
@@ -98,7 +98,7 @@
       @cancel="close"
       @delete="showDeleteConfirmation"
       @saved="handleSaved"
-    />
+    /> -->
 
     <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
       :show="showDelete"
@@ -136,7 +136,7 @@ import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
 import { determineFilter } from '@/lib/filters.js'
 
-import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
+// import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
@@ -145,7 +145,7 @@ import Avatar from '@/components/Avatar.vue'
 export default {
   name: 'PersonIndex',
   components: {
-    SideNodeDialog,
+    // SideNodeDialog,
     RemovePersonDialog,
     ImportPeopleDialog,
     FilterMenu,
@@ -206,6 +206,9 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
+    this.$root.$on('PersonListSave', () => {
+      this.handleSaved()
+    })
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -229,7 +232,6 @@ export default {
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('table', ['tableFilter']),
-    ...mapMutations('person', ['setProfile']),
     activeHeaders () {
       return this.headers.filter(h => h.show)
     },
@@ -253,8 +255,8 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
+    ...mapMutations('person', ['setProfile']),
     addPerson () {
-      console.log('setDialog')
       this.setDialog({
         active: 'new-node',
         type: 'person',
@@ -327,7 +329,11 @@ export default {
     },
     async handleShow (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
+      this.setDialog({
+        active: 'view-edit-node',
+        type: null,
+        source: null
+      })
     },
     close () {
       this.showEditor = false
@@ -335,7 +341,7 @@ export default {
     },
     handleSaved () {
       // Noted save has already been handled by component
-      this.close()
+      // this.close()
       this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
 
       this.isLoading = true
