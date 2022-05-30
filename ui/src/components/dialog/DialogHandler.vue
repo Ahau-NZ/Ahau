@@ -37,6 +37,7 @@
       :show="isActive('view-edit-node')"
       :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
+      :editing="dialogType === 'editing'"
       @close="close"
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
       @delete="toggleDialog('delete-node', null, null)"
@@ -172,6 +173,7 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
@@ -242,7 +244,7 @@ export default {
     toggleDialog (dialog, type, source) {
       this.source = source
       if (this.storeDialog) {
-        this.setDialog(dialog, type, source)
+        this.setDialog({ active: dialog, type, source })
         return
       }
       this.$emit('update:dialog', dialog)
@@ -295,13 +297,19 @@ export default {
 
       const isNewProfile = !input.id
       if (isNewProfile) id = await this.createNewPerson(input)
+
+      // if adding a person direct to database
       if (type && type === 'person') {
         // setSelectedProfile to trigger personIndex watcher and load person
-        return await this.setSelectedProfileId(id)
+        return this.$root.$emit('PersonListAdd', id)
       }
 
-      const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
-      if (isIgnoredProfile) await this.removeIgnoredProfile(id)
+      let isIgnoredProfile
+
+      if (this.view) {
+        isIgnoredProfile = this.view.ignoredProfiles.includes(id)
+        if (isIgnoredProfile) await this.removeIgnoredProfile(id)
+      }
 
       const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
@@ -331,8 +339,9 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          await this.loadDescendants({ profileId: parentProfileId })
-
+          if (this.$route.name === 'personIndex') {
+            this.$root.$emit('PersonListAdd', child)
+          } else await this.loadDescendants({ profileId: parentProfileId })
           break
 
         case 'parent':
@@ -375,6 +384,7 @@ export default {
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
+          this.$root.$emit('PersonListAdd', parent)
           break
         case 'partner':
           parent = this.selectedProfile.id
@@ -388,6 +398,7 @@ export default {
 
           // TODO: this adds the partner to the tree, but do we need to do this much?
           await this.loadDescendants(this.selectedProfile.id)
+          this.$root.$emit('PersonListAdd', parent)
           break
         default:
           console.error('wrong type for add person')
@@ -450,7 +461,7 @@ export default {
         type: 'link/profile-profile/child',
         child,
         parent,
-        recps: this.view.recps,
+        recps: this.view.recps || this.currentTribe.id,
         ...relationshipAttrs
       })
         .then(() => {
@@ -462,7 +473,7 @@ export default {
         type: 'link/profile-profile/partner',
         child,
         parent,
-        recps: this.view.recps
+        recps: this.view.recps || this.currentTribe.id
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },

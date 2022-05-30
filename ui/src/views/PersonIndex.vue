@@ -209,22 +209,13 @@ export default {
     this.$root.$on('PersonListSave', () => {
       this.handleSaved()
     })
+    this.$root.$on('PersonListAdd', (id) => {
+      this.handleAdd(id)
+    })
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
       if (isKaitiaki) await this.loadData()
-    },
-    selectedProfile (profile) {
-      if (profile && !this.profilesIndex.some(a => a.id === profile.id)) {
-        const newProfile = mergeAdminProfile(profile)
-        if (newProfile.aliveInterval) {
-          newProfile.dob = this.computeDate('dob', newProfile.aliveInterval)
-          newProfile.dod = this.computeDate('dod', newProfile.aliveInterval)
-          newProfile.age = this.age(newProfile.aliveInterval)
-        }
-        this.setProfile(newProfile)
-        return this.profilesIndex.unshift(newProfile)
-      }
     }
   },
   computed: {
@@ -251,7 +242,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson']),
+    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
@@ -324,8 +315,11 @@ export default {
     }, 500),
     async handleEdit (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
-      this.isEditing = true
+      this.setDialog({
+        active: 'view-edit-node',
+        type: 'editing',
+        source: null
+      })
     },
     async handleShow (item) {
       this.setSelectedProfileId(item.id)
@@ -339,9 +333,28 @@ export default {
       this.showEditor = false
       this.isEditing = false
     },
+    async handleAdd (id) {
+      if (!this.profilesIndex.some(a => a.id === id)) {
+        this.showAlert({ message: this.$t('viewPerson.profileAdded'), color: 'green' })
+
+        this.isLoading = true
+        await this.loadPersonFull(id)
+        const newProfile = mergeAdminProfile(this.person(id))
+        if (newProfile.aliveInterval) {
+          newProfile.dob = this.computeDate('dob', newProfile.aliveInterval)
+          newProfile.dod = this.computeDate('dod', newProfile.aliveInterval)
+          newProfile.age = this.age(newProfile.aliveInterval)
+        }
+        this.setProfile(newProfile)
+        this.profilesIndex.unshift(newProfile)
+        const search = this.search
+        this.search = ''
+        this.search = search
+        this.isLoading = false
+      }
+    },
     handleSaved () {
       // Noted save has already been handled by component
-      // this.close()
       this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
 
       this.isLoading = true
@@ -409,6 +422,9 @@ export default {
       hiddenElement.download = 'people.csv'
       hiddenElement.click()
     }
+  },
+  beforeDestroy () {
+    this.setDialog(null)
   }
 }
 </script>

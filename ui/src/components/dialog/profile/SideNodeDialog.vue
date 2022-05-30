@@ -229,7 +229,7 @@
                 <hr v-if="parents" class="family-divider"/>
 
                 <!-- Displays a row of partners -->
-                <v-col v-if="partners.length" :cols="12" class="pa-0">
+                <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="partners"
                     :group-title="t('partners')"
@@ -243,7 +243,7 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="partners.length" class="family-divider"/>
+                <hr class="family-divider"/>
 
                 <!-- Displays a row of siblings -->
                 <v-col :cols="12" v-if="parents.length && siblings.length" class="pa-0">
