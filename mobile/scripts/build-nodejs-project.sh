@@ -38,15 +38,18 @@ echo "Building the env.json file...";
 echo "Installing node_modules dependencies...";
 npm install --ignore-scripts --no-optional --silent
 
+# Patch some file changes
+echo "Applying patches...";
+$(npm bin)/patch-package
+rm -rf ./patches ./node_modules/patch-package
+
 if [ $BUILD_PLATFORM == "android" ]; then
   # XCode will build this by its own so iOS isn't necessary
   cd ./node_modules
-  cd ./sodium-native-nodejs-mobile && npm install --no-optional --silent && cd ..
+  echo "Installing and compiling sodium-native-nodejs-mobile...";
+  cd ./sodium-native-nodejs-mobile && npm install --no-optional --no-package-lock --silent && cd ..
   cd ..
 fi
-
-# Patch some file changes
-$(npm bin)/patch-package
 
 echo "Removing unused files meant for macOS or Windows, etc...";
 find ./node_modules \
@@ -69,9 +72,8 @@ find ./node_modules \
 echo "Deleting some definitely-not-necessary files from node_modules...";
 find ./node_modules -empty -type d -delete;
 
-rm -rf ./patches ./node_modules/patch-package
-
 # Remove sodium-native and other unnecessary modules of node_modules to prevent their build
+echo "Deleting sodium-native from node_modules of some dependencies...";
 declare -a modules=(
   "envelope-js"
   "ssb-tribes"
@@ -112,8 +114,32 @@ if [ $BUILD_PLATFORM == "android" ]; then
   ./scripts/android/build-native-modules.sh
 fi
 
-echo "Bundling with noderify...";
+echo "Bundling some dependencies with babel to support Node version...";
 cd ./www/nodejs-project;
+
+declare -a packagesToBabelify=(
+  "@ssb-graphql/profile"
+  "@ssb-graphql/whakapapa"
+  "ssb-profile"
+  "ssb-whakapapa"
+  "ssb-ahau"
+)
+
+# We're bundling with Babel to convert JavaScript code to older version
+# There're some packages that are using JavaScript code not supported by Node 12.x
+for pkg in "${packagesToBabelify[@]}"
+do
+  $(npm bin)/babel ./node_modules/$pkg \
+    --out-dir ./node_modules/$pkg \
+    --ignore "test/**/*","**/*.test.js" \
+    --presets=@babel/preset-env \
+    --config-file=./babel.config.js \
+    --quiet;
+done
+
+rm ./babel.config.js;
+
+echo "Bundling with noderify...";
 # Why some packages are filter'd or replaced:
 #   chloride: needs special compilation configs for android, and we'd like to
 #      remove unused packages such as sodium-browserify etc
@@ -124,6 +150,8 @@ cd ./www/nodejs-project;
 #   supports-color: optional dependency within package `debug`
 #   utf-8-validate: because we want nodejs-mobile to load its native bindings
 #   encoding: optional dependency within package node-fetch used by apollo-server
+#   systeminformation: it provides APIs for desktop, not mobile
+#   async_hooks: native library, it's not added to noderify yet
 $(npm bin)/noderify \
   --replace.bindings=bindings-noderify-nodejs-mobile \
   --replace.node-extend=xtend \
@@ -140,18 +168,21 @@ $(npm bin)/noderify \
   --filter=encoding \
   --filter=casual \
   --filter=systeminformation \
+  --filter=async_hooks \
   index.js > _index.js;
 rm index.js; mv _index.js index.js;
 cd ../..;
 
 if [ $BUILD_PLATFORM == "android" ]; then
+  # Just to Android cause iOS will use the node_modules to build its native modules
   echo "Moving Android dynamic native libs..."
   ./scripts/android/move-dynamic-native-libs.sh
 
-  echo "Removing node_modules folder and package-lock.json...";
-  # Just to Android cause iOS will use the node_modules to build its native modules
-  rm -rf ./www/nodejs-project/node_modules;
+  echo "Removing node_modules folder and package-lock.json, just keeping ssb-ahau migrations...";
+  cd ./www/nodejs-project/node_modules;
+  ls | grep -xv "ssb-ahau" | xargs rm -rf;
+  rm -rf .bin ssb-ahau/node_modules ssb-ahau/test;
+  cd ../../..;
 fi
 
 rm ./www/nodejs-project/package-lock.json;
-rm -rf ./www/nodejs-project/patches;

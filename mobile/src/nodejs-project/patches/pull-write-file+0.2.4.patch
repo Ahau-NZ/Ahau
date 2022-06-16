@@ -1,0 +1,13 @@
+diff --git a/node_modules/pull-write-file/index.js b/node_modules/pull-write-file/index.js
+index e519be3..df15ce5 100644
+--- a/node_modules/pull-write-file/index.js
++++ b/node_modules/pull-write-file/index.js
+@@ -4,7 +4,7 @@ module.exports = function (path, opts, cb) {
+   if('function' == typeof opts)
+     cb = opts, opts = null
+   var flags = opts && opts.flags || 'w'
+-  var mode = opts && opts.mode || 0666
++  var mode = opts && opts.mode || 0o666
+   var pos = 0
+   return function (read) {
+     fs.open(path, flags, mode, function (err, fd) {

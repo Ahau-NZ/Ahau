@@ -95,6 +95,7 @@ SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-hyper-blobs'))
   // Private groups
   .use(require('ssb-tribes'))
+  .use(require('ssb-tribes-registration'))
   // Custom
   .use(require('ssb-ahau'))
   .use(require('ssb-recps-guard'))
