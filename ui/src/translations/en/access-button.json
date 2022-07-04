@@ -13,6 +13,7 @@
   "tribeName": "{tribeName} (tribe)",
   "personal": "Personal",
   "edit": "Edit",
-  "read": "Read",
+  "read": "View",
+  "view": "View",
   "submit": "Submit"
 }

@@ -20,7 +20,7 @@
     </template>
 
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
-      <AccessButton type="story" :accessOptions="accessOptions" :disabled="editing" />
+      <AccessButton type="story" :accessOptions="accessOptions" :permission.sync="formData.permission"/>
     </template>
   </Dialog>
 </template>
