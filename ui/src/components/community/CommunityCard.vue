@@ -1,8 +1,8 @@
 <template>
-  <v-card flat class="rounded-border"
+  <v-card class="rounded-border"
     :width="!mobile ? '190px':'100vw'"
-    elevation="4"
     light
+    flat
     @click="$emit('click')">
     <v-img height="150px" :src="image" class="card-image" />
     <v-card-title class="subtitle font-weight-bold pb-2">
@@ -72,9 +72,8 @@ export default {
   background-size: 50px 50px;
 }
 .rounded-border {
-  color: black;
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
-  border: none
 }
 </style>

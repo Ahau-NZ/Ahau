@@ -19,7 +19,7 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        return res.data.saveProfile // profileId
+        return res.data.saveCommunity // profileId
       } catch (err) {
         console.error('failed to save a private community profile', err)
       }
@@ -32,7 +32,7 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        return res.data.saveProfile // profileId
+        return res.data.saveCommunity // profileId
       } catch (err) {
         console.error('failed to save a public community profile', err)
       }

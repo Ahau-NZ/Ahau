@@ -84,7 +84,7 @@ export default function (apollo) {
     const res = await apollo.mutate(savePersonMutation(input))
     if (res.errors) throw res.errors
 
-    return res.data.saveProfile // profileId
+    return res.data.savePerson // profileId
   }
 
   const actions = {

@@ -17,7 +17,7 @@ export function getObjectChanges (initialValue, updatedValue) {
   if (isEqual(initialValue, updatedValue)) return changes
 
   Object.entries(updatedValue).forEach(([key, value]) => {
-    if (key === 'kaitiaki' || key === 'tiaki') return
+    if (key === 'kaitiaki' || key === 'tiaki' || key === 'customFields') return
 
     let newItems = []
 
@@ -32,6 +32,7 @@ export function getObjectChanges (initialValue, updatedValue) {
               .filter(q => q.label !== '') // ensure it filters out empty entries, these will break backend
             break
           }
+
           // intiate the array to add, remove fields
           changes[key] = { add: [], remove: [] }
           updatedValue[key].forEach(newItem => {

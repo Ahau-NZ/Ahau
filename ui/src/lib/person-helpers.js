@@ -25,6 +25,7 @@ export function setPersonProfile (input) {
     placeOfBirth: profile.placeOfBirth,
     placeOfDeath: profile.placeOfDeath,
     buriedLocation: profile.buriedLocation,
+    customFields: profile.customFields || {},
 
     // relationship
     relationshipType: profile.relationshipType,

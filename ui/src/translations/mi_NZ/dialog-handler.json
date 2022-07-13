@@ -1,9 +1,9 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
-  "createCommunityTitle": "Ko Wai Mātou ---- Hangaia he Hapori Hou",
+  "createCommunityTitle": "Hangaia he Hapori Hou",
   "newNodeTitle": "Add {dialogType} to {displayName}",
   "editNodeTitle": "Whakaniko {displayName}",
-  "whakapapaShowHelperTitle": "Whakapapa ---- Family tree",
+  "whakapapaShowHelperTitle": "Whakapapa",
   "whakapapaRegistryTitle": "Whakapapa registry",
   "filterMenuTitle": "Table Filter Menu"
 }

@@ -32,10 +32,14 @@
   "createCollections": "Create collections",
   "createStories": "Create stories",
   "addDataPoint": "Add data point",
-  "dataModel": "Set your tribal registry data model", 
+  "dataModel": "Set your data model for tribal profiles", 
   "data": "Data", 
   "type": "Type",
   "included": "Included",
+  "access": "Access",
   "required": "Required",
-  "settings": "Settings"
+  "settings": "Settings",
+  "deleteField": "Delete",
+  "newFieldDialogTitle": "Add new field to profiles",
+  "next": "next"
 }

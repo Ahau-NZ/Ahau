@@ -10,6 +10,7 @@
             :index="i"
             :type="type"
             :chip="chip"
+            :ripple="ripple"
             :image="getImage(chip)"
             @click="$emit('click', chip)"
             @delete="$emit('delete', i)"
@@ -29,7 +30,8 @@ export default {
   props: {
     chips: Array,
     deletable: Boolean,
-    type: String
+    type: String,
+    ripple: Boolean
   },
   components: {
     Chip

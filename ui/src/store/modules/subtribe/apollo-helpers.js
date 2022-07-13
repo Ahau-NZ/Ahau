@@ -43,9 +43,9 @@ export const getSubGroups = (parentGroupId) => {
 export const deleteSubGroup = (profileInSubGroup, profileInGroup) => {
   return {
     mutation: gql`
-      mutation($profileInSubGroup: ProfileInput, $profileInGroup: ProfileInput) {
-        deleteProfileInSubGroup: saveProfile(input: $profileInSubGroup)
-        deleteProfileInGroup: saveProfile(input: $profileInGroup)
+      mutation($profileInSubGroup: CommunityProfileInput!, $profileInGroup: CommunityProfileInput!) {
+        deleteProfileInSubGroup: saveCommunity(input: $profileInSubGroup)
+        deleteProfileInGroup: saveCommunity(input: $profileInGroup)
       }
     `,
     variables: {

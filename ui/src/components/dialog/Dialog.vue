@@ -190,6 +190,9 @@ export default {
     submit () {
       if (this.isSubmitting) return
       this.isSubmitting = true
+      setTimeout(() => {
+        this.isSubmitting = false
+      }, 1000)
       this.$emit('submit')
     },
     closeDialog () {
