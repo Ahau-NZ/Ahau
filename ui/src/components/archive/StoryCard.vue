@@ -7,7 +7,8 @@
       :class="customClass"
       :ripple="false"
       :light="!showArtefact"
-      :elevation="(!mobile && !showArtefact && fullStory) ? 24 : 3"
+      :elevation="(!mobile && !showArtefact && fullStory) ? 24 : 0"
+      outlined
       @click.passive="showStory()"
     >
       <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:0">

@@ -105,8 +105,8 @@ export const PublicProfileFieldsFragment = gql`
   fragment PublicProfileFields on Profile {
     id
     preferredName
-    legalName
     ...on Person {
+      legalName
       gender
     }
     avatarImage { uri }
@@ -160,17 +160,3 @@ export const getProfile = ({
   },
   fetchPolicy: 'no-cache'
 })
-
-export const saveProfile = input => {
-  if (input.avatarImage) delete input.avatarImage.uri
-  if (input.headerImage) delete input.headerImage.uri
-
-  return {
-    mutation: gql`
-      mutation($input: ProfileInput!) {
-        saveProfile(input: $input)
-      }
-    `,
-    variables: { input }
-  }
-}

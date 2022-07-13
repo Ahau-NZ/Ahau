@@ -42,19 +42,19 @@
 
           @click:row="handleShow"
         >
-          <template v-if="hiddenColumns" v-slot:header.actions>
+          <template v-if="hiddenColumns" v-slot:header.actions> <!-- eslint-disable-line -->
             <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
-          <template v-slot:item.image="{ item }" >
+          <template v-slot:item.image="{ item }" > <!-- eslint-disable-line -->
             <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
           </template>
           <!-- Handle max description charachters -->
-          <template v-slot:item.description="{ item }" >
+          <template v-slot:item.description="{ item }" > <!-- eslint-disable-line -->
             <span class="description">{{item.description}}</span>
           </template>
           <!-- Handle table actions -->
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:item.actions="{ item }"> <!-- eslint-disable-line -->
             <v-icon small class="mr-2" @click="handleEdit(item)" >
               mdi-pencil
             </v-icon>

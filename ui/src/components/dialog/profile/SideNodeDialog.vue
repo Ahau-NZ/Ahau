@@ -168,7 +168,7 @@
           </v-row>
 
           <!-- Displays profile information when viewing! -->
-          <v-row v-if="!isEditing"  class="flex-column mx-0 ">
+          <v-row v-if="!isEditing" class="flex-column mx-0 ">
             <v-col class="pa-0">
               <v-col cols="12" :class="profile.description ? 'pt-0':'pt-0'">
                 <v-row cols="12" class="rounded-border mb-4">

@@ -7,7 +7,6 @@ import {
   WHAKAPAPA_LINK_FRAGMENT
 } from '../../../lib/person-helpers'
 import { pruneEmptyValues } from '../../../lib/profile-helpers'
-import { saveProfile } from '../profile/apollo-helpers'
 
 const GET_PERSON_MINIMAL = gql`
   query($id: String!) {
@@ -84,7 +83,17 @@ export const savePerson = input => {
   input = pick(input, PERMITTED_PERSON_ATTRS)
   input = pruneEmptyValues(input)
 
-  return saveProfile(input)
+  if (input.avatarImage) delete input.avatarImage.uri
+  if (input.headerImage) delete input.headerImage.uri
+
+  return {
+    mutation: gql`
+      mutation($input: PersonProfileInput!) {
+        savePerson(input: $input)
+      }
+    `,
+    variables: { input }
+  }
 }
 
 export const findPersonByName = (name, type, groupId) => {

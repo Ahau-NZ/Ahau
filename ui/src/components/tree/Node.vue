@@ -33,7 +33,7 @@
         :cy="radius"
         :r="radius + 4"
       />
-      <circle v-if="!imageSrc"
+      <circle
         :style="{ fill: 'white'}"
         :cx="radius"
         :cy="radius"

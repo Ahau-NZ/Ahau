@@ -47,7 +47,7 @@
       @delete="dialog = 'delete-community'"
       @submit="processUpdateCommunity"
       @close="dialog = null"
-      :profile="profile"
+      :profile="mergeTribeProfiles(currentTribe)"
     />
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
@@ -88,7 +88,7 @@ import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { deleteTribe } from '@/lib/community-helpers.js'
+import { deleteTribe, mergeTribeProfiles } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
@@ -189,6 +189,7 @@ export default {
   },
   methods: {
     getDisplayName,
+    mergeTribeProfiles,
     ...mapActions(['setWhoami']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['addAdminsToGroup', 'getMembers', 'loadTribe']),

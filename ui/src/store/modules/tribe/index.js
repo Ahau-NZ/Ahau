@@ -1,5 +1,6 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+
 import pick from 'lodash.pick'
 
 const defaultTribeSettings = {
@@ -58,6 +59,16 @@ export default function (apollo) {
       if (getters.isPersonalTribe) return []
 
       if (tribe.public && tribe.public.length) return tribe.public[0].joiningQuestions || []
+
+      return []
+    },
+    tribeCustomFields: (state, getters) => {
+      const tribe = state.currentTribe
+      if (!tribe) return []
+
+      if (getters.isPersonalTribe) return []
+
+      if (tribe.public && tribe.public.length) return tribe.public[0].customFields || []
 
       return []
     },
@@ -147,9 +158,7 @@ export default function (apollo) {
 
       return options
     },
-    tribes: state => {
-      return state.tribes
-    }
+    tribes: state => state.tribes
   }
 
   const mutations = {
@@ -194,9 +203,10 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        const members = await dispatch('getMembers', id)
+        const tribe = res.data.tribe
+        tribe.members = await dispatch('getMembers', id)
 
-        return { ...res.data.tribe, members }
+        return tribe
       } catch (err) {
         console.error('Something went wrong while fetching tribe: ', id)
         console.error(err)
@@ -228,7 +238,6 @@ export default function (apollo) {
         const res = await apollo.query(getTribes)
 
         if (res.errors) throw res.errors
-
         commit('updateTribes', res.data.tribes)
 
         return res.data.tribes
