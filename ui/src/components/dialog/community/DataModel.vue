@@ -39,7 +39,7 @@
 
         <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
           <v-icon
-            v-if="item.type === 'list' && !isOwnListField(item)"
+            v-if="item.type === 'list'"
             :class="{
               'v-data-table__expand-icon': true,
               'v-data-table__expand-icon--active': isExpanded
@@ -201,12 +201,12 @@ export default {
         { text: 'text', type: 'text' },
         { text: 'number', type: 'number' },
         { text: 'checkbox', type: 'checkbox' },
-        { text: 'list (single)', value: SINGLE_LIST, type: 'list', multiple: false },
-        { text: 'list (multiple) ', value: MULTI_LIST, type: 'list', multiple: true }
+        { text: 'list (choose single entry)', value: SINGLE_LIST, type: 'list', multiple: false },
+        { text: 'list (choose multiple entries) ', value: MULTI_LIST, type: 'list', multiple: true },
+        { text: 'multiple entries', value: 'array' }
 
         // TODO: these are not supported yet
         // { text: 'date', value: 'date' },
-        // { text: 'mulitlpe entries', value: 'array' }
       ],
       rules: [value => !!value || 'Required.'],
       currentField: {},
@@ -234,7 +234,7 @@ export default {
       return getCustomFields(this.customFields)
     },
     expandedFields () {
-      return this.allFields.filter(field => field.type === 'list' && !this.isOwnListField(field))
+      return this.allFields.filter(field => field.type === 'list')
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -254,9 +254,6 @@ export default {
     },
     isRequiredDisabled (field) {
       return REQUIRED_DISABLED_FIELDS.includes(field.label)
-    },
-    isOwnListField (field) {
-      return (field.options && field.options.length === 0 && field.multiple)
     },
     updateRequiredField (selectedField) {
       const newField = selectedField
@@ -321,7 +318,7 @@ export default {
       const index = this.allFields.findIndex(field => field.label === this.currentField.label)
       const dataFields = clone(this.allFields)
       if (!dataFields[index].key) dataFields[index].key = this.generateTimestamp()
-      dataFields[index].tombstone = { date: new Date() }
+      dataFields[index].tombstone = { date: Date.now() }
       this.$emit('update:customFields', dataFields)
       this.deleteFieldDialog = false
     },
