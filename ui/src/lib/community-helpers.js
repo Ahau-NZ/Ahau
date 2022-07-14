@@ -10,7 +10,7 @@ import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-hel
 export const DEFAULT_PROFILE_MODEL = [
   { label: 'first name', type: 'text', required: true, visibleBy: 'members' },
   { label: 'full name', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'other names', type: 'list', required: false, visibleBy: 'members', options: [], multiple: true },
+  { label: 'other names', type: 'array', required: false, visibleBy: 'members' },
   { label: 'gender', type: 'list', required: false, visibleBy: 'members', options: ['male', 'female', 'other', 'unknown'], multiple: false },
   { label: 'related by', type: 'list', required: false, visibleBy: 'members', options: ['birth', 'whangai', 'adopted'], multiple: false },
   { label: 'city', type: 'text', required: true, visibleBy: 'members' },
@@ -28,8 +28,8 @@ export const DEFAULT_PROFILE_MODEL = [
   { label: 'place of death', type: 'text', required: false, visibleBy: 'members' },
   { label: 'buried location', type: 'text', required: false, visibleBy: 'members' },
   { label: 'profession', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'skills/qualifications', type: 'list', required: false, options: [], multiple: true, visibleBy: 'members' },
-  { label: 'schools', type: 'list', required: false, visibleBy: 'members', options: [], multiple: true }
+  { label: 'skills/qualifications', type: 'array', required: false, visibleBy: 'members' },
+  { label: 'schools', type: 'array', required: false, visibleBy: 'members' }
 ]
 
 // these are default fields where the required field cannot be enabled
