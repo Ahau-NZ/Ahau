@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import debounce from 'lodash.debounce'
 
 // /* global namespace */
 import root from './root' // probably has modules to split out
@@ -64,5 +65,30 @@ export default new Vuex.Store({
     table: table(apollo),
 
     settings: settings(apollo)
-  }
+  },
+  plugins: [
+    updateTree
+  ]
 })
+
+function updateTree (store) {
+  // this plugin listens for changes to whakapapa/nestedDescendants
+  // triggers graph data updates
+  const slowedRefreshTree = debounce(
+    () => {
+      store.getters['whakapapa/whakapapaView'].tree
+        ? store.dispatch('tree/refreshWhakapapaData')
+        : store.dispatch('table/refreshWhakapapaData')
+    },
+    200,
+    { maxWait: 2000 }
+  )
+  // we debounce this refresh to slow the degree to which d3 calculations and graph redraw are done
+
+  store.subscribe(mutation => {
+    if (
+      mutation.type.startsWith('whakapapa') ||
+      mutation.type === 'person/setPerson' // includes birthOrder info
+    ) slowedRefreshTree()
+  })
+}

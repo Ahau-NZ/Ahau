@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import uniqby from 'lodash.uniqby'
 
-import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
+import { getWhakapapaView, getDescendantLinks, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
 import FindPathToRoot from './lib/find-path-to-root'
 
@@ -11,7 +11,7 @@ import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
 import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
 const DEFAULT_DEPTH = 2
-// minimum number of generations to load before hiding further children (see loadDescendants)
+// minimum number of generations to load before hiding further children
 const MIN_LOADED_PROFILES = 10
 // minimum number of profiles to initially aim to load
 // this helps take into account graphs which start out line a long line before spreading out
@@ -95,20 +95,14 @@ export default function (apollo) {
     autoCollapse: state => state.viewChanges.autoCollapse,
     isLoadingWhakapapa: state => state.activeQueryCount > 0,
     recordCount: (state, getters) => {
-      const queue = [state.view.focus]
       const profiles = new Set([])
+      const opts = { showCollapsed: true, showExtendedFamily: false }
 
-      while (queue.length) {
-        const rootNodeId = queue.shift()
-
-        profiles.add(rootNodeId)
-
-        getters.getPartnerIds(rootNodeId, { showCollapsed: true, showExtendedFamily: false })
-          .forEach(partnerId => profiles.add(partnerId))
-
-        getters.getChildIds(rootNodeId, { showCollapsed: true, showExtendedFamily: false })
-          .forEach(childId => profiles.add(childId) && queue.push(childId))
-      }
+      walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
+        profiles.add(profileId)
+        getters.getPartnerIds(profileId, opts).forEach(p => profiles.add(p))
+        getters.getChildIds(profileId, opts).forEach(p => profiles.add(p))
+      })
 
       return profiles.size
     },
@@ -240,11 +234,10 @@ export default function (apollo) {
           getters.showExtendedFamily // fallback
         )
       ) return getExtendedFamily(state, getters)(parentId).children
-      else {
-        return getters.getRawChildIds(parentId)
-          .filter(getters.isNotIgnored)
-          .filter(childId => getters.isImportantLink(childId, parentId))
-      }
+
+      return getters.getRawChildIds(parentId)
+        .filter(getters.isNotIgnored)
+        .filter(childId => getters.isImportantLink(childId, parentId))
     },
     getParentIds: (state, getters) => (childId) => {
       let parentIds = getters.getRawParentIds(childId)
@@ -319,18 +312,18 @@ export default function (apollo) {
       } = opts
       lineage.add(parentId)
 
-      return {
+      const result = {
         id: parentId,
         children: getters.getChildIds(parentId)
           .filter(childId => !lineage.has(childId)) // never recurse into a parent already seen
           .map(childId => {
-            // console.log('recursing', childId)
             return getters.buildNestedDescendants(childId, { lineage: new Set(lineage) })
             // we create a new "lineage", so that each branching of the tree can record
             // it's own lineage of people, allowing duplicate profiles across branches
-            // (this behaves like a "path" except we use a set because we don't care about author)
+            // (this behaves like a "path" except we use a set because we don't care about order)
           })
       }
+      return result
     },
     secondaryLinks: (state, getters) => {
       // for each importantRelationship link (which targets a person)
@@ -402,7 +395,7 @@ export default function (apollo) {
     },
 
     // methods for manipulating whakapapa links
-    addLinks (state, { childLinks = [], partnerLinks = [] }) {
+    addLinks (state, { childLinks = [], partnerLinks = [], isLoadingFocus = false }) {
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
       childLinks.forEach(({ parent, child, relationshipType }) => {
@@ -423,6 +416,19 @@ export default function (apollo) {
 
         Vue.set(state.partnerLinks, partnerA, newPartners)
       })
+
+      if (isLoadingFocus) {
+        if (!state.view.focus) {
+          console.error('expected state.view.focus to be set for auto-collapsing')
+          return
+        }
+        walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
+          if (shouldCollapseChildren(processed.size, depth, isLoadingFocus)) {
+            // copy of setNodeCollapsed mutation
+            Vue.set(state.viewChanges.collapsed, profileId, true)
+          }
+        })
+      }
     },
     removeLinksToProfile (state, profileId) {
       // NOTE this exists to be able to disconnect nodes which should not be in graph
@@ -488,9 +494,11 @@ export default function (apollo) {
     resetWhakapapaView ({ commit }) {
       commit('resetWhakapapaView')
     },
-    setViewFocus ({ commit, dispatch, getters }, id) {
+    async setViewFocus ({ commit, dispatch, getters }, id) {
       commit('setViewFocus', id)
-      dispatch('loadDescendants', getters.focus)
+
+      const links = await dispatch('getDescendantLinks', id)
+      if (links) dispatch('addLinks', links)
     },
     toggleViewMode ({ commit, dispatch }) {
       commit('toggleViewMode')
@@ -522,9 +530,7 @@ export default function (apollo) {
     async getWhakapapaView (context, viewId) {
       try {
         const res = await apollo.query(getWhakapapaView(viewId))
-
         if (res.errors) throw new Error(res.errors)
-
         // TODO success alert message
         return res.data.whakapapaView
       }
@@ -533,12 +539,23 @@ export default function (apollo) {
         console.error('failed to get the whakapapa', err)
       }
     },
+    async getDescendantLinks (context, profileId) {
+      try {
+        const res = await apollo.query(getDescendantLinks(profileId))
+        if (res.errors) throw new Error(res.errors)
+        // TODO success alert message
+        return res.data.getDescendantLinks
+      }
+      catch (err) {
+        // TODO error alert message
+        console.error('failed to get the descendant links', err)
+      }
+    },
     async getWhakapapaViews (context, opts = {}) {
       const { groupId } = opts
       try {
         const res = await apollo.query(getWhakapapaViews(groupId))
         if (res.errors) throw new Error(res.errors)
-
         // TODO success alert message
         return res.data.whakapapaViews
       }
@@ -581,72 +598,14 @@ export default function (apollo) {
     async loadWhakapapaView ({ commit, dispatch }, id) {
       commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
-      if (view) {
-        dispatch('setView', view)
-        dispatch('loadDescendants', { profileId: view.focus, depth: DEFAULT_DEPTH })
-      }
+      if (!view) return
+
+      commit('setView', view)
+      const links = await dispatch('getDescendantLinks', view.focus)
+      if (!links) return
+      dispatch('addLinks', { ...links, isLoadingFocus: true })
     },
-    async loadDescendants ({ state, dispatch, commit, getters, rootGetters }, opts) {
-      if (!opts) return
-      if (typeof opts === 'string') return dispatch('loadDescendants', { profileId: opts })
 
-      const {
-        profileId,
-        isLoadingFocus = opts.profileId === getters.focus, // if this load orginates from the focus
-        depth: lastDepth, // how many more generations we want to display. Can be empty
-        loaded = new Set() // which profiles we've already loaded/ processed
-      } = opts
-      if (!profileId || loaded.has(profileId)) return
-
-      const depth = (lastDepth != null) ? lastDepth - 1 : null
-      loaded.add(profileId)
-
-      const { childLinks, partnerLinks } = await dispatch('getFamilyLinks', { profileId, extended: true })
-
-      // NOTE we get extended family links in every case right now (extended: true)
-      // becuase they help with rendering, and mean transition to the extendedFamily view is smoother
-      // const links = await dispatch('getFamilyLinks', { profileId, extended: state.view.extendedFamily
-
-      // TODO 2022-03-07 mix - move this into table/Node.vue I think
-      if (getters.isTable) {
-        // load a persons profile into state if we are looking at the table
-        dispatch('person/loadPersonFull', profileId, { root: true })
-        // get all the partners profiles
-        partnerLinks.forEach(link => {
-          const partnerId = link.child === profileId ? link.parent : link.child
-          dispatch('person/loadPersonMinimal', partnerId, { root: true })
-        })
-      }
-
-      const childIds = childLinks
-        // keep links which from the profileId down to a child
-        .filter(link => link.parent === profileId && link.child !== profileId)
-        // keep links which are importantRelationship links (or not mentioned in a rule)
-        .filter(link => getters.isImportantLink(link.child, profileId))
-        .map(link => link.child)
-
-      if (getters.autoCollapse) {
-        // dont collapse a node who doesnt have descendants and partners
-        if (!childIds.length && !partnerLinks.length) commit('setNodeCollapsed', { nodeId: profileId, isCollapsed: false })
-
-        if (shouldCollapseChildren(loaded.size, depth, isLoadingFocus)) {
-          childIds.forEach(childId => {
-            commit('setNodeCollapsed', { nodeId: childId, isCollapsed: true })
-          })
-        }
-      }
-
-      const isNotIgnored = (link) => getters.isNotIgnored(link.child) && getters.isNotIgnored(link.parent)
-      commit('addLinks', {
-        childLinks: childLinks.filter(isNotIgnored),
-        partnerLinks: partnerLinks.filter(isNotIgnored)
-      })
-
-      // recurse through children
-      childIds.forEach(childId => {
-        dispatch('loadDescendants', { profileId: childId, isLoadingFocus, depth, loaded })
-      })
-    },
     async saveWhakapapaView ({ commit, dispatch }, input) {
       try {
         const res = await apollo.mutate(saveWhakapapaView(input))
@@ -1013,24 +972,38 @@ function uniqueId (array) {
   return uniqby(array, 'id')
 }
 
-function shouldCollapseChildren (numberLoaded, depth, isLoadingFocus) {
-  if (depth === null) return false
+function walkTree (childLinks, start, fn) {
+  // NOTE only walks childLinks
+  // depth-first walk
+  const queue = [[start, 0]]
+  const processed = new Set()
 
-  if (depth > 0) return false
-  if (depth === 0) {
-    // when depth is 0, we have used up all or generation-hops,
-    // so we pre-emptively continue loading links, but collapse the next children
-    // so that the graph drawing is bounded
-    if (isLoadingFocus && numberLoaded < MIN_LOADED_PROFILES) return false
-    // we may want to load more to account for some graphs starting out like a line
-    else return true
+  while (queue.length) {
+    const [parentId, depth] = queue.shift()
+    if (processed.has(parentId)) continue
+
+    fn(parentId, depth, processed)
+
+    for (const childId in childLinks[parentId]) {
+      queue.push([childId, depth + 1])
+    }
+
+    processed.add(parentId)
   }
-  if (depth < 0) {
+}
+
+function shouldCollapseChildren (numberLoaded, depth, isLoadingFocus) {
+  if (depth == null) return false
+
+  if (depth === 0) return false
+  if (depth > 0) {
     if (isLoadingFocus && numberLoaded < MIN_LOADED_PROFILES) return false
     return (depth % DEFAULT_DEPTH === 0)
   }
-  // beyond our initial goal, we collapse every DEFAULT_DEPTH'd generation, so that when you expand (uncollapse)
-  // a node, only another DEFAULT_DEPTH generations are displayed
+  if (depth < 0) {
+    console.error('depth < 0 should not occur')
+    return false
+  }
 }
 
 function firstDefined (...args) {

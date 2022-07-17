@@ -176,27 +176,16 @@ export default {
     this.tableOverflow()
     const { loadPersonFull } = this
 
-    // NOTE we use an async iterator here because with something like Promise.all
-    // it would try to ram all descendants through graphql query and crash the app
-    // with a big tree.
-    // This is like pull-streams but with async-await (ugly aye)
+    // HACKY 2022-07-11 mix
+    // uncollapse all nodes - needed to ensure all nodes are in d3 tree
+    this.setAutoCollapse(false)
 
-    async function * generateLoader (nodes) {
-      for (let i = 0; i < nodes.length; i++) {
-        await loadPersonFull(nodes[i].data.id)
-        await Promise.all(
-          nodes[i].partners
-            .map(node => loadPersonFull(node.data.id))
-        )
-        yield i
-      }
-    }
-
-    const generator = generateLoader(this.descendants)
-    for await (let i of generator) { // eslint-disable-line
-      // could update a progres
-    }
-    // could update 'done loading' here
+    // async load full profiles for all nodes in graph
+    // can be quite extensive, and is not currently cancellable
+    this.descendants.forEach(node => {
+      loadPersonFull(node.data.id)
+      node.partners.forEach(node => loadPersonFull(node.data.id))
+    })
   },
 
   computed: {
@@ -213,10 +202,7 @@ export default {
     },
     pathNode () {
       if (!this.searchedProfileId) return null
-      return this.descendants
-        .find(d => {
-          return d.data.id === this.searchedProfileId
-        })
+      return this.descendants.find(d => d.data.id === this.searchedProfileId)
     },
     // table height based on number of nodes on table
     tableHeight () {
@@ -228,17 +214,12 @@ export default {
     nodes () {
       const nodes = this.descendants
         .map(node => {
-          const profileId = node.data.id
-          const profile = mergeAdminProfile(this.person(profileId))
-          const partners = this.getPartnerIds(profileId)
-            .map(partnerId => this.person(partnerId))
-
           return {
             ...node,
             data: {
               ...node.data,
-              ...profile,
-              partners
+              ...mergeAdminProfile(this.person(node.data.id)),
+              partners: this.getPartnerIds(node.data.id).map(partnerId => this.person(partnerId))
             }
           }
         })
@@ -355,6 +336,7 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapActions('whakapapa', ['setAutoCollapse']),
     ...mapActions('person', ['loadPersonFull']),
     // sets the width of the table
     onscroll (e) {

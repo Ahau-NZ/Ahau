@@ -1,10 +1,13 @@
 export default function FindPathToRoot (getters) {
-  const getParentIds = getters.getRawParentIds
-  const getPartnerIds = getters.getRawPartnerIds
+  const {
+    getRawParentIds: getParentIds,
+    getRawPartnerIds: getPartnerIds,
+    whakapapaView
+  } = getters
 
-  function findAncestors (start, end, profileIds) {
+  function findAncestors (start, end, path) {
     if (start === end) {
-      profileIds.add(start)
+      path.add(start)
       return true
     }
 
@@ -12,18 +15,18 @@ export default function FindPathToRoot (getters) {
 
     return parentIds.some(parentId => {
       if (
-        !findAncestors(parentId, end, profileIds) &&
-        !findPartnerAncestors(parentId, end, profileIds)
+        !findAncestors(parentId, end, path) &&
+        !findPartnerAncestors(parentId, end, path)
       ) return false
 
-      profileIds.add(parentId)
+      path.add(parentId)
       return true
     })
   }
 
-  function findPartnerAncestors (start, end, profileIds) {
+  function findPartnerAncestors (start, end, path) {
     if (start === end) {
-      profileIds.add(start)
+      path.add(start)
       return true
     }
 
@@ -31,22 +34,25 @@ export default function FindPathToRoot (getters) {
 
     return partnerIds.some(partnerId => {
       if (
-        !findAncestors(partnerId, end, profileIds) &&
-        !findPartnerAncestors(partnerId, end, profileIds)
+        !findAncestors(partnerId, end, path) &&
+        !findPartnerAncestors(partnerId, end, path)
       ) return false
 
-      profileIds.add(partnerId)
+      path.add(partnerId)
       return true
     })
   }
 
   return function findPathToRoot (start) {
-    const profileIds = new Set()
-    const end = getters.whakapapaView.focus
+    if (!start) return []
 
-    if (findAncestors(start, end, profileIds)) profileIds.add(start)
-    else if (findPartnerAncestors(start, end, profileIds)) profileIds.add(start)
+    const path = new Set([start])
+    // NOTE: this path does not preserve order
+    const end = whakapapaView.focus
 
-    return Array.from(profileIds)
+    findAncestors(start, end, path) ||
+    findPartnerAncestors(start, end, path)
+
+    return Array.from(path)
   }
 }

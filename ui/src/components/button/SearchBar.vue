@@ -22,10 +22,7 @@
       -->
       <v-list-item v-if="data.item.type === 'loading'">
         <v-list-item-icon>
-          <v-progress-circular
-            indeterminate
-            color="#b12526"
-          />
+          <v-progress-circular indeterminate color="#b12526" />
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ loadingText }}</v-list-item-title>
@@ -88,9 +85,10 @@ export default {
     },
     displayText () {
       if (!this.hasSelection) return this.searchString
-      return (
-        'Selected: ' + (this.searchedProfile && (this.searchedProfile.preferredName || this.searchedProfile.legalName))) ||
-        this.searchString
+      const name = this.searchedProfile && (this.searchedProfile.preferredName || this.searchedProfile.legalName)
+      return name
+        ? 'Selected: ' + name
+        : this.searchString
     },
     searchedProfile () {
       if (!this.hasSelection) return null
@@ -130,6 +128,7 @@ export default {
       return this.isLoadingWhakapapa || this.isLoadingSuggestions
     },
     loadingText () {
+      // TODO i18n / translate
       if (this.isLoadingWhakapapa) return 'Loading profiles in this whakapapa'
       if (this.isLoadingSuggestions) return 'Searching for profiles'
       return '' // shouldnt reach here
