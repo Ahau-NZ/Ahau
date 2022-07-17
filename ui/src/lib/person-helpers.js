@@ -343,17 +343,18 @@ export function setDefaultData (withRelationships) {
 }
 
 export function mergeAdminProfile (profile) {
+  if (!profile) return {}
   if (!profile.adminProfile) return profile
 
   const adminProfile = profile.adminProfile
   profile.adminProfile = null // faster than delete
 
-  for (const [key, value] of Object.entries(adminProfile)) {
+  for (const key in adminProfile) {
     if (key === 'id') continue
-    if (isEmpty(value)) continue
+    if (isEmpty(adminProfile[key])) continue
 
     // over-ride!
-    profile[key] = value
+    profile[key] = adminProfile[key]
   }
 
   return profile

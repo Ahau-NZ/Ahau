@@ -33,81 +33,85 @@ test('vuex/whakapapa getters.findPathToRoot', t => {
 
   const { findPathToRoot } = Getters(state)
 
-  t.deepEqual(
+  const equalPath = (actual, expected, comment) => {
+    t.deepEqual(actual.sort(), expected.sort(), comment)
+  }
+
+  equalPath(
     findPathToRoot(null),
     [],
     'No id'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(muna),
     [muna],
     'No hops'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(myra),
-    [muna, myra],
+    [myra, muna],
     'One hop across'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(rena),
-    [muna, rena],
+    [rena, muna],
     'One hop up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(bill),
-    [muna, rena, bill],
+    [rena, bill, muna],
     'One hop across, and one hop up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(claudine),
-    [muna, rena, claudine],
+    [rena, claudine, muna],
     'One hop across and two hops up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(stacey),
-    [muna, rena, claudine, stacey],
+    [rena, claudine, stacey, muna],
     'Two hops across and two hops up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(susan),
-    [muna, rena, claudine, stacey, susan],
+    [rena, claudine, stacey, susan, muna],
     'One hop up, one hop across and two hops up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(zara),
-    [muna, rena, claudine, zara],
+    [rena, claudine, zara, muna],
     'Three hops up'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(makene),
-    [muna, rena, claudine, zara, makene],
+    [rena, claudine, zara, makene, muna],
     'One hop across and three hops up (including collapsed)'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(otene),
-    [muna, rena, claudine, zara, otene],
+    [rena, claudine, zara, otene, muna],
     'Four hops up (including collapsed)'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(tua),
-    [muna, tua],
+    [tua, muna],
     'finds path to whangai child'
   )
 
-  t.deepEqual(
+  equalPath(
     findPathToRoot(zavien),
-    [muna, rena, claudine, stacey, zavien],
+    [rena, claudine, stacey, zavien, muna],
     'finds path to extended family member'
   )
 
