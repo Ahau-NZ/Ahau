@@ -36,7 +36,7 @@ apollo.niceMutation = runApollo('mutate')
 // helpers which close over apollo.query/mutate and handle errors, results
 // WARNING assumes one thing is being queried at a time
 function runApollo (method) {
-  return (dispatch, opts) => apollo[method](opts)
+  const result = (dispatch, opts) => apollo[method](opts)
     .then(res => {
       if (res.errors) {
         dispatch('error/setGraphqlError', res.errors, { root: true })
@@ -44,7 +44,15 @@ function runApollo (method) {
       } // eslint-disable-line
       else return res.data[Object.keys(res.data)[0]] // assumption of only one thing queried
     })
-    .catch(error => dispatch('error/setNetworkError', error, { root: true }))
+    .catch(error => {
+      if (error.networkError && error.networkError.result && error.networkError.result.errors) {
+        error = error.networkError.result.errors
+      }
+
+      dispatch('error/setNetworkError', error, { root: true })
+    })
+
+  return result
 }
 
 Vue.use(Vuex)

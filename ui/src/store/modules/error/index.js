@@ -33,8 +33,7 @@ function errorMessage (error) {
 function errorDetails (error) {
   return (
     error.stack ||
-    (error.toString && error.toString()) ||
-    JSON.stringify(error)
+    JSON.stringify(error, null, 2)
   )
 }
 
