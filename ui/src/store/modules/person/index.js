@@ -152,7 +152,7 @@ export default function (apollo) {
     },
     async getPerson (_, profileId) {
       // loads all profile fields + siblings, partners, ....
-      // TODO look into deprecating this - should use getPersonFull + loadDescendants
+      // TODO look into deprecating this - should use getPersonFull + look some load-around?
       try {
         const res = await apollo.query(getPersonAndWhanau(profileId))
 

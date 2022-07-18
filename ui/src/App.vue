@@ -24,11 +24,13 @@
     />
 
     <DialogHandler /> <!-- TODO: find out what uses this? -->
+    <Error />
   </v-app>
 </template>
 
 <script>
 import Appbar from '@/components/menu/Appbar.vue'
+import Error from '@/components/Error.vue'
 import Spinner from '@/components/Spinner.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -51,6 +53,7 @@ export default {
   },
   components: {
     Appbar,
+    Error,
     Spinner,
     DialogHandler,
     AlertMessage

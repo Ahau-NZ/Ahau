@@ -520,65 +520,34 @@ export default function (apollo) {
 
       return dispatch('saveWhakapapaView', input)
     },
-    async getWhakapapaView (context, viewId) {
-      try {
-        const res = await apollo.query(getWhakapapaView(viewId))
-        if (res.errors) throw new Error(res.errors)
-        // TODO success alert message
-        return res.data.whakapapaView
-      }
-      catch (err) {
-        // TODO error alert message
-        console.error('failed to get the whakapapa', err)
-      }
+    async getWhakapapaView ({ dispatch }, viewId) {
+      return apollo.niceQuery(dispatch, getWhakapapaView(viewId))
     },
-    async getDescendantLinks (context, profileId) {
-      try {
-        const res = await apollo.query(getDescendantLinks(profileId))
-        if (res.errors) throw new Error(res.errors)
-        // TODO success alert message
-        return res.data.getDescendantLinks
-      }
-      catch (err) {
-        // TODO error alert message
-        console.error('failed to get the descendant links', err)
-      }
+    async getDescendantLinks ({ dispatch }, profileId) {
+      return apollo.niceQuery(dispatch, getDescendantLinks(profileId))
     },
-    async getWhakapapaViews (context, { groupId } = {}) {
-      try {
-        const res = await apollo.query(getWhakapapaViews(groupId))
-        if (res.errors) throw new Error(res.errors)
-        // TODO success alert message
-        return res.data.whakapapaViews
-      }
-      catch (err) {
-        // TODO error alert message
-        return []
-      }
+    async getWhakapapaViews ({ dispatch }, { groupId } = {}) {
+      return (
+        await apollo.niceQuery(dispatch, getWhakapapaViews(groupId)) ||
+        []
+      )
     },
-    async getFamilyLinks ({ commit, rootGetters }, { profileId, extended = true } = {}) {
+    async getFamilyLinks ({ commit, dispatch, rootGetters }, { profileId, extended = true } = {}) {
       commit('modifyActiveQueryCount', 1)
-      try {
-        const res = await apollo.query(getFamilyLinks(profileId, extended))
-        if (res.errors) throw new Error(res.errors)
+      const result = await apollo.niceQuery(dispatch, getFamilyLinks(profileId, extended))
+      commit('modifyActiveQueryCount', -1)
 
-        const { childLinks, partnerLinks } = res.data.loadFamilyOfPerson
-        const isNotTombstoned = (link) => (
-          // filter links involving tombstoned profiles
-          !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
-        )
+      if (!result) return
 
-        commit('modifyActiveQueryCount', -1)
-        return {
-          childLinks: childLinks.filter(isNotTombstoned),
-          partnerLinks: partnerLinks.filter(isNotTombstoned)
-        }
-      }
-      catch (err) {
-        console.error('error getting family links', err)
-        // TODO error alert message
-        commit('modifyActiveQueryCount', -1)
-        return { childLinks: [], partnerLinks: [] }
+      const { childLinks, partnerLinks } = result
+      const isNotTombstoned = (link) => (
+        // filter links involving tombstoned profiles
+        !rootGetters['person/isTombstoned'](link.child) && !rootGetters['person/isTombstoned'](link.parent)
+      )
+
+      return {
+        childLinks: childLinks.filter(isNotTombstoned),
+        partnerLinks: partnerLinks.filter(isNotTombstoned)
       }
     },
     async loadFamilyLinks ({ dispatch }, profileId) {
@@ -597,19 +566,13 @@ export default function (apollo) {
     },
 
     async saveWhakapapaView ({ commit, dispatch }, input) {
-      try {
-        const res = await apollo.mutate(saveWhakapapaView(input))
+      const result = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
+      if (!result) return
 
-        if (res.errors) throw new Error(res.errors)
+      const view = await dispatch('getWhakapapaView', result)
+      if (view) commit('setView', view)
 
-        const view = await dispatch('getWhakapapaView', res.data.saveWhakapapaView)
-        if (view) commit('setView', view)
-
-        return res.data.saveWhakapapaView
-      }
-      catch (err) {
-        console.error('failed to save the whakapapa', err)
-      }
+      return result
     },
     setView ({ commit }, view) {
       commit('setView', view)
@@ -673,17 +636,8 @@ export default function (apollo) {
       input.type = 'link/profile-profile/partner'
       await dispatch('saveLink', input)
     },
-    async saveLink (context, input) {
-      try {
-        const res = await apollo.mutate(saveLink(input))
-        if (res.errors) throw res.errors
-
-        return res.data.saveLink
-      }
-      catch (err) {
-        console.log('failed to create link', input)
-        console.log(err)
-      }
+    async saveLink ({ dispatch }, input) {
+      return apollo.niceMutation(dispatch, saveLink(input))
     },
     async deleteChildLink ({ commit, dispatch }, input) {
       const tombstoneId = await dispatch('deleteLink', input) // from db
@@ -703,41 +657,23 @@ export default function (apollo) {
     },
 
     async deleteLink ({ dispatch }, { linkId, tombstone, parent, child, isPartner }) {
-      try {
-        if (!linkId) {
-          const link = await dispatch('getLink', { parent, child, isPartner })
-          if (!link) throw new Error('cannot delete link, unable to find it')
-          linkId = link.linkId
+      if (!linkId) {
+        const link = await dispatch('getLink', { parent, child, isPartner })
+        if (!link) throw new Error('cannot delete link, unable to find it')
+        linkId = link.linkId
+      }
+
+      return apollo.niceMutation(dispatch, saveLink({
+        linkId,
+        tombstone: tombstone || {
+          date: new Date().toISOString().slice(0, 10),
+          reason: 'user deleted'
         }
-
-        const res = await apollo.mutate(saveLink({
-          linkId,
-          tombstone: tombstone || {
-            date: new Date().toISOString().slice(0, 10),
-            reason: 'user deleted'
-          }
-        }))
-        if (res.errors) throw res.errors
-
-        return res.data.saveLink
-      }
-      catch (err) {
-        console.log('failed to delete link', { linkId, parent, child, tombstone, isPartner })
-        console.log(err)
-      }
+      }))
     },
 
-    async getLink (context, input) { // input = { parent, child, isPartner }
-      try {
-        const res = await apollo.query(whakapapaLink(input))
-        if (res.errors) throw res.errors
-
-        return res.data.whakapapaLink
-      }
-      catch (err) {
-        console.log('failed to find link', input)
-        console.log(err)
-      }
+    async getLink ({ dispatch }, input) { // input = { parent, child, isPartner }
+      return apollo.niceQuery(dispatch, whakapapaLink(input))
     },
 
     async deleteLinkFromImportantRelationships ({ state, getters, dispatch }, link) {
