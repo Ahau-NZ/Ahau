@@ -3,12 +3,12 @@
 import Vue from 'vue'
 import uniqby from 'lodash.uniqby'
 
+import importFromCsvActions from './import-from-csv-actions'
 import { getWhakapapaView, getDescendantLinks, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
 import FindPathToRoot from './lib/find-path-to-root'
 
 import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
-import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
 
 const DEFAULT_DEPTH = 2
 // minimum number of generations to load before hiding further children
@@ -491,8 +491,18 @@ export default function (apollo) {
   }
 
   const actions = {
-    resetWhakapapaView ({ commit }) {
-      commit('resetWhakapapaView')
+    resetWhakapapaView ({ commit }) { commit('resetWhakapapaView') },
+    addLinks ({ commit }, links) { commit('addLinks', links) },
+    setExtendedFamily ({ commit }, extended) { commit('setExtendedFamily', extended) },
+    toggleViewMode ({ commit, dispatch }) { commit('toggleViewMode') },
+    toggleNodeCollapse ({ state, commit }, nodeId) {
+      commit('setNodeCollapsed', {
+        nodeId,
+        isCollapsed: !state.viewChanges.collapsed[nodeId]
+      })
+    },
+    removeLinksToProfile ({ state, commit }, profileId) {
+      commit('removeLinksToProfile', profileId)
     },
     async setViewFocus ({ commit, dispatch, getters }, id) {
       commit('setViewFocus', id)
@@ -500,24 +510,7 @@ export default function (apollo) {
       const links = await dispatch('getDescendantLinks', id)
       if (links) dispatch('addLinks', links)
     },
-    toggleViewMode ({ commit, dispatch }) {
-      commit('toggleViewMode')
-    },
-    async setExtendedFamily ({ commit }, extended) {
-      commit('setExtendedFamily', extended)
-    },
-    toggleNodeCollapse ({ state, commit }, nodeId) {
-      commit('setNodeCollapsed', {
-        nodeId,
-        isCollapsed: !state.viewChanges.collapsed[nodeId]
-      })
-    },
-    addLinks ({ commit }, links) {
-      commit('addLinks', links)
-    },
-    removeLinksToProfile ({ state, commit }, profileId) {
-      commit('removeLinksToProfile', profileId)
-    },
+
     async createWhakapapaView ({ dispatch }, input) {
       if (!input.authors) {
         input.authors = {
@@ -551,8 +544,7 @@ export default function (apollo) {
         console.error('failed to get the descendant links', err)
       }
     },
-    async getWhakapapaViews (context, opts = {}) {
-      const { groupId } = opts
+    async getWhakapapaViews (context, { groupId } = {}) {
       try {
         const res = await apollo.query(getWhakapapaViews(groupId))
         if (res.errors) throw new Error(res.errors)
@@ -564,9 +556,7 @@ export default function (apollo) {
         return []
       }
     },
-    async getFamilyLinks ({ commit, rootGetters }, opts = {}) {
-      const { profileId, extended = true } = opts
-
+    async getFamilyLinks ({ commit, rootGetters }, { profileId, extended = true } = {}) {
       commit('modifyActiveQueryCount', 1)
       try {
         const res = await apollo.query(getFamilyLinks(profileId, extended))
@@ -673,121 +663,8 @@ export default function (apollo) {
         // remove this concat once we check it's not needed...
     },
 
-    // create a whakapapa from rows containing a profile + link
-    async bulkCreateWhakapapaView ({ dispatch }, { whakapapaViewInput, rows, type }) {
-      dispatch('setLoading', true, { root: true })
-      dispatch('setLoadingLabel', 'importing CSV...', { root: true })
+    ...importFromCsvActions,
 
-      const { recps } = whakapapaViewInput
-      if (!recps) throw new Error('no recps found on the import input!')
-
-      const length = rows.length
-      const totalProfiles = {}
-      const totalLinks = []
-      const chunkSize = 100
-
-      for (let i = 0; i < length; i += chunkSize) {
-        // show progress percentage
-        const percentage = Math.round((Object.keys(totalProfiles).length / length * 100) * 10) / 10 || true
-        dispatch('setLoading', percentage, { root: true })
-        dispatch('setLoadingLabel', 'creating profiles...', { root: true })
-        // split out 100 profiles
-        const chunk = rows.slice(i, i + chunkSize)
-        // create profiles
-        const { profiles, links } = await dispatch('bulkCreateProfiles', { chunk, recps })
-        // add profiles to total obj
-        Object.assign(totalProfiles, profiles)
-        // add links to total links arr
-        if (links) totalLinks.push(...links)
-      }
-
-      if (totalLinks.length) {
-        // show progress percentage
-        dispatch('setLoading', true, { root: true })
-        dispatch('setLoadingLabel', 'adding family links...', { root: true })
-
-        for (let i = 0; i < length; i += chunkSize) {
-          // show progress percentage
-          const percentage = Math.round((i / totalLinks.length * 100) * 10) / 10 || true
-          dispatch('setLoading', percentage, { root: true })
-          // split 100 links
-          const linksChunk = totalLinks.slice(i, i + chunkSize)
-          // create links
-          await dispatch('bulkCreateLinks', { linksChunk, totalProfiles, recps })
-        }
-      }
-
-      // if from create whakapapa
-      if (!type) {
-        // the first row is the focus
-        whakapapaViewInput.focus = totalProfiles[rows[0].csvId]
-        // create whakapapa with first person in the csv as the focus
-        return dispatch('createWhakapapaView', whakapapaViewInput) // whakapapaId
-      }
-      else {
-        return totalProfiles
-      }
-    },
-    async bulkCreateProfiles ({ dispatch, rootGetters }, { chunk, recps }) {
-      const profiles = {}
-      const links = chunk
-        .map(row => row.link)
-        .filter(Boolean)
-
-      /*
-        NOTE:
-        profiles = {
-          [csvId]: profileId
-        }
-        links = [{ childCsvId, parentCsvId, relationshipType }]
-      */
-
-      const res = await Promise.all(
-        chunk.map(async ({ csvId, profile }, i) => {
-          if (!profile) return
-
-          profile.recps = recps
-          profile.type = rootGetters.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
-          profile.authors = {
-            add: ['*']
-          }
-          const profileId = await dispatch('person/createPerson', profile, { root: true })
-
-          // importing from peoples list doesnt require a csvId we may not be building relaiotnships
-          if (csvId) profiles[csvId] = profileId
-          else profiles[i] = profileId
-        })
-      )
-        .catch((err) => {
-          console.error('failed to create profile with csv bulk create', err)
-          dispatch('setLoading', false, { root: true })
-        })
-
-      if (!res) return
-
-      return { profiles, links }
-    },
-    async bulkCreateLinks ({ dispatch }, { recps, linksChunk, totalProfiles }) {
-      await Promise.all(
-        linksChunk.map((link, i) => {
-          const { parentCsvId, childCsvId, relationshipType } = link
-
-          const relationship = {
-            // get the parent and child's actual profileId
-            parent: totalProfiles[parentCsvId],
-            child: totalProfiles[childCsvId],
-            recps
-          }
-
-          if (relationshipType === 'partner') return dispatch('createPartnerLink', relationship)
-
-          // // TODO: check if this is important
-          if (relationshipType !== '' && relationshipType !== null) relationship.relationshipType = relationshipType
-
-          return dispatch('createChildLink', relationship)
-        })
-      )
-    },
     async createChildLink ({ dispatch }, input) {
       input.type = 'link/profile-profile/child'
       await dispatch('saveLink', input)
