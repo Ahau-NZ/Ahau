@@ -14,6 +14,7 @@ import whakapapa from './modules/whakapapa'
 
 import alerts from './modules/alerts'
 import analytics from './modules/analytics'
+import error from './modules/error'
 
 // new
 import tribe from './modules/tribe'
@@ -29,6 +30,30 @@ import table from './modules/table'
 import { apolloProvider } from '../plugins/vue-apollo'
 
 const apollo = apolloProvider.defaultClient
+
+apollo.niceQuery = runApollo('query')
+apollo.niceMutation = runApollo('mutate')
+// helpers which close over apollo.query/mutate and handle errors, results
+// WARNING assumes one thing is being queried at a time
+function runApollo (method) {
+  const result = (dispatch, opts) => apollo[method](opts)
+    .then(res => {
+      if (res.errors) {
+        dispatch('error/setGraphqlError', res.errors, { root: true })
+        return null
+      } // eslint-disable-line
+      else return res.data[Object.keys(res.data)[0]] // assumption of only one thing queried
+    })
+    .catch(error => {
+      if (error.networkError && error.networkError.result && error.networkError.result.errors) {
+        error = error.networkError.result.errors
+      }
+
+      dispatch('error/setNetworkError', error, { root: true })
+    })
+
+  return result
+}
 
 Vue.use(Vuex)
 
@@ -49,6 +74,7 @@ export default new Vuex.Store({
     notifications,
     alerts,
     analytics,
+    error,
     tree: tree(),
 
     // new
