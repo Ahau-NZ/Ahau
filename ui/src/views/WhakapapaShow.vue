@@ -57,6 +57,11 @@
           <ExportButton @export="toggleDownload()" />
         </div>
         <div class="icon-button">
+          <v-btn @click="print">
+            Print
+          </v-btn>
+        </div>
+        <div class="icon-button">
           <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
           <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </div>
@@ -176,6 +181,8 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
 
+const pull = require('pull-stream')
+
 export default {
   name: 'WhakapapaShow',
   components: {
@@ -273,6 +280,100 @@ export default {
       } else {
         this.updateDialog('view-edit-person', null)
       }
+    },
+    print () {
+      const svg = document.importNode(document.body.querySelector('svg.tree'), true)
+      svg.removeChild(svg.querySelector('.zoomControl'))
+
+      const images = svg.querySelectorAll('svg image')
+
+      const image = new Image()
+      image.crossOrigin = 'anonymous' // required
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+
+      function toDataURL (src, cb) {
+        if (src.endsWith('.svg')) {
+          fetch(src)
+            .then(res => res.text())
+            .then(text => {
+              const dataURL = 'data:image/svg+xml,' + encodeSVG(text)
+              // const blob = new Blob([text], { type: 'image/svg+xml;charset=utf-8' })
+              // const dataURL = URL.createObjectURL(blob)
+              cb(null, dataURL)
+            })
+        } // eslint-disable-line
+        else {
+          image.onload = () => {
+            canvas.height = image.naturalHeight
+            canvas.width = image.naturalWidth
+            ctx.drawImage(image, 0, 0)
+            cb(null, canvas.toDataURL())
+          }
+          image.src = src
+        }
+      }
+
+      function encodeSVG (svgString) {
+        return svgString
+          .replace('<svg', ~svgString.indexOf('xmlns')
+            ? '<svg'
+            : '<svg xmlns="http://www.w3.org/2000/svg"'
+          )
+          // Encode (may need a few extra replacements)
+          .replace(/"/g, '\'')
+          .replace(/%/g, '%25')
+          .replace(/#/g, '%23')
+          .replace(/{/g, '%7B')
+          .replace(/}/g, '%7D')
+          .replace(/</g, '%3C')
+          .replace(/>/g, '%3E')
+
+          .replace(/\s+/g, ' ')
+          // The maybe list (add on documented fail)
+          //  .replace(/&/g, '%26')
+          //  .replace('|', '%7C')
+          //  .replace('[', '%5B')
+          //  .replace(']', '%5D')
+          //  .replace('^', '%5E')
+          //  .replace('`', '%60')
+          //  .replace(';', '%3B')
+          //  .replace('?', '%3F')
+          //  .replace(':', '%3A')
+          //  .replace('@', '%40')
+          //  .replace('=', '%3D')
+      }
+
+      pull(
+        pull.values(images),
+        pull.asyncMap((img, cb) => {
+          toDataURL(img.getAttribute('href'), (err, dataURL) => {
+            if (err) return cb(err)
+
+            img.setAttribute('href', dataURL)
+            cb(null)
+          })
+        }),
+        pull.collect(err => {
+          if (err) return console.error(err)
+
+
+          const svgStr = svg.outerHTML
+            .replace('svg', 'svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"')
+            // tidy ups
+            .replace(/\sdata-v-[a-z0-9]+=""/g, '')
+
+          const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' })
+          const dataURL = URL.createObjectURL(blob)
+          // const dataURL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.outerHTML)
+
+          const a = document.createElement('a')
+          a.setAttribute('href', dataURL)
+          a.setAttribute('download', 'whakapapa-export.svg')
+          a.setAttribute('target', '_blank')
+          a.click()
+        })
+      )
     },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars

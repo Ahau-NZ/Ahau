@@ -268,12 +268,6 @@ g {
       }
     }
   }
-  rect {
-    fill: #fff;
-  }
-  text {
-    fill: #555;
-  }
 
   &:not(:root) {
     overflow: visible;
