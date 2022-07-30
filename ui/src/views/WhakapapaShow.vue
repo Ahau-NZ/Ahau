@@ -284,6 +284,9 @@ export default {
     print () {
       const svg = document.importNode(document.body.querySelector('svg.tree'), true)
       svg.removeChild(svg.querySelector('.zoomControl'))
+      // fix the:
+      // - set width/ height based on graph OR add viewBox
+      // - left-align the image
 
       const images = svg.querySelectorAll('svg image')
 
@@ -347,6 +350,15 @@ export default {
       pull(
         pull.values(images),
         pull.asyncMap((img, cb) => {
+          // TRY: swap encoded SVG for whole SVG embedded (instead of image)
+
+          // like
+          // if (img.getAttribute('href').endsWith('.svg')) {
+          //   const svg = document.createElement('svg')
+          //   svg.outerHTML = text
+          //   img.parent.replaceChild(img, svg)
+          // }
+          //
           toDataURL(img.getAttribute('href'), (err, dataURL) => {
             if (err) return cb(err)
 

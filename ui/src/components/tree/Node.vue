@@ -10,7 +10,7 @@
   >
 
     <g v-if="showAvatars" :transform="`translate(0 ${radius + 12})`">
-      <rect :width="textWidth" :x="-textWidth / 2" y="-16" height="22"></rect>
+      <rect :width="textWidth" :x="-textWidth / 2" y="-16" height="22" />
       <text x="0" y="-16" text-anchor="middle">
         <tspan v-for="(line, i) in splitDisplayName" :key="i"
           x="0" dy="1.2em"
@@ -50,6 +50,7 @@
         :r="radius"
       />
       <image
+        :href="imageSrc || defaultImage()"
         :xlink:href="imageSrc || defaultImage()"
         :x="-radius"
         :y="-radius"
