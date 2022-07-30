@@ -3,10 +3,11 @@ const fs = require('fs')
 const path = require('path')
 const env = require('ahau-env')()
 const crypto = require('crypto')
-const envPaths = require('env-paths')
+// const envPaths = require('env-paths')
 const merge = require('lodash.merge')
 
-const appPath = envPaths(env.ahau.appName, { suffix: '' }).data
+const appPath = '/tmp/ahau-dev-' + Date.now()
+// const appPath = envPaths(env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
 const core = {
