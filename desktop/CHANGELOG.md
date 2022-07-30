@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## v2.14.1
+
+patched a bug introduced by ssb-tribes removing deprecated `application` API - this was still used
+in ssb-ahau's database migrations
+
 ## v2.14.0
 
 ### Features
