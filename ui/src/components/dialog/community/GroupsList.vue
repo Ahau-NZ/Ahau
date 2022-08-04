@@ -108,7 +108,7 @@ export default {
     }
   },
   async mounted () {
-    await this.loadParentGroup()
+    if (this.editing) await this.loadParentGroup()
     // await this.loadSubGroups()
   },
   computed: {

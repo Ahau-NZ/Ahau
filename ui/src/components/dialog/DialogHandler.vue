@@ -213,7 +213,6 @@ export default {
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
-      'loadDescendants',
       'saveWhakapapaView',
       'addLinks',
       'saveLink',
@@ -322,9 +321,6 @@ export default {
 
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
-
-          await this.loadDescendants({ profileId: parentProfileId })
-
           break
 
         case 'parent':
@@ -356,14 +352,8 @@ export default {
           else {
             const parentId = this.getParentNodeId(child)
 
-            // when a node already has a parent node above them, this will be called
-            if (parentId) { // when a node already has a parent node above them, this will be called
-              await this.loadDescendants(parentId)
-              // TODO change to take a second argument "depth", or make loadDescendantsToDepth
-              // TODO cherese 9-3-22 also replace loadWhakapapa within SideNodeDialog.vue
-            } else {
-              // when the child doesnt have a parent above them, this will be called
-              // load the new parents profile
+            if (!parentId) {
+              // when the child doesnt have a parent above them, load the new parents profile
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
@@ -377,9 +367,6 @@ export default {
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
-
-          // TODO: this adds the partner to the tree, but do we need to do this much?
-          await this.loadDescendants(this.selectedProfile.id)
           break
         default:
           console.error('wrong type for add person')

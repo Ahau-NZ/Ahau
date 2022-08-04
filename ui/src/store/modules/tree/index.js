@@ -17,6 +17,9 @@ import calculateAge from '../../../lib/calculate-age'
 
 export default function () {
   const state = {
+    tree: null,
+    secondaryLinks: {},
+
     mouseEvent: null,
     hoveredProfileId: null,
     searchedProfileId: null
@@ -27,6 +30,12 @@ export default function () {
   // this means we can more easily draw lessImortantRelationship links
 
   const getters = {
+    tree: state => state.tree,
+    descendants (state, getters) {
+      if (state.tree) return state.tree.descendants()
+      else return []
+      // returns the array of descendants starting with the root node, then followed by each child in topological order
+    },
     mouseEvent: state => state.mouseEvent,
     hoveredProfileId: state => state.hoveredProfileId,
     searchedProfileId: state => state.searchedProfileId,
@@ -72,7 +81,6 @@ export default function () {
         ) / NODE_SIZE_X
       }
     },
-
     layout (state, getters) {
       return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
@@ -81,73 +89,6 @@ export default function () {
             ? getters.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
             : getters.distanceBetweenNodes(a, b, true) // areCousins (left=A, right=B)
         })
-    },
-
-    root (state, getters, rootState, rootGetters) {
-      const nestedDescendants = rootGetters['whakapapa/nestedDescendants']
-      return d3Hierarchy(nestedDescendants)
-        /* sort the children by age */
-        // https://github.com/d3/d3-hierarchy#node_sort
-        .sort((a, b) => {
-          const A = getOrderData(rootGetters, a)
-          if (!A) return 0
-          const B = getOrderData(rootGetters, b)
-          if (!B) return 0
-
-          // try to compare by birth order
-          if (A.birthOrder > B.birthOrder) return 1
-          if (A.birthOrder < B.birthOrder) return -1
-
-          // fall back to age
-          if (A.age > B.age) return -1
-          if (A.age < B.age) return 1
-
-          if (!A.birthOrder) return 1
-          if (!B.birthOrder) return -1
-
-          return 0
-        })
-    },
-
-    tree (state, getters, rootState, rootGetters) {
-      const treeLayout = getters.layout(getters.root)
-
-      const getChildType = (parentNode, childNode) => {
-        return rootGetters['whakapapa/getChildType'](parentNode.data.id, childNode.data.id)
-      }
-      const getPartnerType = (A, B) => {
-        return rootGetters['whakapapa/getPartnerType'](A.data.id, B.data.id)
-      }
-
-      // for each node in the tree:
-      treeLayout.each(node => {
-        // add partners (sorted by children)
-        node.partners = layoutPartnerNodes(node, rootGetters)
-
-        const partnerLinks = layoutPartnerLinks(node, { getPartnerType })
-        const childLinks = layoutChildLinks(node, partnerLinks, { getChildType, getPartnerType })
-
-        // then add link data
-        //    - rootNode --> partner (if there's a relationship)
-        //    - rootNode --> child (when solo parent)
-        //    - partner --> child (when solo parent)
-        //    - rootNode + partner --> child
-
-        node.links = [
-          ...childLinks,
-          ...partnerLinks
-        ]
-      })
-
-      // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
-      // NOTE ideally we could do this here ... but results in an infinite loop
-      // NOTE done after above round as partners are added there
-
-      return treeLayout
-    },
-    descendants (state, getters) {
-      return getters.tree.descendants()
-      // returns the array of descendants starting with the root node, then followed by each child in topological order
     },
 
     // nodes
@@ -189,6 +130,9 @@ export default function () {
     },
     setSearchedProfileId (state, id) {
       state.searchedProfileId = id
+    },
+    setTree (state, tree) {
+      state.tree = tree
     }
   }
 
@@ -201,6 +145,11 @@ export default function () {
     },
     setSearchedProfileId ({ commit }, id) {
       commit('setSearchedProfileId', id)
+    },
+    refreshWhakapapaData ({ rootGetters, commit }) {
+      const tree = buildTree(rootGetters)
+
+      commit('setTree', tree)
     }
   }
 
@@ -210,6 +159,74 @@ export default function () {
     getters,
     mutations,
     actions
+  }
+}
+
+export function buildTree (rootGetters) {
+  const root = buildRoot(rootGetters)
+  const treeLayout = rootGetters['tree/layout'](root)
+
+  const getChildType = (parentNode, childNode) => {
+    return rootGetters['whakapapa/getChildType'](parentNode.data.id, childNode.data.id)
+  }
+  const getPartnerType = (A, B) => {
+    return rootGetters['whakapapa/getPartnerType'](A.data.id, B.data.id)
+  }
+
+  // for each node in the tree:
+  treeLayout.each(node => {
+    // add partners (sorted by children)
+    node.partners = layoutPartnerNodes(node, rootGetters)
+
+    // then add link data
+    //    - rootNode --> partner (if there's a relationship)
+    //    - rootNode --> child (when solo parent)
+    //    - partner --> child (when solo parent)
+    //    - rootNode + partner --> child
+    const partnerLinks = layoutPartnerLinks(node, { getPartnerType })
+    const childLinks = layoutChildLinks(node, partnerLinks, { getChildType, getPartnerType })
+
+    node.links = [
+      ...childLinks,
+      ...partnerLinks
+    ]
+  })
+
+  // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
+  // NOTE ideally we could do this here ... but results in an infinite loop
+  // NOTE done after above round as partners are added there
+
+  return treeLayout
+}
+
+function buildRoot (rootGetters) {
+  const nestedDescendants = rootGetters['whakapapa/nestedDescendants']
+
+  return d3Hierarchy(nestedDescendants)
+    /* sort the children by age */
+    .sort(CompareAge(rootGetters))
+    // https://github.com/d3/d3-hierarchy#node_sort
+}
+
+function CompareAge (rootGetters) {
+  return function compareAge (a, b) {
+    const A = getOrderData(rootGetters, a)
+    if (!A) return 0
+    const B = getOrderData(rootGetters, b)
+    if (!B) return 0
+
+    // try to compare by birth order
+    if (A.birthOrder > B.birthOrder) return 1
+    if (A.birthOrder < B.birthOrder) return -1
+
+    // fall back to age
+    if (A.age > B.age) return -1
+    if (A.age < B.age) return 1
+
+    if (!A.birthOrder) return 1
+    if (!B.birthOrder) return -1
+
+    return 0
   }
 }
 

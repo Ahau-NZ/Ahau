@@ -58,7 +58,8 @@ export default {
       type: String,
       default: '12'
     },
-    showCheckbox: Boolean
+    showCheckbox: Boolean,
+    error: { type: Boolean, default: false }
   },
   components: {
     NodeDatePicker
@@ -84,6 +85,9 @@ export default {
 
         this.start = start
         this.end = end
+      },
+      error (newVal) {
+        if (newVal) this.errorMsg = 'Date of birth is required'
       }
     },
     showEndDate (show) {

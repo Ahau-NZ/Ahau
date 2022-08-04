@@ -25,6 +25,10 @@
     "Pataka",
     "Community"
   ],
+  "CustomFieldInterface": [
+    "CommunityCustomField",
+    "CommunityCustomFieldList"
+  ],
   "Artefact": [
     "Video",
     "Audio",

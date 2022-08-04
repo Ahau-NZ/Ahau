@@ -1,6 +1,6 @@
 <template>
   <v-col cols="12">
-    <p class="mb-5 black--text">{{ t('tribalPermissions') }}</p>
+    <p class="mb-5">{{ t('tribalPermissions') }}</p>
     <v-tooltip top open-delay="200">
       <template v-slot:activator="{ on }">
         <v-col v-on="on" :class="mobile ? 'pa-4 black--text':'ml-10 black--text'" style="background-color:#ebebeb80;">
@@ -84,9 +84,5 @@ export default {
 }
 </script>
 <style scoped>
-
-p {
-  color: black
-}
 
 </style>

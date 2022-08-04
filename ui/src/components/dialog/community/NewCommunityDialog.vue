@@ -2,6 +2,7 @@
   <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
+    :hideActions="!editing && tab !== 'tab-3'"
   >
     <template v-if="!hideDetails" v-slot:pinned>
       <v-app-bar
@@ -24,21 +25,9 @@
             <v-icon small v-if="!mobile" left>
               mdi-form-select
             </v-icon>
-            {{t('registration')}}
+            {{t('data')}}
           </v-tab>
-          <v-tab v-if="formData.authors && formData.authors.length" href="#tab-3" :class="mobile ? 'mb-tabs':'desk-tabs'">
-            <v-icon small v-if="!mobile" left>
-              mdi-account-group-outline
-            </v-icon>
-            {{$t('groups.groups')}}
-          </v-tab>
-          <v-tab v-if="formData.authors && formData.authors.length" href="#tab-4" :class="mobile ? 'mb-tabs':'desk-tabs'">
-            <v-icon small v-if="!mobile" left>
-              mdi-account-multiple-check
-            </v-icon>
-            {{t('permissions')}}
-          </v-tab>
-          <v-tab href="#tab-5" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-tab href="#tab-3" :class="mobile ? 'mb-tabs':'desk-tabs'">
             <v-icon small v-if="!mobile" left>
               mdi-cog
             </v-icon>
@@ -52,13 +41,25 @@
       <v-tabs-items light v-model="tab">
         <v-tab-item value="tab-1">
           <v-col class="py-0">
-            <CommunityForm :editing="editing" :communityProfile.sync="formData" />
+            <CommunityForm :editing="editing" :communityProfile.sync="formData"/>
+            <v-row justify="center" class="my-4">
+              <v-btn v-if="editing" class="mx-4" color="secondary" dark @click="$emit('delete')">
+                {{ $t('addCommunityForm.delete') }}
+                <v-icon class="pl-2">mdi-delete</v-icon>
+              </v-btn>
+              <v-btn color="blue-grey" dark @click="nextTab">
+                {{ $t('addCommunityForm.next') }}
+                <v-icon class="pl-2">mdi-page-next-outline</v-icon>
+              </v-btn>
+            </v-row>
           </v-col>
         </v-tab-item>
         <v-tab-item value="tab-2">
+          <DataModel :customFields.sync="formData.customFields"/>
+          <v-divider class="my-10"></v-divider>
           <v-row class="ma-2">
             <v-col cols="12">
-              <p>{{ $t('addCommunityForm.form') }}</p>
+              <p>{{ t('form') }}</p>
             </v-col>
             <v-col cols="10" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1">
               <v-text-field
@@ -66,7 +67,7 @@
                 append-icon="mdi-delete"
                 @click:append="removeJoiningQuestion(i)"
                 :label="`Question ${i + 1}`"
-                :placeholder="$t('addCommunityForm.questionPlaceholder')"
+                :placeholder="t('questionPlaceholder')"
                 auto-focus
                 outlined
                 hide-details
@@ -74,36 +75,34 @@
             </v-col>
             <v-col cols="12" justify="start" class="px-1">
               <v-btn color="#3b3b3b" class="white--text" @click="addQuestionField">
-                <v-icon class="pr-1">mdi-plus</v-icon> {{ $t('addCommunityForm.addQuestion') }}
+                <v-icon class="pr-1">mdi-plus</v-icon> {{ t('addQuestion') }}
               </v-btn>
             </v-col>
           </v-row>
-          <DataModel />
+          <v-row justify="center" class="my-4">
+            <v-btn color="blue-grey" dark @click="nextTab">
+              {{ $t('addCommunityForm.next') }}
+              <v-icon class="pl-2">mdi-page-next-outline</v-icon>
+            </v-btn>
+          </v-row>
         </v-tab-item>
         <v-tab-item light value="tab-3">
-          <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" />
-        </v-tab-item>
-        <v-tab-item light value="tab-4">
-          <Permissions mobile />
-        </v-tab-item>
-        <v-tab-item light value="tab-5">
           <TribeSettings :settings="settings" @change="updateSettings" />
+          <v-divider/>
+          <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" />
+          <v-divider/>
+          <Permissions mobile />
         </v-tab-item>
       </v-tabs-items>
     </template>
     <template v-slot:before-actions>
-      <v-col justify="center">
-        <v-btn v-if="editing" text @click="$emit('delete')">
-          {{ t('delete') }}
-          <v-icon class="pl-2">mdi-delete</v-icon>
-        </v-btn>
-      </v-col>
     </template>
   </Dialog>
 </template>
 
 <script>
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
@@ -115,6 +114,7 @@ import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
 
 import { mapGetters } from 'vuex'
+import isEqual from 'lodash.isequal'
 
 export default {
   name: 'NewCommunityDialog',
@@ -129,7 +129,7 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     profile: { type: Object, default () { return EMPTY_COMMUNITY } },
-    title: { type: String, default: 'Create a new community' },
+    title: { type: String, default: 'Create new tribe' },
     hideDetails: { type: Boolean, default: false },
     editing: Boolean
   },
@@ -166,7 +166,6 @@ export default {
       }
     }
   },
-
   computed: {
     ...mapGetters('tribe', ['tribeSettings']),
     mobile () {
@@ -178,6 +177,7 @@ export default {
   },
   methods: {
     addQuestionField () {
+      if (!this.formData.joiningQuestions) this.formData.joiningQuestions = []
       this.formData.joiningQuestions.push({ label: '', type: 'input' })
     },
     removeJoiningQuestion (index) {
@@ -195,14 +195,12 @@ export default {
         output = getObjectChanges(setDefaultCommunity(EMPTY_COMMUNITY), this.formData)
       }
 
-      if (output.authors) {
-        if (output.authors.add) {
-          output.authors.add = output.authors.add.map(k => k.feedId)
-        }
-        if (output.authors.remove) {
-          output.authors.remove = output.authors.remove.map(k => k.feedId)
-        }
+      if (this.formData.customFields && this.formData.customFields.length) {
+        output.customFields = this.getCustomFieldChanges(this.profile.customFields, this.formData.customFields)
+        if (isEmpty(output.customFields)) delete output.customFields
       }
+
+      if (output.authors) output.authors = this.getAuthorChanges(output.authors)
 
       this.$emit('submit', output)
       this.close()
@@ -216,6 +214,40 @@ export default {
     },
     t (key, vars) {
       return this.$t('addCommunityForm.' + key, vars)
+    },
+    getCustomFieldChanges (initial, updated) {
+      return updated
+        .filter(updatedField => {
+          if (!updatedField.key) return false
+
+          return !initial.some(initialField => {
+            return (initialField.key === updatedField.key) && isEqual(initialField, updatedField)
+          })
+        })
+        .map(field => {
+          delete field.__typename
+          if (field.type === 'list' && typeof field.options === 'string' && field.options.length > 0) {
+            field.options = field.options.split(',')
+          }
+
+          return field
+        })
+    },
+    getAuthorChanges (authors) {
+      if (authors.add) {
+        authors.add = authors.add.map(k => k.feedId)
+      }
+      if (authors.remove) {
+        authors.remove = authors.remove.map(k => k.feedId)
+      }
+      return authors
+    },
+    nextTab () {
+      document.getElementById('app-dialog').scrollTop = 0
+      let tab
+      if (this.tab === 'tab-1') tab = 'tab-2'
+      if (this.tab === 'tab-2') tab = 'tab-3'
+      this.tab = tab
     }
   }
 }

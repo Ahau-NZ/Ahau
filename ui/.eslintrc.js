@@ -25,6 +25,7 @@ module.exports = {
     'quote-props': 'error',
     'array-bracket-spacing': 'warn',
     'dot-notation': 'warn',
+    'no-multiple-empty-lines': 'warn',
 
     'vue/multi-word-component-names': offForNow,
 
