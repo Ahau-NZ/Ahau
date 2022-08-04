@@ -64,6 +64,9 @@ const config = makeConfig(appName, {
   hyperBlobs: {
     port: env.hyperBlobs.port,
     autoPrune: false
+  },
+  graphql: {
+    port: env.graphql.port
   }
 })
 

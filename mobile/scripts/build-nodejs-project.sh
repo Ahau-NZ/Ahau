@@ -13,7 +13,7 @@ trap 'onFailure $?' ERR
 BUILD_PLATFORM=$1
 
 echo "Moving from ./src to ./www ...";
-$(npm bin)/cpy '**/*' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
+$(npm bin)/cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
 
 # Write the file to toggle build of native modules
 if [ -f ./www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt ]; then
