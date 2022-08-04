@@ -1,6 +1,6 @@
 {
   "name": "ahau-mobile-server",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "main": "main.js",
   "engines": {
     "node": "12.19.0"
