@@ -36,7 +36,7 @@ echo "Building the env.json file...";
 # Install modules ignoring their install scripts
 # This reduces the install time
 echo "Installing node_modules dependencies...";
-npm install --ignore-scripts --no-optional --silent
+npm ci --ignore-scripts --no-optional --silent
 
 # Patch some file changes
 echo "Applying patches...";
