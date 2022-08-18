@@ -1,5 +1,6 @@
 import uniqBy from 'lodash.uniqby'
 import clone from 'lodash.clonedeep'
+
 import { orderBy } from 'lodash'
 
 export const DEFAULT_NEW_FIELD = {
@@ -82,8 +83,14 @@ export function findMissingRequiredFields (profile, requiredFields) {
   return invalidProps
 }
 
-function mapLabelToProp (prop) {
-  return mappings[prop]
+function mapLabelToProp (label) {
+  return mappings[label]
+}
+
+export function mapPropToLabel (prop) {
+  return Object.entries(mappings)
+    .find(([key, label]) => label === prop)
+    .at(0)
 }
 
 const mappings = {
