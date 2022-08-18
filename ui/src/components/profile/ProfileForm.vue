@@ -1,5 +1,10 @@
 <template>
-  <v-form ref="form" light class="px-4">
+  <v-form
+    v-model="valid"
+    ref="form"
+    light
+    class="px-4"
+  >
     <v-row :class="readonly ? 'pl-4' : ''">
       <!-- Upload profile photo -->
       <v-col :order="smScreen ? '' : '2'" class="py-0">
@@ -457,7 +462,7 @@ import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 import isEmpty from 'lodash.isempty'
 import get from 'lodash.get'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ProfileForm',
@@ -487,10 +492,7 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       formData: {},
-      form: {
-        valid: true,
-        showDescription: false
-      },
+      valid: false,
       selectedGender: '',
       showAdvanced: false,
       customFieldValues: {},
@@ -498,6 +500,8 @@ export default {
     }
   },
   mounted () {
+    this.$refs.form.validate()
+
     if (this.fullForm) this.showAdvanced = true
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
@@ -532,6 +536,9 @@ export default {
     'formData.gender' (newValue) {
       if (newValue === 'other') this.updateSelectedGender('other')
       if (newValue === 'unknown') this.updateSelectedGender('unknown')
+    },
+    valid (valid) {
+      this.setAllowSubmissions(valid)
     }
   },
   computed: {
@@ -646,6 +653,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
     updateSelectedGender (genderClicked) {
       // reset images to outlined

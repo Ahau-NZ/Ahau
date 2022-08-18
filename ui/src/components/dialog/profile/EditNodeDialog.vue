@@ -65,21 +65,22 @@
 </template>
 
 <script>
+import pick from 'lodash.pick'
+import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
 
 import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers.js'
 import { parseInterval } from '@/lib/date-helpers.js'
+import calculateAge from '@/lib/calculate-age'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import SettingsForm from '@/components/settings/SettingsForm.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
-import isEmpty from 'lodash.isempty'
-import calculateAge from '@/lib/calculate-age'
-import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
 
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'EditNodeDialog',
@@ -213,7 +214,6 @@ export default {
     submit () {
       const output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
 
-      // TODO: the custom field data might make this isEmpty redundant
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {
