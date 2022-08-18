@@ -7,7 +7,7 @@
       :fixed="!mobile"
       :right="!mobile"
       light
-      :width="mobile ? '100%' : '21%'"
+      :width="fullscreen ? '100%' : '600px'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
@@ -471,6 +471,9 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    fullscreen () {
+      return this.mobile || this.$vuetify.breakpoint.sm
+    },
     diedAt () {
       if (this.scopedProfile.aliveInterval) {
         const date = this.scopedProfile.aliveInterval.split('/')
@@ -569,6 +572,8 @@ export default {
       }
     },
     getFieldValue (fieldDef) {
+      if (!Array.isArray(this.profile.customFields)) return ''
+
       // find the value from the applicants profile (if there is one)
       let field = this.profile.customFields.find(field => field.key === fieldDef.key)
 

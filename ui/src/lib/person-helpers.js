@@ -353,6 +353,8 @@ export function mergeAdminProfile (profile) {
 
   for (const key in adminProfile) {
     if (key === 'id') continue
+    // TODO: need to figure out how to handle adminProfile.customFields
+    if (key === 'customFields') continue
     if (isEmpty(adminProfile[key])) continue
 
     // over-ride!
