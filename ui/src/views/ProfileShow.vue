@@ -226,6 +226,9 @@ export default {
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
     async processUpdatePerson (input) {
+      this.closeDialog()
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
+
       const customFields = input.customFields
       input.id = this.profile.id
       delete input.customFields
@@ -235,19 +238,18 @@ export default {
       }
 
       await this.processCustomFieldUpdates(customFields)
-      await this.handleClose()
+      await this.handleReload()
     },
-    async handleClose () {
-      this.closeDialog()
+    async handleReload () {
       await this.refresh()
-
-      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.whoami.personal.profile.id === this.profile.id) await this.setWhoami()
 
       if (this.isApplication) {
         this.goProfile()
       }
+
+      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
     async processCustomFieldUpdates (customFields) {
       if (isEmpty(customFields)) return

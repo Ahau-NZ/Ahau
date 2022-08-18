@@ -552,6 +552,9 @@ export default {
       this.showEditDialog = true
     },
     async processUpdatePerson (input) {
+      this.showEditDialog = false
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
+
       const customFields = input.customFields
       /*
         input is of form:
@@ -566,6 +569,7 @@ export default {
             ...
           }
       */
+      await this.updatePersonalProfile(input)
 
       if (!isEmpty(customFields)) {
         this.rawCustomFields = customFields
@@ -580,7 +584,10 @@ export default {
           })
       }
 
-      await this.updatePersonalProfile(input)
+      // reload your personal profiles
+      await this.setWhoami()
+
+      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
     },
     async updatePersonalProfile (input) {
       delete input.customFields
@@ -597,14 +604,6 @@ export default {
         id: this.personalProfile.id,
         ...input
       })
-
-      // TODO: do this here or in processUpdatePerson
-      this.showEditDialog = false
-
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
-      // reload your personal profiles
-      await this.setWhoami()
     },
     getDefaultFieldValue (field) {
       switch (field.type) {

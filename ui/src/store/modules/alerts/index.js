@@ -25,26 +25,29 @@ const getters = {
 }
 
 const mutations = {
-  showAlert (state, { message, delay = 3000, color = '' }) {
+  showAlert (state, { message, delay = 3000, color = '', isLoading = false }) {
     state.alert.settings = {
       show: true,
       message,
-      color
+      color,
+      delay
     }
-
-    setTimeout(() => {
-      state.alert.settings = {
-        show: false,
-        message: null,
-        color: null
-      }
-    }, delay)
+  },
+  clearAlert (state) {
+    state.alert.settings = {
+      show: false,
+      message: null,
+      color: null
+    }
   }
 }
 
 const actions = {
   showAlert ({ commit }, input) {
     commit('showAlert', input)
+  },
+  clearAlert ({ commit }) {
+    commit('clearAlert')
   },
   showError ({ commit }, message = 'Sorry! An error occurred!') {
     commit('showAlert', { message, delay: 5000, color: 'red' })
