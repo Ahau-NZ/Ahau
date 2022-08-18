@@ -414,7 +414,13 @@
           </v-col>
           <!-- Groups custom fields into tribes -->
           <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
-            <CustomFieldGroup :tribe="tribe" :readonly="readonly" :sideView="isSideViewDialog" :fieldValues.sync="formData.customFields[tribe.tribeId]" />
+            <CustomFieldGroup
+              :tribe="tribe"
+              :profile="tribe.profileInTribe"
+              :readonly="readonly"
+              :sideView="isSideViewDialog"
+              :fieldValues.sync="formData.customFields[tribe.tribeId]"
+            />
           </v-row>
         </template>
       </div>
@@ -493,7 +499,17 @@ export default {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal, oldVal) {
+      handler (newVal) {
+        if (Array.isArray(newVal.customFields)) {
+          newVal.customFields = {
+            [this.currentTribe.id]: {
+              ...(newVal.customFields || []).reduce((acc, field) => {
+                return ({ ...acc, [field.key]: field.value })
+              }, {})
+            }
+          }
+        }
+
         this.formData = newVal
       }
     },
@@ -503,16 +519,21 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile']),
+    ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
     ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes']),
+    ...mapGetters('person', ['person']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    originalProfile () {
+      if (Array.isArray(this.profile.customFields)) return this.profile
+      return this.person(this.profile.id)
     },
     isLoginPage () {
       return this.$route.name === 'login'
     },
     isPersonalProfilePage () {
-      return this.profileId === this.whoami.personal.profileId
+      return (this.profile.id === this.whoami.personal.profile.id)
     },
     showPersonalInfo () {
       return this.isKaitiaki || this.isMyProfile(this.profile.id)
@@ -574,9 +595,8 @@ export default {
     ======== custom fields ==========
     */
     showCustomFields () {
-      // TODO: update this when we are displaying custom fields for multiple tribes
-      // NOTE: here we are displaying the custom fields section, if there
-      // is atleast one tribe with custom fields
+      if (!get(this.formData, 'customFields')) return false
+
       return this.customFieldsByTribes.some(tribe => get(tribe, 'customFields.length'))
     },
     customFieldsByTribes () {
@@ -589,7 +609,8 @@ export default {
             profileId: get(tribe, 'private[0].id'),
             preferredName: get(tribe, 'private[0].preferredName'),
             customFields: getCustomFields(get(tribe, 'public[0].customFields', []))
-              .filter(field => !field.tombstone)
+              .filter(field => !field.tombstone),
+            profileInTribe: this.getPersonalProfileInTribe(tribe.id)
           }
         })
           .filter(tribe => get(tribe, 'customFields.length'))
@@ -602,7 +623,9 @@ export default {
         tribeId: this.currentTribe.id,
         profileId: this.tribeProfile.id,
         preferredName: this.tribeProfile.preferredName,
-        customFields: this.tribeCustomFields
+        customFields: this.tribeCustomFields,
+        // problem here, if we use this.profile, the original value of the custom fields gets overwritten
+        profileInTribe: this.originalProfile
       }]
     }
   },

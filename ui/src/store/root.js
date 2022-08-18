@@ -1,6 +1,8 @@
+import get from 'lodash.get'
+import Vue from 'vue'
+
 import { whoami } from '../lib/person-helpers.js'
 import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants.js'
-import Vue from 'vue'
 
 const SECOND = 1000
 
@@ -67,7 +69,8 @@ export default function rootModule (apollo) {
         }
       },
       isMyProfile: state => (profileId) => {
-        return state.whoami.linkedProfileIds.includes(profileId)
+        if (!profileId) return false
+        return get(state, 'whoami.linkedProfileIds', []).includes(profileId)
       },
       navComponent: state => state.navComponent,
       loadingState: state => {
