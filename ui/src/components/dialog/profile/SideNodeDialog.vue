@@ -27,6 +27,7 @@
                 :profile.sync="formData"
                 isSideViewDialog
                 isEditing
+                isRegistration
                 :readonly="!isEditing"
                 :fullForm="fullForm"
                 :mobile="mobile"
@@ -301,10 +302,12 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex'
+
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+import get from 'lodash.get'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -327,18 +330,6 @@ function arrayEquals (a, b) {
     a.length === b.length &&
     a.every((val, index) => val === b[index])
   )
-}
-
-function defaultData (profile) {
-  console.log(profile)
-  return {
-    ...clone(profile),
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    }
-  }
 }
 
 export default {
@@ -382,7 +373,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
-    ...mapGetters('tribe', ['tribeSettings']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
@@ -455,6 +446,8 @@ export default {
       return this.profile && this.profile.adminProfile
     },
     showStoriesButton () {
+      if (!this.currentAccess) return false
+
       return (
         this.currentAccess.type !== ACCESS_KAITIAKI &&
         (this.tribeSettings && this.tribeSettings.allowStories)
@@ -528,7 +521,8 @@ export default {
       immediate: true,
       async handler (profile) {
         if (!profile) return
-        this.formData = defaultData(profile)
+        this.formData = this.defaultData()
+
         if (profile.originalAuthor) {
           // TODO cherese 8/3/22 move to graphql and change from using getProfile
           // it doesnt need to whole profile
@@ -547,6 +541,17 @@ export default {
     getDisplayName,
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
+    },
+    defaultData () {
+      const profile = this.scopedProfile
+      return {
+        ...clone(profile),
+        altNames: {
+          currentState: clone(profile.altNames),
+          add: [], // new altNames to add
+          remove: [] // altNames to remove
+        }
+      }
     },
     findOrLoadProfile (profileId) {
       const profile = this.person(profileId)
@@ -598,7 +603,7 @@ export default {
     },
     cancel () {
       // reset form values
-      this.formData = defaultData(this.scopedProfile)
+      this.formData = this.defaultData()
       this.toggleEdit()
       this.$emit('cancel')
     },
@@ -607,18 +612,49 @@ export default {
 
       if (!isEmpty(output)) await this.processUpdate(output)
 
-      this.formData = defaultData(this.scopedProfile)
+      this.formData = this.defaultData()
       this.toggleEdit()
     },
     async processUpdate (input) {
       if (input.recps) delete input.recps
 
+      input.customFields = this.getCustomFieldChanges(input.customFields[this.currentTribe.id])
+      if (isEmpty(input.customFields)) delete input.customFields
+
+      if (this.isMyProfile(this.profileId) && input.customFields) {
+        // update separately to prevent bulk update
+        await this.updatePerson({ id: this.profileId, customFields: input.customFields })
+        delete input.customFields
+      }
+
+      // exclude empty altNames from submission
+      if (input.altNames) {
+        if (!get(input, 'altNames.add.length')) delete input.altNames.add
+        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
+        if (isEmpty(input.altNames)) delete input.altNames
+      }
+
       // update their profile in the db
-      await this.updatePerson({ id: this.profileId, ...input })
+      if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
 
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
       this.$emit('saved')
+    },
+    getCustomFieldChanges (customFieldsByTribe) {
+      return Object.entries(customFieldsByTribe)
+        .map(([key, value]) => ({ key, value }))
+        .filter(({ key, value }) => {
+          // find the fields definition
+          const field = this.tribeCustomFields.find(field => field.key === key)
+          if (!field) return false
+
+          // find any existing value of the field from the current profile
+          const valueOnProfile = this.profile.customFields.find(field => field.key === key)
+
+          // only keep those where the value has changes
+          return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, this.getDefaultFieldValue(field)))
+        })
     },
     toggleNew (type) {
       this.$emit('new', type)
@@ -628,6 +664,20 @@ export default {
     },
     t (key, vars) {
       return this.$t('sideProfile.' + key, vars)
+    },
+    getDefaultFieldValue (field) {
+      switch (field.type) {
+        case 'list':
+          return []
+        case 'array':
+          return ['']
+        case 'text':
+          return ''
+        case 'checkbox':
+          return false
+        default:
+          return null
+      }
     }
   }
 }

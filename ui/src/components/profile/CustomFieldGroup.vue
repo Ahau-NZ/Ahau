@@ -13,7 +13,6 @@
 import get from 'lodash.get'
 
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
 
 import CustomField from './CustomField.vue'
 export default {
@@ -25,7 +24,8 @@ export default {
     fieldValues: {
       type: Object,
       default: () => {}
-    }
+    },
+    profile: Object
   },
   components: {
     CustomField
@@ -33,7 +33,7 @@ export default {
   data () {
     return {
       customFieldValues: {},
-      profile: null
+      currentProfile: null
     }
   },
   watch: {
@@ -45,11 +45,9 @@ export default {
     }
   },
   mounted () {
-    this.profile = this.getPersonalProfileInTribe(this.tribe.tribeId)
     this.populateCustomFieldValues()
   },
   computed: {
-    ...mapGetters(['getPersonalProfileInTribe']),
     customFields () {
       return this.tribe.customFields
     },
