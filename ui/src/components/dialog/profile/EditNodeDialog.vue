@@ -19,13 +19,13 @@
         max-height="60px"
       >
         <v-tabs v-model="tab" class="mt-n3">
-          <v-tab href="#tab-1" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-tab href="#tab-1" :class="mobile ? 'mb-tabs' : 'desk-tabs'">
             <v-icon small v-if="!mobile"  left>
               mdi-account
             </v-icon>
             {{ t('profile') }}
           </v-tab>
-          <v-tab href="#tab-2" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-tab v-if="!isRegistration" href="#tab-2" :class="mobile ? 'mb-tabs' : 'desk-tabs'">
             <v-icon small v-if="!mobile" left>
               mdi-cog
             </v-icon>
@@ -40,10 +40,14 @@
       <v-tabs-items light v-model="tab">
         <v-tab-item value="tab-1">
           <v-col class="py-0 px-0">
-            <ProfileForm :profile.sync="formData" :withRelationships="false" :mobile="mobile" :fullForm="true"/>
+            <ProfileForm
+              :profile.sync="formData"
+              fullForm
+              :isRegistration="isRegistration"
+            />
           </v-col>
         </v-tab-item>
-        <v-tab-item value="tab-2">
+        <v-tab-item v-if="!isRegistration" value="tab-2">
           <SettingsForm @openDeleteProfile="showDeleteProfile = true"/>
           <DeleteProfileDialog
             v-if="showDeleteProfile"
@@ -88,8 +92,9 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: '' },
-    hideDetails: { type: Boolean, default: false },
-    nodeProfile: { type: Object, default: () => {} }
+    nodeProfile: { type: Object, default: () => {} },
+    hideDetails: Boolean,
+    isRegistration: Boolean
   },
   mixins: [
     mapProfileMixins({
@@ -119,6 +124,10 @@ export default {
               if (!isEqual(this.formData.altNames.add, this.nodeProfile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
+
+                if (changes[key].add.length === 0) delete changes[key].add
+                if (changes[key].remove.length === 0) delete changes[key].remove
+                if (isEmpty(changes[key])) delete changes[key]
               }
               break
             case 'birthOrder':
@@ -203,6 +212,8 @@ export default {
     },
     submit () {
       const output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
+
+      // TODO: the custom field data might make this isEmpty redundant
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {

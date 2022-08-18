@@ -209,7 +209,7 @@ export default {
       this.close()
     },
     close () {
-      this.formData = setDefaultCommunity(this.profile)
+      this.formData = setDefaultCommunity(EMPTY_COMMUNITY)
       this.$emit('close')
     },
     t (key, vars) {

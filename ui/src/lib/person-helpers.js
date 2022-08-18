@@ -77,7 +77,8 @@ export const PERMITTED_PERSON_NESTED_PROPS = [
   'headerImage',
   'avatarImage',
   'tombstone',
-  'authors'
+  'authors',
+  'customFields'
 ]
 
 export const PERMITTED_PERSON_ATTRS = [

@@ -1,7 +1,9 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import { getCustomFields, getDefaultFields } from '@/lib/custom-field-helpers'
 
 import pick from 'lodash.pick'
+import get from 'lodash.get'
 
 const defaultTribeSettings = {
   allowWhakapapaViews: true,
@@ -53,25 +55,42 @@ export default function (apollo) {
       return null
     },
     tribeJoiningQuestions: (state, getters) => {
-      const tribe = state.currentTribe
-      if (!tribe) return []
-
       if (getters.isPersonalTribe) return []
 
-      if (tribe.public && tribe.public.length) return tribe.public[0].joiningQuestions || []
-
-      return []
+      return get(state, 'currentTribe.public[0].joiningQuestions')
     },
-    tribeCustomFields: (state, getters) => {
-      const tribe = state.currentTribe
-      if (!tribe) return []
 
+    /*
+     =========== CUSTOM FIELDS =================
+    */
+    rawTribeCustomFields: (state, getters) => {
       if (getters.isPersonalTribe) return []
 
-      if (tribe.public && tribe.public.length) return tribe.public[0].customFields || []
-
-      return []
+      return get(state, 'currentTribe.public[0].customFields', [])
     },
+    tribeDefaultFields (state, getters) {
+      return getDefaultFields(getters.rawTribeCustomFields)
+        .filter(field => !field.tombstone)
+    },
+    tribeCustomFields (state, getters) {
+      return getCustomFields(getters.rawTribeCustomFields)
+        .filter(field => !field.tombstone)
+    },
+    tribeRequiredCustomFields: (state, getters) => {
+      return getters.tribeCustomFields
+        .filter(field => field.required)
+    },
+    tribeRequiredDefaultFields: (state, getters) => {
+      return getters.tribeDefaultFields
+        .filter(field => field.required)
+    },
+    tribeRequiredFields: (state, getters) => {
+      return [...getters.tribeRequiredCustomFields, ...getters.tribeRequiredDefaultFields]
+    },
+    /*
+     =========== CUSTOM FIELDS END =================
+    */
+
     tribeKaitiaki: (state, getters) => {
       const tribe = state.currentTribe
       if (!tribe) return []

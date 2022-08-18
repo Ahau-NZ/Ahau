@@ -224,6 +224,10 @@ export default {
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
     async processUpdatePerson ($event) {
+      // TODO: delete this
+      if ($event.customFields && isEmpty($event.customFields)) {
+        delete $event.customFields
+      }
       // attach the id to the input
       const input = { id: this.profile.id, ...$event }
       await this.updatePerson(input)
@@ -254,13 +258,14 @@ export default {
         this.dialog = 'edit-community'
       }
     },
-    async createGroupApplication ({ comment, answers }) {
+    async createGroupApplication ({ comment, answers, customFields }) {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.currentTribe.id,
             comment,
-            answers
+            answers,
+            customFields
           })
         )
 

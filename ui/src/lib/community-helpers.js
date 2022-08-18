@@ -1,68 +1,10 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import uniqBy from 'lodash.uniqby'
-import { orderBy } from 'lodash'
+
 // disabled until returning empty authors is fixed
 // import { AUTHOR_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
-
-export const DEFAULT_PROFILE_MODEL = [
-  { label: 'first name', type: 'text', required: true, visibleBy: 'members' },
-  { label: 'full name', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'other names', type: 'array', required: false, visibleBy: 'members' },
-  { label: 'gender', type: 'list', required: false, visibleBy: 'members', options: ['male', 'female', 'other', 'unknown'], multiple: false },
-  { label: 'related by', type: 'list', required: false, visibleBy: 'members', options: ['birth', 'whangai', 'adopted'], multiple: false },
-  { label: 'city', type: 'text', required: true, visibleBy: 'members' },
-  { label: 'country', type: 'text', required: true, visibleBy: 'members' },
-  { label: 'street address', type: 'text', required: false, visibleBy: 'admin' },
-  { label: 'post code', type: 'text', required: false, visibleBy: 'admin' },
-  { label: 'email', type: 'text', required: false, visibleBy: 'admin' },
-  { label: 'phone', type: 'text', required: false, visibleBy: 'admin' },
-  { label: 'description', type: 'text', required: false, visibleBy: 'members' },
-  // { label: 'date of birth', type: 'date', required: false, visibleBy: 'admin' },
-  { label: 'birth order', type: 'number', required: false, visibleBy: 'members' },
-  { label: 'no longer living', type: 'checkbox', required: false, visibleBy: 'members' },
-  // { label: 'date of death', type: 'date', required: false, visibleBy: 'members' },
-  { label: 'place of birth', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'place of death', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'buried location', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'profession', type: 'text', required: false, visibleBy: 'members' },
-  { label: 'skills/qualifications', type: 'array', required: false, visibleBy: 'members' },
-  { label: 'schools', type: 'array', required: false, visibleBy: 'members' }
-]
-
-// these are default fields where the required field cannot be enabled
-export const REQUIRED_DISABLED_FIELDS = ['description', 'no longer living', 'date of death', 'place of birth', 'place of death', 'buried location']
-
-// this takes all the custom fields, and makes sure there are no duplicates
-// by putting them in order of key, then the first of duplicates will
-// be the only one that is kept
-function getUniqueFields (fields) {
-  return uniqBy(
-    orderBy(fields, ['key'], ['desc']), 'label'
-  )
-}
-
-export function getDefaultFields (customFields) {
-  const uniqueCustomFields = getUniqueFields(customFields)
-
-  return DEFAULT_PROFILE_MODEL.map(defaultField => {
-    const customDefaultField = uniqueCustomFields.find(customField => customField.label === defaultField.label)
-    if (customDefaultField) {
-      return customDefaultField
-    }
-    return defaultField
-  })
-}
-
-export function getCustomFields (customFields) {
-  const uniqueCustomFields = getUniqueFields(customFields)
-
-  return uniqueCustomFields.filter(customField => {
-    return !DEFAULT_PROFILE_MODEL.some(defaultField => defaultField.label === customField.label)
-  })
-}
 
 export function mergeTribeProfiles (tribe) {
   if (!tribe.public) return tribe.private[0]
@@ -77,6 +19,8 @@ export function mergeTribeProfiles (tribe) {
     // over-ride!
     profile[key] = value
   }
+
+  if (!profile.customFields) profile.customFields = [] // for tribes, some custom fields may be null
 
   return profile
 }
