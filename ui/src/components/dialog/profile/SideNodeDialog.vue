@@ -202,8 +202,23 @@
                 <v-row v-if="isKaitiaki" cols="12" class="rounded-border">
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
                   <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
+                </v-row>
+                <v-row v-if="tribeCustomFields.length" class="d-flex flex-column justify-center align-center">
+                  <v-card-subtitle>
+                    {{ t('customFieldText') }}
+                  </v-card-subtitle>
+                </v-row>
+                <v-row v-if="tribeCustomFields.length" cols="12" class="rounded-border">
+                  <ProfileInfoItem
+                    v-for="(fieldDef, i) in tribeCustomFields" :key="i"
+                    class="pb-0 bb"
+                    smCols="12"
+                    mdCols="12"
+                    :title="fieldDef.label"
+                    :value="getFieldValue(fieldDef)"
+                  />
                 </v-row>
               </v-col>
             </v-col>
@@ -551,6 +566,28 @@ export default {
           add: [], // new altNames to add
           remove: [] // altNames to remove
         }
+      }
+    },
+    getFieldValue (fieldDef) {
+      // find the value from the applicants profile (if there is one)
+      let field = this.profile.customFields.find(field => field.key === fieldDef.key)
+
+      // if the field wasnt found
+      // it could mean that they havent defined a value for it yet
+      if (field === undefined) field = { value: this.getDefaultFieldValue(fieldDef) }
+
+      switch (fieldDef.type) {
+        case 'array':
+          if (get(field, 'value.length')) return field.value.join(', ')
+          return ''
+        case 'list':
+          if (fieldDef.multiple) return field.value.join(', ')
+          else return field.value
+        case 'checkbox':
+          if (field.value) return 'yes'
+          else return 'no'
+        default:
+          return field.value || ''
       }
     },
     findOrLoadProfile (profileId) {
