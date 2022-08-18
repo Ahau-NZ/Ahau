@@ -163,7 +163,7 @@
 <script>
 
 import clone from 'lodash.clonedeep'
-import { getCustomFields, getDefaultFields, REQUIRED_DISABLED_FIELDS } from '../../../lib/community-helpers'
+import { getCustomFields, getDefaultFields, REQUIRED_DISABLED_FIELDS, DISABLED_DEFAULT_FIELDS } from '@/lib/custom-field-helpers'
 
 const DEFAULT_NEW_FIELD = {
   label: '',
@@ -171,8 +171,6 @@ const DEFAULT_NEW_FIELD = {
   required: false,
   visibleBy: 'members'
 }
-
-const DISABLED_DEFAULT_FIELDS = ['first name', 'date of birth', 'date of death']
 
 const SINGLE_LIST = 'singleList'
 const MULTI_LIST = 'multiList'

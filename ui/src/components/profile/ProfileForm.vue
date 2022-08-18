@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" light class="px-4">
-    <v-row :class="readonly ? 'pl-4':''">
+    <v-row :class="readonly ? 'pl-4' : ''">
       <!-- Upload profile photo -->
       <v-col :order="smScreen ? '' : '2'" class="py-0">
         <v-row :class="!isSideViewDialog || mobile ? 'justify-center pt-6' : 'justify-center ' ">
@@ -38,7 +38,7 @@
       </v-col>
 
       <!-- Names -->
-      <v-col cols="12" :sm="smScreen ? '12' : '6'" :class="mobile ? 'pt-4 pb-0':'py-0'">
+      <v-col cols="12" :sm="smScreen ? '12' : '6'" :class="mobile ? 'pt-4 pb-0' : 'py-0'">
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
           <!-- Preferred Name -->
@@ -71,7 +71,7 @@
             />
           </v-col>
           <!-- Order of birth -->
-          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2':'pl-1 pr-0 pt-2'" >
+          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2' : 'pl-1 pr-0 pt-2'" >
             <v-text-field
               v-model="formData.birthOrder"
               type="number"
@@ -84,7 +84,7 @@
 
         <!-- No longer living -->
         <v-row v-if="!isLoginPage && !readonly" class="mb-8">
-          <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ':'pt-0'">
+          <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ' : 'pt-0'">
             <v-checkbox
               v-model="formData.deceased"
               :label="t('notLiving')"
@@ -111,14 +111,14 @@
           <!-- WAHINE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('female')">
-              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.female') }}</p>
             </div>
           </v-col>
           <!-- DIVERSE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('other')">
-              <img ref="otherImg" :src="require('@/assets/account-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <img ref="otherImg" :src="require('@/assets/account-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.other') }}</p>
             </div>
           </v-col>
@@ -313,13 +313,13 @@
           <!-- Skills -->
           <v-col v-for="(qualification, index) in formData.education"
             :key="`add-qual-name-${index}`"
-            :cols="smScreen ? '12':'6'"
+            :cols="smScreen ? '12' : '6'"
             class="pa-1"
           >
             <v-text-field
               v-model="formData.education[index]"
               :label="t('skills.skillsQuals')"
-              :append-icon="!readonly ? 'mdi-delete':''"
+              :append-icon="!readonly ? 'mdi-delete' : ''"
               @click:append="removeItem(formData.education, index)"
               v-bind="customProps"
               :readonly="readonly"
@@ -333,7 +333,7 @@
         <v-row class="pb-1">
           <v-col v-for="(school, index) in formData.school"
             :key="`add-school-name-${index}`"
-            :cols="smScreen ? '12':'6'"
+            :cols="smScreen ? '12' : '6'"
             class="pa-1"
           >
             <v-text-field
@@ -351,7 +351,7 @@
         </v-row>
         <v-row v-if="!formData.deceased">
           <!-- Personal Information -->
-          <template v-if="isKaitiaki">
+          <template v-if="showPersonalInfo">
             <v-col cols="12" class="px-0">
               <v-divider class="py-2"/>
               <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
@@ -406,6 +406,17 @@
             />
           </v-col>
         </v-row>
+        <template v-if="showCustomFields">
+          <!-- ====COMMUNITY FIELDS======== -->
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('communityFieldsTitle') }}</span>
+          </v-col>
+          <!-- Groups custom fields into tribes -->
+          <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
+            <CustomFieldGroup :tribe="tribe" :readonly="readonly" :sideView="isSideViewDialog" :fieldValues.sync="formData.customFields[tribe.tribeId]"/>
+          </v-row>
+        </template>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
@@ -416,11 +427,13 @@
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
+import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
+import get from 'lodash.get'
 
 import { mapGetters } from 'vuex'
 
@@ -429,21 +442,22 @@ export default {
   components: {
     Avatar,
     AddButton,
-    DateIntervalPicker
+    DateIntervalPicker,
+    CustomFieldGroup
   },
   props: {
     profile: { type: Object, required: true },
-    withRelationships: { type: Boolean, default: false },
-    readonly: { type: Boolean, default: false },
-    hideDetails: { type: Boolean, default: false },
-    mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    isSideViewDialog: { type: Boolean, default: false },
-    dialogType: { type: String, default: '' },
     type: String,
+    dialogType: { type: String, default: '' },
     displayName: { type: String, default: '' },
-    fullForm: { type: Boolean, default: false },
     moveDup: { type: Boolean, default: true },
+    withRelationships: Boolean,
+    readonly: Boolean,
+    hideDetails: Boolean,
+    isEditing: Boolean,
+    isSideViewDialog: Boolean,
+    isRegistration: Boolean,
+    fullForm: Boolean,
     isDuplicate: Boolean
   },
   data () {
@@ -456,7 +470,8 @@ export default {
         showDescription: false
       },
       selectedGender: '',
-      showAdvanced: false
+      showAdvanced: false,
+      customFieldValues: {}
     }
   },
   mounted () {
@@ -487,9 +502,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki']),
+    ...mapGetters(['isKaitiaki', 'isMyProfile']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     isLoginPage () {
       return this.$route.name === 'login'
+    },
+    showPersonalInfo () {
+      return this.isKaitiaki || this.isMyProfile(this.profile.id)
     },
     showBirthOrder () {
       if (this.dialogType === 'parent') return false
@@ -543,6 +565,27 @@ export default {
     },
     typeIsParent () {
       return this.dialogType === 'parent'
+    },
+    /*
+    ======== custom fields ==========
+    */
+    showCustomFields () {
+      if (!this.tribeCustomFields.length) return false
+
+      // TODO: update this when we are displaying custom fields for multiple tribes
+      return this.customFieldsByTribes.some(tribe => get(tribe, 'customFields.length'))
+    },
+    customFieldsByTribes () {
+      // TODO: update this when we are displaying custom fields for multiple tribes
+      if (!this.isRegistration) return []
+      if (!this.tribeCustomFields.length) return []
+
+      return [{
+        tribeId: this.currentTribe.id,
+        profileId: this.tribeProfile.id,
+        preferredName: this.tribeProfile.preferredName,
+        customFields: this.tribeCustomFields
+      }]
     }
   },
   methods: {
