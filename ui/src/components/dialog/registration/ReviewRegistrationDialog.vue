@@ -65,11 +65,11 @@
             {{ notification.isPersonal ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
           </v-row>
           <v-row>
-            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
               <template v-slot:content>
                 <v-row cols="12" class="pt-0">
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'br bb'"
+                    :class="mobile ? 'bb' : 'br bb'"
                     smCols="12"
                     mdCols="6"
                     :title="t('dob')"
@@ -77,7 +77,7 @@
                     class="pb-0"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'bb'"
+                    :class="mobile ? 'bb' : 'bb'"
                     smCols="12"
                     mdCols="6"
                     :title="t('phone')"
@@ -85,7 +85,7 @@
                     class="pb-0"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'br bb'"
+                    :class="mobile ? 'bb' : 'br bb'"
                     smCols="12"
                     mdCols="6"
                     :title="t('email')"
@@ -109,11 +109,11 @@
                 </v-row>
               </template>
             </ProfileCard>
-            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
               <template v-slot:content>
                 <v-row cols="12" class="pt-0">
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':' bb'"
+                    :class="mobile ? 'bb' : ' bb'"
                     smCols="12"
                     mdCols="12"
                     :title="t('description')"
@@ -121,7 +121,7 @@
                     class="pb-0"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'bb br'"
+                    :class="mobile ? 'bb' : 'bb br'"
                     smCols="12"
                     mdCols="6"
                     :title="t('preferredName')"
@@ -136,7 +136,7 @@
                     class="pb-0 bb"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'br'"
+                    :class="mobile ? 'bb' : 'br'"
                     smCols="12"
                     mdCols="6"
                     :title="t('otherNames')"
@@ -153,11 +153,11 @@
                 </v-row>
               </template>
             </ProfileCard>
-            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
               <template v-slot:content>
                 <v-row cols="12" class="pt-0">
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':' bb br'"
+                    :class="mobile ? 'bb' : ' bb br'"
                     smCols="12"
                     mdCols="6"
                     :title="t('age')"
@@ -165,7 +165,7 @@
                     class="pb-0"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'bb'"
+                    :class="mobile ? 'bb' : 'bb'"
                     smCols="12"
                     mdCols="6"
                     :title="t('profession')"
@@ -173,7 +173,7 @@
                     class="pb-0"
                   />
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'br'"
+                    :class="mobile ? 'bb' : 'br'"
                     smCols="12"
                     mdCols="6"
                     :title="t('education')"
@@ -190,11 +190,11 @@
                 </v-row>
               </template>
             </ProfileCard>
-             <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px; width:100%'">
+             <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px; width:100%'">
               <template v-slot:content>
                 <v-row cols="12" class="pt-0">
                   <ProfileInfoItem
-                    :class="mobile ? 'bb':'br'"
+                    :class="mobile ? 'bb' : 'br'"
                     smCols="12"
                     mdCols="6"
                     :title="t('city')"
@@ -206,6 +206,21 @@
                     mdCols="6"
                     :title="t('country')"
                     :value="applicant.country"
+                    class="pb-0"
+                  />
+                </v-row>
+              </template>
+            </ProfileCard>
+            <ProfileCard v-if="tribeCustomFields.length" :style="mobile ? 'margin: 10px;' : 'margin:20px; width:100%'">
+              <template v-slot:content>
+               <v-row cols="12" class="pt-0">
+                  <ProfileInfoItem
+                    v-for="(fieldDef, i) in tribeCustomFields" :key="i"
+                    :class="mobile ? 'bb' : 'br'"
+                    smCols="12"
+                    mdCols="6"
+                    :title="fieldDef.label"
+                    :value="getFieldValue(fieldDef)"
                     class="pb-0"
                   />
                 </v-row>
@@ -295,13 +310,17 @@
 
 <script>
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import isEmpty from 'lodash.isempty'
+import get from 'lodash.get'
+
+import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
+import { getCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
 export default {
@@ -349,8 +368,15 @@ export default {
     applicant () {
       return this.notification.applicant
     },
+    applicantCustomFields () {
+      return this.applicant.customFields
+    },
     group () {
       return this.notification.group
+    },
+    tribeCustomFields () {
+      return getCustomFields(this.group.customFields)
+        .filter(field => !field.tombstone)
     },
     answers () {
       return this.notification.answers
@@ -413,6 +439,42 @@ export default {
     }
   },
   methods: {
+    getFieldValue (fieldDef) {
+      // find the value from the applicants profile (if there is one)
+      let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
+
+      // if the field wasnt found
+      // it could mean that they havent defined a value for it yet
+      if (field === undefined) field = { value: this.getDefaultFieldValue(fieldDef) }
+
+      switch (fieldDef.type) {
+        case 'array':
+          if (get(field, 'value.length')) return field.value.join(', ')
+          return ''
+        case 'list':
+          if (fieldDef.multiple) return field.value.join(', ')
+          else return field.value
+        case 'checkbox':
+          if (field.value) return 'yes'
+          else return 'no'
+        default:
+          return field.value || ''
+      }
+    },
+    getDefaultFieldValue (field) {
+      switch (field.type) {
+        case 'list':
+          return []
+        case 'array':
+          return ['']
+        case 'text':
+          return ''
+        case 'checkbox':
+          return false
+        default:
+          return null
+      }
+    },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
