@@ -121,6 +121,7 @@ export const PERSON_FRAGMENT = gql`
     ${PERMITTED_PERSON_PROPS}
     avatarImage { ...AvatarFragment }
     headerImage { ...AvatarFragment }
+    customFields { key value }
     originalAuthor
   }
 `

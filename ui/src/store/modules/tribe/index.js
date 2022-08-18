@@ -177,7 +177,20 @@ export default function (apollo) {
 
       return options
     },
-    tribes: state => state.tribes
+    tribes: state => state.tribes,
+    joinedTribes: (state, getters) => getters.tribes.filter(tribe => get(tribe, 'private.length') && get(tribe, 'public.length')),
+    customFieldsByTribe: (state, getters) => {
+      return getters.joinedTribes.map(tribe => {
+        return {
+          tribeId: tribe.id,
+          profileId: get(tribe, 'private[0].id'),
+          preferredName: get(tribe, 'private[0].preferredName'),
+          customFields: getCustomFields(get(tribe, 'public[0].customFields', []))
+            .filter(field => !field.tombstone)
+        }
+      })
+        .filter(tribe => get(tribe, 'customFields.length'))
+    }
   }
 
   const mutations = {

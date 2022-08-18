@@ -13,15 +13,15 @@
 import get from 'lodash.get'
 
 import Vue from 'vue'
-import CustomField from './CustomField.vue'
+import { mapGetters } from 'vuex'
 
+import CustomField from './CustomField.vue'
 export default {
   name: 'CustomFieldGroup',
   props: {
     tribe: Object,
     readonly: Boolean,
     sideView: Boolean,
-    profile: Object, // your profile in that particular tribe
     fieldValues: {
       type: Object,
       default: () => {}
@@ -32,30 +32,24 @@ export default {
   },
   data () {
     return {
-      customFieldValues: {}
+      customFieldValues: {},
+      profile: null
     }
   },
   watch: {
-    profile: {
-      immediate: true,
-      deep: true,
-      handler (val) {
-        if (!val) return
-        this.populateCustomFieldValues()
-      }
-    },
     customFieldValues: {
       deep: true,
-      // immediate: true,
       handler (val) {
         this.$emit('update:fieldValues', val)
       }
     }
   },
   mounted () {
-    if (!this.profile) this.populateCustomFieldValues()
+    this.profile = this.getPersonalProfileInTribe(this.tribe.tribeId)
+    this.populateCustomFieldValues()
   },
   computed: {
+    ...mapGetters(['getPersonalProfileInTribe']),
     customFields () {
       return this.tribe.customFields
     },
@@ -89,7 +83,7 @@ export default {
       }
 
       const valueOnProfile = this.profile.customFields.find(customField => customField.key === field.key)
-      if (valueOnProfile !== undefined) return valueOnProfile
+      if (valueOnProfile !== undefined) return valueOnProfile.value
 
       // otherwise figure out a default value
       return this.getDefaultFieldValue(field)

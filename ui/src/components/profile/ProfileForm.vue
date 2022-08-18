@@ -414,7 +414,7 @@
           </v-col>
           <!-- Groups custom fields into tribes -->
           <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
-            <CustomFieldGroup :tribe="tribe" :readonly="readonly" :sideView="isSideViewDialog" :fieldValues.sync="formData.customFields[tribe.tribeId]"/>
+            <CustomFieldGroup :tribe="tribe" :readonly="readonly" :sideView="isSideViewDialog" :fieldValues.sync="formData.customFields[tribe.tribeId]" />
           </v-row>
         </template>
       </div>
@@ -431,6 +431,7 @@ import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import { getCustomFields } from '@/lib/custom-field-helpers'
 
 import isEmpty from 'lodash.isempty'
 import get from 'lodash.get'
@@ -502,13 +503,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki', 'isMyProfile']),
-    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields']),
+    ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     isLoginPage () {
       return this.$route.name === 'login'
+    },
+    isPersonalProfilePage () {
+      return this.profileId === this.whoami.personal.profileId
     },
     showPersonalInfo () {
       return this.isKaitiaki || this.isMyProfile(this.profile.id)
@@ -570,16 +574,30 @@ export default {
     ======== custom fields ==========
     */
     showCustomFields () {
-      if (!this.tribeCustomFields.length) return false
-
       // TODO: update this when we are displaying custom fields for multiple tribes
+      // NOTE: here we are displaying the custom fields section, if there
+      // is atleast one tribe with custom fields
       return this.customFieldsByTribes.some(tribe => get(tribe, 'customFields.length'))
     },
     customFieldsByTribes () {
-      // TODO: update this when we are displaying custom fields for multiple tribes
-      if (!this.isRegistration) return []
+      // Here if we are viewing our own profile on ProfileShow, we want to display
+      // all custom fields from all tribes
+      if (!this.isRegistration && this.isPersonalProfilePage) {
+        return this.joinedTribes.map(tribe => {
+          return {
+            tribeId: tribe.id,
+            profileId: get(tribe, 'private[0].id'),
+            preferredName: get(tribe, 'private[0].preferredName'),
+            customFields: getCustomFields(get(tribe, 'public[0].customFields', []))
+              .filter(field => !field.tombstone)
+          }
+        })
+          .filter(tribe => get(tribe, 'customFields.length'))
+      }
+
       if (!this.tribeCustomFields.length) return []
 
+      // this means we only display the custom fields in the particular tribe we are in
       return [{
         tribeId: this.currentTribe.id,
         profileId: this.tribeProfile.id,
