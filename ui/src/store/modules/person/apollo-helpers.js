@@ -167,6 +167,10 @@ query($type: String!, $tribeId: String!) {
     education
     school
 
+    customFields {
+      key value
+    }
+
     adminProfile {
       preferredName
       legalName

@@ -185,9 +185,7 @@ export default {
         header('buriedLocation', '100px', false),
         header('profession', '100px', true),
         header('education', '150px', true),
-        header('school', '150px', true),
-
-        { value: 'actions', align: 'end', width: '100px', show: true, sortable: false } // this.t('action.edit')
+        header('school', '150px', true)
       ],
       isLoading: false,
       profilesIndex: [],
@@ -204,6 +202,9 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
+
+    // populate headers with custom fields
+    this.headers.push(...this.customFieldHeaders)
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -213,10 +214,29 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
-      return this.headers.filter(h => h.show)
+      return [
+        ...this.headers
+          // TODO: these need to be filtered out if the default headers have been tombstoned
+          .filter(h => h.show), // default headers
+
+        // ensure these actions are always the last
+        { value: 'actions', align: 'end', width: '100px', show: true, sortable: false }
+      ]
+    },
+    customFieldHeaders () {
+      return this.tribeCustomFields.map(field => {
+        return {
+          align: 'center',
+          show: true,
+          sortable: true,
+          text: field.label,
+          value: `customFields.${field.key}`,
+          width: '100px'
+        }
+      })
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -261,16 +281,25 @@ export default {
 
       await this.loadPersonList({ type: 'group', tribeId })
 
-      this.profilesIndex = this.profilesArr.map(profile => {
-        if (profile.aliveInterval) {
-          profile.dob = this.computeDate('dob', profile.aliveInterval)
-          profile.dod = this.computeDate('dod', profile.aliveInterval)
-          profile.age = this.age(profile.aliveInterval)
-        }
-        return profile
-      })
+      this.profilesIndex = this.profilesArr.map(this.mapProfileData)
 
       this.isLoading = false
+    },
+    mapProfileData (profile) {
+      if (profile.aliveInterval) {
+        profile.dob = this.computeDate('dob', profile.aliveInterval)
+        profile.dod = this.computeDate('dod', profile.aliveInterval)
+        profile.age = this.age(profile.aliveInterval)
+      }
+
+      if (profile.customFields && Array.isArray(profile.customFields)) {
+        profile.customFields = profile.customFields
+          .reduce((acc, field) => {
+            return { ...acc, [field.key]: field.value }
+          }, {})
+      }
+
+      return profile
     },
     searchFilter (value, search, item) {
       const _search = search.toLocaleLowerCase()
@@ -316,10 +345,14 @@ export default {
       this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
 
       this.isLoading = true
+
       const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
       const search = this.search
       this.search = ''
-      this.profilesIndex = this.profilesIndex.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
+      this.profilesIndex = this.profilesIndex
+        .map(profile => {
+          return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
+        })
       this.search = search
       this.isLoading = false
     },
