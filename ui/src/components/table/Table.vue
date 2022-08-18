@@ -1,130 +1,79 @@
 <template>
   <div ref="tablediv" :class="mobile ? 'mobile-table' : 'whakapapa-table'" v-scroll.self="onscroll">
-  <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
-    <g id="zoomable">
-      <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
-      <g class="headers" v-for="(column, i) in columns" :key="column.label">
-        <text :transform="`translate(${column.x + 10} ${50})`">
-          {{ computeLabel(column.label) }}
-        </text>
-        <line v-if="i !== 0" :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
-      </g>
-      <svg id="baseGroup" :width="tableWidth">
-        <g v-if="!tableFlatten" :transform="`translate(${60} ${80})`">
-          <g v-for="link in links" :key="link.id" class="link">
-            <Link :link="link" :class="link.class"/>
-          </g>
+    <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
+      <g id="zoomable">
+        <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
+        <g class="headers" v-for="(column, i) in columns" :key="column.label">
+          <text :transform="`translate(${column.x + 10} ${50})`">
+            {{ computeLabel(column.label) }}
+          </text>
+          <line v-if="i !== 0" :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
         </g>
-        <g
-          :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
-          ref="tree"
-        >
-          <g v-for="(node, i) in nodes" :key="`table-${node.data.id}-${i}`" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="nodeColor(node.data)" :id="node.data.id" />
-            <Node
-              :width="colWidth"
-              :node="node"
-              :radius="nodeRadius"
-              @center="centerNode(node)"
-              :showLabel="true"
-            />
-            <g v-if="tableFlatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-              <text> + </text>
+        <svg id="baseGroup" :width="tableWidth">
+          <g v-if="!tableFlatten" :transform="`translate(${60} ${80})`">
+            <g v-for="link in links" :key="link.id" class="link">
+              <Link :link="link" :class="link.class"/>
             </g>
-            <g v-if="tableFlatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-              <text> - </text>
-            </g>
-            <svg :width="columns[2].x - 45" >
-              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.preferredName }}
-              </text>
-            </svg>
-            <svg :width="columns[3].x - 40" >
-              <g v-if="node.data.partners && node.data.partners.length > 0">
-                <g v-for="(partner, i) in node.data.partners" :key="`${node.data.id}-partner-${partner && partner.id ? partner.id : ''}-${i}`">
-                  <Node
-                    v-if="partner && partner.id"
-                    :id="partner.id"
-                    :width="columns[4].x"
-                    :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
-                    :radius="nodeRadius * 0.9"
-                    isPartner
-                    :hideLabel="node.data.partners.length > 1"
-                    @open="updateDialog($event)"
-                  />
-                </g>
+          </g>
+          <g
+            :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
+            ref="tree"
+          >
+            <g v-for="(node, i) in nodes" :key="`table-${node.data.id}-${i}`" class="node">
+              <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="nodeColor(node.data)" :id="node.data.id" />
+              <Node
+                :width="colWidth"
+                :node="node"
+                :radius="nodeRadius"
+                @center="centerNode(node)"
+                :showLabel="true"
+              />
+              <g v-if="tableFlatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+                <text> + </text>
               </g>
-            </svg>
-            <svg :width="columns[4].x - 45" >
-              <text :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ altNames(node.data.altNames) }}
-              </text>
-            </svg>
-            <svg :width="columns[5].x - 45">
-              <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.age }}
-              </text>
-            </svg>
-            <svg :width="columns[6].x - 45">
-              <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }}
-              </text>
-            </svg>
-            <svg :width="columns[7].x - 45">
-              <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}
-              </text>
-            </svg>
-            <svg :width="columns[8].x - 45">
-              <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
-              </text>
-            </svg>
-            <svg v-if="node.data && node.data.adminProfile" :width="columns[9].x - 45">
-              <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
-              </text>
-            </svg>
-            <svg :width="columns[10].x - 45">
-              <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.city }}
-              </text>
-            </svg>
-            <svg :width="columns[11].x - 45">
-              <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.postCode }}
-              </text>
-            </svg>
-            <svg :width="columns[12].x - 45">
-              <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
-              </text>
-            </svg>
-            <svg :width="columns[13].x - 45">
-              <text  :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfBirth }}
-              </text>
-            </svg>
-            <svg :width="columns[14].x - 45">
-              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfDeath }}
-              </text>
-            </svg>
-            <svg v-if="node.data.email">
-              <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.email }}
-              </text>
-            </svg>
-            <svg v-if="node.data.phone">
-              <text :transform="`translate(${columns[15].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.phone }}
-              </text>
-            </svg>
+              <g v-if="tableFlatten && node.data.children && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+                <text> - </text>
+              </g>
+              <svg :width="columns[2].x - 45" >
+                <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.data.preferredName }}
+                </text>
+              </svg>
+              <svg :width="columns[3].x - 40" >
+                <g v-if="node.data.partners && node.data.partners.length > 0">
+                  <g v-for="(partner, i) in node.data.partners" :key="`${node.data.id}-partner-${partner && partner.id ? partner.id : ''}-${i}`">
+                    <Node
+                      v-if="partner && partner.id"
+                      :id="partner.id"
+                      :width="columns[4].x"
+                      :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
+                      :radius="nodeRadius * 0.9"
+                      isPartner
+                      :hideLabel="node.data.partners.length > 1"
+                      @open="updateDialog($event)"
+                    />
+                  </g>
+                </g>
+              </svg>
+              <g v-for="field in defaultFields" :key="`${node.data.id}-${field.key}-1`">
+                <svg :width="field.width">
+                  <text :transform="field.getTransform(node)" :style="`max-width: ${field.width}px;`">
+                    {{ field.getValue(node) }}
+                  </text>
+                </svg>
+              </g>
+              <g v-for="field in customFields" :key="`${node.data.id}-${field.key}-2`">
+                <svg :width="field.width">
+                  <text :transform="field.getTransform(node)" :style="`max-width: ${field.width}px;`">
+                    {{ field.getValue(node) }}
+                  </text>
+                </svg>
+              </g>
+            </g>
           </g>
-        </g>
-      </svg>
-    </g>
-  </svg>
+        </svg>
+      </g>
+    </svg>
   </div>
 </template>
 
@@ -134,6 +83,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
+import get from 'lodash.get'
 
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
@@ -193,6 +143,7 @@ export default {
     ...mapGetters('whakapapa', ['whakapapaView', 'getPartnerIds']),
     ...mapGetters('table', ['descendants', 'descendantLinks', 'tableFilter', 'tableSort', 'tableFlatten']),
     ...mapGetters('person', ['person']),
+    ...mapGetters('tribe', ['tribeCustomFields']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -214,6 +165,12 @@ export default {
     nodes () {
       const nodes = this.descendants
         .map(node => {
+          // if (node.data.customFields && Array.isArray(node.data.customFields)) {
+          //   node.data.customFields = node.data.customFields
+          //     .reduce((acc, field) => {
+          //       return { ...acc, [field.key]: field.value }
+          //     }, {})
+          // }
           return {
             ...node,
             data: {
@@ -296,8 +253,42 @@ export default {
         { label: this.t('pob'), x: this.colWidth + 1900 },
         { label: this.t('pod'), x: this.colWidth + 2100 },
         { label: this.t('email'), x: this.colWidth + 2300 },
-        { label: this.t('phone'), x: this.colWidth + 2550 }
+        { label: this.t('phone'), x: this.colWidth + 2550 },
+
+        // custom field columns
+        ...this.tribeCustomFields
+          .map((field, i) => {
+            return {
+              label: field.label,
+              x: this.colWidth + (2750 + (i * 200))
+            }
+          })
       ]
+    },
+    defaultFields () {
+      return [
+        this.defaultFieldValue('aka', node => this.altNames(node.data.altNames)),
+        this.defaultFieldValue('age', node => calculateAge(node.data.aliveInterval)),
+        this.defaultFieldValue('dob', node => this.computeDate('dob', node.data.aliveInterval)),
+        this.defaultFieldValue('dod', node => this.computeDate('dob', node.data.aliveInterval)),
+        this.defaultFieldValue('profession'),
+        this.defaultFieldValue('address'),
+        this.defaultFieldValue('city'),
+        this.defaultFieldValue('postCode'),
+        this.defaultFieldValue('country'),
+        this.defaultFieldValue('pob', node => node.data.placeOfBirth),
+        this.defaultFieldValue('pod', node => node.data.placeOfDeath),
+        this.defaultFieldValue('email'),
+        this.defaultFieldValue('phone')
+      ]
+        .filter(Boolean)
+    },
+    customFields () {
+      return this.tribeCustomFields
+        .map(fieldDef => {
+          return this.defaultFieldValue(fieldDef.label, node => this.getCustomFieldValue(node, fieldDef), true)
+        })
+        .filter(Boolean)
     }
   },
 
@@ -346,6 +337,66 @@ export default {
       const width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
       this.$emit('update', this.tableWidth)
+    },
+    defaultFieldValue (key, getValue, isCustomField = false) {
+      if (!this.columns) return
+
+      const label = isCustomField ? key : this.t(key)
+      const index = this.columns.findIndex(column => column.label === label)
+      if (index < 0) return
+
+      if (getValue === undefined) {
+        getValue = (node) => {
+          if (isCustomField) return node.data.customFields[key]
+          return node.data[key]
+        }
+      }
+
+      const field = {
+        key,
+        getValue,
+        getTransform: (node) => `translate(${this.columns[index].x - this.nodeSize + 10} ${node.y + this.nodeRadius + 5})`
+      }
+
+      if (index !== (this.columns.length - 1)) field.width = this.columns[index + 1].x - 45
+
+      return field
+    },
+    getCustomFieldValue (node, fieldDef) {
+      const customFields = get(node, 'data.customFields', []) // may not be loaded in the data yet
+      let customField = customFields.find(customField => customField.key === fieldDef.key)
+
+      // if the field wasnt found
+      // it could mean that they havent defined a value for it yet
+      if (customField === undefined) customField = { value: this.getDefaultFieldValue(fieldDef) }
+
+      switch (fieldDef.type) {
+        case 'array':
+          if (get(customField, 'value.length')) return customField.value.join(', ')
+          return ''
+        case 'list':
+          if (fieldDef.multiple) return customField.value.join(', ')
+          else return customField.value
+        case 'checkbox':
+          if (customField.value) return 'yes'
+          else return 'no'
+        default:
+          return customField.value || ''
+      }
+    },
+    getDefaultFieldValue (field) {
+      switch (field.type) {
+        case 'list':
+          return []
+        case 'array':
+          return ['']
+        case 'text':
+          return ''
+        case 'checkbox':
+          return false
+        default:
+          return null
+      }
     },
 
     // set the width for the first column which needs to be dynamic when showing whakapapa links
