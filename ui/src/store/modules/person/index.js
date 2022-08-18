@@ -3,6 +3,7 @@ import Vue from 'vue'
 import { getPerson as getPersonAndWhanau, mergeAdminProfile } from '@/lib/person-helpers'
 import {
   getPersonMinimal,
+  getPersonCustomFields,
   savePerson as savePersonMutation,
   deletePerson, getPersonFull,
   findPersonByName,
@@ -155,6 +156,17 @@ export default function (apollo) {
       // TODO look into deprecating this - should use getPersonFull + look some load-around?
       try {
         const res = await apollo.query(getPersonAndWhanau(profileId))
+
+        if (res.errors) throw res.errors
+
+        return res.data.person
+      } catch (err) {
+        console.error('Something went wrong while trying to get a person', err)
+      }
+    },
+    async getPersonCustomFields (_, profileId) {
+      try {
+        const res = await apollo.query(getPersonCustomFields(profileId))
 
         if (res.errors) throw res.errors
 

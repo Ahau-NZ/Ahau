@@ -77,6 +77,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+import get from 'lodash.get'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
@@ -132,8 +134,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'isKaitiaki']),
-    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe', 'isPersonalTribe']),
+    ...mapGetters(['whoami', 'isKaitiaki', 'linkedProfiles', 'getPersonalProfileInTribe']),
+    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe', 'isPersonalTribe', 'customFieldsByTribe']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
     personalProfileCopy () {
       return copyProfileInformation(this.whoami.personal.profile)
@@ -223,23 +225,71 @@ export default {
       await this.refresh()
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
-    async processUpdatePerson ($event) {
-      // TODO: delete this
-      if ($event.customFields && isEmpty($event.customFields)) {
-        delete $event.customFields
-      }
-      // attach the id to the input
-      const input = { id: this.profile.id, ...$event }
-      await this.updatePerson(input)
+    async processUpdatePerson (input) {
+      const customFields = input.customFields
+      input.id = this.profile.id
+      delete input.customFields
 
+      if (Object.keys(input).length > 1) {
+        await this.updatePerson(input)
+      }
+
+      await this.processCustomFieldUpdates(customFields)
+      await this.handleClose()
+    },
+    async handleClose () {
       this.closeDialog()
       await this.refresh()
+
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.whoami.personal.profile.id === this.profile.id) await this.setWhoami()
 
       if (this.isApplication) {
         this.goProfile()
+      }
+    },
+    async processCustomFieldUpdates (customFields) {
+      if (isEmpty(customFields)) return
+
+      await Promise.all(
+        Object.entries(customFields).map(([tribeId, customFieldsByTribe]) => {
+          const profile = this.getPersonalProfileInTribe(tribeId)
+
+          if (!profile) return null
+
+          const customFieldChanges = Object.entries(customFieldsByTribe)
+            .map(([key, value]) => ({ key, value }))
+            .filter(({ key, value }) => {
+              const tribe = this.customFieldsByTribe.find(tribe => tribe.tribeId === tribeId)
+              const field = tribe.customFields.find(field => field.key === key)
+              if (!field) return false
+
+              const valueOnProfile = profile.customFields.find(field => field.key === key)
+
+              // only keep those where the value has changes
+              return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, this.getDefaultFieldValue(field)))
+            })
+
+          if (!customFieldChanges || !customFieldChanges.length) return null
+
+          return this.updatePerson({ id: profile.id, customFields: customFieldChanges })
+        })
+      )
+    },
+    // TODO: move this to a helper
+    getDefaultFieldValue (field) {
+      switch (field.type) {
+        case 'list':
+          return []
+        case 'array':
+          return ['']
+        case 'text':
+          return ''
+        case 'checkbox':
+          return false
+        default:
+          return null
       }
     },
     async deleteCommunity () {

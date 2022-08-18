@@ -50,6 +50,19 @@ const GET_PERSON_FULL = gql`
   }
 `
 
+const GET_PERSON_CUSTOM_FIELDS = gql`
+  query($id: String!) {
+    person(id: $id){
+      id
+      customFields {
+        key
+        value
+      }
+      recps
+    }
+  }
+`
+
 // TODO: check if need all the persons links, or just their minimal profile
 const FIND_PERSON_BY_NAME = gql`
 ${PERSON_FRAGMENT}
@@ -75,6 +88,12 @@ query($name: String!, $groupId: String, $type: String) {
 
 export const getPersonFull = (id, fetchPolicy = 'no-cache') => ({
   query: GET_PERSON_FULL,
+  variables: { id },
+  fetchPolicy
+})
+
+export const getPersonCustomFields = (id, fetchPolicy = 'no-cache') => ({
+  query: GET_PERSON_CUSTOM_FIELDS,
   variables: { id },
   fetchPolicy
 })

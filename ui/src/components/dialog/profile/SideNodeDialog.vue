@@ -23,13 +23,15 @@
           <v-row v-if="isEditing">
             <!-- Displays the form to edit the profile fields -->
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData"
+              <ProfileForm
+                :profile.sync="formData"
                 isSideViewDialog
                 isEditing
                 :readonly="!isEditing"
-                :fullForm='fullForm'
+                :fullForm="fullForm"
                 :mobile="mobile"
-                @cancel="cancel" >
+                @cancel="cancel"
+              >
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <v-btn
@@ -77,10 +79,10 @@
           </v-row>
 
           <v-row v-if="isEditing">
-            <v-col cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <v-divider/>
             </v-col>
-            <v-col v-if="parents.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="parents.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="parent"
                 :label="t('parents')"
@@ -90,7 +92,7 @@
               />
               <v-divider/>
             </v-col>
-            <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="partner"
                 :label="t('partners')"
@@ -99,7 +101,7 @@
               />
               <v-divider/>
             </v-col>
-            <v-col v-if="children.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="children.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="child"
                 :label="t('children')"
@@ -170,7 +172,7 @@
           <!-- Displays profile information when viewing! -->
           <v-row v-if="!isEditing" class="flex-column mx-0 ">
             <v-col class="pa-0">
-              <v-col cols="12" :class="profile.description ? 'pt-0':'pt-0'">
+              <v-col cols="12" :class="profile.description ? 'pt-0' : 'pt-0'">
                 <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
                   <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
@@ -179,7 +181,7 @@
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
                 <v-row cols="12" class="rounded-border mb-4">
-                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
+                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br' : 'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6' : '12'" :smCols="profile.deceased ? '6' : '12'" :value="profile.placeOfBirth" />
                   <template v-if="profile.deceased">
                     <ProfileInfoItem class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
                     <ProfileInfoItem class="pb-0 br" :title="t('dateOfPassing')" mdCols="6" smCols="6" :value="diedAt" />
@@ -328,6 +330,7 @@ function arrayEquals (a, b) {
 }
 
 function defaultData (profile) {
+  console.log(profile)
   return {
     ...clone(profile),
     altNames: {
