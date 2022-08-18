@@ -65,26 +65,37 @@
                   outlined
                 >
                   <v-card-text>
-                    <div v-if="isValidPersonalProfile">
-                      No updates required. Go to your profile if you wish to provide more information
+                    <div v-if="isLoadingProfile">
+                      Please wait while your profile is updating
+                      <v-progress-circular
+                        indeterminate
+                        color="#b12526"
+                      />
                     </div>
                     <div v-else>
-                      Please update the following information on your profile: <br>
-                      <ul>
-                        <li v-for="({ prop }) in missingRequiredFields" :key="prop">
-                          {{ prop }}
-                        </li>
-                      </ul>
+                      <div v-if="isValidPersonalProfile">
+                        No updates required. Go to your profile if you wish to provide more information
+                      </div>
+                      <div v-else>
+                        Please update the following information on your profile: <br>
+                        <ul>
+                          <li v-for="({ prop }) in missingRequiredFields" :key="prop">
+                            {{ prop }}
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </v-card-text>
                 </v-card>
                 <v-btn
                   color="primary"
+                  :disabled="isLoadingProfile"
                   @click="goProfile"
                 >
                   Go to edit profile
                 </v-btn>
                 <v-btn
+                  :disabled="!isValidPersonalProfile || isLoadingProfile"
                   class="ml-5"
                   color="primary"
                   @click="step = hasJoiningQuestions ? 2 : 3"
@@ -455,12 +466,16 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
+    ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields']),
     personalProfile () {
       return {
         ...this.whoami.personal.profile,
         customFields: this.rawCustomFields
       }
+    },
+    isLoadingProfile () {
+      return this.alertSettings.delay === -1
     },
     displayName () {
       return this.personalProfile.preferredName
@@ -552,6 +567,9 @@ export default {
       this.showEditDialog = true
     },
     async processUpdatePerson (input) {
+      this.showEditDialog = false
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
+
       const customFields = input.customFields
       /*
         input is of form:
@@ -566,6 +584,7 @@ export default {
             ...
           }
       */
+      await this.updatePersonalProfile(input)
 
       if (!isEmpty(customFields)) {
         this.rawCustomFields = customFields
@@ -580,7 +599,10 @@ export default {
           })
       }
 
-      await this.updatePersonalProfile(input)
+      // reload your personal profiles
+      await this.setWhoami()
+
+      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
     },
     async updatePersonalProfile (input) {
       delete input.customFields
@@ -597,14 +619,6 @@ export default {
         id: this.personalProfile.id,
         ...input
       })
-
-      // TODO: do this here or in processUpdatePerson
-      this.showEditDialog = false
-
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
-      // reload your personal profiles
-      await this.setWhoami()
     },
     getDefaultFieldValue (field) {
       switch (field.type) {

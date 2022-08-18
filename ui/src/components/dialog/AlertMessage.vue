@@ -2,15 +2,17 @@
   <div class="text-center ma-2">
     <v-snackbar
       v-model="showMessage"
+      :timeout="alertSettings.delay"
       content-class="text-center"
     >
-      {{ message }}
+      {{ alertSettings.message }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
-          :color="color"
-          text
           v-bind="attrs"
+          :color="alertSettings.color"
+          text
+          :loading="alertSettings.delay === -1"
           @click="showMessage = false"
         >
           <v-icon>mdi-close</v-icon>
@@ -20,22 +22,26 @@
   </div>
 </template>
 <script>
+
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'AlertMessage',
-  props: {
-    show: { type: Boolean, default: false },
-    message: { type: String, default: 'Action successfully completed' },
-    color: { type: String, default: '' }
-  },
   data () {
     return {
       showMessage: false
     }
   },
   watch: {
-    show (newVal) {
-      this.showMessage = newVal
+    alertSettings: {
+      deep: true,
+      handler (settings) {
+        this.showMessage = settings.show
+      }
     }
+  },
+  computed: {
+    ...mapGetters('alerts', ['alertSettings'])
   }
 }
 </script>

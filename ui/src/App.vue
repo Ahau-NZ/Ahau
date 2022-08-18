@@ -17,12 +17,7 @@
       <span>version</span> {{version}}
     </div>
 
-    <AlertMessage
-      :show="alertSettings.show"
-      :message="alertSettings.message"
-      :color="alertSettings.color"
-    />
-
+    <AlertMessage />
     <DialogHandler /> <!-- TODO: find out what uses this? -->
     <ErrorSnackDialog />
   </v-app>
@@ -134,7 +129,6 @@ export default {
     ...mapGetters(['isKaitiaki']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
     ...mapGetters(['storeDialog', 'loadingState']),
-    ...mapGetters('alerts', ['alertSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
