@@ -1,5 +1,10 @@
 <template>
-  <v-form ref="form" light class="px-4">
+  <v-form
+    v-model="valid"
+    ref="form"
+    light
+    class="px-4"
+  >
     <v-row :class="readonly ? 'pl-4' : ''">
       <!-- Upload profile photo -->
       <v-col :order="smScreen ? '' : '2'" class="py-0">
@@ -50,6 +55,7 @@
                 :label="t('preferredName')"
                 v-bind="customProps"
                 outlined
+                :rules="getFieldRules('preferredName')"
               />
             </slot>
           </v-col>
@@ -68,6 +74,7 @@
               :menu-props="{ light: true }"
               outlined
               hide-details
+              :rules="getFieldRules('relatedBy')"
             />
           </v-col>
           <!-- Order of birth -->
@@ -78,6 +85,7 @@
               :label="t('birthOrder')"
               min="1"
               v-bind="customProps"
+              :rules="getFieldRules('birthOrder')"
             />
           </v-col>
         </v-row>
@@ -187,10 +195,12 @@
               v-model="formData.legalName"
               :label="t('legalName')"
               v-bind="customProps"
+              :rules="getFieldRules('legalName')"
             />
           </v-col>
           <!-- Alt names -->
           <template>
+            <!-- TODO: configure required -->
             <v-col v-for="(altName, index) in formData.altNames.currentState"
               :key="`value-alt-name-${index}`"
               cols="12"
@@ -208,6 +218,7 @@
             </v-col>
           </template>
 
+          <!-- TODO: configure required -->
           <template v-if="!readonly">
             <v-col v-for="(altName, index) in formData.altNames.add"
               :key="`add-alt-name-${index}`"
@@ -307,10 +318,12 @@
                 v-model="formData.profession"
                 :label="t('skills.profession')"
                 v-bind="customProps"
+                :rules="getFieldRules('profession')"
               />
             </v-col>
           </v-col>
           <!-- Skills -->
+          <!-- TODO: configure required -->
           <v-col v-for="(qualification, index) in formData.education"
             :key="`add-qual-name-${index}`"
             :cols="smScreen ? '12' : '6'"
@@ -330,6 +343,7 @@
           </v-col>
         </v-row>
         <!-- Education -->
+        <!-- TODO: configure required -->
         <v-row class="pb-1">
           <v-col v-for="(school, index) in formData.school"
             :key="`add-school-name-${index}`"
@@ -362,6 +376,7 @@
                 v-model="formData.email"
                 :label="t('personalInfo.email')"
                 v-bind="customProps"
+                :rules="getFieldRules('email')"
               />
             </v-col>
             <!-- Phone -->
@@ -370,6 +385,7 @@
                 v-model="formData.phone"
                 :label="t('personalInfo.phone')"
                 v-bind="customProps"
+                :rules="getFieldRules('phone')"
               />
             </v-col>
             <!-- Address -->
@@ -378,6 +394,7 @@
                 v-model="formData.address"
                 :label="t('personalInfo.address')"
                 v-bind="customProps"
+                :rules="getFieldRules('address')"
               />
             </v-col>
           </template>
@@ -387,6 +404,7 @@
               v-model="formData.postCode"
               :label="t('personalInfo.postCode')"
               v-bind="customProps"
+              :rules="getFieldRules('postCode')"
             />
           </v-col>
           <!-- City -->
@@ -395,6 +413,7 @@
               v-model="formData.city"
               :label="t('personalInfo.city')"
               v-bind="customProps"
+              :rules="getFieldRules('city')"
             />
           </v-col>
           <!-- Country -->
@@ -403,6 +422,7 @@
               v-model="formData.country"
               :label="t('personalInfo.country')"
               v-bind="customProps"
+              :rules="getFieldRules('country')"
             />
           </v-col>
         </v-row>
@@ -437,12 +457,12 @@ import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { getCustomFields } from '@/lib/custom-field-helpers'
+import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 
 import isEmpty from 'lodash.isempty'
 import get from 'lodash.get'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ProfileForm',
@@ -472,16 +492,16 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       formData: {},
-      form: {
-        valid: true,
-        showDescription: false
-      },
+      valid: false,
       selectedGender: '',
       showAdvanced: false,
-      customFieldValues: {}
+      customFieldValues: {},
+      rules: [value => !!value || 'Required.']
     }
   },
   mounted () {
+    this.$refs.form.validate()
+
     if (this.fullForm) this.showAdvanced = true
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
@@ -516,11 +536,14 @@ export default {
     'formData.gender' (newValue) {
       if (newValue === 'other') this.updateSelectedGender('other')
       if (newValue === 'unknown') this.updateSelectedGender('unknown')
+    },
+    valid (valid) {
+      this.setAllowSubmissions(valid)
     }
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
-    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields']),
     ...mapGetters('person', ['person']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -630,6 +653,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
     updateSelectedGender (genderClicked) {
       // reset images to outlined
@@ -649,6 +673,15 @@ export default {
       }
       // update the gender
       this.formData.gender = this.genderSelected
+    },
+    getFieldRules (key) {
+      const label = mapPropToLabel(key)
+      if (!label) return []
+
+      const field = this.tribeRequiredDefaultFields.find(field => field.label === label)
+      if (!field) return []
+
+      return field.required ? this.rules : []
     },
     addAltNameField () {
       this.formData.altNames.add.push(null)
