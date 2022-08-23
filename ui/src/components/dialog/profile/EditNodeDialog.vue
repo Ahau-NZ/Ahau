@@ -44,6 +44,7 @@
               :profile.sync="formData"
               fullForm
               :show-custom-fields="isRegistration"
+              :isRegistration="isRegistration"
             />
           </v-col>
         </v-tab-item>

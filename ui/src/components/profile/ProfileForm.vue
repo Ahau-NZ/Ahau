@@ -440,6 +440,7 @@
               :readonly="readonly"
               :sideView="isSideViewDialog"
               :fieldValues.sync="formData.customFields[tribe.tribeId]"
+              :isRegistration="isRegistration"
             />
           </v-row>
         </template>
@@ -478,6 +479,7 @@ export default {
     dialogType: { type: String, default: '' },
     displayName: { type: String, default: '' },
     moveDup: { type: Boolean, default: true },
+    isRegistration: Boolean,
     withRelationships: Boolean,
     readonly: Boolean,
     hideDetails: Boolean,
@@ -675,6 +677,9 @@ export default {
       this.formData.gender = this.genderSelected
     },
     getFieldRules (key) {
+      // disable required fields when we are on the whakapapa
+      if (!this.isRegistration) return []
+
       const label = mapPropToLabel(key)
       if (!label) return []
 
