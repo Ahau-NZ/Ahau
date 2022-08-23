@@ -17,6 +17,7 @@
           :displayName="getDisplayName(selectedProfile)"
           :isDuplicate="isDuplicate"
           :moveDup.sync="moveDup"
+          show-custom-fields
         >
 
           <!-- Slot = Search -->
