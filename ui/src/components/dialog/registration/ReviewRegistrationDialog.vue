@@ -320,7 +320,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
-import { getCustomFields } from '@/lib/custom-field-helpers'
+import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
 export default {
@@ -445,7 +445,7 @@ export default {
 
       // if the field wasnt found
       // it could mean that they havent defined a value for it yet
-      if (field === undefined) field = { value: this.getDefaultFieldValue(fieldDef) }
+      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
 
       switch (fieldDef.type) {
         case 'array':
@@ -459,20 +459,6 @@ export default {
           else return 'no'
         default:
           return field.value || ''
-      }
-    },
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
       }
     },
     monthTranslations (key, vars) {

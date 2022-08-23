@@ -230,7 +230,9 @@ export default {
     },
     async handleDoubleStep (input) {
       try {
-        let { id } = input
+        let {
+          id
+        } = input
 
         // if theres no id, that means we're creating the whakapapa from a new person
         if (!id) {

@@ -1,5 +1,7 @@
 import uniqBy from 'lodash.uniqby'
 import clone from 'lodash.clonedeep'
+import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
 
 import { orderBy } from 'lodash'
 
@@ -118,4 +120,45 @@ const mappings = {
   // disabled for now (as we dont have custom field dates)
   // 'date of birth': 'dateOfBirth',
   // 'date of death': 'dateOfDeath',
+}
+
+/**
+ * Method to find the custom field changes against the default values.
+ * This method is used when creating a new profile
+ *
+ * @param {Object} customFields { [timstamp]: value } (value can be multiple types)
+ */
+export function findInitialCustomFieldChanges (customFields, tribeCustomFields) {
+  if (isEmpty(customFields)) return []
+
+  return Object.entries(customFields)
+    .map(([key, value]) => ({ key, value }))
+    .filter(({ key, value }) => {
+      const field = tribeCustomFields.find(field => field.key === key)
+      if (!field) return false
+
+      // only keep those where the value has changes
+      return !isEqual(value, getDefaultFieldValue(field))
+    })
+}
+
+/**
+ * Method to find the custom field changes against the default values.
+ * This method is used when creating a new profile
+ *
+ * @param {Object} field { type } the custom field definition
+ */
+export function getDefaultFieldValue (field) {
+  switch (field.type) {
+    case 'list':
+      return []
+    case 'array':
+      return ['']
+    case 'text':
+      return ''
+    case 'checkbox':
+      return false
+    default:
+      return null
+  }
 }

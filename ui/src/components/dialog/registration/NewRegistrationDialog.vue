@@ -402,10 +402,9 @@ import { mapGetters, mapActions } from 'vuex'
 
 import calculateAge from '@/lib/calculate-age'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { findMissingRequiredFields } from '@/lib/custom-field-helpers'
+import { findMissingRequiredFields, findInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 import clone from 'lodash.clonedeep'
-import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 
 export default {
@@ -586,17 +585,10 @@ export default {
       */
       await this.updatePersonalProfile(input)
 
-      if (!isEmpty(customFields)) {
+      const customFieldValues = findInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+      if (!isEmpty(customFieldValues)) {
         this.rawCustomFields = customFields
-        this.customFields = Object.entries(customFields[this.currentTribe.id])
-          .map(([key, value]) => ({ key, value }))
-          .filter(({ key, value }) => {
-            const field = this.tribeCustomFields.find(field => field.key === key)
-            if (!field) return false
-
-            // only keep those where the value has changes
-            return !isEqual(value, this.getDefaultFieldValue(field))
-          })
+        this.customFields = customFieldValues
       }
 
       // reload your personal profiles
@@ -619,20 +611,6 @@ export default {
         id: this.personalProfile.id,
         ...input
       })
-    },
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
-      }
     }
   }
 }
