@@ -4,7 +4,13 @@
       {{ tribe.preferredName }}
     </v-col>
     <v-col v-for="(customField, i) in customFields" :key="`cf-${customField.key}-${i}`" :cols="calculateFieldCols(customField)" class="py-2">
-      <CustomField :field="customField" :fieldValue.sync="customFieldValues[customField.key]" :readonly="readonly" :sideView="sideView" />
+      <CustomField
+        :field="customField"
+        :fieldValue.sync="customFieldValues[customField.key]"
+        :readonly="readonly"
+        :sideView="sideView"
+        :isRegistration="isRegistration"
+      />
     </v-col>
   </v-row>
 </template>
@@ -21,6 +27,7 @@ export default {
     tribe: Object,
     readonly: Boolean,
     sideView: Boolean,
+    isRegistration: Boolean,
     fieldValues: {
       type: Object,
       default: () => {}

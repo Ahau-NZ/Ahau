@@ -7,7 +7,7 @@
       :type="field.type"
       :label="field.label"
       v-bind="customProps"
-      :rules="field.required ? rules : []"
+      :rules="fieldRules"
     />
     <!-- Date field-->
     <DateIntervalPicker
@@ -15,7 +15,7 @@
       :label="field.label"
       allowInterval
       :interval.sync="value"
-      :rules="field.required ? rules : []"
+      :rules="fieldRules"
     />
     <!-- Checkbox field -->
     <v-checkbox
@@ -24,7 +24,7 @@
       :label="field.label"
       hide-details
       v-bind="customProps"
-      :rules="field.required ? rules : []"
+      :rules="fieldRules"
     />
     <!-- List of MultipleChoice feild -->
     <v-select
@@ -37,7 +37,7 @@
       :chips="field.multiple"
       :deletable-chips="field.multiple"
       :multiple="field.multiple"
-      :rules="field.required ? rules : []"
+      :rules="fieldRules"
     />
     <!-- Array field -->
     <v-row v-else-if="field.type === 'array'">
@@ -49,7 +49,7 @@
           @click:append="removeItem(i)"
           v-bind="customProps"
           :readonly="readonly"
-          :rules="field.required ? rules : []"
+          :rules="fieldRules"
         />
       </v-col>
       <AddButton v-if="!readonly" :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="field.label" @click="addEmptyItem" row/>
@@ -67,7 +67,8 @@ export default {
     field: Object,
     fieldValue: [String, Number, Boolean, Array, Object], // TODO: object? (list)
     readonly: Boolean,
-    sideView: Boolean
+    sideView: Boolean,
+    isRegistration: Boolean
   },
   components: {
     AddButton
@@ -115,6 +116,11 @@ export default {
     },
     justifyBtn () {
       return this.smScreen ? 'start' : 'center'
+    },
+    fieldRules () {
+      if (!this.isRegistration) return []
+
+      return this.field.required ? this.rules : []
     }
   },
   methods: {
