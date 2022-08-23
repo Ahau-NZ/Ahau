@@ -19,8 +19,10 @@
 import get from 'lodash.get'
 
 import Vue from 'vue'
-
 import CustomField from './CustomField.vue'
+
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers.js'
+
 export default {
   name: 'CustomFieldGroup',
   props: {
@@ -84,28 +86,14 @@ export default {
         const fieldValue = get(this.fieldValues, field.key)
         if (fieldValue !== undefined) return fieldValue
 
-        return this.getDefaultFieldValue(field)
+        return getDefaultFieldValue(field)
       }
 
       const valueOnProfile = this.profile.customFields.find(customField => customField.key === field.key)
       if (valueOnProfile !== undefined) return valueOnProfile.value
 
       // otherwise figure out a default value
-      return this.getDefaultFieldValue(field)
-    },
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
-      }
+      return getDefaultFieldValue(field)
     },
     calculateFieldCols (field) {
       if (field.type === 'array') return '12'

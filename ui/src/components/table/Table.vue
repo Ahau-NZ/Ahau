@@ -92,6 +92,7 @@ import calculateAge from '../../lib/calculate-age.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { mergeAdminProfile } from '@/lib/person-helpers.js'
 import { determineFilter } from '@/lib/filters.js'
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
 import { SORT } from '@/lib/constants.js'
 import { mapNodesToCsv } from '@/lib/csv.js'
@@ -368,7 +369,7 @@ export default {
 
       // if the field wasnt found
       // it could mean that they havent defined a value for it yet
-      if (customField === undefined) customField = { value: this.getDefaultFieldValue(fieldDef) }
+      if (customField === undefined) customField = { value: getDefaultFieldValue(fieldDef) }
 
       switch (fieldDef.type) {
         case 'array':
@@ -382,20 +383,6 @@ export default {
           else return 'no'
         default:
           return customField.value || ''
-      }
-    },
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
       }
     },
 

@@ -93,6 +93,7 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { deleteTribe, mergeTribeProfiles } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
 export default {
   name: 'ProfileShow',
@@ -270,7 +271,7 @@ export default {
               const valueOnProfile = profile.customFields.find(field => field.key === key)
 
               // only keep those where the value has changes
-              return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, this.getDefaultFieldValue(field)))
+              return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, getDefaultFieldValue(field)))
             })
 
           if (!customFieldChanges || !customFieldChanges.length) return null
@@ -278,21 +279,6 @@ export default {
           return this.updatePerson({ id: profile.id, customFields: customFieldChanges })
         })
       )
-    },
-    // TODO: move this to a helper
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
-      }
     },
     async deleteCommunity () {
       try {

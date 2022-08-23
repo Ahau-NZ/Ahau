@@ -337,6 +337,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -579,7 +580,7 @@ export default {
 
       // if the field wasnt found
       // it could mean that they havent defined a value for it yet
-      if (field === undefined) field = { value: this.getDefaultFieldValue(fieldDef) }
+      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
 
       switch (fieldDef.type) {
         case 'array':
@@ -695,7 +696,7 @@ export default {
           const valueOnProfile = this.profile.customFields.find(field => field.key === key)
 
           // only keep those where the value has changes
-          return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, this.getDefaultFieldValue(field)))
+          return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, getDefaultFieldValue(field)))
         })
     },
     toggleNew (type) {
@@ -706,20 +707,6 @@ export default {
     },
     t (key, vars) {
       return this.$t('sideProfile.' + key, vars)
-    },
-    getDefaultFieldValue (field) {
-      switch (field.type) {
-        case 'list':
-          return []
-        case 'array':
-          return ['']
-        case 'text':
-          return ''
-        case 'checkbox':
-          return false
-        default:
-          return null
-      }
     }
   }
 }
