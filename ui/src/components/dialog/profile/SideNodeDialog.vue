@@ -27,7 +27,7 @@
                 :profile.sync="formData"
                 isSideViewDialog
                 isEditing
-                isRegistration
+                show-custom-fields
                 :readonly="!isEditing"
                 :fullForm="fullForm"
                 :mobile="mobile"

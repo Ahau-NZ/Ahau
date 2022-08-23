@@ -333,7 +333,8 @@ export function setDefaultData (withRelationships) {
     placeOfDeath: '',
     buriedLocation: '',
     education: [],
-    school: []
+    school: [],
+    customFields: []
   }
 
   if (!withRelationships) {

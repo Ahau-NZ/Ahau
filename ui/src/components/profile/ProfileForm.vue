@@ -426,7 +426,7 @@
             />
           </v-col>
         </v-row>
-        <template v-if="showCustomFields">
+        <template v-if="showCustomFieldsSection">
           <!-- ====COMMUNITY FIELDS======== -->
           <v-col cols="12" class="px-0">
             <v-divider class="py-2"/>
@@ -483,7 +483,7 @@ export default {
     hideDetails: Boolean,
     isEditing: Boolean,
     isSideViewDialog: Boolean,
-    isRegistration: Boolean,
+    showCustomFields: Boolean,
     fullForm: Boolean,
     isDuplicate: Boolean
   },
@@ -617,7 +617,7 @@ export default {
     /*
     ======== custom fields ==========
     */
-    showCustomFields () {
+    showCustomFieldsSection () {
       if (!get(this.formData, 'customFields')) return false
 
       return this.customFieldsByTribes.some(tribe => get(tribe, 'customFields.length'))
@@ -625,7 +625,7 @@ export default {
     customFieldsByTribes () {
       // Here if we are viewing our own profile on ProfileShow, we want to display
       // all custom fields from all tribes
-      if (!this.isRegistration && this.isPersonalProfilePage) {
+      if (!this.showCustomFields && this.isPersonalProfilePage) {
         return this.joinedTribes.map(tribe => {
           return {
             tribeId: tribe.id,
