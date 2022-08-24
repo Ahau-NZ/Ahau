@@ -20,17 +20,8 @@
       :title="t('newNodeTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
       :type="dialogType"
       withView
-      @create="addPerson($event)"
+      @create="addPerson"
       @close="close"
-    />
-    <!-- TODO: this doesnt appear to be used by anything here! -->
-    <EditNodeDialog
-      v-if="isActive('edit-node')"
-      :show="isActive('edit-node')"
-      :title="t('editNodeTitle', {displayName: getDisplayName(selectedProfile)})"
-      @submit="processUpdate($event)"
-      @close="close"
-      :nodeProfile="profile"
     />
     <SideNodeDialog
       v-if="isActive('view-edit-node') && selectedProfile"
@@ -92,10 +83,10 @@
 
 <script>
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -106,8 +97,8 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
+import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 import { getDisplayName } from '@/lib/person-helpers.js'
-
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -118,7 +109,6 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
-    EditNodeDialog,
     SideNodeDialog,
     RemovePersonDialog,
     WhakapapaViewDialog,
@@ -139,7 +129,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'review-registration', 'table-filter-menu'
       ].includes(val)
     },
@@ -172,6 +162,7 @@ export default {
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeCustomFields']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -275,18 +266,23 @@ export default {
       }
     },
     async addPerson (input) {
+      let { id, children, parents, partners, moveDup, customFields: rawCustomFields } = input
+
       // if moveDup is in input than add duplink
-      if ('moveDup' in input) {
+      if (moveDup) {
         await this.addImportantRelationship(input)
         delete input.moveDup
       }
 
       // get children, parents, partners quick add links
-      let { id, children, parents, partners } = input
       // remove them from input
       delete input.children
       delete input.parents
       delete input.partners
+
+      // set the custom fields
+      input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
+      if (isEmpty(input.customFields)) delete input.customFields
 
       const isNewProfile = !input.id
       if (isNewProfile) id = await this.createNewPerson(input)
@@ -444,17 +440,6 @@ export default {
         recps: this.view.recps
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
-    },
-    // TODO: see what is using this and move it into that component instead
-    async processUpdate (input) {
-      if (input.recps) delete input.recps
-
-      const profileId = this.selectedProfile.id
-      // update their profile in the db
-      await this.updatePerson({ id: profileId, ...input })
-
-      // loads their full profile for changes in the tree as well as the side node dialog
-      await this.loadPersonFull(profileId)
     },
     async removeProfile (deleteOrIgnore) {
       await this.deleteProfileFromImportantRelationships(this.selectedProfile.id)

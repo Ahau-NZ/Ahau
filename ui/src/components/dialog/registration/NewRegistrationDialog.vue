@@ -402,7 +402,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 import calculateAge from '@/lib/calculate-age'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { findMissingRequiredFields, findInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
+import { findMissingRequiredFields, getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 import clone from 'lodash.clonedeep'
 import isEmpty from 'lodash.isempty'
@@ -585,7 +585,7 @@ export default {
       */
       await this.updatePersonalProfile(input)
 
-      const customFieldValues = findInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+      const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
       if (!isEmpty(customFieldValues)) {
         this.rawCustomFields = customFields
         this.customFields = customFieldValues

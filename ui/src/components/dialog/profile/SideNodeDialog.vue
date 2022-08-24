@@ -337,7 +337,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDefaultFieldValue } from '@/lib/custom-field-helpers.js'
+import { getDefaultFieldValue, getCustomFieldChanges } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -661,7 +661,7 @@ export default {
     async processUpdate (input) {
       if (input.recps) delete input.recps
 
-      input.customFields = this.getCustomFieldChanges(input.customFields[this.currentTribe.id])
+      input.customFields = getCustomFieldChanges(this.profile.customFields, input.customFields[this.currentTribe.id], this.tribeCustomFields)
       if (isEmpty(input.customFields)) delete input.customFields
 
       if (this.isMyProfile(this.profileId) && input.customFields) {
@@ -683,21 +683,6 @@ export default {
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
       this.$emit('saved')
-    },
-    getCustomFieldChanges (customFieldsByTribe) {
-      return Object.entries(customFieldsByTribe)
-        .map(([key, value]) => ({ key, value }))
-        .filter(({ key, value }) => {
-          // find the fields definition
-          const field = this.tribeCustomFields.find(field => field.key === key)
-          if (!field) return false
-
-          // find any existing value of the field from the current profile
-          const valueOnProfile = this.profile.customFields.find(field => field.key === key)
-
-          // only keep those where the value has changes
-          return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, getDefaultFieldValue(field)))
-        })
     },
     toggleNew (type) {
       this.$emit('new', type)
