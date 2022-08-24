@@ -139,7 +139,7 @@ const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
 const isNotEmpty = (array) => array && array.length > 0
 
 export default {
-  name: 'NewNodeDialog',
+  name: 'NewPersonDialog',
   components: {
     Avatar,
     Dialog,
@@ -565,7 +565,7 @@ export default {
       this.suggestions = []
     },
     t (key, vars) {
-      return this.$t('newNode.' + key, vars)
+      return this.$t('newPerson.' + key, vars)
     },
 
     async findSuggestionsByGroup (name) {

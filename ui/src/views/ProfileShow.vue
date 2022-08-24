@@ -49,9 +49,9 @@
       @close="dialog = null"
       :profile="mergeTribeProfiles(currentTribe)"
     />
-    <EditNodeDialog
-      v-if="dialog === 'edit-node'"
-      :show="dialog === 'edit-node'"
+    <EditPersonDialog
+      v-if="dialog === 'edit-person'"
+      :show="dialog === 'edit-person'"
       :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="processUpdatePerson"
       @close="dialog = null"
@@ -86,7 +86,7 @@ import ProfileButton from '@/components/button/ProfileButton.vue'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
-import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -107,7 +107,7 @@ export default {
     Header,
     NewCommunityDialog,
     DeleteCommunityDialog,
-    EditNodeDialog,
+    EditPersonDialog,
     NewRegistrationDialog,
     ProfileButton
   },
@@ -199,7 +199,7 @@ export default {
     ...mapActions('person', ['updatePerson']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
-      if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
+      if (this.profile.type.startsWith('person')) this.dialog = 'edit-person'
       else this.dialog = 'edit-community'
     },
     async processUpdateCommunity ($event) {

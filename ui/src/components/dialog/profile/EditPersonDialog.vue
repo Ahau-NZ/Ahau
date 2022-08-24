@@ -84,7 +84,7 @@ import ProfileForm from '@/components/profile/ProfileForm.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'EditNodeDialog',
+  name: 'EditPersonDialog',
   components: {
     Dialog,
     DeleteProfileDialog,
@@ -237,7 +237,7 @@ export default {
       this.formData.altNames.currentState.splice(index, 1)
     },
     t (key, vars) {
-      return this.$t('editNodeDialog.' + key, vars)
+      return this.$t('editPersonDialog.' + key, vars)
     }
   }
 }

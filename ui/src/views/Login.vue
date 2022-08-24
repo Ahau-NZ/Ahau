@@ -49,7 +49,7 @@
       />
       <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
     </div>
-    <NewNodeDialog v-if="dialog"
+    <NewPersonDialog v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
       @close="toggleNew"
@@ -71,7 +71,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar'
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 
 const karakia = `
@@ -213,7 +213,7 @@ export default {
   },
   components: {
     Avatar,
-    NewNodeDialog,
+    NewPersonDialog,
     NewPatakaDialog
   }
 }

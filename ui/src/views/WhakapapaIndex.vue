@@ -74,7 +74,7 @@
       @submit="handleStepOne"
     />
 
-    <NewNodeDialog v-if="showProfileForm"
+    <NewPersonDialog v-if="showProfileForm"
       :show="showProfileForm"
       title="Add a Person"
 
@@ -92,7 +92,7 @@ import isEmpty from 'lodash.isempty'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
@@ -109,7 +109,7 @@ export default {
   components: {
     WhakapapaViewCard,
     NewViewDialog,
-    NewNodeDialog,
+    NewPersonDialog,
     WhakapapaListHelper,
     BigAddButton,
     SkeletonLoader,

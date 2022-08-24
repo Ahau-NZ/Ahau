@@ -1,8 +1,8 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
   "createCommunityTitle": "Create New Tribe",
-  "newNodeTitle": "Add {dialogType} to {displayName}",
-  "editNodeTitle": "Edit {displayName}",
+  "newPersonTitle": "Add {dialogType} to {displayName}",
+  "editPersonTitle": "Edit {displayName}",
   "whakapapaShowHelperTitle": "Family tree",
   "whakapapaRegistryTitle": "Whakapapa registry",
   "filterMenuTitle": "Table Filter Menu"
