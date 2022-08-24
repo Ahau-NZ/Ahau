@@ -522,7 +522,7 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal) {
-        if (Array.isArray(newVal.customFields)) {
+        if (Array.isArray(newVal.customFields) && !this.isLoginPage) {
           newVal.customFields = {
             [this.currentTribe.id]: {
               ...(newVal.customFields || []).reduce((acc, field) => {
