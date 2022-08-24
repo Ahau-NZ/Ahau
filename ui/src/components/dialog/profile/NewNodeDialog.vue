@@ -210,6 +210,7 @@ export default {
       }
     },
     async 'formData.preferredName' (name) {
+      if (this.isLogin) return
       clearTimeout(this.timer)
 
       if (!name) {
@@ -255,6 +256,9 @@ export default {
     ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
+    isLogin () {
+      return this.$route.name === 'login'
+    },
     allowRelationships () {
       return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },

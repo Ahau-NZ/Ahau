@@ -197,6 +197,9 @@ export default {
     },
 
     async save (input) {
+      // no custom fields on your personal profile
+      if (input.customFields) delete input.customFields
+
       await this.updatePerson({
         id: this.whoami.personal.profile.id,
         ...input
