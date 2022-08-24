@@ -1,8 +1,39 @@
-import { getDefaultFields, DEFAULT_PROFILE_MODEL, getCustomFields, findMissingRequiredFields } from './custom-field-helpers'
+import {
+  getDefaultFields,
+  DEFAULT_PROFILE_MODEL,
+  getCustomFields,
+  findMissingRequiredFields,
+  getInitialCustomFieldChanges,
+  getCustomFieldChanges
+} from './custom-field-helpers'
 
 const test = require('tape')
 
-test('pick fields (empty custom fields)', t => {
+const FIELD_DEFS = [
+  {
+    key: '1657665746447',
+    label: 'full name',
+    required: true,
+    type: 'text',
+    visibleBy: 'members'
+  },
+  {
+    key: '1657464476657',
+    label: 'First pets name',
+    required: true,
+    type: 'text',
+    visibleBy: 'members'
+  },
+  {
+    key: '1476466577564',
+    label: 'Pets favourite treats',
+    required: false,
+    type: 'array',
+    visibleBy: 'members'
+  }
+]
+
+test('getDefaultFields + getCustomFields (empty)', t => {
   const defaultFields = DEFAULT_PROFILE_MODEL
 
   t.deepEqual(
@@ -20,7 +51,7 @@ test('pick fields (empty custom fields)', t => {
   t.end()
 })
 
-test('pick fields from custom fields', t => {
+test('getCustomFields', t => {
   const customFields = [
     { // default one
       key: '1657665746445',
@@ -58,7 +89,7 @@ test('pick fields from custom fields', t => {
   t.end()
 })
 
-test('pick fields from custom fields (duplicates labels)', t => {
+test('getDefaultFields', t => {
   const customFields = [
     {
       key: '1657665746445',
@@ -120,6 +151,49 @@ test('required fields', t => {
     findMissingRequiredFields(profile, requiredFields),
     [{ prop: 'full name' }, { prop: 'First pets name' }],
     'returns the missing required field'
+  )
+
+  t.end()
+})
+
+test('getInitialCustomFieldChanges', t => {
+  const rawCustomFields = {
+    1657665746447: '',
+    1657464476657: 'Snowy',
+    1476466577564: ['i dont know']
+  }
+
+  t.deepEqual(
+    getInitialCustomFieldChanges(rawCustomFields, FIELD_DEFS),
+    [
+      { key: '1657464476657', value: 'Snowy' },
+      { key: '1476466577564', value: ['i dont know'] }
+    ],
+    'returns the fields that changed from their default values'
+  )
+
+  t.end()
+})
+
+test('getCustomFieldChanges', t => {
+  const profileCustomFields = [
+    { key: '1657464476657', value: 'Snowy' },
+    { key: '1476466577564', value: ['i dont know'] }
+  ]
+
+  const updatedCustomFields = {
+    1657665746447: 'Cherese Eriepa',
+    1657464476657: 'Snowy',
+    1476466577564: []
+  }
+
+  t.deepEqual(
+    getCustomFieldChanges(profileCustomFields, updatedCustomFields, FIELD_DEFS),
+    [
+      { key: '1657665746447', value: 'Cherese Eriepa' },
+      { key: '1476466577564', value: [] }
+    ],
+    'returns the fields that changed from the profiles previous value'
   )
 
   t.end()
