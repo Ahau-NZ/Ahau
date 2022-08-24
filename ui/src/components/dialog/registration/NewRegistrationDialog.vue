@@ -378,7 +378,7 @@
         </v-btn>
       </template>
     </Dialog>
-    <EditNodeDialog
+    <EditPersonDialog
       v-if="showEditDialog"
       :show="showEditDialog"
       isRegistration
@@ -396,7 +396,7 @@ import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
-import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -414,7 +414,7 @@ export default {
     Avatar,
     ProfileCard,
     ProfileInfoItem,
-    EditNodeDialog
+    EditPersonDialog
   },
   props: {
     show: { type: Boolean, required: true },

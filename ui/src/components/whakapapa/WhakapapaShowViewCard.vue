@@ -152,7 +152,7 @@ export default {
     ...mapActions('person', ['setSelectedProfileById']),
     openProfile (profile) {
       this.setSelectedProfileById(profile.id)
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.setDialog({ active: 'view-edit-person', type: 'preview' })
     },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)

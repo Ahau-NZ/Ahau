@@ -98,7 +98,7 @@ export default {
       this.close()
     },
     t (key, vars) {
-      return this.$t('deleteNode.' + key, vars)
+      return this.$t('deletePerson.' + key, vars)
     }
   }
 }

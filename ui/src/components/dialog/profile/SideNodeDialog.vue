@@ -636,7 +636,7 @@ export default {
     async openProfile (profile) {
       this.updateDialog(null, null)
       await this.setSelectedProfileById(profile.id)
-      this.updateDialog('view-edit-node', null)
+      this.updateDialog('view-edit-person', null)
     },
     cordovaBackButton () {
       this.close()

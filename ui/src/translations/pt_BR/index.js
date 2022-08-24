@@ -17,7 +17,7 @@ module.exports = {
   addCollectionForm: require('./add-collection-form.json'),
   settingsForm: require('./settings-form.json'),
 
-  deleteNode: require('./delete-node.json'),
+  deletePerson: require('./delete-person.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),

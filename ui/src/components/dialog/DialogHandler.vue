@@ -14,30 +14,30 @@
       @submit="setupNewCommunity($event)"
       @close="close"
     />
-    <NewNodeDialog
-      v-if="isActive('new-node')"
-      :show="isActive('new-node')"
-      :title="t('newNodeTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
+    <NewPersonDialog
+      v-if="isActive('new-person')"
+      :show="isActive('new-person')"
+      :title="t('newPersonTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
       :type="dialogType"
       withView
       @create="addPerson"
       @close="close"
     />
     <SideNodeDialog
-      v-if="isActive('view-edit-node') && selectedProfile"
-      :show="isActive('view-edit-node')"
+      v-if="isActive('view-edit-person') && selectedProfile"
+      :show="isActive('view-edit-person')"
       :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
       @close="close"
-      @new="toggleDialog('new-node', $event, 'view-edit-node')"
-      @delete="toggleDialog('delete-node', null, null)"
+      @new="toggleDialog('new-person', $event, 'view-edit-person')"
+      @delete="toggleDialog('delete-person', null, null)"
       @reload-whakapapa="reloadWhakapapa"
       :view="view"
       :preview="previewProfile"
     />
     <RemovePersonDialog
-      v-if="isActive('delete-node')"
-      :show="isActive('delete-node')"
+      v-if="isActive('delete-person')"
+      :show="isActive('delete-person')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== focus"
       @submit="removeProfile"
@@ -85,7 +85,7 @@
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
@@ -108,7 +108,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'DialogHandler',
   components: {
-    NewNodeDialog,
+    NewPersonDialog,
     SideNodeDialog,
     RemovePersonDialog,
     WhakapapaViewDialog,
@@ -129,7 +129,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'delete-story',
+        'new-community', 'new-person', 'view-edit-person', 'delete-person', 'new-story', 'edit-story', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'review-registration', 'table-filter-menu'
       ].includes(val)
     },
@@ -215,7 +215,7 @@ export default {
       return (type === this.dialog || type === this.storeDialog)
     },
     close () {
-      if (this.isActive('new-node')) {
+      if (this.isActive('new-person')) {
         this.toggleDialog(this.source, this.dialogType, null)
         return
       }

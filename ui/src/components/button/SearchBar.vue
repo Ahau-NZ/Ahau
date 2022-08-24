@@ -30,7 +30,7 @@
       </v-list-item>
 
       <!-- Profile in the list -->
-      <v-list-item v-else @click="setSearchNode(data.item, $event)">
+      <v-list-item v-else @click="setSearchProfile(data.item, $event)">
         <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
         <v-list-item-content v-if="data.item.preferredName">
           <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
@@ -185,9 +185,9 @@ export default {
         this.searchString = ''
       } else this.$emit('close')
     },
-    setSearchNode (data, e) {
-      this.setSearchedProfileId(data.id)
-      this.setMouseEvent(e)
+    setSearchProfile (profile, event) {
+      this.setSearchedProfileId(profile.id)
+      this.setMouseEvent(event)
     },
     setLoadingSuggestions (isLoading) {
       this.isLoadingSuggestions = isLoading

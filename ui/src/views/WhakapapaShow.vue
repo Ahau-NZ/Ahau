@@ -283,7 +283,7 @@ export default {
     // },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfileById(profile)
-      if (this.dialog.active === 'view-edit-node') {
+      if (this.dialog.active === 'view-edit-person') {
         this.updateDialog(null, null)
       }
       this.updateDialog(dialog, type)
@@ -364,7 +364,7 @@ export default {
     },
     openTableContextMenu (event) {
       this.setSelectedProfileById(event.profile)
-      if (this.dialog.active === 'view-edit-node') {
+      if (this.dialog.active === 'view-edit-person') {
         this.updateDialog(null, null)
       }
       this.$refs.menu.open(event.$event)

@@ -1,8 +1,8 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
   "createCommunityTitle": "Hangaia he Hapori Hou",
-  "newNodeTitle": "Add {dialogType} to {displayName}",
-  "editNodeTitle": "Whakaniko {displayName}",
+  "newPersonTitle": "Add {dialogType} to {displayName}",
+  "editPersonTitle": "Whakaniko {displayName}",
   "whakapapaShowHelperTitle": "Whakapapa",
   "whakapapaRegistryTitle": "Whakapapa registry",
   "filterMenuTitle": "Table Filter Menu"

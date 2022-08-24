@@ -1,14 +1,14 @@
 <template>
   <VueContext ref="menu" class="px-0">
     <li>
-      <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
+      <a href="#" @click.prevent="updateDialog('view-edit-person', null)"  class="d-flex align-center px-4">
         <img class="contextMenuIcon" :src="require('@/assets/account-circle.svg')"/>
         <p class="ma-0 pl-3">{{ t('viewPerson') }}</p>
       </a>
     </li>
     <li v-for="option in options" :key="option.dialog + option.type">
       <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-        <v-icon v-if="option.dialog === 'delete-node'" class="contextMenuIcon black--text">
+        <v-icon v-if="option.dialog === 'delete-person'" class="contextMenuIcon black--text">
           {{ option.icon }}
         </v-icon>
         <img v-else class="contextMenuIcon" :src="option.icon"/>
@@ -66,35 +66,35 @@ export default {
       return [
         {
           title: this.t('addParent'),
-          dialog: 'new-node',
+          dialog: 'new-person',
           type: 'parent',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-parent.svg')
         },
         {
           title: this.t('addPartner'),
-          dialog: 'new-node',
+          dialog: 'new-person',
           type: 'partner',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-partner.svg')
         },
         {
           title: this.t('addChild'),
-          dialog: 'new-node',
+          dialog: 'new-person',
           type: 'child',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-child.svg')
         },
         {
           title: this.t('addSibling'),
-          dialog: 'new-node',
+          dialog: 'new-person',
           type: 'sibling',
           isPermitted: this.canAddSibling,
           icon: require('@/assets/node-sibling.svg')
         },
         {
           title: this.t('deletePerson'),
-          dialog: 'delete-node',
+          dialog: 'delete-person',
           type: null,
           isPermitted: this.canDelete,
           icon: 'mdi-delete'
