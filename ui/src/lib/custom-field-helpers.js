@@ -129,10 +129,10 @@ const mappings = {
  * @param {Object} customFields raw custom fields in this form { [key]: value }
  * @param {Array} customFieldDefs custom field definitions in this form [{ type, key, label, required, visibleBy, order, ... }]
  */
-export function getInitialCustomFieldChanges (customFields, customFieldDefs) {
-  if (isEmpty(customFields)) return []
+export function getInitialCustomFieldChanges (rawCustomFields, customFieldDefs) {
+  if (isEmpty(rawCustomFields)) return []
 
-  return Object.entries(customFields)
+  return Object.entries(rawCustomFields)
     .map(([key, value]) => ({ key, value }))
     .filter(({ key, value }) => {
       const fieldDef = customFieldDefs.find(field => field.key === key)
