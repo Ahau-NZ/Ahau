@@ -89,7 +89,7 @@
                       color="blue"
                       :disabled="!allowSubmissions"
                     >
-                      {{ t('save') }}
+                      {{ submitLabel ? submitLabel : t('save') }}
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -125,6 +125,7 @@ export default {
       type: String,
       default: ''
     },
+    submitLabel: String,
     goBack: Function,
     enableMenu: Boolean,
     enableBar: {
