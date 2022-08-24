@@ -2,7 +2,7 @@ import uniqBy from 'lodash.uniqby'
 import clone from 'lodash.clonedeep'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
-
+import get from 'lodash.get'
 import { orderBy } from 'lodash'
 
 export const DEFAULT_NEW_FIELD = {
@@ -123,28 +123,52 @@ const mappings = {
 }
 
 /**
- * Method to find the custom field changes against the default values.
- * This method is used when creating a new profile
+ * This method returns the custom field changes against the default values.
+ * This method is used when creating a new profile in a tribe
  *
- * @param {Object} customFields { [timstamp]: value } (value can be multiple types)
+ * @param {Object} customFields raw custom fields in this form { [key]: value }
+ * @param {Array} customFieldDefs custom field definitions in this form [{ type, key, label, required, visibleBy, order, ... }]
  */
-export function findInitialCustomFieldChanges (customFields, tribeCustomFields) {
+export function getInitialCustomFieldChanges (customFields, customFieldDefs) {
   if (isEmpty(customFields)) return []
 
   return Object.entries(customFields)
     .map(([key, value]) => ({ key, value }))
     .filter(({ key, value }) => {
-      const field = tribeCustomFields.find(field => field.key === key)
-      if (!field) return false
+      const fieldDef = customFieldDefs.find(field => field.key === key)
+      if (!fieldDef) return false
 
       // only keep those where the value has changes
-      return !isEqual(value, getDefaultFieldValue(field))
+      return !isEqual(value, getDefaultFieldValue(fieldDef))
     })
 }
 
 /**
- * Method to find the custom field changes against the default values.
- * This method is used when creating a new profile
+ * Method to find the custom field changes against existing ones from the same profile.
+ * This method is used when update a profile in a tribe that has custom fields (or doesnt)
+ *
+ * @param {Array} originalCustomFields the custom field values given by the profile
+ * @param {Array} updatedCustomFields raw custom fields in this form { [key]: value }
+ * @oaran {Array} customFieldDefs custom field definitions in this form [{ type, key, label, required, visibleBy, order, ... }]
+ */
+export function getCustomFieldChanges (originalCustomFields, updatedCustomFields, customFieldDefs) {
+  return Object.entries(updatedCustomFields)
+    .map(([key, value]) => ({ key, value }))
+    .filter(({ key, value }) => {
+      // find the fields definition
+      const fieldDef = customFieldDefs.find(field => field.key === key)
+      if (!fieldDef) return false
+
+      // find any existing value of the field from the current profile
+      const fieldOriginalValue = originalCustomFields.find(field => field.key === key)
+
+      // only keep those where the value has changed from the original value and the default value
+      return (!isEqual(get(fieldOriginalValue, 'value'), value) && !isEqual(value, getDefaultFieldValue(fieldDef)))
+    })
+}
+
+/**
+ * This method returns the default value for a custom field, depending on its type
  *
  * @param {Object} field { type } the custom field definition
  */

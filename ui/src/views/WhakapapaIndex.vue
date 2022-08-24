@@ -88,6 +88,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
@@ -98,6 +99,7 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import CollectionGroup from '../components/archive/CollectionGroup.vue'
+import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 export default {
   name: 'WhakapapaIndex',
@@ -129,7 +131,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
-    ...mapGetters('tribe', ['currentTribe', 'tribes', 'isPersonalTribe']),
+    ...mapGetters('tribe', ['currentTribe', 'tribes', 'isPersonalTribe', 'tribeCustomFields']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -244,6 +246,11 @@ export default {
                 : '*'
             ]
           }
+
+          // format custom fields
+          input.customFields = getInitialCustomFieldChanges(input.customFields[this.currentTribe.id], this.tribeCustomFields)
+
+          if (isEmpty(input.customFields)) delete input.customFields
 
           id = await this.createPerson(input)
         }
