@@ -438,9 +438,9 @@ export default {
         .filter(Boolean)
     },
     scopedProfile () {
-      if (this.profile && this.profile.adminProfile) {
+      const profile = clone(this.profile)
+      if (profile && profile.adminProfile) {
         const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
-        const profile = { ...this.profile }
         const adminProfile = profile.adminProfile
         delete profile.adminProfile
 
@@ -456,7 +456,7 @@ export default {
         return profile
       }
 
-      return this.profile
+      return profile
     },
     isAdminProfile () {
       return this.profile && this.profile.adminProfile
@@ -481,40 +481,6 @@ export default {
         return dateToString(date[1], this.monthTranslations)
       }
       return null
-    },
-    profileChanges () {
-      const changes = {}
-
-      Object.entries(this.formData).forEach(([key, value]) => {
-        if (['school', 'education'].includes(key)) {
-          if (!arrayEquals(this.formData[key], this.profile[key])) {
-            changes[key] = value
-          }
-        } else if (!isEqual(this.formData[key], this.scopedProfile[key])) {
-          switch (key) {
-            case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.scopedProfile.altNames)) {
-                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-                changes[key].add = changes[key].add.filter(Boolean)
-              }
-              break
-            case 'birthOrder':
-              changes[key] = parseInt(value)
-              break
-            case 'relationshipType':
-              if (value && value !== this.scopedProfile.relationshipType) {
-                changes[key] = value
-              }
-              break
-            case 'aliveInterval':
-              changes[key] = parseInterval(this.formData.aliveInterval)
-              break
-            default:
-              changes[key] = value
-          }
-        }
-      })
-      return changes
     },
     customProps () {
       return {
@@ -562,15 +528,59 @@ export default {
       return this.$t('months.' + key, vars)
     },
     defaultData () {
-      const profile = this.scopedProfile
+      const profile = clone(this.profile)
       return {
-        ...clone(profile),
+        ...profile,
         altNames: {
           currentState: clone(profile.altNames),
           add: [], // new altNames to add
           remove: [] // altNames to remove
         }
       }
+    },
+    getProfileChanges () {
+      const changes = {}
+
+      Object.entries(this.formData).forEach(([key, value]) => {
+        if (['school', 'education'].includes(key)) {
+          if (!arrayEquals(this.formData[key], this.profile[key])) {
+            changes[key] = value
+          }
+        } else if (key === 'customFields') {
+          const customFields = getCustomFieldChanges(
+            clone(this.profile[key]),
+            clone(this.formData[key][this.currentTribe.id]),
+            this.tribeCustomFields
+          )
+
+          if (!isEmpty(customFields)) {
+            changes[key] = customFields
+          }
+        } else if (!isEqual(this.formData[key], this.scopedProfile[key])) {
+          switch (key) {
+            case 'altNames':
+              if (!isEqual(this.formData.altNames.add, this.scopedProfile.altNames)) {
+                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+                changes[key].add = changes[key].add.filter(Boolean)
+              }
+              break
+            case 'birthOrder':
+              changes[key] = parseInt(value)
+              break
+            case 'relationshipType':
+              if (value && value !== this.scopedProfile.relationshipType) {
+                changes[key] = value
+              }
+              break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
+              break
+            default:
+              changes[key] = value
+          }
+        }
+      })
+      return changes
     },
     getFieldValue (fieldDef) {
       if (!Array.isArray(this.profile.customFields)) return ''
@@ -651,8 +661,9 @@ export default {
       this.$emit('cancel')
     },
     async submit () {
-      const output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      const profileChanges = this.getProfileChanges()
 
+      const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) await this.processUpdate(output)
 
       this.formData = this.defaultData()
@@ -660,9 +671,6 @@ export default {
     },
     async processUpdate (input) {
       if (input.recps) delete input.recps
-
-      input.customFields = getCustomFieldChanges(this.profile.customFields, input.customFields[this.currentTribe.id], this.tribeCustomFields)
-      if (isEmpty(input.customFields)) delete input.customFields
 
       if (this.isMyProfile(this.profileId) && input.customFields) {
         // update separately to prevent bulk update
