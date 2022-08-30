@@ -85,7 +85,7 @@ export function findMissingRequiredFields (profile, requiredFields) {
   return invalidProps
 }
 
-function mapLabelToProp (label) {
+export function mapLabelToProp (label) {
   return mappings[label]
 }
 

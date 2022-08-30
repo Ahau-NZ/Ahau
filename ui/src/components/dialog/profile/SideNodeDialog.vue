@@ -173,37 +173,37 @@
           <!-- Displays profile information when viewing! -->
           <v-row v-if="!isEditing" class="flex-column mx-0 ">
             <v-col class="pa-0">
-              <v-col cols="12" :class="profile.description ? 'pt-0' : 'pt-0'">
+              <v-col cols="12" class="pt-0">
                 <v-row cols="12" class="rounded-border mb-4">
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
-                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
-                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
+                  <ProfileInfoItem v-if="hasDefaultField('legalName')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
+                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
+                  <ProfileInfoItem :class="{ 'pb-0': true, bb: hasDefaultField('city') || hasDefaultField('country') }" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem v-if="hasDefaultField('city')" class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
+                  <ProfileInfoItem v-if="hasDefaultField('country')" class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
-                <v-row cols="12" class="rounded-border mb-4">
-                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br' : 'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6' : '12'" :smCols="profile.deceased ? '6' : '12'" :value="profile.placeOfBirth" />
-                  <template v-if="profile.deceased">
-                    <ProfileInfoItem class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
+                <v-row cols="12" v-if="hasDefaultField('isDeceased') && profile.deceased" class="rounded-border mb-4">
+                  <ProfileInfoItem v-if="hasDefaultField('isDeceased')" :class="profile.deceased ? 'pb-0 bb br' : 'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6' : '12'" :smCols="profile.deceased ? '6' : '12'" :value="profile.placeOfBirth" />
+                  <template v-if="hasDefaultField('isDeceased') && profile.deceased">
+                    <ProfileInfoItem v-if="hasDefaultField('placeOfDeath')" class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
                     <ProfileInfoItem class="pb-0 br" :title="t('dateOfPassing')" mdCols="6" smCols="6" :value="diedAt" />
-                    <ProfileInfoItem class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
+                    <ProfileInfoItem v-if="hasDefaultField('buriedLocation')" class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
                   </template>
                 </v-row>
-                <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
-                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.school && formData.education.join('\n')"/>
+                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'qualifications'])" class="rounded-border">
+                  <ProfileInfoItem v-if="hasDefaultField('profession')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
+                  <ProfileInfoItem v-if="hasDefaultField('education')" class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('qualifications')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki" class="d-flex flex-column justify-center align-center">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
                     {{ t('contactInfoText') }}
                   </v-card-subtitle>
                 </v-row>
-                <v-row v-if="isKaitiaki" cols="12" class="rounded-border">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
-                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" cols="12" class="rounded-border">
+                  <ProfileInfoItem v-if="hasDefaultField('address')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
+                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
+                  <ProfileInfoItem v-if="hasDefaultField('phone')" class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
+                  <ProfileInfoItem v-if="hasDefaultField('email')" class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
                 </v-row>
                 <v-row v-if="tribeCustomFields.length" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
@@ -337,7 +337,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDefaultFieldValue, getCustomFieldChanges } from '@/lib/custom-field-helpers.js'
+import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel, mapLabelToProp } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -389,7 +389,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
-    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
@@ -538,7 +538,24 @@ export default {
         }
       }
     },
-    getProfileChanges () {
+    hasDefaultField (key) {
+      const label = mapPropToLabel(key)
+
+      if (!label) return
+
+      // find in defaultCustomFields
+      return this.tribeDefaultFields.some(field => field.label === label)
+    },
+    hasOneField (keys) {
+      return keys.some(key => this.hasDefaultField(key))
+    },
+    getFieldValueFromProfile (fieldDef) {
+      const key = mapLabelToProp(fieldDef.label)
+      if (!key) return '' // something went wrong?
+
+      return get(this.profile, key, '')
+    },
+    getProfileChanges  () {
       const changes = {}
 
       Object.entries(this.formData).forEach(([key, value]) => {
