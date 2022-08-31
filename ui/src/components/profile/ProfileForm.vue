@@ -190,7 +190,7 @@
       <div v-show="showAdvanced" :class="readonly && !mobile ? 'ml-5' : ''">
         <v-row>
           <!-- Full Name -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('legalName')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.legalName"
               :label="t('legalName')"
@@ -199,7 +199,7 @@
             />
           </v-col>
           <!-- Alt names -->
-          <template>
+          <template v-if="hasDefaultField('altNames')" >
             <!-- TODO: configure required -->
             <v-col v-for="(altName, index) in formData.altNames.currentState"
               :key="`value-alt-name-${index}`"
@@ -219,7 +219,7 @@
           </template>
 
           <!-- TODO: configure required -->
-          <template v-if="!readonly">
+          <template v-if="!readonly && hasDefaultField('legalName')">
             <v-col v-for="(altName, index) in formData.altNames.add"
               :key="`add-alt-name-${index}`"
               cols="12"
@@ -256,7 +256,7 @@
 
         </v-row>
         <!-- Editing: relationship type-->
-        <v-row >
+        <v-row>
           <!-- <v-col v-if="(withRelationships || editRelationship || $route.name !== 'login') && !readonly" :cols="sideViewCols" class="pa-1">
             <v-select
               v-model="formData.relationshipType"
@@ -267,14 +267,14 @@
               hide-details
             />
           </v-col> -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('placeOfBirth')"  :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               :label="t('birthPlace')"
               v-bind="customProps"
             />
           </v-col>
-          <template v-if="formData.deceased">
+          <template v-if="formData.deceased && hasDefaultField('placeOfDeath')">
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
@@ -282,7 +282,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="formData.deceased && hasDefaultField('buriedLocation')" :cols="sideViewCols" class="pa-1">
               <!-- Burial Location -->
               <v-text-field
                 v-model="formData.buriedLocation"
@@ -306,11 +306,14 @@
         </v-row>
 
         <!-- Skills and Qualifications -->
-        <v-row class="pt-2">
+        <v-row v-if="hasOneField(['profession', 'qualifications', 'education'])" class="pt-2">
           <v-col cols="12" class="px-0">
             <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
           </v-col>
+        </v-row>
+
+        <v-row v-if="hasDefaultField('profession')">
           <!-- Profession-->
           <v-col cols="12" class="pa-0">
             <v-col :cols="sideViewCols" class="pa-1">
@@ -322,8 +325,11 @@
               />
             </v-col>
           </v-col>
+        </v-row>
+
           <!-- Skills -->
           <!-- TODO: configure required -->
+        <v-row v-if="hasDefaultField('qualifications')">
           <v-col v-for="(qualification, index) in formData.education"
             :key="`add-qual-name-${index}`"
             :cols="smScreen ? '12' : '6'"
@@ -342,9 +348,10 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
           </v-col>
         </v-row>
+
         <!-- Education -->
         <!-- TODO: configure required -->
-        <v-row class="pb-1">
+        <v-row v-if="hasDefaultField('education')" class="pb-1">
           <v-col v-for="(school, index) in formData.school"
             :key="`add-school-name-${index}`"
             :cols="smScreen ? '12' : '6'"
@@ -363,7 +370,8 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
-        <v-row v-if="!formData.deceased">
+
+        <v-row v-if="!formData.deceased && hasOneField(['email', 'phone', 'address', 'postCode', 'city', 'country'])">
           <!-- Personal Information -->
           <template v-if="showPersonalInfo">
             <v-col cols="12" class="px-0">
@@ -371,7 +379,7 @@
               <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
             </v-col>
             <!-- Email -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('email')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.email"
                 :label="t('personalInfo.email')"
@@ -380,7 +388,7 @@
               />
             </v-col>
             <!-- Phone -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('phone')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.phone"
                 :label="t('personalInfo.phone')"
@@ -389,7 +397,7 @@
               />
             </v-col>
             <!-- Address -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('address')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.address"
                 :label="t('personalInfo.address')"
@@ -399,7 +407,7 @@
             </v-col>
           </template>
           <!-- Post Code -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('postCode')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.postCode"
               :label="t('personalInfo.postCode')"
@@ -408,7 +416,7 @@
             />
           </v-col>
           <!-- City -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('city')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.city"
               :label="t('personalInfo.city')"
@@ -417,7 +425,7 @@
             />
           </v-col>
           <!-- Country -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('country')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.country"
               :label="t('personalInfo.country')"
@@ -545,7 +553,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
-    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -657,6 +665,17 @@ export default {
   methods: {
     ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
+    hasDefaultField (key) {
+      const label = mapPropToLabel(key)
+
+      if (!label) return
+
+      // find in defaultCustomFields
+      return this.tribeDefaultFields.some(field => field.label === label)
+    },
+    hasOneField (keys) {
+      return keys.some(key => this.hasDefaultField(key))
+    },
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
