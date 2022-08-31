@@ -70,10 +70,10 @@
               :align="mobile ? '' : 'right'"
               class="pt-0 d-flex justify-space-between"
             >
-              <v-btn @click="cancel" text large fab class="secondary--text">
+              <v-btn @click="cancel" text large class="secondary--text">
                 {{ t('cancel') }}
               </v-btn>
-              <v-btn @click="submit" text large fab class="blue--text" color="blue">
+              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
                 {{ t('save') }}
               </v-btn>
             </v-col>
@@ -388,6 +388,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
@@ -395,6 +396,9 @@ export default {
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
       'getPartnerType'
     ]),
+    isLoadingProfile () {
+      return this.alertSettings.delay === -1
+    },
     isDeletable () {
       return (
         this.deleteable &&
@@ -519,6 +523,7 @@ export default {
   },
   methods: {
     ...mapMutations(['updateDialog']),
+    ...mapActions('alerts', ['showAlert']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
@@ -677,16 +682,24 @@ export default {
       this.toggleEdit()
       this.$emit('cancel')
     },
-    async submit () {
+    async processUpdatePerson () {
       const profileChanges = this.getProfileChanges()
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
-      if (!isEmpty(output)) await this.processUpdate(output)
+      if (!isEmpty(output)) {
+        await this.processUpdate(output)
+      } else {
+        this.showAlert({ message: 'No changes were submitted', color: 'green' })
+        this.handleReload()
+        return
+      }
 
-      this.formData = this.defaultData()
-      this.toggleEdit()
+      // handle reload
+      this.showAlert({ message: 'Profile updated', color: 'green' })
+      this.handleReload()
     },
     async processUpdate (input) {
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
       if (input.recps) delete input.recps
 
       if (this.isMyProfile(this.profileId) && input.customFields) {
@@ -708,6 +721,10 @@ export default {
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
       this.$emit('saved')
+    },
+    handleReload () {
+      this.formData = this.defaultData()
+      this.toggleEdit()
     },
     toggleNew (type) {
       this.$emit('new', type)
