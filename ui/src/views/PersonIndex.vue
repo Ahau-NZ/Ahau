@@ -58,7 +58,7 @@
             <v-icon small class="mr-2" @click="handleEdit(item)" >
               mdi-pencil
             </v-icon>
-            <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
+            <v-icon v-if="!isMyProfile(item.id)" small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
               mdi-delete
             </v-icon>
           </template>
@@ -212,6 +212,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
     ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
