@@ -12,15 +12,24 @@
         :expanded="expandedFields"
         item-key="label"
       >
+
+        <!-- TODO: this is disabled for now as we do not implement this yet -->
         <template v-slot:item.visibleBy="{ item }"> <!-- eslint-disable-line -->
-          <v-select
-            v-model="item.visibleBy"
-            :items="items"
-            single-line
-            class="custom-select"
-            v-bind="customProps"
-            :disabled="isDisabledField(item)"
-          ></v-select>
+          <v-tooltip left open-delay="700">
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-select
+                  v-model="item.visibleBy"
+                  :items="items"
+                  single-line
+                  class="custom-select"
+                  v-bind="customProps"
+                  disabled
+                ></v-select>
+              </div>
+            </template>
+            <span>Access coming soon</span>
+          </v-tooltip>
         </template>
         <template v-slot:item.required="{ item }"> <!-- eslint-disable-line -->
           <v-checkbox
@@ -105,13 +114,22 @@
                     cols="12"
                     sm="6"
                   >
-                    <v-select
-                      label="visible by"
-                      v-model="newField.visibleBy"
-                      :items="items"
-                      class="custom-select"
-                      v-bind="customProps"
-                    ></v-select>
+                    <!-- TODO: this is disabled until we add in this feature -->
+                    <v-tooltip bottom open-delay="700">
+                      <template v-slot:activator="{ on }">
+                        <div v-on="on">
+                          <v-select
+                            label="visible by"
+                            v-model="newField.visibleBy"
+                            :items="items"
+                            class="custom-select"
+                            v-bind="customProps"
+                            disabled
+                          ></v-select>
+                        </div>
+                      </template>
+                      <span>Access coming soon</span>
+                    </v-tooltip>
                   </v-col>
                   <v-col
                     cols="12"
