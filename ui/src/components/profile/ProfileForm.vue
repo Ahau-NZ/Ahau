@@ -201,7 +201,7 @@
           <!-- Alt names -->
           <template v-if="hasDefaultField('altNames')" >
             <!-- TODO: configure required -->
-            <v-col v-for="(altName, index) in formData.altNames.currentState"
+            <v-col v-for="(altName, index) in currentAltNames"
               :key="`value-alt-name-${index}`"
               cols="12"
               :sm="smScreen ? '12' : '6'"
@@ -220,7 +220,7 @@
 
           <!-- TODO: configure required -->
           <template v-if="!readonly && hasDefaultField('legalName')">
-            <v-col v-for="(altName, index) in formData.altNames.add"
+            <v-col v-for="(altName, index) in newAltNames"
               :key="`add-alt-name-${index}`"
               cols="12"
               :sm="smScreen ? '12' : '6'"
@@ -530,16 +530,6 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal) {
-        if (Array.isArray(newVal.customFields) && !this.isLoginPage) {
-          newVal.customFields = {
-            [this.currentTribe.id]: {
-              ...(newVal.customFields || []).reduce((acc, field) => {
-                return ({ ...acc, [field.key]: field.value })
-              }, {})
-            }
-          }
-        }
-
         this.formData = newVal
       }
     },
@@ -549,12 +539,33 @@ export default {
     },
     valid (valid) {
       this.setAllowSubmissions(valid)
+    },
+    'currentTribe.id': {
+      deep: true,
+      immediate: true,
+      handler (id) {
+        if (Array.isArray(this.profile.customFields) && !this.isLoginPage) {
+          this.formData.customFields = {
+            [id]: {
+              ...(this.profile.customFields || []).reduce((acc, field) => {
+                return ({ ...acc, [field.key]: field.value })
+              }, {})
+            }
+          }
+        }
+      }
     }
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
     ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
+    currentAltNames () {
+      return get(this.formData, 'altNames.currentState', [])
+    },
+    newAltNames () {
+      return get(this.formData, 'altNames.add', [])
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -666,6 +677,8 @@ export default {
     ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
     hasDefaultField (key) {
+      if (!this.currentTribe) return false // avoid displaying any fields until the tribe has loaded
+
       const label = mapPropToLabel(key)
 
       if (!label) return
