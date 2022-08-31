@@ -100,7 +100,6 @@
 
     <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
       :show="showDelete"
-      context="personIndex"
 
       :profile="selectedProfile"
 
