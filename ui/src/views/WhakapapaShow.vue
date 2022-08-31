@@ -257,6 +257,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alerts', ['showAlert']),
     ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', [
@@ -386,12 +387,15 @@ export default {
 
       await this.saveWhakapapaView(input)
     },
+    closeDialog () {
+      this.updateDialog(null, null)
+      this.dialog.active = null
+    },
     async deleteWhakapapa () {
-      const input = {
-        tombstone: { date: new Date() }
-      }
+      this.closeDialog()
+      this.showAlert({ message: 'Deleting the whakapapa...', color: 'green', delay: -1 })
 
-      await this.processSaveWhakapapa(input)
+      await this.processSaveWhakapapa({ tombstone: { date: new Date() } })
 
       // check the group we are going to is an admin one
       const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
@@ -403,6 +407,8 @@ export default {
       } else {
         this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
       }
+
+      this.showAlert({ message: 'Whakapapa successfully deleted', color: 'green' })
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
