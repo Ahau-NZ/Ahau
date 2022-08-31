@@ -139,6 +139,7 @@ import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.v
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
+import { mapLabelToProp } from '../lib/custom-field-helpers'
 
 export default {
   name: 'PersonIndex',
@@ -161,7 +162,7 @@ export default {
       }
     }
     return {
-      headers: [
+      defaultHeaders: [
         header('image', '80px', true, true),
         header('preferredName', '120px', true),
         header('legalName', '150px', true),
@@ -187,6 +188,7 @@ export default {
         header('education', '150px', true),
         header('school', '150px', true)
       ],
+      headers: [],
       isLoading: false,
       profilesIndex: [],
       showEditor: false,
@@ -203,8 +205,7 @@ export default {
     // and then magically being able to load this list
     await this.loadData()
 
-    // populate headers with custom fields
-    this.headers.push(...this.customFieldHeaders)
+    this.populateHeaders()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -214,13 +215,12 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
         ...this.headers
-          // TODO: these need to be filtered out if the default headers have been tombstoned
-          .filter(h => h.show), // default headers
+          .filter(header => header.show),
 
         // ensure these actions are always the last
         { value: 'actions', align: 'end', width: '100px', show: true, sortable: false }
@@ -250,7 +250,7 @@ export default {
       return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
     },
     hiddenColumns () {
-      return this.headers.length - this.activeHeaders.length
+      return (this.headers.length - this.activeHeaders.length) + 1
     }
   },
   methods: {
@@ -258,6 +258,18 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading']),
+    populateHeaders () {
+      const defaultHeaders = this.defaultHeaders
+        .filter(header => {
+          return this.tribeDefaultFields.some(fieldDef => {
+            const key = mapLabelToProp(fieldDef.label)
+            return header.value === key
+          })
+        })
+
+      this.headers.push(...defaultHeaders)
+      this.headers.push(...this.customFieldHeaders)
+    },
     toggleSettings () {
       this.settingsPanel = !this.settingsPanel
     },
