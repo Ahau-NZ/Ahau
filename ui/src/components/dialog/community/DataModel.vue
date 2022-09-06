@@ -216,6 +216,7 @@ export default {
       typeOptions: [
         { text: 'text', type: 'text' },
         { text: 'number', type: 'number' },
+        { text: 'date', type: 'date' },
         { text: 'checkbox', type: 'checkbox' },
         { text: 'list (choose single entry)', value: SINGLE_LIST, type: 'list', multiple: false },
         { text: 'list (choose multiple entries) ', value: MULTI_LIST, type: 'list', multiple: true },
