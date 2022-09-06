@@ -2,49 +2,49 @@
   <div>
     <!-- Text || Number field -->
     <v-text-field
-      v-if="field.type === 'text' || field.type === 'number'"
+      v-if="fieldDef.type === 'text' || fieldDef.type === 'number'"
       v-model="value"
-      :type="field.type"
-      :label="field.label"
+      :type="fieldDef.type"
+      :label="fieldDef.label"
       v-bind="customProps"
       :rules="fieldRules"
     />
     <!-- Date field-->
-    <DateIntervalPicker
-      v-if="field.type === 'date'"
-      :label="field.label"
-      allowInterval
-      :interval.sync="value"
-      :rules="fieldRules"
+    <NodeDatePicker
+      v-else-if="fieldDef.type === 'date'"
+      :value.sync="value"
+      :label="fieldDef.label"
+      :readonly="readonly"
+      min="0000-01-01"
     />
     <!-- Checkbox field -->
     <v-checkbox
-      v-else-if="field.type === 'checkbox'"
+      v-else-if="fieldDef.type === 'checkbox'"
       v-model="value"
-      :label="field.label"
+      :label="fieldDef.label"
       hide-details
       v-bind="customProps"
       :rules="fieldRules"
     />
     <!-- List of MultipleChoice feild -->
     <v-select
-      v-else-if="field.type === 'list'"
+      v-else-if="fieldDef.type === 'list'"
       v-model="value"
-      :label="field.label"
-      :items="field.options"
+      :label="fieldDef.label"
+      :items="fieldDef.options"
       :menu-props="{ light: true }"
       v-bind="customProps"
-      :chips="field.multiple"
-      :deletable-chips="field.multiple"
-      :multiple="field.multiple"
+      :chips="fieldDef.multiple"
+      :deletable-chips="fieldDef.multiple"
+      :multiple="fieldDef.multiple"
       :rules="fieldRules"
     />
     <!-- Array field -->
-    <v-row v-else-if="field.type === 'array'">
-      <v-col v-for="(_, i) in value" :key="`${field.key}-${i}`" :class="{ 'pt-0 mt-0': i === 0, 'pt-2': i > 0 }" cols="6">
+    <v-row v-else-if="fieldDef.type === 'array'">
+      <v-col v-for="(_, i) in value" :key="`${fieldDef.key}-${i}`" :class="{ 'pt-0 mt-0': i === 0, 'pt-2': i > 0 }" cols="6">
         <v-text-field
           v-model="value[i]"
-          :label="`${field.label} (${i + 1})`"
+          :label="`${fieldDef.label} (${i + 1})`"
           :append-icon="!readonly ? 'mdi-delete' : ''"
           @click:append="removeItem(i)"
           v-bind="customProps"
@@ -52,26 +52,27 @@
           :rules="fieldRules"
         />
       </v-col>
-      <AddButton v-if="!readonly" :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="field.label" @click="addEmptyItem" row/>
+      <AddButton v-if="!readonly" :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="fieldDef.label" @click="addEmptyItem" row/>
     </v-row>
-    <!-- <v-col v-else class="py-1">{{ field.label }}</v-col> -->
   </div>
 </template>
 
 <script>
 import AddButton from '@/components/button/AddButton.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 export default {
   name: 'CustomField',
   props: {
-    field: Object,
+    fieldDef: Object,
     fieldValue: [String, Number, Boolean, Array, Object], // TODO: object? (list)
     readonly: Boolean,
     sideView: Boolean,
     isRegistration: Boolean
   },
   components: {
-    AddButton
+    AddButton,
+    NodeDatePicker
   },
   data () {
     return {
@@ -120,7 +121,7 @@ export default {
     fieldRules () {
       if (!this.isRegistration) return []
 
-      return this.field.required ? this.rules : []
+      return this.fieldDef.required ? this.rules : []
     }
   },
   methods: {

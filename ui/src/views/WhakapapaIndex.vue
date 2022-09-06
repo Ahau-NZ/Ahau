@@ -248,9 +248,10 @@ export default {
           }
 
           // format custom fields
-          input.customFields = getInitialCustomFieldChanges(input.customFields[this.currentTribe.id], this.tribeCustomFields)
-
-          if (isEmpty(input.customFields)) delete input.customFields
+          if (input.customFields) {
+            input.customFields = getInitialCustomFieldChanges(input.customFields[this.currentTribe.id], this.tribeCustomFields)
+            if (isEmpty(input.customFields)) delete input.customFields
+          }
 
           id = await this.createPerson(input)
         }

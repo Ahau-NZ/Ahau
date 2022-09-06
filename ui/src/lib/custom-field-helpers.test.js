@@ -30,6 +30,13 @@ const FIELD_DEFS = [
     required: false,
     type: 'array',
     visibleBy: 'members'
+  },
+  {
+    key: '1452341465646',
+    label: 'Date joined',
+    required: true,
+    type: 'date',
+    visibleBy: 'members'
   }
 ]
 
@@ -160,14 +167,16 @@ test('getInitialCustomFieldChanges', t => {
   const rawCustomFields = {
     1657665746447: '',
     1657464476657: 'Snowy',
-    1476466577564: ['i dont know']
+    1476466577564: ['i dont know'],
+    1452341465646: '2020-XX-XX'
   }
 
   t.deepEqual(
     getInitialCustomFieldChanges(rawCustomFields, FIELD_DEFS),
     [
       { key: '1657464476657', value: 'Snowy' },
-      { key: '1476466577564', value: ['i dont know'] }
+      { key: '1476466577564', value: ['i dont know'] },
+      { key: '1452341465646', value: '2020-XX-XX', type: 'date' }
     ],
     'returns the fields that changed from their default values'
   )
