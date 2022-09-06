@@ -16,32 +16,29 @@ export const DEFAULT_PROFILE_MODEL = [
   { label: 'first name', type: 'text', required: true, visibleBy: 'members' },
   { label: 'full name', type: 'text', required: false, visibleBy: 'members' },
   { label: 'other names', type: 'array', required: false, visibleBy: 'members' },
+  { label: 'date of birth', type: 'date', required: false, visibleBy: 'members' },
   { label: 'gender', type: 'list', required: false, visibleBy: 'members', options: ['male', 'female', 'other', 'unknown'], multiple: false },
   { label: 'related by', type: 'list', required: false, visibleBy: 'members', options: ['birth', 'whangai', 'adopted'], multiple: false },
   { label: 'city', type: 'text', required: true, visibleBy: 'members' },
   { label: 'country', type: 'text', required: true, visibleBy: 'members' },
   { label: 'street address', type: 'text', required: false, visibleBy: 'admin' },
-  { label: 'post code', type: 'text', required: false, visibleBy: 'admin' },
+  { label: 'post code', type: 'text', required: false, visibleBy: 'members' },
   { label: 'email', type: 'text', required: false, visibleBy: 'admin' },
   { label: 'phone', type: 'text', required: false, visibleBy: 'admin' },
   { label: 'description', type: 'text', required: false, visibleBy: 'members' },
   { label: 'birth order', type: 'number', required: false, visibleBy: 'members' },
   { label: 'no longer living', type: 'checkbox', required: false, visibleBy: 'members' },
+  { label: 'date of death', type: 'date', required: false, visibleBy: 'members' },
   { label: 'place of birth', type: 'text', required: false, visibleBy: 'members' },
   { label: 'place of death', type: 'text', required: false, visibleBy: 'members' },
   { label: 'buried location', type: 'text', required: false, visibleBy: 'members' },
   { label: 'profession', type: 'text', required: false, visibleBy: 'members' },
   { label: 'skills/qualifications', type: 'array', required: false, visibleBy: 'members' },
   { label: 'schools', type: 'array', required: false, visibleBy: 'members' }
-
-  // disabled for now (as we dont have custom field dates)
-  // { label: 'date of death', type: 'date', required: false, visibleBy: 'members' },
-  // { label: 'date of birth', type: 'date', required: false, visibleBy: 'admin' }
 ]
 
 // these are default fields which are disabled (you cant change or remove them)
-// NOTE: date fields disabled for now (as we dont have custom field dates)
-export const DISABLED_DEFAULT_FIELDS = ['first name', 'date of birth', 'date of death']
+export const DISABLED_DEFAULT_FIELDS = ['first name']
 
 // these are default fields where the required field cannot be enabled
 export const REQUIRED_DISABLED_FIELDS = ['description', 'no longer living', 'date of death', 'place of birth', 'place of death', 'buried location']
@@ -115,11 +112,9 @@ const mappings = {
   'buried location': 'buriedLocation',
   profession: 'profession',
   'skills/qualifications': 'qualifications',
-  schools: 'education'
-
-  // disabled for now (as we dont have custom field dates)
-  // 'date of birth': 'dateOfBirth',
-  // 'date of death': 'dateOfDeath',
+  schools: 'education',
+  'date of birth': 'dateOfBirth',
+  'date of death': 'dateOfDeath'
 }
 
 /**
