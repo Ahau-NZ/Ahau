@@ -505,7 +505,6 @@ export default {
       valid: false,
       selectedGender: '',
       showAdvanced: false,
-      customFieldValues: {},
       rules: [value => !!value || 'Required.']
     }
   },
@@ -530,6 +529,16 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal) {
+        if (Array.isArray(this.profile.customFields) && !this.isLoginPage && this.currentTribe) {
+          this.formData.customFields = {
+            [this.currentTribe.id]: {
+              ...(this.profile.customFields || []).reduce((acc, field) => {
+                return ({ ...acc, [field.key]: field.value })
+              }, {})
+            }
+          }
+        }
+
         this.formData = newVal
       }
     },
@@ -539,21 +548,6 @@ export default {
     },
     valid (valid) {
       this.setAllowSubmissions(valid)
-    },
-    'currentTribe.id': {
-      deep: true,
-      immediate: true,
-      handler (id) {
-        if (Array.isArray(this.profile.customFields) && !this.isLoginPage) {
-          this.formData.customFields = {
-            [id]: {
-              ...(this.profile.customFields || []).reduce((acc, field) => {
-                return ({ ...acc, [field.key]: field.value })
-              }, {})
-            }
-          }
-        }
-      }
     }
   },
   computed: {

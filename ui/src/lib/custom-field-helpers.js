@@ -128,14 +128,17 @@ export function getInitialCustomFieldChanges (rawCustomFields, customFieldDefs) 
   if (isEmpty(rawCustomFields)) return []
 
   return Object.entries(rawCustomFields)
-    .map(([key, value]) => ({ key, value }))
-    .filter(({ key, value }) => {
+    .map(([key, value]) => {
       const fieldDef = customFieldDefs.find(field => field.key === key)
-      if (!fieldDef) return false
+      // doing the filtering here so that we dont have to search the fieldDef again in the next step
+      if (!fieldDef) return undefined
+      if (isEqual(value, getDefaultFieldValue(fieldDef))) return undefined
 
-      // only keep those where the value has changes
-      return !isEqual(value, getDefaultFieldValue(fieldDef))
+      return (fieldDef.type === 'date')
+        ? { type: 'date', key, value }
+        : { key, value }
     })
+    .filter(Boolean)
 }
 
 /**
@@ -174,6 +177,7 @@ export function getDefaultFieldValue (field) {
     case 'array':
       return ['']
     case 'text':
+    case 'date':
       return ''
     case 'checkbox':
       return false

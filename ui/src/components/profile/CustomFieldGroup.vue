@@ -3,10 +3,10 @@
     <v-col cols="12">
       {{ tribe.preferredName }}
     </v-col>
-    <v-col v-for="(customField, i) in customFields" :key="`cf-${customField.key}-${i}`" :cols="calculateFieldCols(customField)" class="py-2">
+    <v-col v-for="(fieldDef, i) in customFieldDefs" :key="`cf-${fieldDef.key}-${i}`" :cols="calculateFieldCols(fieldDef)" class="py-2">
       <CustomField
-        :field="customField"
-        :fieldValue.sync="customFieldValues[customField.key]"
+        :fieldDef="fieldDef"
+        :fieldValue.sync="customFieldValues[fieldDef.key]"
         :readonly="readonly"
         :sideView="sideView"
         :isRegistration="isRegistration"
@@ -48,6 +48,7 @@ export default {
   watch: {
     customFieldValues: {
       deep: true,
+      immediate: true,
       handler (val) {
         this.$emit('update:fieldValues', val)
       }
@@ -57,7 +58,7 @@ export default {
     this.populateCustomFieldValues()
   },
   computed: {
-    customFields () {
+    customFieldDefs () {
       return this.tribe.customFields
     },
     mobile () {
@@ -74,26 +75,26 @@ export default {
     populateCustomFieldValues () {
       // look in the store for the custom fields???
       // find the profile in the tribe?
-      this.customFields.forEach(field => {
-        Vue.set(this.customFieldValues, field.key, this.getFieldValue(field))
+      this.customFieldDefs.forEach(fieldDef => {
+        Vue.set(this.customFieldValues, fieldDef.key, this.getFieldValue(fieldDef))
       })
     },
-    getFieldValue (field) {
+    getFieldValue (fieldDef) {
       // handle if there isnt a profile, e.g. editing your profile for registration
       if (!this.profile) {
         // incase we are registering and have opened then closed
         // the editing form, this preserves those values
-        const fieldValue = get(this.fieldValues, field.key)
+        const fieldValue = get(this.fieldValues, fieldDef.key)
         if (fieldValue !== undefined) return fieldValue
 
-        return getDefaultFieldValue(field)
+        return getDefaultFieldValue(fieldDef)
       }
 
-      const valueOnProfile = this.profile.customFields.find(customField => customField.key === field.key)
+      const valueOnProfile = this.profile.customFields.find(customField => customField.key === fieldDef.key)
       if (valueOnProfile !== undefined) return valueOnProfile.value
 
       // otherwise figure out a default value
-      return getDefaultFieldValue(field)
+      return getDefaultFieldValue(fieldDef)
     },
     calculateFieldCols (field) {
       if (field.type === 'array') return '12'
