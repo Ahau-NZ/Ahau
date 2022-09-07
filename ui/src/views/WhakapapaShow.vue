@@ -296,79 +296,55 @@ export default {
       const ctx = canvas.getContext('2d')
 
       function toDataURL (src, cb) {
-        if (src.endsWith('.svg')) {
-          fetch(src)
-            .then(res => res.text())
-            .then(text => {
-              const dataURL = 'data:image/svg+xml,' + encodeSVG(text)
-              // const blob = new Blob([text], { type: 'image/svg+xml;charset=utf-8' })
-              // const dataURL = URL.createObjectURL(blob)
-              cb(null, dataURL)
-            })
-        } // eslint-disable-line
-        else {
-          image.onload = () => {
-            canvas.height = image.naturalHeight
-            canvas.width = image.naturalWidth
-            ctx.drawImage(image, 0, 0)
-            cb(null, canvas.toDataURL())
-          }
-          image.src = src
+        image.onload = () => {
+          canvas.height = image.naturalHeight
+          canvas.width = image.naturalWidth
+          ctx.drawImage(image, 0, 0)
+          cb(null, canvas.toDataURL())
         }
-      }
-
-      function encodeSVG (svgString) {
-        return svgString
-          .replace('<svg', ~svgString.indexOf('xmlns')
-            ? '<svg'
-            : '<svg xmlns="http://www.w3.org/2000/svg"'
-          )
-          // Encode (may need a few extra replacements)
-          .replace(/"/g, '\'')
-          .replace(/%/g, '%25')
-          .replace(/#/g, '%23')
-          .replace(/{/g, '%7B')
-          .replace(/}/g, '%7D')
-          .replace(/</g, '%3C')
-          .replace(/>/g, '%3E')
-
-          .replace(/\s+/g, ' ')
-          // The maybe list (add on documented fail)
-          //  .replace(/&/g, '%26')
-          //  .replace('|', '%7C')
-          //  .replace('[', '%5B')
-          //  .replace(']', '%5D')
-          //  .replace('^', '%5E')
-          //  .replace('`', '%60')
-          //  .replace(';', '%3B')
-          //  .replace('?', '%3F')
-          //  .replace(':', '%3A')
-          //  .replace('@', '%40')
-          //  .replace('=', '%3D')
+        image.src = src
       }
 
       pull(
         pull.values(images),
         pull.asyncMap((img, cb) => {
-          // TRY: swap encoded SVG for whole SVG embedded (instead of image)
+          // TODO - TRY: swap encoded SVG for whole SVG embedded (instead of image)
+          const href = img.getAttribute('href')
 
-          // like
-          // if (img.getAttribute('href').endsWith('.svg')) {
-          //   const svg = document.createElement('svg')
-          //   svg.outerHTML = text
-          //   img.parent.replaceChild(img, svg)
-          // }
-          //
-          toDataURL(img.getAttribute('href'), (err, dataURL) => {
-            if (err) return cb(err)
+          if (href.endsWith('.svg')) {
+            fetch(href)
+              .then(res => res.text())
+              .then(text => {
+                img.insertAdjacentHTML(
+                  'beforebegin',
+                  text
+                    .replace(/<\?xml[^>]*\?>/, '')
+                    .replace(/[\n\t]/g, ' ')
+                )
+                const svg = img.previousElementSibling
+                svg.setAttribute('width', 100)
+                svg.setAttribute('height', 100)
+                svg.setAttribute('x', 0)
+                svg.setAttribute('y', 0)
 
-            img.setAttribute('href', dataURL)
-            cb(null)
-          })
+                img.parentElement.removeChild(img)
+
+                cb(null)
+              })
+          } // eslint-disable-line
+          else {
+            toDataURL(img.getAttribute('href'), (err, dataURL) => {
+              if (err) return cb(err)
+
+              // img.setAttribute('href', dataURL) // new but less supported
+              img.removeAttribute('href')
+              img.setAttribute('xlink:href', dataURL)
+              cb(null)
+            })
+          }
         }),
         pull.collect(err => {
           if (err) return console.error(err)
-
 
           const svgStr = svg.outerHTML
             .replace('svg', 'svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"')
