@@ -185,7 +185,6 @@ export default {
     ...mapActions('profile', ['getProfile']),
     getDisplayName,
     setPermission (permission) {
-      console.log('setPermission: ', permission)
       // TODO update record backend to hold permission
       this.$emit('update:permission', permission)
     },

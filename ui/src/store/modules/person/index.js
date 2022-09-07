@@ -44,7 +44,6 @@ export default function (apollo) {
     person: state => (profileId) => state.profiles[profileId],
     profilesArr: state => state.profilesArr,
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
-      console.log('5. get personPlusFamily')
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
       // NOTE this only builds on links already in the whakapapa store
@@ -79,7 +78,6 @@ export default function (apollo) {
       state.selectedProfileId = id
     },
     setPerson (state, profile) {
-      console.log('4. set person: ', profile)
       Vue.set(state.profiles, profile.id, profile)
     },
     tombstoneId (state, profileId) {
@@ -233,7 +231,6 @@ export default function (apollo) {
       }
     },
     async loadPersonFull ({ state, dispatch, commit }, profileId) {
-      console.log('3. load person')
       if (state.tombstoned.has(profileId)) return
       commit('incrementLoading')
 
@@ -254,12 +251,10 @@ export default function (apollo) {
       }
     },
     async setSelectedProfileById ({ dispatch }, id) {
-      console.log('1. set selected profile: ', id)
       // legacy : TODO go through app and change to setSelectedProfileId
       dispatch('setSelectedProfileId', id)
     },
     async setSelectedProfileId ({ dispatch, commit, rootState }, id) {
-      console.log('1. set selected profile: ', id)
       commit('setSelectedProfileId', id)
 
       if (!id) return
