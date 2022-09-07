@@ -69,9 +69,9 @@
                   <v-list-item
                     v-for="(permission, index) in permissions"
                     :key="index"
-                    @click="setPermission(permission)"
+                    @click="setPermission(permission.value)"
                   >
-                    <v-list-item-title>{{ permission }}</v-list-item-title>
+                    <v-list-item-title>{{ permission.text }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -124,14 +124,17 @@ export default {
       profile: {},
       toggle: false,
       permissions: [
-        this.t('edit'),
-        this.t('read')
+        { value: 'edit', text: this.t('edit') },
+        { value: 'view', text: this.t('read') }
         // this.t('submit')
       ]
     }
   },
   components: {
     Avatar
+  },
+  mounted () {
+    this.setPermission('view')
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
@@ -166,9 +169,9 @@ export default {
       if (currentAccess.type === ACCESS_PRIVATE) return this.t('privateAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_ALL_MEMBERS) {
-        if (permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
-        else if (permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
-        else if (permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
+        if (permission === 'edit') return this.t('membersCanEdit', { recordType: this.type })
+        else if (permission === 'view') return this.t('membersCanAccess', { recordType: this.type })
+        else if (permission === 'submit') return this.t('membersCanSubmit', { recordType: this.type })
       }
       return ''
     },

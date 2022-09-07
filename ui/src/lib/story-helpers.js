@@ -101,7 +101,7 @@ export const EMPTY_STORY = {
   artefacts: [],
   timeInterval: null,
   submissionDate: null,
-  permission: 'read'
+  permission: null
 }
 
 export const PERMITTED_STORY_ATTRS = [
@@ -120,7 +120,7 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  // 'permission',
+  'permission',
   'recps'
 ]
 

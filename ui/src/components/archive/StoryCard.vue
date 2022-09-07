@@ -218,11 +218,11 @@
         </v-row>
       </div>
       <v-card-actions v-if="fullStory" class="justify-end">
-        <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
+        <v-list-item-icon v-if="fullStory && !showArtefact && !viewOnly" class="pt-0 mt-0">
           <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-artefact')"/>
+          <EditArtefactButton v-if="story.canEdit && !viewOnly" @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
         style="position:absolute; top:0px; right:0px;">
@@ -344,6 +344,9 @@ export default {
     ...mapGetters(['storeDialog', 'whoami']),
     ...mapGetters('archive', ['showArtefact']),
     ...mapGetters('tribe', ['tribeProfile']),
+    viewOnly () {
+      return !this.story.canEdit && this.story.permission === 'view'
+    },
     access () {
       return [this.tribeProfile].filter(Boolean)
     },
