@@ -134,7 +134,7 @@ export default {
     Avatar
   },
   mounted () {
-    this.setPermission('view')
+    if (!this.permission) this.setPermission('view')
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
