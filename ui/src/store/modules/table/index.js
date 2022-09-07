@@ -1,5 +1,8 @@
+import { buildTree } from '../tree'
+
 export default function () {
   const state = {
+    tree: null,
     settings: {
       flatten: true,
       filter: {
@@ -23,35 +26,22 @@ export default function () {
     tableFilter: state => state.settings.filter,
     tableSort: state => state.settings.sortBy,
     tableFlatten: state => state.settings.flatten,
-
-    table: (state, getters, rootState, rootGetters) => {
-      const root = rootGetters['tree/root']
-      if (!root) return
-
-      let index = -1
-      return rootGetters['tree/root'].eachBefore((n) => {
-        n.x = state.settings.flatten ? 0.1 : n.depth * 15
-        n.y = ++index * 30
-      })
+    descendants: state => {
+      if (!state.tree) return []
+      return state.tree.descendants()
     },
-    descendants: (state, getters) => {
-      const table = getters.table
+    descendantLinks: state => {
+      if (!state.tree) return []
 
-      if (!table) return []
-
-      return table.descendants()
-    },
-    descendantLinks: (state, getters) => {
-      const table = getters.table
-
-      if (!table) return []
-
-      return table.links()
+      return state.tree.links
     }
     // TODO: move table nodes, filtering and sorting to vuex
   }
 
   const mutations = {
+    setTree (state, tree) {
+      state.tree = tree
+    },
     toggleTableFlatten (state) {
       state.settings.flatten = !state.settings.flatten
     },
@@ -79,6 +69,18 @@ export default function () {
   }
 
   const actions = {
+    refreshWhakapapaData ({ state, rootGetters, commit }) {
+      const tree = buildTree(rootGetters)
+      if (!tree) return
+
+      let index = -1
+      tree.eachBefore(n => {
+        n.x = state.settings.flatten ? 0.1 : n.depth * 15
+        n.y = ++index * 30
+      })
+
+      commit('setTree', tree)
+    },
     updateTableFilter ({ commit }, { type, value }) {
       switch (type) {
         case 'name': return commit('updateNameFilter', value)

@@ -17,42 +17,45 @@
     </v-row>
     <v-expand-transition>
       <div v-show="show">
+        <!-- name, location, skills -->
         <v-row>
           <v-col align="start" class="pb-0">
-            <p class="caption mb-0">
-              {{ t('name') }}
-            </p>
-            <SearchBar
-              @change="updateFilter({ type: 'name', value: $event})"
-              isFilter
-              :reset="reset"
+            <v-text-field
+              v-model='name'
+              :label="t('name')"
+              outlined
+              dense
+              clearable
+              @input="updateFilter({ type: 'name', value: $event  })"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col align="start" class="pb-0">
-            <p class="caption mb-0">
-              {{ t('location') }}
-            </p>
-            <SearchBar
-              @change="updateFilter({ type: 'location', value: $event})"
-              isFilter
-              :reset="reset"
+            <v-text-field
+              v-model='location'
+              :label="t('location')"
+              outlined
+              dense
+              clearable
+              @input="updateFilter({ type: 'location', value: $event  })"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col align="start" class="pb-0">
-            <p class="caption mb-0">
-              {{ t('skills') }}
-            </p>
-            <SearchBar
-              @change="updateFilter({ type: 'skills', value: $event})"
-              isFilter
-              :reset="reset"
+            <v-text-field
+              v-model='skills'
+              :label="t('skills')"
+              outlined
+              dense
+              clearable
+              @input="updateFilter({ type: 'skills', value: $event  })"
             />
           </v-col>
         </v-row>
+
+        <!-- age range -->
         <v-row>
           <v-col align="start" class="pb-0">
             <p class="caption mb-0">
@@ -91,21 +94,20 @@
 </template>
 
 <script>
-import SearchBar from '@/components/button/SearchBar.vue'
 import { createNamespacedHelpers } from 'vuex'
 
 const { mapActions: mapTableActions } = createNamespacedHelpers('table')
 
 export default {
   name: 'FilterInput',
-  components: {
-    SearchBar
-  },
   props: {
     reset: { type: Boolean, default: false }
   },
   data () {
     return {
+      name: '',
+      location: '',
+      skills: '',
       ageRange: {
         min: 0,
         max: 150
@@ -130,7 +132,7 @@ export default {
       }
     },
     show () {
-      this.$emit('whakapapa')
+      this.$emit('toggle-show')
     }
   },
   methods: {

@@ -123,6 +123,11 @@ export const methods = {
       // reload again
       story = await this.getStory(id)
 
+      // if editing story and adding a collection show the story
+      if (!this.currentStory?.collections && collections.add) {
+        this.showCurrentCollection({ id: collections.add[0].id })
+      }
+
       if (input.id) {
         this.setCurrentStory(story)
       } else {

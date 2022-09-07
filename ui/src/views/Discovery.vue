@@ -9,7 +9,7 @@
 
       <!-- main/middle body of page -->
       <v-col cols="12" md="8" >
-        <CommunitiesList class="mt-4 mr-12" style="max-width:calc(5 * 214px);" >
+        <CommunitiesList :class="mobile ? 'mt-4':'mt-4 mr-12'" style="max-width:calc(5 * 214px);" >
           <div class="mr-3" style="display: flex; justify-content: right;">
             <BigAddButton
               :label="t('newTribeButton')"

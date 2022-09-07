@@ -276,6 +276,7 @@
                 type="story"
                 :chips="formData.relatedRecords"
                 deletable
+                :ripple="!editing"
                 @delete="removeItem(formData.relatedRecords, $event)"
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
@@ -306,6 +307,7 @@
                 type="collection"
                 :chips="this.formData.collections"
                 :deletable="!this.collection"
+                :ripple="!editing"
                 @delete="removeItem(formData.collections, $event)"
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>

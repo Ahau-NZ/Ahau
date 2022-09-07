@@ -12,49 +12,28 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
 
-import gql from 'graphql-tag'
+const COMMUNITY_TYPE = 'community'
+
+// import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeaderImage',
   props: {
-    profile: Object,
     canEdit: Boolean
   },
   components: {
     ImagePicker,
     Avatar
   },
-  methods: {
-    async updateHeader (image) {
-      delete image.uri
-
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.profile.id,
-            headerImage: image
-          }
-        }
-      })
-      if (res.errors) {
-        console.error('failed to update header photo', res)
-        return
-      }
-      if (res.data) {
-        // this.$emit('setupProfile', this.profile.id)
-        this.$parent.$apollo.queries.profile.refetch({ id: this.profile.id })
-      }
-    }
-  },
   computed: {
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe']),
+    profile () {
+      return this.tribeProfile || {}
+    },
     headerImage () {
       if (this.profile.headerImage) return this.profile.headerImage.uri
       else return require('@/assets/nzheader.jpg')
@@ -79,6 +58,30 @@ export default {
         default:
           return '300'
       }
+    }
+  },
+  methods: {
+    ...mapActions('person', ['updatePerson']),
+    ...mapActions('community', ['saveCommunity']),
+    ...mapActions('tribe', ['loadTribe']),
+    async updateHeader (image) {
+      delete image.uri
+
+      const type = this.profile.type
+
+      const input = {
+        id: this.profile.id,
+        headerImage: image
+      }
+
+      // TODO: show something in the UI when it is loading
+      if (type === COMMUNITY_TYPE) {
+        await this.saveCommunity(input)
+        await this.loadTribe(this.currentTribe.id)
+      } else await this.updatePerson(input)
+
+      // reload
+      await this.$parent.$apollo.queries.profile.refetch({ id: this.profile.id })
     }
   }
 }

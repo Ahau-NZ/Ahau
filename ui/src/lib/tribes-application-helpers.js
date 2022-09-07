@@ -6,25 +6,28 @@ import { COMMUNITY_FRAGMENT } from './community-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
 import { pruneEmptyValues } from './profile-helpers'
 
-export const createGroupApplication = ({ groupId, answers, comment }) => {
+export const createGroupApplication = ({ groupId, answers, comment, customFields }) => {
   return {
     mutation: gql`
       mutation(
         $groupId: String!,
         $answers: [GroupApplicationAnswerInput],
-        $comment: String
+        $comment: String,
+        $customFields: [PersonGroupCustomFieldInput]
       ) {
         createGroupApplication(
-          groupId: $groupId,
-          answers: $answers,
+          groupId: $groupId
+          answers: $answers
           comment: $comment
+          customFields: $customFields
         )
       }
     `,
     variables: {
       groupId,
       answers,
-      comment
+      comment,
+      customFields
     }
   }
 }
@@ -135,24 +138,6 @@ export const getGroupApplication = gql`
     }
   }
 `
-
-export function findInvalidProfileProps (profile) {
-  // validate required props on a profile when applying to join a community
-  // preferredName or legalName
-  // dob
-  // city
-  // country
-  const invalidProps = []
-
-  const { preferredName, legalName, aliveInterval, city, country } = profile
-
-  if (!preferredName && !legalName) invalidProps.push({ prop: 'Preferred Name or Full Name' })
-  if (!aliveInterval) invalidProps.push({ prop: 'Date of Birth' })
-  if (!city) invalidProps.push({ prop: 'City' })
-  if (!country) invalidProps.push({ prop: 'Country' })
-
-  return invalidProps
-}
 
 export function copyProfileInformation (profile) {
   profile = clone(profile)

@@ -3,6 +3,7 @@ import Vue from 'vue'
 import { getPerson as getPersonAndWhanau, mergeAdminProfile } from '@/lib/person-helpers'
 import {
   getPersonMinimal,
+  getPersonCustomFields,
   savePerson as savePersonMutation,
   deletePerson, getPersonFull,
   findPersonByName,
@@ -11,7 +12,21 @@ import {
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 
-let count = 0
+const pull = require('pull-stream')
+const pullParaMap = require('pull-paramap')
+const Pushable = require('pull-pushable')
+
+const queue = Pushable()
+// use by going queue.push(runPromise)
+// where runPromise(done) returns a Promise which calls done() once finished
+pull(
+  queue,
+  pullParaMap(
+    (continuable, done) => continuable(done),
+    10 // width of parallel processing
+  ),
+  pull.drain()
+)
 
 export default function (apollo) {
   const state = {
@@ -22,7 +37,7 @@ export default function (apollo) {
     },
     profilesArr: [],
     tombstoned: new Set(),
-    isLoading: false
+    loadingCount: 0
   }
 
   const getters = {
@@ -56,7 +71,7 @@ export default function (apollo) {
       return getters.personPlusFamily(state.selectedProfileId)
     },
     isTombstoned: state => (profileId) => state.tombstoned.has(profileId),
-    isLoadingProfiles: state => state.isLoading
+    isLoadingProfiles: state => state.loadingCount > 0
   }
 
   const mutations = {
@@ -70,8 +85,11 @@ export default function (apollo) {
     tombstoneId (state, profileId) {
       state.tombstoned.add(profileId)
     },
-    setLoading (state, status) {
-      if (state.isLoading !== status) state.isLoading = status
+    incrementLoading (state) {
+      state.loadingCount = state.loadingCount + 1
+    },
+    decrementLoading (state) {
+      state.loadingCount = state.loadingCount - 1
     },
     setProfiles (state, profiles) {
       state.profilesArr = profiles
@@ -86,7 +104,7 @@ export default function (apollo) {
     const res = await apollo.mutate(savePersonMutation(input))
     if (res.errors) throw res.errors
 
-    return res.data.saveProfile // profileId
+    return res.data.savePerson // profileId
   }
 
   const actions = {
@@ -102,9 +120,42 @@ export default function (apollo) {
         throw err
       }
     },
+    async getPersonMinimal (_, profileId) {
+      // ONLY details needed for rendering Nodes in graph
+      // make a Promise which defers execution to a queue
+      return new Promise((resolve, reject) => {
+        const runQuery = (done) => apollo.query(getPersonMinimal(profileId))
+          .catch(reject)
+          .then(res => {
+            if (res.errors) reject(res.errors)
+            else resolve(res.data.person)
+          })
+          .finally(done)
+
+        // put apollo query in a "continuable" and place that in queue.
+        // Note runQuery closes over our resolve/reject so that when it gets to front
+        // of the queue results can be sent back to original person calling this action
+        queue.push(runQuery)
+      })
+    },
+    async getPersonFull (_, profileId) {
+      // ALL profile fields AND any associated admin profile
+      return new Promise((resolve, reject) => {
+        const runQuery = (done) => apollo.query(getPersonFull(profileId))
+          .catch(reject)
+          .then(res => {
+            if (res.errors) reject(res.errors)
+            else resolve(res.data.person)
+          })
+          .finally(done)
+
+        // see comments in getPersonMinimal
+        queue.push(runQuery)
+      })
+    },
     async getPerson (_, profileId) {
       // loads all profile fields + siblings, partners, ....
-      // TODO look into deprecating this - should use getPersonFull + loadDescendants
+      // TODO look into deprecating this - should use getPersonFull + look some load-around?
       try {
         const res = await apollo.query(getPersonAndWhanau(profileId))
 
@@ -115,29 +166,15 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a person', err)
       }
     },
-    async getPersonFull (_, profileId) {
-      // loads all profile fields AND any associated admin profile
+    async getPersonCustomFields (_, profileId) {
       try {
-        const res = await apollo.query(getPersonFull(profileId))
+        const res = await apollo.query(getPersonCustomFields(profileId))
 
         if (res.errors) throw res.errors
 
         return res.data.person
       } catch (err) {
-        console.error('Something went wrong while trying to get a persons details')
-      }
-    },
-    async getPersonMinimal (_, profileId) {
-      // loads a profile with only what's needed for the tree (avatar / things needed for fallback, name, ordering info)
-      try {
-        const res = await apollo.query(getPersonMinimal(profileId))
-
-        if (res.errors) throw res.errors
-
-        return res.data.person
-      } catch (err) {
-        console.error('Something went wrong while trying to get a person (minimal)', profileId)
-        console.error(err)
+        console.error('Something went wrong while trying to get a person', err)
       }
     },
     async updatePerson (_, input) {
@@ -176,40 +213,45 @@ export default function (apollo) {
 
     async loadPersonMinimal ({ state, dispatch, commit }, profileId) {
       if (state.tombstoned.has(profileId)) return
-      count++
-      commit('setLoading', count > 0)
+      commit('incrementLoading')
 
       try {
         const profile = await dispatch('getPersonMinimal', profileId)
         if (profile.tombstone) {
           commit('tombstoneId', profileId)
           dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-          count--
-          commit('setLoading', count > 0)
+          commit('decrementLoading')
         } // eslint-disable-line
         else commit('setPerson', profile)
-        count--
-        commit('setLoading', count > 0)
+
+        commit('decrementLoading')
         return profile
       } catch (err) {
-        console.error('error loading profile', err)
-        // TODO error alert message
-        count--
-        commit('setLoading', count > 0)
+        console.error('loadPersonMinimal error', err) // TODO error alert message
+        commit('decrementLoading')
         return {}
       }
     },
     async loadPersonFull ({ state, dispatch, commit }, profileId) {
       console.log('3. load person')
       if (state.tombstoned.has(profileId)) return
+      commit('incrementLoading')
 
-      const profile = await dispatch('getPersonFull', profileId)
-      if (profile.tombstone) {
-        commit('tombstoneId', profileId)
-        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-      } // eslint-disable-line
-      else commit('setPerson', profile)
-      return profile
+      try {
+        const profile = await dispatch('getPersonFull', profileId)
+        if (profile.tombstone) {
+          commit('tombstoneId', profileId)
+          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+        } // eslint-disable-line
+        else commit('setPerson', profile)
+
+        commit('decrementLoading')
+        return profile
+      } catch (err) {
+        console.error('loadPersonFull error', err) // TODO error alert message
+        commit('decrementLoading')
+        return {}
+      }
     },
     async setSelectedProfileById ({ dispatch }, id) {
       console.log('1. set selected profile: ', id)
@@ -283,7 +325,7 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
         const profiles = res.data.listPerson.map(mergeAdminProfile)
-        commit('setProfiles', profiles)
+        commit('setProfiles', profiles) // QUESTION 2020-07-11 why have this as well?
         profiles.forEach(profile => {
           commit('setPerson', profile)
         })

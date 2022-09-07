@@ -1,6 +1,11 @@
 <template>
-  <v-form ref="form" light class="px-4">
-    <v-row :class="readonly ? 'pl-4':''">
+  <v-form
+    v-model="valid"
+    ref="form"
+    light
+    class="px-4"
+  >
+    <v-row :class="readonly ? 'pl-4' : ''">
       <!-- Upload profile photo -->
       <v-col :order="smScreen ? '' : '2'" class="py-0">
         <v-row :class="!isSideViewDialog || mobile ? 'justify-center pt-6' : 'justify-center ' ">
@@ -38,7 +43,7 @@
       </v-col>
 
       <!-- Names -->
-      <v-col cols="12" :sm="smScreen ? '12' : '6'" :class="mobile ? 'pt-4 pb-0':'py-0'">
+      <v-col cols="12" :sm="smScreen ? '12' : '6'" :class="mobile ? 'pt-4 pb-0' : 'py-0'">
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
           <!-- Preferred Name -->
@@ -50,6 +55,7 @@
                 :label="t('preferredName')"
                 v-bind="customProps"
                 outlined
+                :rules="getFieldRules('preferredName')"
               />
             </slot>
           </v-col>
@@ -68,23 +74,25 @@
               :menu-props="{ light: true }"
               outlined
               hide-details
+              :rules="getFieldRules('relatedBy')"
             />
           </v-col>
           <!-- Order of birth -->
-          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2':'pl-1 pr-0 pt-2'" >
+          <v-col v-if="showBirthOrder" cols="6" :class="mobile ? 'px-0 pt-2' : 'pl-1 pr-0 pt-2'" >
             <v-text-field
               v-model="formData.birthOrder"
               type="number"
               :label="t('birthOrder')"
               min="1"
               v-bind="customProps"
+              :rules="getFieldRules('birthOrder')"
             />
           </v-col>
         </v-row>
 
         <!-- No longer living -->
         <v-row v-if="!isLoginPage && !readonly" class="mb-8">
-          <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ':'pt-0'">
+          <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ' : 'pt-0'">
             <v-checkbox
               v-model="formData.deceased"
               :label="t('notLiving')"
@@ -111,14 +119,14 @@
           <!-- WAHINE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('female')">
-              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.female') }}</p>
             </div>
           </v-col>
           <!-- DIVERSE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('other')">
-              <img ref="otherImg" :src="require('@/assets/account-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <img ref="otherImg" :src="require('@/assets/account-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.other') }}</p>
             </div>
           </v-col>
@@ -182,16 +190,18 @@
       <div v-show="showAdvanced" :class="readonly && !mobile ? 'ml-5' : ''">
         <v-row>
           <!-- Full Name -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('legalName')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.legalName"
               :label="t('legalName')"
               v-bind="customProps"
+              :rules="getFieldRules('legalName')"
             />
           </v-col>
           <!-- Alt names -->
-          <template>
-            <v-col v-for="(altName, index) in formData.altNames.currentState"
+          <template v-if="hasDefaultField('altNames')" >
+            <!-- TODO: configure required -->
+            <v-col v-for="(altName, index) in currentAltNames"
               :key="`value-alt-name-${index}`"
               cols="12"
               :sm="smScreen ? '12' : '6'"
@@ -208,8 +218,9 @@
             </v-col>
           </template>
 
-          <template v-if="!readonly">
-            <v-col v-for="(altName, index) in formData.altNames.add"
+          <!-- TODO: configure required -->
+          <template v-if="!readonly && hasDefaultField('legalName')">
+            <v-col v-for="(altName, index) in newAltNames"
               :key="`add-alt-name-${index}`"
               cols="12"
               :sm="smScreen ? '12' : '6'"
@@ -245,7 +256,7 @@
 
         </v-row>
         <!-- Editing: relationship type-->
-        <v-row >
+        <v-row>
           <!-- <v-col v-if="(withRelationships || editRelationship || $route.name !== 'login') && !readonly" :cols="sideViewCols" class="pa-1">
             <v-select
               v-model="formData.relationshipType"
@@ -256,14 +267,14 @@
               hide-details
             />
           </v-col> -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('placeOfBirth')"  :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               :label="t('birthPlace')"
               v-bind="customProps"
             />
           </v-col>
-          <template v-if="formData.deceased">
+          <template v-if="formData.deceased && hasDefaultField('placeOfDeath')">
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
@@ -271,7 +282,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="formData.deceased && hasDefaultField('buriedLocation')" :cols="sideViewCols" class="pa-1">
               <!-- Burial Location -->
               <v-text-field
                 v-model="formData.buriedLocation"
@@ -295,11 +306,14 @@
         </v-row>
 
         <!-- Skills and Qualifications -->
-        <v-row class="pt-2">
+        <v-row v-if="hasOneField(['profession', 'qualifications', 'education'])" class="pt-2">
           <v-col cols="12" class="px-0">
             <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
           </v-col>
+        </v-row>
+
+        <v-row v-if="hasDefaultField('profession')">
           <!-- Profession-->
           <v-col cols="12" class="pa-0">
             <v-col :cols="sideViewCols" class="pa-1">
@@ -307,19 +321,24 @@
                 v-model="formData.profession"
                 :label="t('skills.profession')"
                 v-bind="customProps"
+                :rules="getFieldRules('profession')"
               />
             </v-col>
           </v-col>
+        </v-row>
+
           <!-- Skills -->
+          <!-- TODO: configure required -->
+        <v-row v-if="hasDefaultField('qualifications')">
           <v-col v-for="(qualification, index) in formData.education"
             :key="`add-qual-name-${index}`"
-            :cols="smScreen ? '12':'6'"
+            :cols="smScreen ? '12' : '6'"
             class="pa-1"
           >
             <v-text-field
               v-model="formData.education[index]"
               :label="t('skills.skillsQuals')"
-              :append-icon="!readonly ? 'mdi-delete':''"
+              :append-icon="!readonly ? 'mdi-delete' : ''"
               @click:append="removeItem(formData.education, index)"
               v-bind="customProps"
               :readonly="readonly"
@@ -329,11 +348,13 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
           </v-col>
         </v-row>
+
         <!-- Education -->
-        <v-row class="pb-1">
+        <!-- TODO: configure required -->
+        <v-row v-if="hasDefaultField('education')" class="pb-1">
           <v-col v-for="(school, index) in formData.school"
             :key="`add-school-name-${index}`"
-            :cols="smScreen ? '12':'6'"
+            :cols="smScreen ? '12' : '6'"
             class="pa-1"
           >
             <v-text-field
@@ -349,63 +370,88 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
-        <v-row v-if="!formData.deceased">
+
+        <v-row v-if="!formData.deceased && hasOneField(['email', 'phone', 'address', 'postCode', 'city', 'country'])">
           <!-- Personal Information -->
-          <template v-if="isKaitiaki">
+          <template v-if="showPersonalInfo">
             <v-col cols="12" class="px-0">
               <v-divider class="py-2"/>
               <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
             </v-col>
             <!-- Email -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('email')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.email"
                 :label="t('personalInfo.email')"
                 v-bind="customProps"
+                :rules="getFieldRules('email')"
               />
             </v-col>
             <!-- Phone -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('phone')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.phone"
                 :label="t('personalInfo.phone')"
                 v-bind="customProps"
+                :rules="getFieldRules('phone')"
               />
             </v-col>
             <!-- Address -->
-            <v-col :cols="sideViewCols" class="pa-1">
+            <v-col v-if="hasDefaultField('address')" :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.address"
                 :label="t('personalInfo.address')"
                 v-bind="customProps"
+                :rules="getFieldRules('address')"
               />
             </v-col>
           </template>
           <!-- Post Code -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('postCode')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.postCode"
               :label="t('personalInfo.postCode')"
               v-bind="customProps"
+              :rules="getFieldRules('postCode')"
             />
           </v-col>
           <!-- City -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('city')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.city"
               :label="t('personalInfo.city')"
               v-bind="customProps"
+              :rules="getFieldRules('city')"
             />
           </v-col>
           <!-- Country -->
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col v-if="hasDefaultField('country')" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.country"
               :label="t('personalInfo.country')"
               v-bind="customProps"
+              :rules="getFieldRules('country')"
             />
           </v-col>
         </v-row>
+        <template v-if="showCustomFieldsSection">
+          <!-- ====COMMUNITY FIELDS======== -->
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('communityFieldsTitle') }}</span>
+          </v-col>
+          <!-- Groups custom fields into tribes -->
+          <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
+            <CustomFieldGroup
+              :tribe="tribe"
+              :profile="tribe.profileInTribe"
+              :readonly="readonly"
+              :sideView="isSideViewDialog"
+              :fieldValues.sync="formData.customFields[tribe.tribeId]"
+              :isRegistration="isRegistration"
+            />
+          </v-row>
+        </template>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
@@ -416,34 +462,39 @@
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
+import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 
 import isEmpty from 'lodash.isempty'
+import get from 'lodash.get'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'ProfileForm',
   components: {
     Avatar,
     AddButton,
-    DateIntervalPicker
+    DateIntervalPicker,
+    CustomFieldGroup
   },
   props: {
     profile: { type: Object, required: true },
-    withRelationships: { type: Boolean, default: false },
-    readonly: { type: Boolean, default: false },
-    hideDetails: { type: Boolean, default: false },
-    mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    isSideViewDialog: { type: Boolean, default: false },
-    dialogType: { type: String, default: '' },
     type: String,
+    dialogType: { type: String, default: '' },
     displayName: { type: String, default: '' },
-    fullForm: { type: Boolean, default: false },
     moveDup: { type: Boolean, default: true },
+    isRegistration: Boolean,
+    withRelationships: Boolean,
+    readonly: Boolean,
+    hideDetails: Boolean,
+    isEditing: Boolean,
+    isSideViewDialog: Boolean,
+    showCustomFields: Boolean,
+    fullForm: Boolean,
     isDuplicate: Boolean
   },
   data () {
@@ -451,15 +502,15 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       formData: {},
-      form: {
-        valid: true,
-        showDescription: false
-      },
+      valid: false,
       selectedGender: '',
-      showAdvanced: false
+      showAdvanced: false,
+      rules: [value => !!value || 'Required.']
     }
   },
   mounted () {
+    this.$refs.form.validate()
+
     if (this.fullForm) this.showAdvanced = true
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
@@ -477,19 +528,53 @@ export default {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal, oldVal) {
+      handler (newVal) {
+        if (Array.isArray(this.profile.customFields) && !this.isLoginPage && this.currentTribe) {
+          this.formData.customFields = {
+            [this.currentTribe.id]: {
+              ...(this.profile.customFields || []).reduce((acc, field) => {
+                return ({ ...acc, [field.key]: field.value })
+              }, {})
+            }
+          }
+        }
+
         this.formData = newVal
       }
     },
     'formData.gender' (newValue) {
       if (newValue === 'other') this.updateSelectedGender('other')
       if (newValue === 'unknown') this.updateSelectedGender('unknown')
+    },
+    valid (valid) {
+      this.setAllowSubmissions(valid)
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki']),
+    ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields']),
+    ...mapGetters('person', ['person']),
+    currentAltNames () {
+      return get(this.formData, 'altNames.currentState', [])
+    },
+    newAltNames () {
+      return get(this.formData, 'altNames.add', [])
+    },
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    originalProfile () {
+      if (Array.isArray(this.profile.customFields)) return this.profile
+      return this.person(this.profile.id)
+    },
     isLoginPage () {
       return this.$route.name === 'login'
+    },
+    isPersonalProfilePage () {
+      return (this.profile.id === this.whoami.personal.profile.id)
+    },
+    showPersonalInfo () {
+      return this.isKaitiaki || this.isMyProfile(this.profile.id)
     },
     showBirthOrder () {
       if (this.dialogType === 'parent') return false
@@ -543,10 +628,61 @@ export default {
     },
     typeIsParent () {
       return this.dialogType === 'parent'
+    },
+    /*
+    ======== custom fields ==========
+    */
+    showCustomFieldsSection () {
+      if (!get(this.formData, 'customFields')) return false
+
+      return this.customFieldsByTribes.some(tribe => get(tribe, 'customFields.length'))
+    },
+    customFieldsByTribes () {
+      // Here if we are viewing our own profile on ProfileShow, we want to display
+      // all custom fields from all tribes
+      if (!this.showCustomFields && this.isPersonalProfilePage) {
+        return this.joinedTribes.map(tribe => {
+          return {
+            tribeId: tribe.id,
+            profileId: get(tribe, 'private[0].id'),
+            preferredName: get(tribe, 'private[0].preferredName'),
+            customFields: getCustomFields(get(tribe, 'public[0].customFields', []))
+              .filter(field => !field.tombstone),
+            profileInTribe: this.getPersonalProfileInTribe(tribe.id)
+          }
+        })
+          .filter(tribe => get(tribe, 'customFields.length'))
+      }
+
+      if (!this.tribeCustomFields.length) return []
+
+      // this means we only display the custom fields in the particular tribe we are in
+      return [{
+        tribeId: this.currentTribe.id,
+        profileId: this.tribeProfile.id,
+        preferredName: this.tribeProfile.preferredName,
+        customFields: this.tribeCustomFields,
+        // problem here, if we use this.profile, the original value of the custom fields gets overwritten
+        profileInTribe: this.originalProfile
+      }]
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
+    hasDefaultField (key) {
+      if (!this.currentTribe) return false // avoid displaying any fields until the tribe has loaded
+
+      const label = mapPropToLabel(key)
+
+      if (!label) return
+
+      // find in defaultCustomFields
+      return this.tribeDefaultFields.some(field => field.label === label)
+    },
+    hasOneField (keys) {
+      return keys.some(key => this.hasDefaultField(key))
+    },
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
@@ -565,6 +701,18 @@ export default {
       }
       // update the gender
       this.formData.gender = this.genderSelected
+    },
+    getFieldRules (key) {
+      // disable required fields when we are on the whakapapa
+      if (!this.isRegistration) return []
+
+      const label = mapPropToLabel(key)
+      if (!label) return []
+
+      const field = this.tribeRequiredDefaultFields.find(field => field.label === label)
+      if (!field) return []
+
+      return field.required ? this.rules : []
     },
     addAltNameField () {
       this.formData.altNames.add.push(null)

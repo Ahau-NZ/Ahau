@@ -47,11 +47,11 @@
       @delete="dialog = 'delete-community'"
       @submit="processUpdateCommunity"
       @close="dialog = null"
-      :profile="profile"
+      :profile="mergeTribeProfiles(currentTribe)"
     />
-    <EditNodeDialog
-      v-if="dialog === 'edit-node'"
-      :show="dialog === 'edit-node'"
+    <EditPersonDialog
+      v-if="dialog === 'edit-person'"
+      :show="dialog === 'edit-person'"
       :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="processUpdatePerson"
       @close="dialog = null"
@@ -77,6 +77,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+import get from 'lodash.get'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
@@ -84,13 +86,14 @@ import ProfileButton from '@/components/button/ProfileButton.vue'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
-import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { deleteTribe } from '@/lib/community-helpers.js'
+import { deleteTribe, mergeTribeProfiles } from '@/lib/community-helpers.js'
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
 export default {
   name: 'ProfileShow',
@@ -104,7 +107,7 @@ export default {
     Header,
     NewCommunityDialog,
     DeleteCommunityDialog,
-    EditNodeDialog,
+    EditPersonDialog,
     NewRegistrationDialog,
     ProfileButton
   },
@@ -132,8 +135,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'isKaitiaki']),
-    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe', 'isPersonalTribe']),
+    ...mapGetters(['whoami', 'isKaitiaki', 'linkedProfiles', 'getPersonalProfileInTribe']),
+    ...mapGetters('tribe', ['tribes', 'tribeProfile', 'currentTribe', 'isPersonalTribe', 'customFieldsByTribe']),
     ...mapGetters('archive', ['showStory', 'showArtefact']),
     personalProfileCopy () {
       return copyProfileInformation(this.whoami.personal.profile)
@@ -189,13 +192,14 @@ export default {
   },
   methods: {
     getDisplayName,
+    mergeTribeProfiles,
     ...mapActions(['setWhoami']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['addAdminsToGroup', 'getMembers', 'loadTribe']),
     ...mapActions('person', ['updatePerson']),
     ...mapActions('community', ['updateCommunity']),
     goEdit () {
-      if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
+      if (this.profile.type.startsWith('person')) this.dialog = 'edit-person'
       else this.dialog = 'edit-community'
     },
     async processUpdateCommunity ($event) {
@@ -222,20 +226,59 @@ export default {
       await this.refresh()
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
     },
-    async processUpdatePerson ($event) {
-      // attach the id to the input
-      const input = { id: this.profile.id, ...$event }
-      await this.updatePerson(input)
-
+    async processUpdatePerson (input) {
       this.closeDialog()
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
+
+      const customFields = input.customFields
+      input.id = this.profile.id
+      delete input.customFields
+
+      if (Object.keys(input).length > 1) {
+        await this.updatePerson(input)
+      }
+
+      await this.processCustomFieldUpdates(customFields)
+      await this.handleReload()
+    },
+    async handleReload () {
       await this.refresh()
-      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.whoami.personal.profile.id === this.profile.id) await this.setWhoami()
 
       if (this.isApplication) {
         this.goProfile()
       }
+
+      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
+    },
+    async processCustomFieldUpdates (customFields) {
+      if (isEmpty(customFields)) return
+
+      await Promise.all(
+        Object.entries(customFields).map(([tribeId, customFieldsByTribe]) => {
+          const profile = this.getPersonalProfileInTribe(tribeId)
+
+          if (!profile) return null
+
+          const customFieldChanges = Object.entries(customFieldsByTribe)
+            .map(([key, value]) => ({ key, value }))
+            .filter(({ key, value }) => {
+              const tribe = this.customFieldsByTribe.find(tribe => tribe.tribeId === tribeId)
+              const field = tribe.customFields.find(field => field.key === key)
+              if (!field) return false
+
+              const valueOnProfile = profile.customFields.find(field => field.key === key)
+
+              // only keep those where the value has changes
+              return (!isEqual(get(valueOnProfile, 'value'), value) && !isEqual(value, getDefaultFieldValue(field)))
+            })
+
+          if (!customFieldChanges || !customFieldChanges.length) return null
+
+          return this.updatePerson({ id: profile.id, customFields: customFieldChanges })
+        })
+      )
     },
     async deleteCommunity () {
       try {
@@ -253,13 +296,14 @@ export default {
         this.dialog = 'edit-community'
       }
     },
-    async createGroupApplication ({ comment, answers }) {
+    async createGroupApplication ({ comment, answers, customFields }) {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.currentTribe.id,
             comment,
-            answers
+            answers,
+            customFields
           })
         )
 

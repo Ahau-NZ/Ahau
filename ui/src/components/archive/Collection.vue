@@ -5,7 +5,7 @@
     light
     class="pa-0 ma-1"
     @click="$emit('click')"
-    :elevation='3'
+    outlined
   >
     <v-img
       :src="image"

@@ -14,39 +14,30 @@
       @submit="setupNewCommunity($event)"
       @close="close"
     />
-    <NewNodeDialog
-      v-if="isActive('new-node')"
-      :show="isActive('new-node')"
-      :title="t('newNodeTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
+    <NewPersonDialog
+      v-if="isActive('new-person')"
+      :show="isActive('new-person')"
+      :title="t('newPersonTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
       :type="dialogType"
       withView
-      @create="addPerson($event)"
+      @create="addPerson"
       @close="close"
-    />
-    <!-- TODO: this doesnt appear to be used by anything here! -->
-    <EditNodeDialog
-      v-if="isActive('edit-node')"
-      :show="isActive('edit-node')"
-      :title="t('editNodeTitle', {displayName: getDisplayName(selectedProfile)})"
-      @submit="processUpdate($event)"
-      @close="close"
-      :nodeProfile="profile"
     />
     <SideNodeDialog
-      v-if="isActive('view-edit-node') && selectedProfile"
-      :show="isActive('view-edit-node')"
+      v-if="isActive('view-edit-person') && selectedProfile"
+      :show="isActive('view-edit-person')"
       :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
       @close="close"
-      @new="toggleDialog('new-node', $event, 'view-edit-node')"
-      @delete="toggleDialog('delete-node', null, null)"
+      @new="toggleDialog('new-person', $event, 'view-edit-person')"
+      @delete="toggleDialog('delete-person', null, null)"
       @reload-whakapapa="reloadWhakapapa"
       :view="view"
       :preview="previewProfile"
     />
     <RemovePersonDialog
-      v-if="isActive('delete-node')"
-      :show="isActive('delete-node')"
+      v-if="isActive('delete-person')"
+      :show="isActive('delete-person')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== focus"
       @submit="removeProfile"
@@ -92,10 +83,10 @@
 
 <script>
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -106,8 +97,8 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
+import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 import { getDisplayName } from '@/lib/person-helpers.js'
-
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -117,8 +108,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'DialogHandler',
   components: {
-    NewNodeDialog,
-    EditNodeDialog,
+    NewPersonDialog,
     SideNodeDialog,
     RemovePersonDialog,
     WhakapapaViewDialog,
@@ -139,7 +129,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-person', 'view-edit-person', 'delete-person', 'new-story', 'edit-story', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'review-registration', 'table-filter-menu'
       ].includes(val)
     },
@@ -172,6 +162,7 @@ export default {
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeCustomFields']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -213,7 +204,6 @@ export default {
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
-      'loadDescendants',
       'saveWhakapapaView',
       'addLinks',
       'saveLink',
@@ -225,7 +215,7 @@ export default {
       return (type === this.dialog || type === this.storeDialog)
     },
     close () {
-      if (this.isActive('new-node')) {
+      if (this.isActive('new-person')) {
         this.toggleDialog(this.source, this.dialogType, null)
         return
       }
@@ -276,18 +266,23 @@ export default {
       }
     },
     async addPerson (input) {
+      let { id, children, parents, partners, moveDup, customFields: rawCustomFields } = input
+
       // if moveDup is in input than add duplink
-      if ('moveDup' in input) {
+      if (moveDup) {
         await this.addImportantRelationship(input)
         delete input.moveDup
       }
 
       // get children, parents, partners quick add links
-      let { id, children, parents, partners } = input
       // remove them from input
       delete input.children
       delete input.parents
       delete input.partners
+
+      // set the custom fields
+      input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
+      if (isEmpty(input.customFields)) delete input.customFields
 
       const isNewProfile = !input.id
       if (isNewProfile) id = await this.createNewPerson(input)
@@ -322,9 +317,6 @@ export default {
 
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
-
-          await this.loadDescendants({ profileId: parentProfileId })
-
           break
 
         case 'parent':
@@ -356,14 +348,8 @@ export default {
           else {
             const parentId = this.getParentNodeId(child)
 
-            // when a node already has a parent node above them, this will be called
-            if (parentId) { // when a node already has a parent node above them, this will be called
-              await this.loadDescendants(parentId)
-              // TODO change to take a second argument "depth", or make loadDescendantsToDepth
-              // TODO cherese 9-3-22 also replace loadWhakapapa within SideNodeDialog.vue
-            } else {
-              // when the child doesnt have a parent above them, this will be called
-              // load the new parents profile
+            if (!parentId) {
+              // when the child doesnt have a parent above them, load the new parents profile
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
@@ -377,9 +363,6 @@ export default {
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
-
-          // TODO: this adds the partner to the tree, but do we need to do this much?
-          await this.loadDescendants(this.selectedProfile.id)
           break
         default:
           console.error('wrong type for add person')
@@ -457,17 +440,6 @@ export default {
         recps: this.view.recps
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
-    },
-    // TODO: see what is using this and move it into that component instead
-    async processUpdate (input) {
-      if (input.recps) delete input.recps
-
-      const profileId = this.selectedProfile.id
-      // update their profile in the db
-      await this.updatePerson({ id: profileId, ...input })
-
-      // loads their full profile for changes in the tree as well as the side node dialog
-      await this.loadPersonFull(profileId)
     },
     async removeProfile (deleteOrIgnore) {
       await this.deleteProfileFromImportantRelationships(this.selectedProfile.id)

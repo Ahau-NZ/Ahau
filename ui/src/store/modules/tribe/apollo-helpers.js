@@ -84,7 +84,8 @@ const communityProfileAttrs = [
   'allowPersonsList',
 
   // for public only
-  'joiningQuestions'
+  'joiningQuestions',
+  'customFields'
 ]
 
 export const initGroup = (_input) => {
@@ -95,7 +96,7 @@ export const initGroup = (_input) => {
 
   return {
     mutation: gql`
-      mutation ($communityProfile: CommunityProfileInput) {
+      mutation ($communityProfile: CommunityProfileInput!) {
         initGroup(communityProfile: $communityProfile) {
           groupId
           adminSubGroupId

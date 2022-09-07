@@ -1,16 +1,41 @@
 # Changelog | Ahau desktop
 
-## v2.14.0 (Draft)
+## v2.14.2
+
+patched a bug introduced by ssb-tribes removing deprecated `application` API - this was still used
+in ssb-ahau's database migrations
+
+## v2.14.0
 
 ### Features
 
 - tree search bar
-  - uncollapses all nodes from the root/focus node to the searched profile
-  - highlights the path
+    - uncollapses all nodes from the root/focus node to the searched profile
+    - highlights the path
+- error handling
+    - network / graphql errors will now open a little alert (for whakapapa queries)
+- custom community fields
+    - admins can now set "custom fields" for tribes.
+    - these are fields which people will be able to fill in in a future release
+    - TODO
+        - connecting it to person profile
+        - connecting it to group registrations
+- highlight-path from root node ==> searched node
+    - also uncollapses path to this
+
+## Improvements
+
+- faster graph loading
+    - reworked data loading to significantly speed up whakapapa loading for large graphs
+- styling improved
+    - person list
 
 ## Bug Fixes
 
-- N/A
+- group tangle bug
+    - Ben had a group which had out of control tangle meta-data (too many "previous" messages referenced)
+    - added a fix which ensures message never exceeds size limit because of this meta-data
+- updating items on person-list
 
 ### Improvements
 

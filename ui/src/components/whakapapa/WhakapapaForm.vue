@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="form.valid" lazy-validation>
+  <v-form ref="form" v-model="valid" lazy-validation>
     <v-row class="px-4">
       <v-col cols="12" sm="5" order-sm="2">
         <v-row class="pa-0">
@@ -32,7 +32,7 @@
               :label="t('name')"
               placeholder=" "
               hide-details
-              :rules="form.rules.name.whakapapaView"
+              :rules="rules.name.whakapapaView"
             />
           </v-col>
           <!-- Description textarea -->
@@ -83,7 +83,7 @@
                 accept=".csv"
                 :label="t('csvUpload')"
                 :success-messages="successMsg"
-                :rules="form.rules.csvFile"
+                :rules="rules.csvFile"
                 @click:clear="resetFile()"
               ></v-file-input>
             </v-col>
@@ -96,6 +96,8 @@
   </v-form>
 </template>
 <script>
+
+import { mapMutations } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
@@ -135,13 +137,14 @@ export default {
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
+  mounted () {
+    this.$refs.form.validate()
+  },
   data () {
     return {
       formData: setDefaultWhakapapa(this.view),
-      form: {
-        valid: true,
-        rules: RULES
-      },
+      rules: RULES,
+      valid: false,
       file: null,
       errorMsgs: [],
       successMsg: [],
@@ -151,6 +154,9 @@ export default {
     }
   },
   watch: {
+    valid (valid) {
+      this.setAllowSubmissions(valid)
+    },
     view (newVal) {
       this.formData = newVal
     },
@@ -178,6 +184,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     downloadCsv,
     csvInfo () {
       this.csvHelper = !this.csvHelper

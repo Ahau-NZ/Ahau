@@ -3,6 +3,7 @@
     <Dialog :show="show" :title="title" width="720px" :goBack="closeOrCancel" enableMenu
       @submit="submit"
       @close="closeOrCancel"
+      submit-label="next"
     >
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
@@ -106,10 +107,6 @@ export default {
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.whakapapaForm.$refs.form.validate()) {
-        console.error('not validated')
-        return
-      }
       this.setLoading(true)
       const csv = this.csv
       const output = whakapapaSubmission(this.formData)

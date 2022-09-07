@@ -26,5 +26,6 @@
   "phone": "Phone", 
   "address": "Address",
   "postcode": "Postcode",
-  "contactInfoText": "(Kaitiaki only)"
+  "contactInfoText": "(Kaitiaki only)",
+  "customFieldText": "Community Fields"
 }

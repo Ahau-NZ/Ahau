@@ -74,7 +74,7 @@
       @submit="handleStepOne"
     />
 
-    <NewNodeDialog v-if="showProfileForm"
+    <NewPersonDialog v-if="showProfileForm"
       :show="showProfileForm"
       title="Add a Person"
 
@@ -88,16 +88,18 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import CollectionGroup from '../components/archive/CollectionGroup.vue'
+import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 export default {
   name: 'WhakapapaIndex',
@@ -107,7 +109,7 @@ export default {
   components: {
     WhakapapaViewCard,
     NewViewDialog,
-    NewNodeDialog,
+    NewPersonDialog,
     WhakapapaListHelper,
     BigAddButton,
     SkeletonLoader,
@@ -129,7 +131,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
-    ...mapGetters('tribe', ['currentTribe', 'tribes', 'isPersonalTribe']),
+    ...mapGetters('tribe', ['currentTribe', 'tribes', 'isPersonalTribe', 'tribeCustomFields']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -230,7 +232,9 @@ export default {
     },
     async handleDoubleStep (input) {
       try {
-        let { id } = input
+        let {
+          id
+        } = input
 
         // if theres no id, that means we're creating the whakapapa from a new person
         if (!id) {
@@ -241,6 +245,12 @@ export default {
                 ? this.whoami.public.feedId
                 : '*'
             ]
+          }
+
+          // format custom fields
+          if (input.customFields) {
+            input.customFields = getInitialCustomFieldChanges(input.customFields[this.currentTribe.id], this.tribeCustomFields)
+            if (isEmpty(input.customFields)) delete input.customFields
           }
 
           id = await this.createPerson(input)

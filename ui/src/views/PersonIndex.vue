@@ -42,23 +42,23 @@
 
           @click:row="handleShow"
         >
-          <template v-if="hiddenColumns" v-slot:header.actions>
+          <template v-if="hiddenColumns" v-slot:header.actions> <!-- eslint-disable-line -->
             <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
-          <template v-slot:item.image="{ item }" >
+          <template v-slot:item.image="{ item }" > <!-- eslint-disable-line -->
             <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
           </template>
           <!-- Handle max description charachters -->
-          <template v-slot:item.description="{ item }" >
+          <template v-slot:item.description="{ item }" > <!-- eslint-disable-line -->
             <span class="description">{{item.description}}</span>
           </template>
           <!-- Handle table actions -->
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:item.actions="{ item }"> <!-- eslint-disable-line -->
             <v-icon small class="mr-2" @click="handleEdit(item)" >
               mdi-pencil
             </v-icon>
-            <v-icon small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
+            <v-icon v-if="!isMyProfile(item.id)" small class="mx-2" @click.stop="showDeleteConfirmation(item)" >
               mdi-delete
             </v-icon>
           </template>
@@ -100,7 +100,6 @@
 
     <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
       :show="showDelete"
-      context="personIndex"
 
       :profile="selectedProfile"
 
@@ -139,6 +138,7 @@ import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.v
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
+import { mapLabelToProp } from '../lib/custom-field-helpers'
 
 export default {
   name: 'PersonIndex',
@@ -161,7 +161,7 @@ export default {
       }
     }
     return {
-      headers: [
+      defaultHeaders: [
         header('image', '80px', true, true),
         header('preferredName', '120px', true),
         header('legalName', '150px', true),
@@ -185,10 +185,9 @@ export default {
         header('buriedLocation', '100px', false),
         header('profession', '100px', true),
         header('education', '150px', true),
-        header('school', '150px', true),
-
-        { value: 'actions', align: 'end', width: '100px', show: true, sortable: false } // this.t('action.edit')
+        header('school', '150px', true)
       ],
+      headers: [],
       isLoading: false,
       profilesIndex: [],
       showEditor: false,
@@ -204,6 +203,8 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
+
+    this.populateHeaders()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -211,12 +212,31 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
-      return this.headers.filter(h => h.show)
+      return [
+        ...this.headers
+          .filter(header => header.show),
+
+        // ensure these actions are always the last
+        { value: 'actions', align: 'end', width: '100px', show: true, sortable: false }
+      ]
+    },
+    customFieldHeaders () {
+      return this.tribeCustomFields.map(field => {
+        return {
+          align: 'center',
+          show: true,
+          sortable: true,
+          text: field.label,
+          value: `customFields.${field.key}`,
+          width: '100px'
+        }
+      })
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -230,7 +250,7 @@ export default {
       return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
     },
     hiddenColumns () {
-      return this.headers.length - this.activeHeaders.length
+      return (this.headers.length - this.activeHeaders.length) + 1
     }
   },
   methods: {
@@ -238,6 +258,18 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading']),
+    populateHeaders () {
+      const defaultHeaders = this.defaultHeaders
+        .filter(header => {
+          return this.tribeDefaultFields.some(fieldDef => {
+            const key = mapLabelToProp(fieldDef.label)
+            return header.value === key
+          })
+        })
+
+      this.headers.push(...defaultHeaders)
+      this.headers.push(...this.customFieldHeaders)
+    },
     toggleSettings () {
       this.settingsPanel = !this.settingsPanel
     },
@@ -261,16 +293,25 @@ export default {
 
       await this.loadPersonList({ type: 'group', tribeId })
 
-      this.profilesIndex = this.profilesArr.map(profile => {
-        if (profile.aliveInterval) {
-          profile.dob = this.computeDate('dob', profile.aliveInterval)
-          profile.dod = this.computeDate('dod', profile.aliveInterval)
-          profile.age = this.age(profile.aliveInterval)
-        }
-        return profile
-      })
+      this.profilesIndex = this.profilesArr.map(this.mapProfileData)
 
       this.isLoading = false
+    },
+    mapProfileData (profile) {
+      if (profile.aliveInterval) {
+        profile.dob = this.computeDate('dob', profile.aliveInterval)
+        profile.dod = this.computeDate('dod', profile.aliveInterval)
+        profile.age = this.age(profile.aliveInterval)
+      }
+
+      if (profile.customFields && Array.isArray(profile.customFields)) {
+        profile.customFields = profile.customFields
+          .reduce((acc, field) => {
+            return { ...acc, [field.key]: field.value }
+          }, {})
+      }
+
+      return profile
     },
     searchFilter (value, search, item) {
       const _search = search.toLocaleLowerCase()
@@ -316,10 +357,14 @@ export default {
       this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
 
       this.isLoading = true
+
       const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
       const search = this.search
       this.search = ''
-      this.profilesIndex = this.profilesIndex.map(profile => profile.id === this.selectedProfileId ? newProfile : profile)
+      this.profilesIndex = this.profilesIndex
+        .map(profile => {
+          return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
+        })
       this.search = search
       this.isLoading = false
     },

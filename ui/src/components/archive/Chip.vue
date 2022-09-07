@@ -10,7 +10,8 @@
     :max-height="expanded ? 'auto' : '60'"
     :min-height="expanded ? '100' : '60'"
     :class="expanded ? 'ma-0': 'ma-1'"
-
+    :ripple="ripple"
+    :style="ripple ? '':'cursor: unset'"
     @click="$emit('click')"
 
   >
@@ -51,6 +52,7 @@ export default {
     type: String,
     chip: Object,
     index: Number,
+    ripple: Boolean,
     expanded: { type: Boolean, default: false },
     image: { type: String, default: null }
   },

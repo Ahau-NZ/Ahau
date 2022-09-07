@@ -17,6 +17,7 @@
           :displayName="getDisplayName(selectedProfile)"
           :isDuplicate="isDuplicate"
           :moveDup.sync="moveDup"
+          show-custom-fields
         >
 
           <!-- Slot = Search -->
@@ -138,7 +139,7 @@ const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
 const isNotEmpty = (array) => array && array.length > 0
 
 export default {
-  name: 'NewNodeDialog',
+  name: 'NewPersonDialog',
   components: {
     Avatar,
     Dialog,
@@ -209,6 +210,7 @@ export default {
       }
     },
     async 'formData.preferredName' (name) {
+      if (this.isLogin) return
       clearTimeout(this.timer)
 
       if (!name) {
@@ -254,6 +256,9 @@ export default {
     ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
+    isLogin () {
+      return this.$route.name === 'login'
+    },
     allowRelationships () {
       return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },
@@ -560,7 +565,7 @@ export default {
       this.suggestions = []
     },
     t (key, vars) {
-      return this.$t('newNode.' + key, vars)
+      return this.$t('newPerson.' + key, vars)
     },
 
     async findSuggestionsByGroup (name) {

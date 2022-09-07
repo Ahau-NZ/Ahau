@@ -6,6 +6,25 @@ import clone from 'lodash.clonedeep'
 // import { AUTHOR_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from '../store/modules/profile/apollo-helpers'
 
+export function mergeTribeProfiles (tribe) {
+  if (!tribe.public) return tribe.private[0]
+
+  const profile = tribe.private[0]
+
+  for (const [key, value] of Object.entries(tribe.public[0])) {
+    if (key === 'id') continue
+    if (isEmpty(value)) continue
+    if (key === '__typename') continue
+
+    // over-ride!
+    profile[key] = value
+  }
+
+  if (!profile.customFields) profile.customFields = [] // for tribes, some custom fields may be null
+
+  return profile
+}
+
 export const EMPTY_COMMUNITY = {
   type: 'community',
   id: null,
@@ -22,6 +41,7 @@ export const EMPTY_COMMUNITY = {
   joiningQuestions: [],
   authors: [],
   kaitiaki: [],
+  customFields: [],
 
   // private community settings
   allowWhakapapaViews: true,
@@ -46,6 +66,7 @@ export function setDefaultCommunity (newCommunity) {
     phone: community.phone,
     joiningQuestions: community.joiningQuestions,
     authors: (community.kaitiaki || community.tiaki).map(d => ({ ...d.profile, feedId: d.feedId })),
+    customFields: community.customFields || [],
 
     // private community settings
     allowWhakapapaViews: community.allowWhakapapaViews,
@@ -121,7 +142,8 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'postCode',
   'tombstone',
   'tiaki',
-  'joiningQuestions'
+  'joiningQuestions',
+  'customFields'
 ]
 
 export const COMMUNITY_FRAGMENT = gql`
@@ -152,6 +174,20 @@ ${PublicProfileFieldsFragment}
     joiningQuestions {
       type
       label
+    }
+    customFields {
+      key
+      label
+      type
+      required
+      visibleBy
+      ...on CommunityCustomFieldList {
+        multiple
+        options
+      }
+      tombstone {
+        date
+      }
     }
 
   }
@@ -197,14 +233,13 @@ ${PublicProfileFieldsFragment}
 export const saveCommunity = input => {
   const _input = prune(input, PERMITTED_COMMUNITY_ATTRS)
 
-  if (!_input.id) _input.type = 'community'
   if (_input.avatarImage) delete _input.avatarImage.uri
   if (_input.headerImage) delete _input.headerImage.uri
 
   return {
     mutation: gql`
-      mutation($input: ProfileInput!) {
-        saveProfile(input: $input)
+      mutation($input: CommunityProfileInput!) {
+        saveCommunity(input: $input)
       }
     `,
     variables: {
@@ -216,7 +251,6 @@ export const saveCommunity = input => {
 export const savePublicCommunity = input => {
   const _input = prune(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
 
-  if (!_input.id) _input.type = 'community'
   if (_input.avatarImage) delete _input.avatarImage.uri
   if (_input.headerImage) delete _input.headerImage.uri
 
@@ -224,8 +258,8 @@ export const savePublicCommunity = input => {
 
   return {
     mutation: gql`
-      mutation($input: ProfileInput!) {
-        saveProfile(input: $input)
+      mutation($input: CommunityProfileInput!) {
+        saveCommunity(input: $input)
       }
     `,
     variables: {
@@ -237,9 +271,9 @@ export const savePublicCommunity = input => {
 export const deleteTribe = tribe => {
   return {
     mutation: gql`
-      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
-        deletePrivate: saveProfile(input: $privateInput)
-        deletePublic: saveProfile(input: $publicInput)
+      mutation($privateInput: CommunityProfileInput!, $publicInput: CommunityProfileInput!) {
+        deletePrivate: saveCommunity(input: $privateInput)
+        deletePublic: saveCommunity(input: $publicInput)
       }
     `,
     variables: {
@@ -267,9 +301,9 @@ export const updateTribe = (tribe, input) => {
 
   return {
     mutation: gql`
-      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
-        savePrivate: saveProfile(input: $privateInput)
-        savePublic: saveProfile(input: $publicInput)
+      mutation($privateInput: CommunityProfileInput!, $publicInput: CommunityProfileInput!) {
+        savePrivate: saveCommunity(input: $privateInput)
+        savePublic: saveCommunity(input: $publicInput)
       }
     `,
     variables: {
@@ -326,4 +360,15 @@ export function getTribalProfile (tribe, whoami) {
       : tribe.public[0],
     isPersonalGroup: false
   }
+}
+
+function isEmpty (value) {
+  if (value == null) return true
+  if (value === '') return true
+  if (Array.isArray(value)) {
+    if (value.length === 0) return true
+    if (value.every(el => el === '')) return true
+  }
+
+  return false
 }

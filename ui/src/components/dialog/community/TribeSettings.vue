@@ -1,47 +1,46 @@
 <template>
   <v-container fluid >
     <v-row>
-      <v-col cols="12" class="text-h5">
+      <v-col cols="12" class="overline">
         {{ t('kaitiakiFeatures') }}
       </v-col>
-      <v-col :class="`${subtitleClass} py-0`">
+      <v-col class="py-0 font-italic">
         {{ t('kaitiakiFeaturesDescription') }}
       </v-col>
-      <v-col cols="12" class="pl-10">
+      <v-col cols="12" class="pl-5">
         <v-row v-for="(setting, i) in kaitiakiSettings" :key="i" class="py-0">
           <v-col class="py-0">
-            <v-checkbox
+            <v-switch
               v-model="setting.value"
               :label="setting.label(setting.value)"
               color="blue"
-              class="py-0"
+              class="py-0 switch"
               hide-details
               @change="emitChanges(setting.key, setting.value)"
-            ></v-checkbox>
+            ></v-switch>
           </v-col>
           <v-spacer v-if="!mobile" class="py-0"/>
         </v-row>
       </v-col>
 
-      <v-col cols="12" class="text-h5">
+      <v-col cols="12" class="overline">
         {{ t('memberFeatures') }}
       </v-col>
-      <v-col :class="`${subtitleClass} py-0`">
+      <v-col class="py-0 font-italic">
         {{ t('memberFeaturesDescription') }}
       </v-col>
-      <v-col cols="12" class="pl-10">
+      <v-col cols="12" class="pl-5">
         <v-row v-for="(setting, i) in memberSettings" :key="i" class="py-0">
           <v-col class="py-0">
-            <v-checkbox
+            <v-switch
               v-model="setting.value"
               :label="setting.label(setting.value)"
               color="blue"
-              class="py-0"
+              class="py-0 switch"
               hide-details
               @change="emitChanges(setting.key, setting.value)"
-            ></v-checkbox>
+            ></v-switch>
           </v-col>
-          <v-spacer v-if="!mobile" class="py-0"/>
         </v-row>
       </v-col>
     </v-row>
@@ -57,7 +56,6 @@ export default {
   },
   data () {
     return {
-      subtitleClass: 'pl-md-8 pr-md-10 pt-md-0 text-body-2 font-italic font-weight-light text-wrap',
       kaitiakiSettings: [
         {
           key: 'allowPersonsList',
@@ -98,6 +96,9 @@ export default {
 }
 </script>
 <style scoped>
+.switch ::v-deep .v-label {
+  font-size: 0.9rem
+}
 center {
   text-align: center;
 }

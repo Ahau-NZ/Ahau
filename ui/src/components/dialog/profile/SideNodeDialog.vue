@@ -7,7 +7,7 @@
       :fixed="!mobile"
       :right="!mobile"
       light
-      :width="mobile ? '100%' : '21%'"
+      :width="fullscreen ? '100%' : '600px'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
@@ -23,13 +23,16 @@
           <v-row v-if="isEditing">
             <!-- Displays the form to edit the profile fields -->
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData"
+              <ProfileForm
+                :profile.sync="formData"
                 isSideViewDialog
                 isEditing
+                show-custom-fields
                 :readonly="!isEditing"
-                :fullForm='fullForm'
+                :fullForm="fullForm"
                 :mobile="mobile"
-                @cancel="cancel" >
+                @cancel="cancel"
+              >
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <v-btn
@@ -67,20 +70,20 @@
               :align="mobile ? '' : 'right'"
               class="pt-0 d-flex justify-space-between"
             >
-              <v-btn @click="cancel" text large fab class="secondary--text">
+              <v-btn @click="cancel" text large class="secondary--text">
                 {{ t('cancel') }}
               </v-btn>
-              <v-btn @click="submit" text large fab class="blue--text" color="blue">
+              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
                 {{ t('save') }}
               </v-btn>
             </v-col>
           </v-row>
 
           <v-row v-if="isEditing">
-            <v-col cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <v-divider/>
             </v-col>
-            <v-col v-if="parents.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="parents.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="parent"
                 :label="t('parents')"
@@ -90,7 +93,7 @@
               />
               <v-divider/>
             </v-col>
-            <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="partners.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="partner"
                 :label="t('partners')"
@@ -99,7 +102,7 @@
               />
               <v-divider/>
             </v-col>
-            <v-col v-if="children.length" cols="12" :class="mobile ? 'px-0':'py-0'">
+            <v-col v-if="children.length" cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <EditRelationships
                 type="child"
                 :label="t('children')"
@@ -168,39 +171,54 @@
           </v-row>
 
           <!-- Displays profile information when viewing! -->
-          <v-row v-if="!isEditing"  class="flex-column mx-0 ">
+          <v-row v-if="!isEditing" class="flex-column mx-0 ">
             <v-col class="pa-0">
-              <v-col cols="12" :class="profile.description ? 'pt-0':'pt-0'">
+              <v-col cols="12" class="pt-0">
                 <v-row cols="12" class="rounded-border mb-4">
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
-                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
-                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
+                  <ProfileInfoItem v-if="hasDefaultField('legalName')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
+                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
+                  <ProfileInfoItem :class="{ 'pb-0': true, bb: hasDefaultField('city') || hasDefaultField('country') }" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem v-if="hasDefaultField('city')" class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
+                  <ProfileInfoItem v-if="hasDefaultField('country')" class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
-                <v-row cols="12" class="rounded-border mb-4">
-                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
-                  <template v-if="profile.deceased">
-                    <ProfileInfoItem class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
+                <v-row cols="12" v-if="hasDefaultField('isDeceased') && profile.deceased" class="rounded-border mb-4">
+                  <ProfileInfoItem v-if="hasDefaultField('isDeceased')" :class="profile.deceased ? 'pb-0 bb br' : 'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6' : '12'" :smCols="profile.deceased ? '6' : '12'" :value="profile.placeOfBirth" />
+                  <template v-if="hasDefaultField('isDeceased') && profile.deceased">
+                    <ProfileInfoItem v-if="hasDefaultField('placeOfDeath')" class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
                     <ProfileInfoItem class="pb-0 br" :title="t('dateOfPassing')" mdCols="6" smCols="6" :value="diedAt" />
-                    <ProfileInfoItem class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
+                    <ProfileInfoItem v-if="hasDefaultField('buriedLocation')" class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
                   </template>
                 </v-row>
-                <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
-                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.school && formData.education.join('\n')"/>
+                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'qualifications'])" class="rounded-border">
+                  <ProfileInfoItem v-if="hasDefaultField('profession')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
+                  <ProfileInfoItem v-if="hasDefaultField('education')" class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('qualifications')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki" class="d-flex flex-column justify-center align-center">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
                     {{ t('contactInfoText') }}
                   </v-card-subtitle>
                 </v-row>
-                <v-row v-if="isKaitiaki" cols="12" class="rounded-border">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
-                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" cols="12" class="rounded-border">
+                  <ProfileInfoItem v-if="hasDefaultField('address')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
+                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
+                  <ProfileInfoItem v-if="hasDefaultField('phone')" class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
+                  <ProfileInfoItem v-if="hasDefaultField('email')" class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
+                </v-row>
+                <v-row v-if="tribeCustomFields.length" class="d-flex flex-column justify-center align-center">
+                  <v-card-subtitle>
+                    {{ t('customFieldText') }}
+                  </v-card-subtitle>
+                </v-row>
+                <v-row v-if="tribeCustomFields.length" cols="12" class="rounded-border">
+                  <ProfileInfoItem
+                    v-for="(fieldDef, i) in tribeCustomFields" :key="i"
+                    class="pb-0 bb"
+                    smCols="12"
+                    mdCols="12"
+                    :title="fieldDef.label"
+                    :value="getFieldValue(fieldDef)"
+                  />
                 </v-row>
               </v-col>
             </v-col>
@@ -299,10 +317,12 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex'
+
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+import get from 'lodash.get'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -317,6 +337,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
+import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel, mapLabelToProp } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -325,17 +346,6 @@ function arrayEquals (a, b) {
     a.length === b.length &&
     a.every((val, index) => val === b[index])
   )
-}
-
-function defaultData (profile) {
-  return {
-    ...clone(profile),
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    }
-  }
 }
 
 export default {
@@ -378,13 +388,17 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
-    ...mapGetters('tribe', ['tribeSettings']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
       'getPartnerType'
     ]),
+    isLoadingProfile () {
+      return this.alertSettings.delay === -1
+    },
     isDeletable () {
       return (
         this.deleteable &&
@@ -428,9 +442,9 @@ export default {
         .filter(Boolean)
     },
     scopedProfile () {
-      if (this.profile && this.profile.adminProfile) {
+      const profile = clone(this.profile)
+      if (profile && profile.adminProfile) {
         const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
-        const profile = { ...this.profile }
         const adminProfile = profile.adminProfile
         delete profile.adminProfile
 
@@ -446,12 +460,14 @@ export default {
         return profile
       }
 
-      return this.profile
+      return profile
     },
     isAdminProfile () {
       return this.profile && this.profile.adminProfile
     },
     showStoriesButton () {
+      if (!this.currentAccess) return false
+
       return (
         this.currentAccess.type !== ACCESS_KAITIAKI &&
         (this.tribeSettings && this.tribeSettings.allowStories)
@@ -460,6 +476,9 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    fullscreen () {
+      return this.mobile || this.$vuetify.breakpoint.sm
+    },
     diedAt () {
       if (this.scopedProfile.aliveInterval) {
         const date = this.scopedProfile.aliveInterval.split('/')
@@ -467,13 +486,97 @@ export default {
       }
       return null
     },
-    profileChanges () {
+    customProps () {
+      return {
+        readonly: !this.isEditing,
+        flat: !this.isEditing,
+        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
+        hideDetails: true,
+        placeholder: ' ',
+        class: !this.isEditing ? 'custom' : ''
+      }
+    }
+  },
+  watch: {
+    show: {
+      immediate: true,
+      handler (newVal) {
+        this.drawer = newVal
+        if (this.mobile) window.scrollTo(0, 0)
+      }
+    },
+    scopedProfile: {
+      deep: true,
+      immediate: true,
+      async handler (profile) {
+        if (!profile) return
+        this.formData = this.defaultData()
+
+        if (profile.originalAuthor) {
+          // TODO cherese 8/3/22 move to graphql and change from using getProfile
+          // it doesnt need to whole profile
+          const originalAuthor = await this.getProfile(profile.originalAuthor)
+          this.authors = [originalAuthor]
+        }
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(['updateDialog']),
+    ...mapActions('alerts', ['showAlert']),
+    ...mapActions('archive', ['setIsFromWhakapapaShow']),
+    ...mapActions('profile', ['getProfile']),
+    ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
+    getDisplayName,
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
+    },
+    defaultData () {
+      const profile = clone(this.profile)
+      return {
+        ...profile,
+        altNames: {
+          currentState: clone(profile.altNames),
+          add: [], // new altNames to add
+          remove: [] // altNames to remove
+        }
+      }
+    },
+    hasDefaultField (key) {
+      const label = mapPropToLabel(key)
+
+      if (!label) return
+
+      // find in defaultCustomFields
+      return this.tribeDefaultFields.some(field => field.label === label)
+    },
+    hasOneField (keys) {
+      return keys.some(key => this.hasDefaultField(key))
+    },
+    getFieldValueFromProfile (fieldDef) {
+      const key = mapLabelToProp(fieldDef.label)
+      if (!key) return '' // something went wrong?
+
+      return get(this.profile, key, '')
+    },
+    getProfileChanges  () {
       const changes = {}
 
       Object.entries(this.formData).forEach(([key, value]) => {
         if (['school', 'education'].includes(key)) {
           if (!arrayEquals(this.formData[key], this.profile[key])) {
             changes[key] = value
+          }
+        } else if (key === 'customFields') {
+          const customFields = getCustomFieldChanges(
+            clone(this.profile[key]),
+            clone(this.formData[key][this.currentTribe.id]),
+            this.tribeCustomFields
+          )
+
+          if (!isEmpty(customFields)) {
+            changes[key] = customFields
           }
         } else if (!isEqual(this.formData[key], this.scopedProfile[key])) {
           switch (key) {
@@ -501,49 +604,29 @@ export default {
       })
       return changes
     },
-    customProps () {
-      return {
-        readonly: !this.isEditing,
-        flat: !this.isEditing,
-        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
-        hideDetails: true,
-        placeholder: ' ',
-        class: !this.isEditing ? 'custom' : ''
+    getFieldValue (fieldDef) {
+      if (!Array.isArray(this.profile.customFields)) return ''
+
+      // find the value from the applicants profile (if there is one)
+      let field = this.profile.customFields.find(field => field.key === fieldDef.key)
+
+      // if the field wasnt found
+      // it could mean that they havent defined a value for it yet
+      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
+
+      switch (fieldDef.type) {
+        case 'array':
+          if (get(field, 'value.length')) return field.value.join(', ')
+          return ''
+        case 'list':
+          if (fieldDef.multiple) return field.value.join(', ')
+          else return field.value
+        case 'checkbox':
+          if (field.value) return 'yes'
+          else return 'no'
+        default:
+          return field.value || ''
       }
-    }
-  },
-  watch: {
-    show: {
-      immediate: true,
-      handler (newVal) {
-        this.drawer = newVal
-        if (this.mobile) window.scrollTo(0, 0)
-      }
-    },
-    scopedProfile: {
-      deep: true,
-      immediate: true,
-      async handler (profile) {
-        if (!profile) return
-        this.formData = defaultData(profile)
-        if (profile.originalAuthor) {
-          // TODO cherese 8/3/22 move to graphql and change from using getProfile
-          // it doesnt need to whole profile
-          const originalAuthor = await this.getProfile(profile.originalAuthor)
-          this.authors = [originalAuthor]
-        }
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(['updateDialog']),
-    ...mapActions('archive', ['setIsFromWhakapapaShow']),
-    ...mapActions('profile', ['getProfile']),
-    ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
-    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
-    getDisplayName,
-    monthTranslations (key, vars) {
-      return this.$t('months.' + key, vars)
     },
     findOrLoadProfile (profileId) {
       const profile = this.person(profileId)
@@ -585,7 +668,7 @@ export default {
     async openProfile (profile) {
       this.updateDialog(null, null)
       await this.setSelectedProfileById(profile.id)
-      this.updateDialog('view-edit-node', null)
+      this.updateDialog('view-edit-person', null)
     },
     cordovaBackButton () {
       this.close()
@@ -595,27 +678,53 @@ export default {
     },
     cancel () {
       // reset form values
-      this.formData = defaultData(this.scopedProfile)
+      this.formData = this.defaultData()
       this.toggleEdit()
       this.$emit('cancel')
     },
-    async submit () {
-      const output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+    async processUpdatePerson () {
+      const profileChanges = this.getProfileChanges()
 
-      if (!isEmpty(output)) await this.processUpdate(output)
+      const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
+      if (!isEmpty(output)) {
+        await this.processUpdate(output)
+      } else {
+        this.showAlert({ message: 'No changes were submitted', color: 'green' })
+        this.handleReload()
+        return
+      }
 
-      this.formData = defaultData(this.scopedProfile)
-      this.toggleEdit()
+      // handle reload
+      this.showAlert({ message: 'Profile updated', color: 'green' })
+      this.handleReload()
     },
     async processUpdate (input) {
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
       if (input.recps) delete input.recps
 
+      if (this.isMyProfile(this.profileId) && input.customFields) {
+        // update separately to prevent bulk update
+        await this.updatePerson({ id: this.profileId, customFields: input.customFields })
+        delete input.customFields
+      }
+
+      // exclude empty altNames from submission
+      if (input.altNames) {
+        if (!get(input, 'altNames.add.length')) delete input.altNames.add
+        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
+        if (isEmpty(input.altNames)) delete input.altNames
+      }
+
       // update their profile in the db
-      await this.updatePerson({ id: this.profileId, ...input })
+      if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
 
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
       this.$emit('saved')
+    },
+    handleReload () {
+      this.formData = this.defaultData()
+      this.toggleEdit()
     },
     toggleNew (type) {
       this.$emit('new', type)
