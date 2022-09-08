@@ -218,11 +218,11 @@
         </v-row>
       </div>
       <v-card-actions v-if="fullStory" class="justify-end">
-        <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
-          <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
+        <v-list-item-icon v-if="fullStory && !showArtefact && !viewOnly && story.canEdit" class="pt-0 mt-0">
+          <EditStoryButton @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
-        <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-artefact')"/>
+        <v-list-item-icon v-if="showArtefact && !viewOnly && story.canEdit" class="pt-0 mt-12">
+          <EditArtefactButton @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
         style="position:absolute; top:0px; right:0px;">
@@ -277,6 +277,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import get from 'lodash.get'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
@@ -341,9 +342,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['storeDialog', 'whoami']),
+    ...mapGetters(['storeDialog', 'whoami', 'isMyProfile']),
     ...mapGetters('archive', ['showArtefact']),
     ...mapGetters('tribe', ['tribeProfile']),
+    viewOnly () {
+      return !this.isContributor && this.story.permission === 'view'
+    },
+    isContributor () {
+      return get(this.story, 'contributors', [])
+        .some(contributor => this.isMyProfile(contributor.profile.id))
+    },
     access () {
       return [this.tribeProfile].filter(Boolean)
     },

@@ -37,7 +37,8 @@ const PERMITTED_CSV_COLUMNS = [
   'school',
   'education',
   'avatarImage',
-  'headerImage'
+  'headerImage',
+  'description'
 ]
 
 const REQUIRED_CSV_COLUMNS = [

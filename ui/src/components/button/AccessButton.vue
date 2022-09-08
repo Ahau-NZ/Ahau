@@ -7,80 +7,75 @@
             text
             small
             :ripple="false"
+            disabled
           >
             <Avatar class="" size="20px" :image="profile.avatarImage" :isView="!profile.avatarImage" :alt="getDisplayName(profile)" :gender="profile.gender" :aliveInterval="profile.aliveInterval" />
             <span class="ml-1 truncated-x">{{ profile ? currentAccessIsPersonalGroup ? t('private') : profile.preferredName : t('setAccess')}}</span>
           </v-btn>
-          <v-tooltip top open-delay="200">
-            <template v-slot:activator="{ on }">
-              <div v-on="on">
-                <template v-if="!currentAccessIsPersonalGroup">
-                  <!-- TODO: Update to list groups in Tribe: This is dependant on Groups Epic  -->
-                  <v-menu offset-y light hide-details dense rounded outlined>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        v-bind="attrs"
-                        v-on="on"
-                        text
-                        rounded
-                        small
-                        :disabled="disabled"
-                      >
-                        <v-icon small>mdi-eye</v-icon>
-                        <span class="ml-2">{{ currentAccess.label || $t(`accessButton.${currentAccess.type}`) }}</span>
-                        <v-icon v-if="!disabled && allowedOptions.length > 1">mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list v-if="allowedOptions.length > 1">
-                      <v-list-item
-                        v-for="(accessOption, index) in allowedOptions"
-                        :key="index"
-                        @click="setCurrentAccess(accessOption)"
-                      >
-                        <v-list-item-title>{{ accessOption.label || $t(`accessButton.${accessOption.type}`) }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-
-                  <!-- Set record Permissions: TODO when enabling this you will need to hide the 'submit' option until the Review and Submissions Epic is completed -->
-                  <v-menu offset-y light hide-details dense rounded outlined>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        v-bind="attrs"
-                        v-on="on"
-                        text
-                        rounded
-                        disabled
-                        small
-                      >
-                      <!-- <v-btn
-                        v-bind="attrs"
-                        v-on="on"
-                        text
-                        rounded
-                        :disabled="group === 'Kaitiaki only'"
-                        small
-                      > -->
-                        <span class="ml-2">{{ permission }}</span>
-                        <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
-                      </v-btn>
-                    </template>
-
-                    <v-list>
-                      <v-list-item
-                        v-for="(permission, index) in permissions"
-                        :key="index"
-                        @click="setPermission(permission)"
-                      >
-                        <v-list-item-title>{{ permission }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
+          <div v-if="!currentAccessIsPersonalGroup">
+              <!-- TODO: Update to list groups in Tribe: This is dependant on Groups Epic  -->
+              <v-menu offset-y light hide-details dense rounded outlined>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    text
+                    rounded
+                    small
+                    :disabled="disabled || recordView"
+                    :ripple="false"
+                  >
+                    <v-icon small>mdi-eye</v-icon>
+                    <span class="ml-2">{{ currentAccess.label || t(currentAccess.type) }}</span>
+                    <v-icon v-if="!disabled && allowedOptions.length > 1">mdi-chevron-down</v-icon>
+                  </v-btn>
                 </template>
-              </div>
-            </template>
-            <span>{{ tooltipText }}</span>
-          </v-tooltip>
+                <v-list v-if="allowedOptions.length > 1">
+                  <v-list-item
+                    v-for="(accessOption, index) in allowedOptions"
+                    :key="index"
+                    @click="setCurrentAccess(accessOption)"
+                  >
+                    <v-list-item-title>{{ accessOption.label || t(currentAccess.type) }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+
+              <!-- Set record Permissions: TODO when enabling this you will need to hide the 'submit' option until the Review and Submissions Epic is completed -->
+              <v-menu offset-y light hide-details dense rounded outlined>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    text
+                    rounded
+                    small
+                    :disabled="disabled"
+                  >
+                  <!-- <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    text
+                    rounded
+                    :disabled="group === 'Kaitiaki only'"
+                    small
+                  > -->
+                    <span class="ml-2">{{ permission }}</span>
+                    <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-list>
+                  <v-list-item
+                    v-for="(permission, index) in permissions"
+                    :key="index"
+                    @click="setPermission(permission.value)"
+                  >
+                    <v-list-item-title>{{ permission.text }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+          </div>
         </v-row>
       </v-col>
       <v-col cols="12" class="pt-0">
@@ -121,6 +116,7 @@ export default {
       default: () => []
     },
     disabled: Boolean,
+    permission: String,
     type: String
   },
   data () {
@@ -128,18 +124,23 @@ export default {
       profile: {},
       toggle: false,
       permissions: [
-        this.t('edit'),
-        this.t('read'),
-        this.t('submit')
-      ],
-      permission: this.t('edit')
+        { value: 'edit', text: this.t('edit') },
+        { value: 'view', text: this.t('read') }
+        // this.t('submit')
+      ]
     }
   },
   components: {
     Avatar
   },
+  mounted () {
+    if (!this.permission) this.setPermission('view')
+  },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),
+    recordView () {
+      return this.$route.name === 'community/archive'
+    },
     allowedOptions () {
       if (this.type === 'whakapapa') return this.accessOptions
 
@@ -168,9 +169,9 @@ export default {
       if (currentAccess.type === ACCESS_PRIVATE) return this.t('privateAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_KAITIAKI) return this.t('kaitiakiAccess', { recordType: this.type })
       else if (currentAccess.type === ACCESS_ALL_MEMBERS) {
-        if (permission === this.t('edit')) return this.t('membersCanEdit', { recordType: this.type })
-        else if (permission === this.t('read')) return this.t('membersCanAccess', { recordType: this.type })
-        else if (permission === this.t('submit')) return this.t('membersCanSubmit', { recordType: this.type })
+        if (permission === 'edit') return this.t('membersCanEdit', { recordType: this.type })
+        else if (permission === 'view') return this.t('membersCanAccess', { recordType: this.type })
+        else if (permission === 'submit') return this.t('membersCanSubmit', { recordType: this.type })
       }
       return ''
     },
@@ -185,9 +186,7 @@ export default {
     getDisplayName,
     setPermission (permission) {
       // TODO update record backend to hold permission
-      this.permission = permission
-      console.log('change permission to: ', permission)
-      // this.$emit('permission', permission)
+      this.$emit('update:permission', permission)
     },
     t (key, vars) {
       return this.$t('accessButton.' + key, vars)

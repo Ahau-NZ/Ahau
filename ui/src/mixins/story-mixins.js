@@ -124,7 +124,7 @@ export const methods = {
       story = await this.getStory(id)
 
       // if editing story and adding a collection show the story
-      if (!this.currentStory?.collections && collections.add) {
+      if (!this.currentStory?.collections && collections?.add) {
         this.showCurrentCollection({ id: collections.add[0].id })
       }
 
