@@ -1,16 +1,7 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-    <defs>
-      <filter id="blur">
-        <feGaussianBlur stdDeviation="3"/>
-      </filter>
-      <filter id="dropShadow">
-        <feDropShadow dx="0" dy="0" stdDeviation="0.5" flood-color="cyan"/>
-      </filter>
-    </defs>
-
     <g id="baseGroup">
-      <g :transform="`translate(${treeX - radius} ${treeY - radius})`" ref="tree" >
+      <g :transform="`translate(${treeX - radius}, ${treeY - radius})`" ref="tree" >
         <SubTree v-if="tree"
           :x="tree.x"
           :y="tree.y"

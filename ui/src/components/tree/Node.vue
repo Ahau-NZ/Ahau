@@ -81,7 +81,7 @@
         font-size="30"
         font-weight="600"
         cursor="initial"
-        style="fill:#000;"
+        style="fill: #000;"
         transform="rotate(90)"
       >..</text>
     </g>
