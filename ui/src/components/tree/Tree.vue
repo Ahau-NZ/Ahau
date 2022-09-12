@@ -164,7 +164,7 @@ export default {
 
       svg.call(
         d3Zoom()
-          .scaleExtent([0.05, 2])
+          .scaleExtent([0.01, 5])
           .on('zoom', (event) => g.attr('transform', event.transform))
       )
         .on('dblclick.zoom', null)
@@ -231,7 +231,7 @@ export default {
       const g = d3Select('#baseGroup')
 
       const zoom = d3Zoom()
-        .scaleExtent([0.05, 2])
+        .scaleExtent([0.01, 10])
         .on('zoom', (event) => g.attr('transform', event.transform))
 
       zoom.scaleBy(svg.transition().duration(150), scale)
