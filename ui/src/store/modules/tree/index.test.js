@@ -33,8 +33,8 @@ test.only('_compareAge', t => {
 
   const children3 = [
     { created: 1, birthOrder: undefined, age: undefined },
-    { created: 2, birthOrder: undefined, age: 2 },
-    { created: 3, birthOrder: undefined, age: 3 },
+    { created: 2, birthOrder: undefined, age: 3 },
+    { created: 3, birthOrder: undefined, age: 2 },
     { created: 4, birthOrder: undefined, age: 4 }
   ]
   const expected3 = [
