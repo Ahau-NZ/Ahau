@@ -6,48 +6,68 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
   if (!partnerIds.length) return []
 
   const childNodes = rootNode.children || []
-  let leftPartners = 0
-  let rightPartners = 0
 
   function meanChildX (partnerId) {
+    // get the children of partner
     const partnerChildren = rootGetters['whakapapa/getChildIds'](partnerId)
+      // keep only the birth children
       .filter(childId => rootGetters['whakapapa/getChildType'](partnerId, childId) === 'birth')
+      // get the nodes from the graph that are also a child of the rootNode
       .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
-      // find the position of partnerId's children below the the rootNode (if it exists)
-      .filter(Boolean) // filters out empty entries
+      // filters out empty entries
+      .filter(Boolean)
 
-    if (!partnerChildren.length) return 0
+    if (!partnerChildren.length) return 1000
+    // if no children push them way to the right.
+    // We did this to priortise the position of partners with children over the order in which the partner were created
+    // the core problem is that we dont record the order or dates of relationships currently.
+    // This needs some design if we want to add this feature
+
+    // this return the average x position of the partners children
     return meanX(partnerChildren)
   }
 
-  return partnerIds
-    // sort partners by where most of their children are
-    .sort((A, B) => meanChildX(A) - meanChildX(B))
-    // then alternate placing them on each side (starting with left)
-    .map((partnerId, i) => {
-      // set partners to be on side where most of their birth children are
-      // OR fall back to making it evenly placed
+  const hopDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
 
-      let sign = -1 // default to the left
-      if (leftPartners > rightPartners) { sign = 1 }
-
-      // update the count of the partners on each side
-      (sign > 0) ? rightPartners++ : leftPartners++
-
-      const hops = (sign > 0) ? rightPartners : leftPartners
-      let hopsDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
-      if (hops > 1) hopsDistance += (hops - 1) * PARTNER_RADIUS + PARTNER_SPACE + PARTNER_RADIUS
-
-      // how far sideways the partner sits from the root node at 0
-      const x = (
-        rootNode.x + // avatar center
-        sign * hopsDistance
-      )
-
+  return partnerIds.reverse() // TODO: do this reverse upstream
+    // calcuate where most of their children are
+    .map(partnerId => {
       return {
-        x,
-        y: rootNode.y,
-        data: { id: partnerId }
+        id: partnerId,
+        meanChildX: meanChildX(partnerId) - rootNode.x // shift x average to be relative to the rootNode
+      }
+    })
+    // put the partners in order of child position
+    .sort((A, B) => {
+      return (A.meanChildX - B.meanChildX)
+    })
+    .map((A, i, arr) => {
+      // if meanChildX is negative push to left, if positive to right
+      if (A.meanChildX < 0) {
+        // get an arr of elements that are on the left of the rootNode
+        const lessThanZero = arr.filter(A => A.meanChildX < 0).map(A => A.id)
+        // figure out which one this is
+        const index = lessThanZero.indexOf(A.id)
+        // figure how many hops it is from the rootNode
+        const hops = lessThanZero.length - index
+        return {
+          // set how many hops based on their position in that set
+          x: rootNode.x - hops * hopDistance,
+          y: rootNode.y,
+          data: { id: A.id }
+        }
+      } else {
+        // get an arr of elements that are on the right of the rootNode
+        const moreThanZero = arr.filter(A => A.meanChildX >= 0).map(A => A.id)
+        // figure out which one this is
+        const index = moreThanZero.indexOf(A.id)
+        // figure how many hops it is from the rootNode
+        return {
+          // set how many hops based on their position in that set
+          x: rootNode.x + (index + 1) * hopDistance,
+          y: rootNode.y,
+          data: { id: A.id }
+        }
       }
     })
 }

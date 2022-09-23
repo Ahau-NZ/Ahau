@@ -19,7 +19,6 @@ export default function () {
   const state = {
     tree: null,
     secondaryLinks: {},
-
     mouseEvent: null,
     hoveredProfileId: null,
     searchedProfileId: null
@@ -232,9 +231,6 @@ export function _compareAge (A, B) {
   if (A.age > B.age) return -1
   if (A.age < B.age) return 1
 
-  // if there is no birth order set and but one has a dob order by created order
-  // if (A.birthOrder !== undefined && B.age) return 0
-  // if (B.birthOrder !== undefined) return -1
   return 0
 }
 
