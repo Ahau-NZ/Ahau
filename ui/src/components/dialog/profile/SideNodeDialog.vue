@@ -7,7 +7,7 @@
       :fixed="!mobile"
       :right="!mobile"
       light
-      :width="fullscreen ? '100%' : '600px'"
+      :width="fullscreen ? '100%' : '300px'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
@@ -51,35 +51,6 @@
           </v-row>
 
           <v-row v-if="isEditing">
-            <!-- Displays delete profile button (if editing and allowed to delete) -->
-            <v-col cols="12" sm="auto" v-if="isDeletable">
-              <v-btn
-                @click="$emit('delete')"
-                align="center"
-                color="white"
-                text
-                class="secondary--text"
-              >
-                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
-              </v-btn>
-            </v-col>
-
-            <!-- Displays the save/cancel buttons when editing the profile -->
-            <v-col
-              cols="12"
-              :align="mobile ? '' : 'right'"
-              class="pt-0 d-flex justify-space-between"
-            >
-              <v-btn @click="cancel" text large class="secondary--text">
-                {{ t('cancel') }}
-              </v-btn>
-              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('save') }}
-              </v-btn>
-            </v-col>
-          </v-row>
-
-          <v-row v-if="isEditing">
             <v-col cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <v-divider/>
             </v-col>
@@ -110,6 +81,35 @@
                 @updateLink="updateChildLink"
                 @removeLink="deleteChildLink"
               />
+            </v-col>
+          </v-row>
+
+          <v-row v-if="isEditing">
+            <!-- Displays delete profile button (if editing and allowed to delete) -->
+            <v-col cols="12" sm="auto" v-if="isDeletable">
+              <v-btn
+                @click="$emit('delete')"
+                align="center"
+                color="white"
+                text
+                class="secondary--text"
+              >
+                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
+              </v-btn>
+            </v-col>
+
+            <!-- Displays the save/cancel buttons when editing the profile -->
+            <v-col
+              cols="12"
+              :align="mobile ? '' : 'right'"
+              class="pt-0 d-flex justify-space-between"
+            >
+              <v-btn @click="cancel" text large class="secondary--text">
+                {{ t('cancel') }}
+              </v-btn>
+              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
+                {{ t('save') }}
+              </v-btn>
             </v-col>
           </v-row>
 
@@ -389,7 +389,7 @@ export default {
   },
   computed: {
     ...mapGetters('alerts', ['alertSettings']),
-    ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile']),
+    ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile', 'whoami']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
@@ -442,22 +442,17 @@ export default {
         .filter(Boolean)
     },
     scopedProfile () {
-      const profile = clone(this.profile)
+      let profile = clone(this.profile)
+
       if (profile && profile.adminProfile) {
-        const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
-        const adminProfile = profile.adminProfile
-        delete profile.adminProfile
+        const _profile = profile.adminProfile
+        delete _profile.adminProfile
 
-        for (const field in adminProfile) {
-          if (ignoreList.has(field)) continue
-          if (adminProfile[field] === null) continue
-          if (Array.isArray(adminProfile[field]) && adminProfile[field].length === 0) continue
-
-          profile[field] = adminProfile[field]
-        }
+        profile = this.mergeProfiles(profile, _profile)
         profile.adminProfileId = this.profile.adminProfile.id
-
-        return profile
+      } else if (this.isMyProfile) {
+        profile = this.mergeProfiles(profile, this.whoami.personal.profile)
+        console.log('after: ', profile)
       }
 
       return profile
@@ -533,7 +528,7 @@ export default {
       return this.$t('months.' + key, vars)
     },
     defaultData () {
-      const profile = clone(this.profile)
+      const profile = clone(this.scopedProfile)
       return {
         ...profile,
         altNames: {
@@ -734,6 +729,18 @@ export default {
     },
     t (key, vars) {
       return this.$t('sideProfile.' + key, vars)
+    },
+    mergeProfiles (profile, _profile) {
+      const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
+
+      for (const field in _profile) {
+        if (ignoreList.has(field)) continue
+        if (_profile[field] === null) continue
+        if (Array.isArray(_profile[field]) && _profile[field].length === 0) continue
+
+        profile[field] = _profile[field]
+      }
+      return profile
     }
   }
 }
