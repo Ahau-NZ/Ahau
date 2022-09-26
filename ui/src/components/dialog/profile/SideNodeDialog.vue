@@ -450,9 +450,8 @@ export default {
 
         profile = this.mergeProfiles(profile, _profile)
         profile.adminProfileId = this.profile.adminProfile.id
-      } else if (this.isMyProfile) {
+      } else if (this.isMyProfile(this.profile.id)) {
         profile = this.mergeProfiles(profile, this.whoami.personal.profile)
-        console.log('after: ', profile)
       }
 
       return profile
