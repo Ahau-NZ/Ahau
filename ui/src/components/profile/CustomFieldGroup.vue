@@ -1,6 +1,6 @@
 <template>
-  <v-row>
-    <v-col cols="12">
+  <v-row class="mx-0">
+    <v-col cols="12" class="overline">
       {{ tribe.preferredName }}
     </v-col>
     <v-col v-for="(fieldDef, i) in customFieldDefs" :key="`cf-${fieldDef.key}-${i}`" :cols="calculateFieldCols(fieldDef)" class="py-2">

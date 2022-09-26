@@ -251,6 +251,7 @@
               :hasEndDate.sync="formData.deceased"
               :cols='sideViewCols'
               :readonly="readonly"
+              :rules="getFieldRules('dateOfBirth')"
             />
           </v-col>
 
@@ -711,6 +712,8 @@ export default {
 
       const field = this.tribeRequiredDefaultFields.find(field => field.label === label)
       if (!field) return []
+
+      console.log('field: ', field)
 
       return field.required ? this.rules : []
     },

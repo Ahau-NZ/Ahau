@@ -11,7 +11,7 @@
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
           {{ collection.name + ' collection'}}
         </h4>
-        <div v-if="collection && collection.canEdit">
+        <div v-if="collection && collection.isKaitiaki">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -76,7 +76,7 @@ export default {
     collection: Object
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('tribe', ['tribeProfile']),
     desktop () {
       return this.$vuetify.breakpoint.lg

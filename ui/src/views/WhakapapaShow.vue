@@ -7,7 +7,7 @@
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-          <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
+          <template v-slot:edit v-if="whakapapaView && isKaitiaki">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
