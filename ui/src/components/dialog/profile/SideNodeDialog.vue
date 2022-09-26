@@ -7,7 +7,7 @@
       :fixed="!mobile"
       :right="!mobile"
       light
-      :width="fullscreen ? '100%' : '300px'"
+      :width="fullscreen ? '100%' : '320px'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
@@ -737,8 +737,11 @@ export default {
         if (ignoreList.has(field)) continue
         if (_profile[field] === null) continue
         if (Array.isArray(_profile[field]) && _profile[field].length === 0) continue
-
-        profile[field] = _profile[field]
+        if (field === 'customFields') {
+          profile[field] = { ...profile[field], ..._profile[field] }
+        } else {
+          profile[field] = _profile[field]
+        }
       }
       return profile
     }
