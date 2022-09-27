@@ -11,7 +11,7 @@
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
           {{ collection.name + ' collection'}}
         </h4>
-        <div v-if="collection && collection.isKaitiaki">
+        <div v-if="collection && isKaitiaki">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
