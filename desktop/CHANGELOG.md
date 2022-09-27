@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+# Features
+
+### Bugs
+
+- SideNodeDialog now showing admin fields for admin users
+- NewRegistrationDialog now recongnises required DOB inputs
 ## v2.14.2
 
 patched a bug introduced by ssb-tribes removing deprecated `application` API - this was still used
