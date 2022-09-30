@@ -266,7 +266,7 @@ export default {
       }
     },
     async addPerson (input) {
-      let { id, children, parents, partners, moveDup, customFields: rawCustomFields } = input
+      let { id, children, parents, partners, moveDup, customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
       if (moveDup) {

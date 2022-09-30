@@ -7,7 +7,7 @@
       :fixed="!mobile"
       :right="!mobile"
       light
-      :width="fullscreen ? '100%' : '600px'"
+      :width="fullscreen ? '100%' : '21%'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"

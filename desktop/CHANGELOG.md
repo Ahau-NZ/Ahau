@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.15
+
+### Fixes
+- fixed sorting of children
+- fixed sorting of partners
+
 ## v2.14.2
 
 patched a bug introduced by ssb-tribes removing deprecated `application` API - this was still used
