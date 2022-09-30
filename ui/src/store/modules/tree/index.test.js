@@ -2,7 +2,7 @@ import { _compareAge } from './index.js'
 
 const test = require('tape')
 
-test.only('_compareAge', t => {
+test('_compareAge', t => {
   const children1 = [
     { created: 1, birthOrder: 1, age: 2 },
     { created: 2, birthOrder: 2, age: 3 }
