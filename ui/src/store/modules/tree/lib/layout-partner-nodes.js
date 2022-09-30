@@ -29,7 +29,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
 
   const hopDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
 
-  return partnerIds.reverse() // TODO: do this reverse upstream
+  return partnerIds.reverse()// TODO: do this reverse upstream
     // calcuate where most of their children are
     .map(partnerId => {
       return {

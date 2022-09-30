@@ -15,8 +15,8 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
     {
       id: 'A',
       children: [
-        { id: 'ax', children: [] },
-        { id: 'ab', children: [] }
+        { id: 'ab', children: [] },
+        { id: 'ax', children: [] }
       ]
     },
     'returns nestedDescendants'
@@ -29,10 +29,10 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
     {
       id: 'A',
       children: [
-        { id: 'ax', children: [] },
-        { id: 'ab', children: [] },
+        { id: 'bc', children: [] },
         { id: 'xy', children: [] },
-        { id: 'bc', children: [] }
+        { id: 'ab', children: [] },
+        { id: 'ax', children: [] }
       ]
     },
     'returns nestedDescendants with extended family'
@@ -76,10 +76,10 @@ test('vuex/whakapapa getters.nestedDescendants (with ignoredProfiles)', t => {
     {
       id: 'A',
       children: [
-        { id: 'ax', children: [] },
+        { id: 'bc', children: [] },
         { id: 'ab', children: [] },
+        { id: 'ax', children: [] }
         // { id: 'xy', children: [] },
-        { id: 'bc', children: [] }
       ]
     },
     'returns nestedDescendants (extended), excluding ignoredProfiles (and profiles beyond)'
@@ -107,6 +107,10 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
   const expected = {
     id: 'Grandad',
     children: [
+      { // duplicate
+        id: 'Grandaughter',
+        children: [{ id: 'Baby', children: [] }]
+      },
       {
         id: 'Son',
         children: [
@@ -115,10 +119,6 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
             children: [{ id: 'Baby', children: [] }]
           }
         ]
-      },
-      { // duplicate
-        id: 'Grandaughter',
-        children: [{ id: 'Baby', children: [] }]
       }
     ]
   }
@@ -152,12 +152,12 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
       id: 'Grandad',
       children: [
         {
-          id: 'Son',
-          children: []
-        },
-        {
           id: 'Grandaughter',
           children: [{ id: 'Baby', children: [] }]
+        },
+        {
+          id: 'Son',
+          children: []
         }
       ]
     },
@@ -219,11 +219,11 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
     id: 'Grandma',
     children: [
       {
-        id: 'Daughter',
+        id: 'Grandaughter',
         children: []
       },
       {
-        id: 'Grandaughter',
+        id: 'Daughter',
         children: []
       }
     ]
@@ -251,11 +251,11 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
       id: 'Grandma',
       children: [
         {
-          id: 'Daughter',
+          id: 'Grandaughter',
           children: []
         },
         {
-          id: 'Grandaughter',
+          id: 'Daughter',
           children: []
         }
       ]
@@ -307,8 +307,8 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
   const expected = {
     id: 'Parent',
     children: [
-      { id: 'Son', children: [] },
-      { id: 'Daughter', children: [] }
+      { id: 'Daughter', children: [] },
+      { id: 'Son', children: [] }
     ]
   }
   t.deepEqual(
@@ -395,13 +395,13 @@ test('vuex/whakapapa getters.nestedDescendants (marriage within tree)', t => {
       id: 'Grandma',
       children: [
         {
-          id: 'Daughter',
+          id: 'Son',
           children: [
             { id: 'Grandaughter', children: [] }
           ]
         },
         {
-          id: 'Son',
+          id: 'Daughter',
           children: [
             { id: 'Grandaughter', children: [] }
           ]
