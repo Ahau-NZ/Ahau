@@ -208,7 +208,6 @@ function buildRoot (rootGetters) {
 }
 
 function CompareAge (rootGetters) {
-  console.log('rootGetters', rootGetters)
   return function compareAge (a, b) {
     const A = getOrderData(rootGetters, a)
     if (!A) return 0
