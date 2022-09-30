@@ -89,7 +89,7 @@
         <v-tab-item light value="tab-3">
           <TribeSettings :settings="settings" @change="updateSettings" />
           <v-divider/>
-          <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" />
+          <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" :isEditing="editing"/>
           <v-divider/>
           <Permissions mobile />
         </v-tab-item>
