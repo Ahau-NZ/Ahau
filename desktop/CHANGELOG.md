@@ -1,8 +1,13 @@
 # Changelog | Ahau desktop
 
+## Latest
+### Bug Fixes
+
+- SideNodeDialog now showing admin fields for admin users
+- NewRegistrationDialog now recongnises required DOB inputs
 ## v2.15
 
-### Fixes
+### Bug Fixes
 - fixed sorting of children
 - fixed sorting of partners
 

@@ -15,7 +15,7 @@
     </template>
 
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
-      <AccessButton type="collection" :accessOptions="accessOptions" :disabled="editing"  />
+      <AccessButton type="collection" :accessOptions="accessOptions" disabled permission="view"  />
     </template>
   </Dialog>
 </template>

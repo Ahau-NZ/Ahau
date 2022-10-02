@@ -201,7 +201,6 @@ export function parseInterval (interval) {
 }
 
 export function formatSubmissionDate (submittedDate, t) {
-  console.log('submittedDate: ', submittedDate)
   const months = [
     t('jan'),
     t('feb'),
@@ -226,8 +225,6 @@ export function formatSubmissionDate (submittedDate, t) {
 
   try {
     const bornDate = new Date(submittedDate)
-    console.log('bornDate: ', bornDate)
-    console.log('getDate: ', bornDate.getDate())
 
     if (submittedDate.toString().length === 4) { // If only year passed, i.e. bornAt = '1990'
       return bornDate.getFullYear().toString()
