@@ -19,7 +19,6 @@ export default function () {
   const state = {
     tree: null,
     secondaryLinks: {},
-
     mouseEvent: null,
     hoveredProfileId: null,
     searchedProfileId: null
@@ -215,19 +214,24 @@ function CompareAge (rootGetters) {
     const B = getOrderData(rootGetters, b)
     if (!B) return 0
 
-    // try to compare by birth order
-    if (A.birthOrder > B.birthOrder) return 1
-    if (A.birthOrder < B.birthOrder) return -1
-
-    // fall back to age
-    if (A.age > B.age) return -1
-    if (A.age < B.age) return 1
-
-    if (!A.birthOrder) return 1
-    if (!B.birthOrder) return -1
-
-    return 0
+    return _compareAge(A, B)
   }
+}
+
+export function _compareAge (A, B) {
+  // if the birth order is set for both use that
+  if (A.birthOrder > B.birthOrder) return 1
+  if (A.birthOrder < B.birthOrder) return -1
+
+  // if the birth order is only set for one of them it goes first
+  if (A.birthOrder !== undefined && B.birthOrder === undefined) return -1
+  if (A.birthOrder === undefined && B.birthOrder !== undefined) return 1
+
+  // if there is no birth order set and both have a dob order by dob
+  if (A.age > B.age) return -1
+  if (A.age < B.age) return 1
+
+  return 0
 }
 
 function getOrderData (rootGetters, node) {

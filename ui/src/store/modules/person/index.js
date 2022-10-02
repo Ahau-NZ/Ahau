@@ -59,7 +59,7 @@ export default function (apollo) {
           return rootGetters['whakapapa/getChildIds'](id).map(getters.personPlusFamily)
         },
         get partners () {
-          return rootGetters['whakapapa/getPartnerIds'](id).map(getters.personPlusFamily)
+          return rootGetters['whakapapa/getPartnerIds'](id).map(getters.personPlusFamily).reverse()
         }
       }
     },

@@ -322,6 +322,7 @@ export default function (apollo) {
             // it's own lineage of people, allowing duplicate profiles across branches
             // (this behaves like a "path" except we use a set because we don't care about order)
           })
+          .reverse()
       }
       return result
     },
