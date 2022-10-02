@@ -6,7 +6,7 @@
         :label="label"
         :readonly="readonly"
         min="0000-01-01"
-        :hasError="!!errorMsg"
+        :hasError="!!errorMsg || !!required"
       />
     </v-col>
     <!-- END DATE CHECKBOX -->
@@ -59,7 +59,8 @@ export default {
       default: '12'
     },
     showCheckbox: Boolean,
-    error: { type: Boolean, default: false }
+    error: { type: Boolean, default: false },
+    rules: { type: Array, default: null }
   },
   components: {
     NodeDatePicker
@@ -115,6 +116,11 @@ export default {
         class: this.readonly ? 'custom mt-0' : 'mt-0',
         light: true
       }
+    },
+    required () {
+      if (this.rules.length && this.label === 'Date of birth') {
+        return 'Date of birth is required'
+      } return null
     }
   },
   methods: {

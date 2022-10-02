@@ -523,8 +523,10 @@ export default {
     },
     missingRequiredFields () {
       if (!this.personalProfile) return []
+      const profile = clone(this.personalProfile)
+      profile.dateOfBirth = this.dob
 
-      return findMissingRequiredFields(this.personalProfile, this.tribeRequiredFields)
+      return findMissingRequiredFields(profile, this.tribeRequiredFields)
         .filter(({ prop }) => {
           const field = this.tribeCustomFields.find(field => field.label === prop) || this.tribeDefaultFields.find(field => field.label === prop)
           if (!field) return false
