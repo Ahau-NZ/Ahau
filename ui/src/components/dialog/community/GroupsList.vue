@@ -95,7 +95,8 @@ export default {
   props: {
     profile: Object,
     formData: Object,
-    mobile: Boolean
+    mobile: Boolean,
+    isEditing: Boolean
   },
   data () {
     return {
@@ -108,7 +109,7 @@ export default {
     }
   },
   async mounted () {
-    if (this.editing) await this.loadParentGroup()
+    if (this.isEditing) await this.loadParentGroup()
     // await this.loadSubGroups()
   },
   computed: {
@@ -121,7 +122,7 @@ export default {
     },
     membersNotInKaitiakiGroup () {
       return this.parentGroup && this.parentGroup.members.filter(d => {
-        return !this.formData.authors.some(m => m.feedId === d.feedId)
+        return !this.formData.authors?.some(m => m.feedId === d.feedId)
       })
     }
   },
@@ -145,7 +146,7 @@ export default {
       this.showKaitiaki = false
     },
     isCurrentKaitiaki (kaitiaki) {
-      return this.profile && this.profile.authors.some(m => m.feedId === kaitiaki.feedId)
+      return this.profile && this.profile.kaitiaki.some(m => m.feedId === kaitiaki.feedId)
     },
     deleteKaitiaki (tiaki) {
       const index = this.formData.authors.indexOf(tiaki)
