@@ -122,9 +122,8 @@ export const methods = {
 
       // reload again
       story = await this.getStory(id)
-
-      // if editing story and adding a collection show the story
-      if (!this.currentStory?.collections && collections?.add) {
+      // if editing story and adding a collection show the collection
+      if (!this.currentStory?.collections && collections?.add && this.$route.name !== 'community/collection') {
         this.showCurrentCollection({ id: collections.add[0].id })
       }
 

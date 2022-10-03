@@ -143,7 +143,11 @@ export default {
       async handler (tribe) {
         if (!tribe) return
 
-        this.views = await this.getWhakapapaViews({ groupId: tribe.id })
+        const views = await this.getWhakapapaViews({ groupId: tribe.id })
+        this.views = views.map(view => {
+          if (!view.permission) view.permission = 'edit'
+          return view
+        })
 
         if (this.isPersonalTribe) return
 
@@ -207,7 +211,7 @@ export default {
       else throw new Error('Recps field missing from whakapapa input')
 
       this.newView = {
-        ...pick(input, ['name', 'description', 'image', 'recps']),
+        ...pick(input, ['name', 'description', 'image', 'recps', 'permission']),
         focus: null, // To complete
         // change this fo profile in the current group
         mode: 'descendants' // hard-coded at the moment

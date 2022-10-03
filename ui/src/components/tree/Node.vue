@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['person', 'selectedProfileId', 'isLoadingProfiles']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
     ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     isCollapsed () {
       if (this.isLoadingProfiles) return
@@ -160,6 +160,7 @@ export default {
     },
     showMenuButton () {
       // if (this.isPartner) return false
+      if (!this.whakapapaView.canEdit) return false
       if (this.isCollapsed) return false
       return this.hoveredProfileId === this.profileId
     },

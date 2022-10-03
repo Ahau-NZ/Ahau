@@ -555,10 +555,14 @@ export default function (apollo) {
       const links = await dispatch('getFamilyLinks', { profileId })
       if (links) dispatch('addLinks', links)
     },
-    async loadWhakapapaView ({ commit, dispatch }, id) {
+    async loadWhakapapaView ({ commit, dispatch, rootGetters }, id) {
       commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
       if (!view) return
+      // if no permission set then set as edit
+      if (!view.permission) view.permission = 'edit'
+      // set canEdit here instead of with graphql
+      view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
 
       commit('setView', view)
       const links = await dispatch('getDescendantLinks', view.focus)

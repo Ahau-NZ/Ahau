@@ -91,11 +91,6 @@
             :clickable="fullStory"
           />
         </v-col>
-        <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
-          <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
-          <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
-        </v-col>
-
         <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
           <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
           <AvatarGroup
@@ -107,6 +102,11 @@
             :clickable="fullStory"
           />
         </v-col>
+        <v-col v-if="story.location" cols="auto">
+          <v-list-item-subtitle style="color:#a7a3a3" class="pb-1">Location</v-list-item-subtitle>
+          <p class="mt-3">{{ story.location }}</p>
+        </v-col>
+
         <v-col v-if="fullStory">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Submission date</v-list-item-subtitle>
           <p class="mt-3">{{ submissionDate }}</p>
@@ -218,10 +218,10 @@
         </v-row>
       </div>
       <v-card-actions v-if="fullStory" class="justify-end">
-        <v-list-item-icon v-if="fullStory && !showArtefact && !viewOnly && story.canEdit" class="pt-0 mt-0">
+        <v-list-item-icon v-if="fullStory && !showArtefact && !viewOnly" class="pt-0 mt-0">
           <EditStoryButton @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
-        <v-list-item-icon v-if="showArtefact && !viewOnly && story.canEdit" class="pt-0 mt-12">
+        <v-list-item-icon v-if="showArtefact && !viewOnly" class="pt-0 mt-12">
           <EditArtefactButton @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
@@ -342,11 +342,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['storeDialog', 'whoami', 'isMyProfile']),
+    ...mapGetters(['storeDialog', 'whoami', 'isMyProfile', 'isKaitiaki']),
     ...mapGetters('archive', ['showArtefact']),
     ...mapGetters('tribe', ['tribeProfile']),
     viewOnly () {
-      return !this.isContributor && this.story.permission === 'view'
+      return !this.isKaitiaki && !this.isContributor && this.story.permission === 'view'
     },
     isContributor () {
       return get(this.story, 'contributors', [])

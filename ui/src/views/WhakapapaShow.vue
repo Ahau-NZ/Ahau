@@ -111,12 +111,11 @@
       </v-expand-transition>
       <Tree
         v-if="whakapapaView.tree"
-
         :class="mobile? 'mobile-tree':'tree'"
-
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         @change-focus="setFocusToAncestorOf($event)"
+        @toggleSideDialog="toggleSideDialog($event)"
       />
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -224,7 +223,7 @@ export default {
 
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
-    ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles']),
+    ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode']),
@@ -266,6 +265,15 @@ export default {
       'setViewFocus', 'toggleViewMode'
     ]),
     ...mapActions('table', ['resetTableFilters']),
+    toggleSideDialog (id) {
+      if (this.dialog.active === 'view-edit-person' && this.selectedProfileId === id) {
+        this.updateDialog(null, null)
+      } else if (!this.whakapapaView.canEdit) {
+        this.updateDialog('view-edit-person', 'preview')
+      } else {
+        this.updateDialog('view-edit-person', null)
+      }
+    },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars
     },

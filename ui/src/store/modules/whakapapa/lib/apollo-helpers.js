@@ -7,11 +7,11 @@ export const WhakapapaFragment = gql`
     name
     description
     focus
-    canEdit
     recps
     ignoredProfiles
     image { uri }
     recordCount
+    permission
     importantRelationships {
       profileId
       primary {

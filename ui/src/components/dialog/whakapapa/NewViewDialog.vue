@@ -10,7 +10,7 @@
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
       <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
-        <AccessButton type="whakapapa" :accessOptions="accessOptions"/>
+        <AccessButton type="whakapapa" :accessOptions="accessOptions" :permission.sync="formData.permission"/>
       </template>
     </Dialog>
   </div>
@@ -31,7 +31,8 @@ const EMPTY_WHAKAPAPA = {
   description: '',
   mode: 'descendants',
   focus: 'new',
-  image: null
+  image: null,
+  permission: null
 }
 
 const PERMITTED_WHAKAPAPA_ATTRS = [
@@ -39,7 +40,8 @@ const PERMITTED_WHAKAPAPA_ATTRS = [
   'description',
   'mode',
   'focus',
-  'image'
+  'image',
+  'permission'
 ]
 
 function setDefaultWhakapapa (whakapapa) {
@@ -48,7 +50,8 @@ function setDefaultWhakapapa (whakapapa) {
     description: whakapapa.description,
     mode: whakapapa.mode,
     focus: whakapapa.focus,
-    image: whakapapa.image
+    image: whakapapa.image,
+    permission: whakapapa.permission
   }
 }
 

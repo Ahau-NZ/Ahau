@@ -90,7 +90,7 @@ export default {
   beforeDestroy () {
     if (!this.whakapapaView) return
     if (this.whakapapaView.name === 'Loading') return
-    if (!this.whakapapaView.canEdit) return
+    if (this.whakapapaView.canEdit) return
 
     if (!this.whakapapaView.id) {
       console.warn('Trying to save the record count without a whakapapa id', this.whakapapaView)
@@ -178,6 +178,7 @@ export default {
     },
 
     handleRootNodeClick (id) {
+      this.$emit('toggleSideDialog', id)
       // if node is not already centered, center it
       if (this.nodeCentered !== id) {
         this.setSelectedProfileById(id)
