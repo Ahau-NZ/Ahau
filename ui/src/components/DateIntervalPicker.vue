@@ -118,7 +118,7 @@ export default {
       }
     },
     required () {
-      if (this.rules.length && this.label === 'Date of birth') {
+      if (this.rules?.length && this.label === 'Date of birth') {
         return 'Date of birth is required'
       } return null
     }

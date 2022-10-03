@@ -1,15 +1,17 @@
 # Changelog | Ahau desktop
 
 ## Latest
-### Bug Fixes
 
-- SideNodeDialog now showing admin fields for admin users
-- NewRegistrationDialog now recongnises required DOB inputs
-## v2.15
-
+### Features
+* added option to select whether a member can edit or view a whakapapa record 
+* auto open sideNodeDialog when clicking on a person, add
+* update whakapapa card in whakapapa index to show whakapapa permissions
+* members cannot update view only records
 ### Bug Fixes
 - fixed sorting of children
 - fixed sorting of partners
+- SideNodeDialog now showing admin fields for admin users
+- NewRegistrationDialog now recongnises required DOB inputs
 
 ## v2.14.2
 

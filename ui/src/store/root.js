@@ -50,8 +50,7 @@ export default function rootModule (apollo) {
       allowSubmissions: true, // TODO extract to specific domain,
 
       // TODO mix 2021-12-09 move these to the tribe module (?) :
-      currentAccess: null,
-      isKaitiaki: false
+      currentAccess: null
     },
 
     getters: {
@@ -162,9 +161,6 @@ export default function rootModule (apollo) {
       setAllowSubmissions (state, allow) {
         state.allowSubmissions = allow
       },
-      setIsKaitiaki (state, kaitiaki) {
-        state.isKaitiaki = kaitiaki
-      },
       updateLinkedProfile (state, profile) {
         Vue.set(state.linkedProfiles, profile.id, profile)
       }
@@ -213,9 +209,6 @@ export default function rootModule (apollo) {
       },
       setNavComponent ({ commit }, component) {
         commit('setNavComponent', component)
-      },
-      setIsKaitiaki ({ commit }, bool = false) {
-        commit('setIsKaitiaki', bool)
       }
     }
   }

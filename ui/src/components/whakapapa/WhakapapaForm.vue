@@ -106,21 +106,14 @@ import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
 import { importCsv, downloadCsv } from '@/lib/csv'
 
-const EMPTY_WHAKAPAPA = {
-  name: '',
-  description: '',
-  mode: 'descendants',
-  focus: 'new',
-  image: null
-}
-
 function setDefaultWhakapapa (whakapapa) {
   return {
     name: whakapapa.name,
     description: whakapapa.description,
     mode: whakapapa.mode,
     focus: whakapapa.focus,
-    image: whakapapa.image
+    image: whakapapa.image,
+    permission: whakapapa.permission
   }
 }
 
@@ -133,16 +126,17 @@ export default {
     CsvErrorDialog
   },
   props: {
-    view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
+    view: Object,
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
   mounted () {
+    setDefaultWhakapapa(this.view)
     this.$refs.form.validate()
   },
   data () {
     return {
-      formData: setDefaultWhakapapa(this.view),
+      formData: this.view,
       rules: RULES,
       valid: false,
       file: null,
@@ -157,14 +151,11 @@ export default {
     valid (valid) {
       this.setAllowSubmissions(valid)
     },
-    view (newVal) {
-      this.formData = newVal
-    },
     formData: {
+      deep: true,
       handler (newVal) {
         this.$emit('update:view', newVal)
-      },
-      deep: true
+      }
     },
     file (newFile) {
       if (newFile == null) return

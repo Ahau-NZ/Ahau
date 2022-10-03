@@ -10,6 +10,7 @@
           ? 'dialog-bottom-transition'
           : 'scale-transition'"
     @input="close"
+    persistent
   >
     <v-card>
       <!-- bar at the top of the dialog with title + close button -->

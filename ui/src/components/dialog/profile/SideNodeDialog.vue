@@ -244,10 +244,10 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="parents" class="family-divider"/>
+                <hr class="family-divider"/>
 
                 <!-- Displays a row of partners -->
-                <v-col v-if="partners.length" :cols="12" class="pa-0">
+                <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="partners"
                     :group-title="t('partners')"
@@ -261,10 +261,10 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="partners.length" class="family-divider"/>
+                <hr class="family-divider"/>
 
                 <!-- Displays a row of siblings -->
-                <v-col :cols="12" v-if="parents.length && siblings.length" class="pa-0">
+                <v-col :cols="12" v-if="parents.length" class="pa-0">
                   <AvatarGroup
                     :profiles="siblings"
                     :group-title="t('siblings')"
@@ -516,7 +516,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateDialog']),
+    ...mapMutations(['updateDialog', 'updateType']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
@@ -662,7 +662,10 @@ export default {
     async openProfile (profile) {
       this.updateDialog(null, null)
       await this.setSelectedProfileById(profile.id)
-      this.updateDialog('view-edit-person', null)
+      if (this.preview) {
+        this.updateDialog('view-edit-person')
+        this.updateType('preview')
+      } else this.updateDialog('view-edit-person')
     },
     cordovaBackButton () {
       this.close()

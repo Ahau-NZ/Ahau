@@ -22,7 +22,7 @@
                     text
                     rounded
                     small
-                    :disabled="disabled || recordView"
+                    :disabled="disabled || recordView || editing"
                     :ripple="false"
                   >
                     <v-icon small>mdi-eye</v-icon>
@@ -36,7 +36,7 @@
                     :key="index"
                     @click="setCurrentAccess(accessOption)"
                   >
-                    <v-list-item-title>{{ accessOption.label || t(currentAccess.type) }}</v-list-item-title>
+                    <v-list-item-title>{{ t(accessOption.type) || t(currentAccess.type) }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -117,7 +117,8 @@ export default {
     },
     disabled: Boolean,
     permission: String,
-    type: String
+    type: String,
+    editing: Boolean
   },
   data () {
     return {
@@ -134,7 +135,7 @@ export default {
     Avatar
   },
   mounted () {
-    if (!this.permission) this.setPermission('view')
+    if (!this.permission) this.type === 'whakapapa' ? this.setPermission('edit') : this.setPermission('view')
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),

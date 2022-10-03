@@ -137,7 +137,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling', 'partner'
+        'parent', 'child', 'sibling', 'partner', 'preview'
       ].includes(val)
     },
     loadKnownFamily: Function,
@@ -167,7 +167,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     previewProfile () {
-      return this.storeType === 'preview'
+      return this.storeType === 'preview' || this.type === 'preview'
     },
     dialogOpen () {
       return (this.dialog || this.storeDialog)
