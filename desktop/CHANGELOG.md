@@ -1,9 +1,9 @@
 # Changelog | Ahau desktop
 
-## Latest
+## v2.15.0
 
 ### Features
-* added option to select whether a member can edit or view a whakapapa record 
+* added option to select whether a member can edit or view a whakapapa record
 * auto open sideNodeDialog when clicking on a person, add
 * update whakapapa card in whakapapa index to show whakapapa permissions
 * members cannot update view only records
@@ -141,7 +141,7 @@ WhakapapaIndex
 - registration form
     - fixes ui for joining questions
     - add placeholders
-    - hide comments section when there are no comments 
+    - hide comments section when there are no comments
 
 ## v2.9.6
 
@@ -171,7 +171,7 @@ WhakapapaIndex
 ### Features
 
 - updated various front-end dependencies
-  
+
 ### Bug Fixes
 
 - fixed bug where ignored profiles werent showing up in the SideNodeDialog
@@ -426,7 +426,7 @@ Features:
 - In tribe profile view you can now click on a member to view there profile info
 - Updated Pataka onboarding
   - updated the Pataka dialog to provided users with other options
-  - Users will now be prompted to join a Pātaka upon creating a profile 
+  - Users will now be prompted to join a Pātaka upon creating a profile
 - Translation updates
 
 ### Bug Fixes
@@ -571,9 +571,9 @@ This updates `electron`, `electron-builder` and `electron-notarize`
 - artifact zoomer on mobile
 - can filter by name on table
 
-### Bug Fixes 
+### Bug Fixes
 - fix showing collection photos on stories
-- fix date picker input 
+- fix date picker input
 
 ---
 
@@ -599,7 +599,7 @@ This updates `electron`, `electron-builder` and `electron-notarize`
  - back button:
     - back to archive button
  - wording changes around the app
-    
+
 ---
 
 ## Version 1.0.0
@@ -612,5 +612,3 @@ This updates `electron`, `electron-builder` and `electron-notarize`
 **We have also updated**
 - the profile information section to include the place of birth, if deceased location buried and changed legal name to full name. We have also added a selection avatar for 'other' gender
 - we have updated the date input to a dropdown list
-
-
