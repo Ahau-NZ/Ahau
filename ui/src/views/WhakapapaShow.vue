@@ -53,14 +53,20 @@
         <div class="icon-button" v-if="isKaitiaki">
           <TableButton :table="whakapapaView.table" @table="toggleTable()" />
         </div>
-        <div v-if="whakapapaView.table" class="icon-button">
-          <ExportButton @export="toggleDownload()" />
-        </div>
+
         <div class="icon-button">
-          <v-btn @click="print">
-            Print
-          </v-btn>
+          <ExportButton
+            v-if="whakapapaView.table"
+            alt="Export CSV"
+            @export="toggleDownload()"
+          />
+          <ExportButton
+            v-else
+            alt="Export SVG"
+            @export="exportSVG()"
+          />
         </div>
+
         <div class="icon-button">
           <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
           <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -180,8 +186,7 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-
-const pull = require('pull-stream')
+import svgExport from '@/lib/svg-export.js'
 
 export default {
   name: 'WhakapapaShow',
@@ -281,104 +286,15 @@ export default {
         this.updateDialog('view-edit-person', null)
       }
     },
-    print () {
+    exportSVG () {
       const tree = document.body.querySelector('svg.tree #baseGroup')
       const { width, height } = tree.getBBox()
 
-      const svg = document.importNode(document.body.querySelector('svg.tree'), true)
-
-      svg.setAttribute('version', '1.1')
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
-      svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
-      svg.setAttribute('viewBox', `0 0 ${width} ${height}`)
-      svg.removeAttribute('width')
-      svg.setAttribute('height', '100vh')
-
-      svg.removeChild(svg.querySelector('.zoomControl'))
-
-      const radius = 35
-      const minX = [...svg.querySelectorAll('.node')]
-        .reduce(
-          (acc, node) => Math.min(node.transform.baseVal[0].matrix.e, acc),
-          0
-        )
-      // NOTE tree are not perfectly symmetric, so moving to half way will often put some off side of map,
-      // so we figure out where leftmost node is and translate X to that
-      svg.childNodes[0].setAttribute('transform', `translate(${Math.abs(minX)}, ${radius})`) // set global translation, remove scale
-      svg.childNodes[0].childNodes[0].removeAttribute('transform') // drop other positioning
-
-      const images = svg.querySelectorAll('image')
-      const image = new Image()
-      image.crossOrigin = 'anonymous' // required
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-
-      function toDataURL (src, cb) {
-        image.onload = () => {
-          canvas.height = image.naturalHeight
-          canvas.width = image.naturalWidth
-          ctx.drawImage(image, 0, 0)
-          cb(null, canvas.toDataURL())
-        }
-        image.src = src
-      }
-
-      pull(
-        pull.values(images),
-        pull.asyncMap((img, cb) => {
-          // TODO - TRY: swap encoded SVG for whole SVG embedded (instead of image)
-          const href = img.getAttribute('href')
-
-          if (href.endsWith('.svg')) {
-            fetch(href)
-              .then(res => res.text())
-              .then(text => {
-                img.insertAdjacentHTML(
-                  'beforebegin',
-                  text
-                    .replace(/<\?xml[^>]*\?>/, '')
-                    // .replace(/[\n\t]+/g, ' ')
-                )
-                const svg = img.previousElementSibling
-                svg.setAttribute('width', img.getAttribute('width'))
-                svg.setAttribute('height', img.getAttribute('height'))
-                svg.setAttribute('x', 0)
-                svg.setAttribute('y', 0)
-
-                img.parentElement.removeChild(img)
-
-                cb(null)
-              })
-          } // eslint-disable-line
-          else {
-            toDataURL(img.getAttribute('href'), (err, dataURL) => {
-              if (err) return cb(err)
-
-              // img.setAttribute('href', dataURL) // new but less supported
-              img.removeAttribute('href')
-              img.setAttribute('xlink:href', dataURL)
-              cb(null)
-            })
-          }
-        }),
-        pull.collect(err => {
-          if (err) return console.error(err)
-
-          // tidy ups
-          const svgStr = svg.outerHTML
-            .replace(/\sdata-v-[a-z0-9]+=""/g, '')
-
-          const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' })
-          const dataURL = URL.createObjectURL(blob)
-          // const dataURL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.outerHTML)
-
-          const a = document.createElement('a')
-          a.setAttribute('href', dataURL)
-          a.setAttribute('download', 'whakapapa-export.svg')
-          a.setAttribute('target', '_blank')
-          a.click()
-        })
-      )
+      const fileName = [
+        (this.whakapapaView.name || '').replace(/\s+/g, '-'),
+        'whakapapa'
+      ].join('-')
+      svgExport(document.body.querySelector('svg.tree'), width, height, fileName)
     },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars
