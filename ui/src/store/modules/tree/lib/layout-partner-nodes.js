@@ -17,7 +17,9 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
       // filters out empty entries
       .filter(Boolean)
 
-    if (!partnerChildren.length) return 1000
+    if (!partnerChildren.length) {
+      return partnerIds.length > 1 ? 1000 : -1
+    }
     // if no children push them way to the right.
     // We did this to priortise the position of partners with children over the order in which the partner were created
     // the core problem is that we dont record the order or dates of relationships currently.
@@ -43,7 +45,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
     })
     .map((A, i, arr) => {
       // if meanChildX is negative push to left, if positive to right
-      if (A.meanChildX < 0) {
+      if (A.meanChildX <= 0) {
         // get an arr of elements that are on the left of the rootNode
         const lessThanZero = arr.filter(A => A.meanChildX < 0).map(A => A.id)
         // figure out which one this is
@@ -58,7 +60,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
         }
       } else {
         // get an arr of elements that are on the right of the rootNode
-        const moreThanZero = arr.filter(A => A.meanChildX >= 0).map(A => A.id)
+        const moreThanZero = arr.filter(A => A.meanChildX > 0).map(A => A.id)
         // figure out which one this is
         const index = moreThanZero.indexOf(A.id)
         // figure how many hops it is from the rootNode
