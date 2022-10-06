@@ -41,20 +41,27 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
+    partnerSidesCount: (state, getters) => (nodeId) => {
+      // calculate how many left/ right
+      // ??!!
+    },
     countPartnersBetween: (state, getters) => (nodeA, nodeB) => {
-      const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
-      let partnersBetween = 0
-      let count
+      // calculate the partner placement for each Node,
+      // then count the partners "between"
+      //
+      //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
+      //
+      const partnersA = getters.partnerSidesCount(nodeA)
+      // { left: 0, right: 2 }
+      const partnersB = getters.partnerSidesCount(nodeA)
+      // { left: 0, right: 2 }
 
-      // count the num partners on the right of the leftNode
-      count = getters.countPartners(leftNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
-
-      // add the num partners on the left of rightNode
-      count = getters.countPartners(rightNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
-
-      return partnersBetween
+      if (nodeA.x <= nodeB.x) {
+        return partnersA.right + partnersB.left
+      }
+      else {
+        return partnersB.right + partnersA.left
+      }
     },
     distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
       // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
