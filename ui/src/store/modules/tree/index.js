@@ -41,27 +41,69 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
-    partnerSidesCount: (state, getters) => (nodeId) => {
-      // calculate how many left/ right
-      // ??!!
-    },
-    countPartnersBetween: (state, getters) => (nodeA, nodeB) => {
+    // partnerSidesCount: (state, getters) => (nodeId) => {
+    //   // calculate how many left/ right
+    //   // ??!!
+    // },
+    countPartnersBetween: (state, getters, rootState, rootGetters) => (nodeA, nodeB) => {
+      const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
+      let partnersBetween = 0
+      let count
+
+      // count the num partners on the right of the leftNode
+      count = getters.countPartners(leftNode)
+      partnersBetween += count
+
+      // add the num partners on the left of rightNode
+      count = getters.countPartners(rightNode)
+      partnersBetween += count
+
+      return partnersBetween
+
+      // ========MIX========
       // calculate the partner placement for each Node,
       // then count the partners "between"
       //
       //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
       //
-      const partnersA = getters.partnerSidesCount(nodeA)
-      // { left: 0, right: 2 }
-      const partnersB = getters.partnerSidesCount(nodeA)
-      // { left: 0, right: 2 }
+      // const partnersA = getters.partnerSidesCount(nodeA)
+      // // { left: 0, right: 2 }
+      // const partnersB = getters.partnerSidesCount(nodeA)
+      // // { left: 0, right: 2 }
 
-      if (nodeA.x <= nodeB.x) {
-        return partnersA.right + partnersB.left
-      }
-      else {
-        return partnersB.right + partnersA.left
-      }
+      // if (nodeA.x <= nodeB.x) {
+      //   return partnersA.right + partnersB.left
+      // }
+      // else {
+      //   return partnersB.right + partnersA.left
+      // }
+
+      // ========BEN========
+      // calculate the partner placement for each Node,
+      // then count the partners "between"
+      //
+      //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
+      //
+      // let partnersBetween = 0
+      // let partners
+
+      // // 1. Get partners of A
+      // partners = layoutPartnerNodes(leftNode, rootGetters)
+      // if (partners.length) {
+      //   console.log({ leftPartners: partners })
+      //   partnersBetween += partners.filter(partner => partner.x > leftNode.x)
+      // }
+
+      // // 2. get partners of B
+      // partners = layoutPartnerNodes(rightNode, rootGetters)
+      // if (partners.length) {
+      //   console.log({ rightPartners: partners })
+      //   partnersBetween += partners.filter(partner => partner.x < rightNode.x)
+      // }
+      // if (partnersBetween.length) {
+      //   console.log({ partnersBetween })
+      // }
+      // return partnersBetween
     },
     distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
       // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
