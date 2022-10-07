@@ -41,23 +41,35 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
-    countPartnersBetween: (state, getters) => (nodeA, nodeB) => {
+    countPartnersBetween: (state, getters, rootState, rootGetters) => (nodeA, nodeB) => {
       const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
       let partnersBetween = 0
       let count
 
       // count the num partners on the right of the leftNode
       count = getters.countPartners(leftNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
+      // NOTE right now we can't easily predict this because it depends on children
+      // This is an approximation which at least guarentees no collisions
+      // Mix: I think we should watch + if this feels messy, consider going back to
+      // "even number of partners either side" but with our fixed ordering
+      partnersBetween += count
 
       // add the num partners on the left of rightNode
       count = getters.countPartners(rightNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
+      // NOTE (see above)
+      partnersBetween += count
 
       return partnersBetween
+
+      // ========IDEAL state========
+      // calculate the partner placement for each Node,
+      // then count the partners "between"
+      //
+      //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
+      //
     },
-    distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
-      // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
+    separation: (state, getters) => (nodeA, nodeB) => {
+      // horizontal distance between node centers, as a multuple of NODE_SIZE_X
 
       const partnersBetween = getters.countPartnersBetween(nodeA, nodeB)
 
@@ -83,11 +95,7 @@ export default function () {
     layout (state, getters) {
       return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
-        .separation((a, b) => {
-          return (a.parent === b.parent)
-            ? getters.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
-            : getters.distanceBetweenNodes(a, b, true) // areCousins (left=A, right=B)
-        })
+        .separation(getters.separation)
     },
 
     // nodes

@@ -7,7 +7,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
 
   const childNodes = rootNode.children || []
 
-  function meanChildX (partnerId) {
+  function meanChildX (partnerId, partnerX) {
     // get the children of partner
     const partnerChildren = rootGetters['whakapapa/getChildIds'](partnerId)
       // keep only the birth children
@@ -17,7 +17,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
       // filters out empty entries
       .filter(Boolean)
 
-    if (!partnerChildren.length) return 1000
+    if (!partnerChildren.length) return null
     // if no children push them way to the right.
     // We did this to priortise the position of partners with children over the order in which the partner were created
     // the core problem is that we dont record the order or dates of relationships currently.
@@ -32,20 +32,30 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
   return partnerIds.reverse()// TODO: do this reverse upstream
     // calcuate where most of their children are
     .map(partnerId => {
+      let meanX = meanChildX(partnerId)
+      if (meanX === null) {
+        // when we couldn't calculate a meanChildX, make up a meanX
+        // on the right or left of the rootNode
+        // (based on how many partners total at the moment)
+        meanX = rootNode.x + ((partnerIds.length <= 1) ? -1 : 10000)
+        // if only one partner, put on left
+        // if more then one partner, throw them waaaay right
+      }
+
       return {
         id: partnerId,
-        meanChildX: meanChildX(partnerId) - rootNode.x // shift x average to be relative to the rootNode
+        relativeChildX: meanX - rootNode.x// shift x average to be relative to the rootNode
       }
     })
     // put the partners in order of child position
     .sort((A, B) => {
-      return (A.meanChildX - B.meanChildX)
+      return (A.relativeChildX - B.relativeChildX)
     })
     .map((A, i, arr) => {
-      // if meanChildX is negative push to left, if positive to right
-      if (A.meanChildX < 0) {
+      // if relativeChildX is negative push to left, if positive to right
+      if (A.relativeChildX <= 0) {
         // get an arr of elements that are on the left of the rootNode
-        const lessThanZero = arr.filter(A => A.meanChildX < 0).map(A => A.id)
+        const lessThanZero = arr.filter(A => A.relativeChildX < 0).map(A => A.id)
         // figure out which one this is
         const index = lessThanZero.indexOf(A.id)
         // figure how many hops it is from the rootNode
@@ -58,7 +68,7 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
         }
       } else {
         // get an arr of elements that are on the right of the rootNode
-        const moreThanZero = arr.filter(A => A.meanChildX >= 0).map(A => A.id)
+        const moreThanZero = arr.filter(A => A.relativeChildX > 0).map(A => A.id)
         // figure out which one this is
         const index = moreThanZero.indexOf(A.id)
         // figure how many hops it is from the rootNode
