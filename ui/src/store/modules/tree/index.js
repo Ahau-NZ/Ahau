@@ -48,16 +48,11 @@ export default function () {
 
       // count the num partners on the right of the leftNode
       count = getters.countPartners(leftNode)
-      // NOTE right now we can't easily predict this because it depends on children
-      // This is an approximation which at least guarentees no collisions
-      // Mix: I think we should watch + if this feels messy, consider going back to
-      // "even number of partners either side" but with our fixed ordering
-      partnersBetween += count
+      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
 
       // add the num partners on the left of rightNode
       count = getters.countPartners(rightNode)
-      // NOTE (see above)
-      partnersBetween += count
+      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
 
       return partnersBetween
 
@@ -68,8 +63,8 @@ export default function () {
       //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
       //
     },
-    separation: (state, getters) => (nodeA, nodeB) => {
-      // horizontal distance between node centers, as a multuple of NODE_SIZE_X
+    distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
+      // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
 
       const partnersBetween = getters.countPartnersBetween(nodeA, nodeB)
 
@@ -95,7 +90,11 @@ export default function () {
     layout (state, getters) {
       return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
-        .separation(getters.separation)
+        .separation((a, b) => {
+          return (a.parent === b.parent)
+            ? getters.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
+            : getters.distanceBetweenNodes(a, b, true) // areCousins (left=A, right=B)
+        })
     },
 
     // nodes
