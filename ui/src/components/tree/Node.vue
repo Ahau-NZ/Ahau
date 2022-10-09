@@ -11,11 +11,14 @@
 
     <g v-if="showAvatars" :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ displayName }}</text>
+      <!-- <text>{{ displayName }}</text> -->
+      <text x="0" y="-1.2rem">
+        <tspan v-for="(line, i) in displayName" :key="i" x="0" dy="1.2em"> {{line}}</tspan>
+      </text>
     </g>
     <g v-else :style="nameTextStyle" @click="$emit('click')" >
       <rect :width="textWidth*2" y="-25" height="30" />
-      <text :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }">
+      <text y="-1.2rem" :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }">
         {{ displayName }}
       </text>
     </g>
@@ -186,8 +189,8 @@ export default {
       }
     },
     textWidth () {
-      const width = (this.displayName || '').length * 8
-      return width
+      const width = (this.displayName.join('') || '').length * 8
+      return width < 100 ? width : 100
     },
     textStyle () {
       return {
@@ -233,7 +236,8 @@ export default {
       }
     },
     displayName () {
-      return getDisplayName(this.profile)
+      const name = getDisplayName(this.profile)
+      return !name.includes(' ') ? name.match(/(.{1,12})/g) : name.match(/(.{1,20})(\s|$)/g)
     }
   },
   methods: {
