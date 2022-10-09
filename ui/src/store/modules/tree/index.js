@@ -41,10 +41,6 @@ export default function () {
     countPartners: (state, getters, rootState, rootGetters) => (node) => {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
-    // partnerSidesCount: (state, getters) => (nodeId) => {
-    //   // calculate how many left/ right
-    //   // ??!!
-    // },
     countPartnersBetween: (state, getters, rootState, rootGetters) => (nodeA, nodeB) => {
       const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
       let partnersBetween = 0
@@ -52,61 +48,28 @@ export default function () {
 
       // count the num partners on the right of the leftNode
       count = getters.countPartners(leftNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
+      // NOTE right now we can't easily predict this because it depends on children
+      // This is an approximation which at least guarentees no collisions
+      // Mix: I think we should watch + if this feels messy, consider going back to
+      // "even number of partners either side" but with our fixed ordering
+      partnersBetween += count
 
       // add the num partners on the left of rightNode
       count = getters.countPartners(rightNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
+      // NOTE (see above)
+      partnersBetween += count
 
       return partnersBetween
 
-      // ========MIX========
+      // ========IDEAL state========
       // calculate the partner placement for each Node,
       // then count the partners "between"
       //
       //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
       //
-      // const partnersA = getters.partnerSidesCount(nodeA)
-      // // { left: 0, right: 2 }
-      // const partnersB = getters.partnerSidesCount(nodeA)
-      // // { left: 0, right: 2 }
-
-      // if (nodeA.x <= nodeB.x) {
-      //   return partnersA.right + partnersB.left
-      // }
-      // else {
-      //   return partnersB.right + partnersA.left
-      // }
-
-      // ========BEN========
-      // calculate the partner placement for each Node,
-      // then count the partners "between"
-      //
-      //        (A)-p-p         p-(B)-p-p-p   : 3 partners between
-      //
-      // let partnersBetween = 0
-      // let partners
-
-      // // 1. Get partners of A
-      // partners = layoutPartnerNodes(leftNode, rootGetters)
-      // if (partners.length) {
-      //   console.log({ leftPartners: partners })
-      //   partnersBetween += partners.filter(partner => partner.x > leftNode.x)
-      // }
-
-      // // 2. get partners of B
-      // partners = layoutPartnerNodes(rightNode, rootGetters)
-      // if (partners.length) {
-      //   console.log({ rightPartners: partners })
-      //   partnersBetween += partners.filter(partner => partner.x < rightNode.x)
-      // }
-      // if (partnersBetween.length) {
-      //   console.log({ partnersBetween })
-      // }
-      // return partnersBetween
     },
-    distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
-      // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
+    separation: (state, getters) => (nodeA, nodeB) => {
+      // horizontal distance between node centers, as a multuple of NODE_SIZE_X
 
       const partnersBetween = getters.countPartnersBetween(nodeA, nodeB)
 
@@ -132,11 +95,7 @@ export default function () {
     layout (state, getters) {
       return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
-        .separation((a, b) => {
-          return (a.parent === b.parent)
-            ? getters.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
-            : getters.distanceBetweenNodes(a, b, true) // areCousins (left=A, right=B)
-        })
+        .separation(getters.separation)
     },
 
     // nodes

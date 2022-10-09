@@ -91,7 +91,7 @@ module.exports = {
 
     // certificateSubjectName: 'Ahau NZ Limited', // The name of the subject of the signing certificate
     // NOTE - this field worked for code signing certificate, but not the EV signing
-    certificateSha1: 'A5F49ED3D5EBBCA6EE093BF2A8AA93DA36BDBF56'
+    certificateSha1: '8BD3CF2F9D2CF6EB7E4EFF9F3890443CF7FC41F8'
     // This is a way to be VERY specific about the exact certificate used. This worked well with EV signing cert.
   },
   nsis: {
