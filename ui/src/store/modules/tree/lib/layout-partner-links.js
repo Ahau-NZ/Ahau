@@ -3,7 +3,7 @@ import linkKey from './link-key'
 import offsetIncrement from './offset-increment'
 import settings from '../../../../lib/link'
 
-const Y_GAP = 5
+const Y_GAP = 10
 
 export default function layoutPartnerLinks (rootNode, { getPartnerType }) {
   if (!rootNode.partners) throw new Error('missing partners')
