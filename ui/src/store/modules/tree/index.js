@@ -52,11 +52,11 @@ export default function () {
 
       // count the num partners on the right of the leftNode
       count = getters.countPartners(leftNode)
-      partnersBetween += count
+      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
 
       // add the num partners on the left of rightNode
       count = getters.countPartners(rightNode)
-      partnersBetween += count
+      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
 
       return partnersBetween
 
