@@ -22,7 +22,7 @@ export default function svgExport (svgInput, width, height, fileName = 'whakapap
     )
   // NOTE tree are not perfectly symmetric, so moving to half way will often put some off side of map,
   // so we figure out where leftmost node is and translate X to that
-  svg.childNodes[0].setAttribute('transform', `translate(${Math.abs(minX)}, ${radius})`) // set global translation, remove scale
+  svg.childNodes[0].setAttribute('transform', `translate(${Math.abs(minX) + radius}, ${radius})`) // set global translation, remove scale
   svg.childNodes[0].childNodes[0].removeAttribute('transform') // drop other positioning
 
   const images = svg.querySelectorAll('image')
