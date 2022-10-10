@@ -90,11 +90,7 @@ export default function () {
     layout (state, getters) {
       return d3Tree()
         .nodeSize([NODE_SIZE_X, NODE_SIZE_Y])
-        .separation((a, b) => {
-          return (a.parent === b.parent)
-            ? getters.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
-            : getters.distanceBetweenNodes(a, b, true) // areCousins (left=A, right=B)
-        })
+        .separation((a, b) => getters.distanceBetweenNodes(a, b))
     },
 
     // nodes
