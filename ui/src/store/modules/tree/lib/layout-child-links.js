@@ -9,7 +9,11 @@ const pileSort = require('pile-sort')
 
 export default function layoutChildLinks (rootNode, partnerLinks, { getChildType, getPartnerType }) {
   if (!rootNode.children || !rootNode.children.length) return []
-
+  // create object with number of links for Y offset
+  const partnersMultiplier = {}
+  partnerLinks.forEach(function (link, i) {
+    partnersMultiplier[link.key] = i
+  })
   const adults = [rootNode, ...rootNode.partners]
 
   // find all the children with only one parentLink (of each type) among the adults
@@ -48,7 +52,9 @@ export default function layoutChildLinks (rootNode, partnerLinks, { getChildType
         const partnerLinkKey = linkKey('partner', [A, B])
         const partnerLink = partnerLinks.find(link => link.key === partnerLinkKey)
 
+        // use assign link multiplier to opts for Yoffset
         const opts = (partnerLink) ? { startY: partnerLink.y } : {}
+        opts.multipler = partnersMultiplier[partnerLinkKey]
 
         const link = multiLink(rootNode, [A, B], childNode, relType, opts)
         multiLinks[link.key] = link

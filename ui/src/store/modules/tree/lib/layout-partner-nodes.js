@@ -52,14 +52,15 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
       return (A.relativeChildX - B.relativeChildX)
     })
     .map((A, i, arr) => {
-      // if relativeChildX is negative push to left, if positive to right
-      if (A.relativeChildX <= 0) {
-        // get an arr of elements that are on the left of the rootNode
-        const lessThanZero = arr.filter(A => A.relativeChildX < 0).map(A => A.id)
+      // get the medium number of partners
+      const middle = Math.ceil(arr.length / 2)
+      // split arr down the middle
+      if (i < middle) {
+        const firstHalf = arr.slice(0, middle).map(A => A.id)
         // figure out which one this is
-        const index = lessThanZero.indexOf(A.id)
+        const index = firstHalf.indexOf(A.id)
         // figure how many hops it is from the rootNode
-        const hops = lessThanZero.length - index
+        const hops = firstHalf.length - index
         return {
           // set how many hops based on their position in that set
           x: rootNode.x - hops * hopDistance,
@@ -67,11 +68,10 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
           data: { id: A.id }
         }
       } else {
-        // get an arr of elements that are on the right of the rootNode
-        const moreThanZero = arr.filter(A => A.relativeChildX > 0).map(A => A.id)
-        // figure out which one this is
-        const index = moreThanZero.indexOf(A.id)
-        // figure how many hops it is from the rootNode
+        const secondHalf = arr.slice(middle).map(A => A.id)
+        // // get an arr of elements that are on the right of the rootNode
+        const index = secondHalf.indexOf(A.id)
+
         return {
           // set how many hops based on their position in that set
           x: rootNode.x + (index + 1) * hopDistance,
