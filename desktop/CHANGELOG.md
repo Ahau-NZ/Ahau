@@ -1,5 +1,18 @@
 # Changelog | Ahau desktop
 
+## v2.16.0
+
+### Features
+* added "export to SVG" for whakapapa graphs
+
+### Improvements
+* better layout for complex multi-partner scenarios
+* better relationship line layout
+
+### Bug Fixes
+* fixed auto-updating for windows (this version onwards should work)
+
+
 ## v2.15.0
 
 ### Features
