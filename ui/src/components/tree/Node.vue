@@ -10,7 +10,13 @@
   >
 
     <g v-if="showAvatars" :transform="`translate(0 ${radius + 12})`">
-      <rect :width="textWidth" :x="-textWidth / 2" y="-16" height="22" />
+      <rect
+        :width="textWidth"
+        height="22"
+        :x="-textWidth / 2"
+        y="-16"
+        fill="#fff"
+      />
       <text x="0" y="-16" text-anchor="middle">
         <tspan v-for="(line, i) in splitDisplayName" :key="i"
           x="0" dy="1.2em"
@@ -21,7 +27,13 @@
       </text>
     </g>
     <g v-else @click="$emit('click')" >
-      <rect :width="textWidth * 2" :x="-textWidth" y="-24" height="30" />
+      <rect
+        :width="textWidth * 2"
+        :x="-textWidth"
+        y="-24"
+        height="30"
+        fill="#fff"
+      />
       <text y="0rem"
         :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }"
         text-anchor="middle"

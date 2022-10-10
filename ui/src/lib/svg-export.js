@@ -59,8 +59,8 @@ export default function svgExport (svgInput, width, height, fileName = 'whakapap
             const svg = img.previousElementSibling
             svg.setAttribute('width', img.getAttribute('width'))
             svg.setAttribute('height', img.getAttribute('height'))
-            svg.setAttribute('x', 0)
-            svg.setAttribute('y', 0)
+            svg.setAttribute('x', img.getAttribute('x'))
+            svg.setAttribute('y', img.getAttribute('y'))
 
             img.parentElement.removeChild(img)
 
