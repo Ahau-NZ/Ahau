@@ -92,7 +92,7 @@ function soloLink (rootNode, parentNode, childNode, relType) {
         endX: childNode.x,
         endY: childNode.y
       },
-      (parentNode.y + childNode.y) / 2.1 + Y_BASE
+      (parentNode.y + childNode.y) / 2 + Y_BASE
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
@@ -137,7 +137,7 @@ function multiLink (rootNode, [A, B], childNode, relType, opts = {}) {
         endX: childNode.x,
         endY: childNode.y
       },
-      (startY + childNode.y) / 2.1 + Y_BASE + Y_SPACE + (opts.multipler * 7.5)
+      (startY + childNode.y) / 2 + Y_BASE + Y_SPACE
     ),
     style: linkStyle({
       // inherits the style from the parent so the links are the same color
