@@ -418,7 +418,7 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: 'Join Community' },
+    title: { type: String, default: 'Join Tribe' },
     hideDetails: { type: Boolean, default: false },
     profile: { type: Object, default () { return {} } }
   },

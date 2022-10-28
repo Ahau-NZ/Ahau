@@ -3,9 +3,9 @@
     pill
     outlined
     large
-    :color="text !== 'Join Community' ? 'grey' : '#b12526'"
+    :color="text !== 'Join Tribe' ? 'grey' : '#b12526'"
     height="50px"
-    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: text !== 'Join Community' }]"
+    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: text !== 'Join Tribe' }]"
     @click="$emit('click')"
   >
     <span>{{ text }}</span>

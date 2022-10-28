@@ -42,17 +42,16 @@ export default function () {
       return rootGetters['whakapapa/getPartnerIds'](node.data.id).length
     },
     countPartnersBetween: (state, getters, rootState, rootGetters) => (nodeA, nodeB) => {
-      const [leftNode, rightNode] = [nodeA, nodeB].sort((a, b) => a.x - b.x)
       let partnersBetween = 0
       let count
 
       // count the num partners on the right of the leftNode
-      count = getters.countPartners(leftNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
+      count = getters.countPartners(nodeA)
+      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
 
       // add the num partners on the left of rightNode
-      count = getters.countPartners(rightNode)
-      partnersBetween += count % 2 === 0 ? count / 2 : (count + 1) / 2
+      count = getters.countPartners(nodeB)
+      partnersBetween += count % 2 === 0 ? count / 2 : (count - 1) / 2
 
       return partnersBetween
 
@@ -65,8 +64,7 @@ export default function () {
     },
     distanceBetweenNodes: (state, getters) => (nodeA, nodeB) => {
       // horizontal distance between node centers (as a multuple of NODE_SIZE_X)
-
-      const partnersBetween = getters.countPartnersBetween(nodeA, nodeB)
+      const partnersBetween = nodeA.parent === nodeB.parent ? getters.countPartnersBetween(nodeA, nodeB) : getters.countPartnersBetween(nodeB, nodeA)
 
       /* if nodes are siblings */
       if (nodeA.parent === nodeB.parent) {
@@ -217,11 +215,11 @@ function CompareAge (rootGetters) {
     const B = getOrderData(rootGetters, b)
     if (!B) return 0
 
-    return _compareAge(A, B)
+    return _compareAge(A, B, rootGetters)
   }
 }
 
-export function _compareAge (A, B) {
+export function _compareAge (A, B, rootGetters) {
   // if the birth order is set for both use that
   if (A.birthOrder > B.birthOrder) return 1
   if (A.birthOrder < B.birthOrder) return -1
@@ -242,7 +240,8 @@ function getOrderData (rootGetters, node) {
   if (!profile) return
   return {
     age: profile.aliveInterval && calculateAge(profile.aliveInterval),
-    birthOrder: profile.birthOrder || undefined
+    birthOrder: profile.birthOrder || undefined,
+    id: profile.id
     // NOTE cannot leave null, as e.g. null < 4 === true
   }
 }
