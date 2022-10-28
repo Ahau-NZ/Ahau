@@ -224,7 +224,7 @@ export default {
         else if (notifications.some(n => n.isPersonal && !n.isAccepted && !n.isNew)) return 'Request Declined'
       }
 
-      return 'Join Community'
+      return 'Join Tribe'
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
