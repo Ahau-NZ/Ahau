@@ -1,8 +1,8 @@
 {
-  "name": "ahau-desktop",
+  "name": "Ahau",
   "version": "2.16.1",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
-  "homepage": "https://gitlab.com/ahau/whakapapa-ora",
+  "homepage": "https://gitlab.com/ahau/ahau",
   "main": "main.bundle.js",
   "scripts": {
     "start": "electron main.bundle.js -- --title Āhau",
@@ -62,7 +62,7 @@
   "author": "Āhau Ltd.",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
+    "url": "git+https://gitlab.com/ahau/ahau.git"
   },
   "license": "AGPL-3.0"
 }
