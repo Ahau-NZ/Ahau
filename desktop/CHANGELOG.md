@@ -1,5 +1,14 @@
 # Changelog | Ahau desktop
 
+## v2.16.1
+
+### Bug Fixes
+* fixed correct partner spacing
+* fixed updating whakapapa count
+
+Tweak Feature
+* changed the installer names-pattern
+
 ## v2.16.0
 
 ### Features

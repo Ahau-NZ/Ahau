@@ -57,7 +57,7 @@ module.exports = {
     target: 'AppImage'
   },
   appImage: {
-    artifactName: '${name}-Linux-${version}-${arch}.${ext}' // eslint-disable-line
+    artifactName: '${name}_Linux-${arch}.${ext}' // eslint-disable-line
   },
 
   /* Mac OS */
@@ -70,7 +70,7 @@ module.exports = {
     // entitlementsInherit: 'build/mac/entitlements.mac.plist' // N
   },
   dmg: {
-    artifactName: '${name}-Mac-${version}.${ext}', // eslint-disable-line
+    artifactName: '${name}_Mac.${ext}', // eslint-disable-line
     background: 'build/mac/background.png',
     icon: 'build/mac/dmg-icon.icns',
     sign: false // N
@@ -97,7 +97,7 @@ module.exports = {
     // This is a way to be VERY specific about the exact certificate used. This worked well with EV signing cert.
   },
   nsis: {
-    artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
+    artifactName: '${name}_Windows.${ext}', // eslint-disable-line
     installerIcon: 'build/win/setup-icon.ico',
     include: 'build/win/add-missing-dll.nsh' // fixes missing VCRUNTIME140.dll
     // source: https://github.com/sodium-friends/sodium-native/issues/100

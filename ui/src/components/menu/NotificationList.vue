@@ -3,7 +3,7 @@
     <v-list
       height="30px"
       class="py-0"
-      style="background-color:#a9a9a950"
+      style="background-color:#e5e5e5"
       v-if="notifications && notifications.length > 0 && title"
     >
       <p :class="`pt-1 pl-8 my-0 subtitle-2 black--text font-weight-medium`">{{ title }}</p>
