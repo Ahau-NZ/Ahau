@@ -57,7 +57,7 @@ module.exports = {
     target: 'AppImage'
   },
   appImage: {
-    artifactName: '${name}-Linux-${version}-${arch}.${ext}' // eslint-disable-line
+    artifactName: '${name}_Linux-${arch}.${ext}' // eslint-disable-line
   },
 
   /* Mac OS */
@@ -70,7 +70,7 @@ module.exports = {
     // entitlementsInherit: 'build/mac/entitlements.mac.plist' // N
   },
   dmg: {
-    artifactName: '${name}-Mac-${version}.${ext}', // eslint-disable-line
+    artifactName: '${name}_Mac.${ext}', // eslint-disable-line
     background: 'build/mac/background.png',
     icon: 'build/mac/dmg-icon.icns',
     sign: false // N
@@ -83,19 +83,21 @@ module.exports = {
   win: {
     icon: 'build/win/icon.ico',
     publisherName: [
-      'Āhau NZ Limited', // << New name
-      'Ahau NZ Limited' // << old certificate name, to be deprecated
+      'Ahau NZ Ltd', //        name that will probably happen
+      'Āhau NZ Ltd', //     << current name
+      'Āhau NZ Limited', //    last name
+      'Ahau NZ Limited' //     oldest name
     ],
     // WARNING - this name must *exactly* match the subject/ "issued to" field on the Signing Certificate
     // otherwise in future if this name changes, auto-updating will fail D:
 
     // certificateSubjectName: 'Ahau NZ Limited', // The name of the subject of the signing certificate
     // NOTE - this field worked for code signing certificate, but not the EV signing
-    certificateSha1: 'A5F49ED3D5EBBCA6EE093BF2A8AA93DA36BDBF56'
+    certificateSha1: '8BD3CF2F9D2CF6EB7E4EFF9F3890443CF7FC41F8'
     // This is a way to be VERY specific about the exact certificate used. This worked well with EV signing cert.
   },
   nsis: {
-    artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
+    artifactName: '${name}_Windows.${ext}', // eslint-disable-line
     installerIcon: 'build/win/setup-icon.ico',
     include: 'build/win/add-missing-dll.nsh' // fixes missing VCRUNTIME140.dll
     // source: https://github.com/sodium-friends/sodium-native/issues/100

@@ -82,7 +82,7 @@
       </v-row>
     </template>
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
-      <AccessButton type="whakapapa" disabled :accessOptions="accessOptions"/>
+      <AccessButton type="whakapapa" editing :accessOptions="accessOptions" :permission.sync="formData.permission"/>
     </template>
   </Dialog>
 </template>
@@ -105,7 +105,8 @@ function setDefaultData (view) {
     name: view.name,
     description: view.description,
     image: view.image,
-    recps: view.recps
+    recps: view.recps,
+    permission: view.permission
   }
 }
 

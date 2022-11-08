@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="form.valid" lazy-validation>
+  <v-form ref="form" v-model="valid" lazy-validation>
     <v-row class="px-4">
       <v-col cols="12" sm="5" order-sm="2">
         <v-row class="pa-0">
@@ -32,7 +32,7 @@
               :label="t('name')"
               placeholder=" "
               hide-details
-              :rules="form.rules.name.whakapapaView"
+              :rules="rules.name.whakapapaView"
             />
           </v-col>
           <!-- Description textarea -->
@@ -83,7 +83,7 @@
                 accept=".csv"
                 :label="t('csvUpload')"
                 :success-messages="successMsg"
-                :rules="form.rules.csvFile"
+                :rules="rules.csvFile"
                 @click:clear="resetFile()"
               ></v-file-input>
             </v-col>
@@ -97,6 +97,8 @@
 </template>
 <script>
 
+import { mapMutations } from 'vuex'
+
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
@@ -104,21 +106,14 @@ import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
 import { importCsv, downloadCsv } from '@/lib/csv'
 
-const EMPTY_WHAKAPAPA = {
-  name: '',
-  description: '',
-  mode: 'descendants',
-  focus: 'new',
-  image: null
-}
-
 function setDefaultWhakapapa (whakapapa) {
   return {
     name: whakapapa.name,
     description: whakapapa.description,
     mode: whakapapa.mode,
     focus: whakapapa.focus,
-    image: whakapapa.image
+    image: whakapapa.image,
+    permission: whakapapa.permission
   }
 }
 
@@ -131,17 +126,19 @@ export default {
     CsvErrorDialog
   },
   props: {
-    view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
+    view: Object,
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
+  mounted () {
+    setDefaultWhakapapa(this.view)
+    this.$refs.form.validate()
+  },
   data () {
     return {
-      formData: setDefaultWhakapapa(this.view),
-      form: {
-        valid: true,
-        rules: RULES
-      },
+      formData: this.view,
+      rules: RULES,
+      valid: false,
       file: null,
       errorMsgs: [],
       successMsg: [],
@@ -151,14 +148,14 @@ export default {
     }
   },
   watch: {
-    view (newVal) {
-      this.formData = newVal
+    valid (valid) {
+      this.setAllowSubmissions(valid)
     },
     formData: {
+      deep: true,
       handler (newVal) {
         this.$emit('update:view', newVal)
-      },
-      deep: true
+      }
     },
     file (newFile) {
       if (newFile == null) return
@@ -178,6 +175,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     downloadCsv,
     csvInfo () {
       this.csvHelper = !this.csvHelper

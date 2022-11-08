@@ -21,7 +21,7 @@
                   <v-row class="justify-center pt-12">
                     <Avatar
                       class="big-avatar"
-                      :size="mobile ? '200px':'100px'"
+                      :size="mobile ? '200px' : '100px'"
                       :image="formData.avatarImage"
                       :alt="formData.preferredName"
                       isView
@@ -65,32 +65,88 @@
                   outlined
                 >
                   <v-card-text>
-                    Please update the following information on your profile: <br>
-                    <ul>
-                      <li v-for="({ prop }) in invalidPersonalProfileProps" :key="JSON.stringify(prop)">
-                        {{ prop }}
-                      </li>
-                    </ul>
+                    <div v-if="isLoadingProfile">
+                      Please wait while your profile is updating
+                      <v-progress-circular
+                        indeterminate
+                        color="#b12526"
+                      />
+                    </div>
+                    <div v-else>
+                      <div v-if="isValidPersonalProfile">
+                        No updates required. Go to your profile if you wish to provide more information
+                      </div>
+                      <div v-else>
+                        Please update the following information on your profile: <br>
+                        <ul>
+                          <li v-for="({ prop }) in missingRequiredFields" :key="prop">
+                            {{ prop }}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </v-card-text>
                 </v-card>
                 <v-btn
                   color="primary"
+                  :disabled="isLoadingProfile"
                   @click="goProfile"
                 >
                   Go to edit profile
                 </v-btn>
+                <v-btn
+                  :disabled="!isValidPersonalProfile || isLoadingProfile"
+                  class="ml-5"
+                  color="primary"
+                  @click="step = hasJoiningQuestions ? 2 : 3"
+                >
+                  Next
+                </v-btn>
               </v-stepper-content>
-
-              <!-- STEP 2: Share Community information  -->
+              <!-- STEP 2: Joining Questions -->
               <v-stepper-step
                 :complete="step > 2"
                 step="2"
+                :color="step > 2 ? 'green' : 'black'"
+              >
+                {{ hasJoiningQuestions ? 'Please answer these questions to join this community' : 'No joining questions to answer' }}
+              </v-stepper-step>
+
+              <v-stepper-content step="2">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-row>
+                    <v-col cols="12" sm="12" v-for="(question, i) in answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0' : 'pt-6 px-5'">
+                      <v-text-field
+                        v-model="answers[i].answer"
+                        v-bind="customProps"
+                        :label="answers[i].question"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card>
+                <v-btn
+                  color="primary"
+                  @click="step = 3"
+                >
+                  Next
+                </v-btn>
+              </v-stepper-content>
+
+              <!-- STEP 3: Share Community information  -->
+              <v-stepper-step
+                :complete="step > 3"
+                step="3"
                 :color="checkbox1 ? 'green' : 'black'"
               >
                 Share your information with the Community Members
               </v-stepper-step>
 
-              <v-stepper-content step="2">
+              <v-stepper-content step="3">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -104,11 +160,11 @@
                     </strong>
                     community members
                   </v-card-text>
-                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                  <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12" class="pt-0">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':' bb'"
+                          :class="mobile ? 'bb' : 'bb'"
                           smCols="12"
                           mdCols="12"
                           title="Description"
@@ -116,7 +172,7 @@
                           class="pb-0"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'bb br'"
+                          :class="mobile ? 'bb' : 'bb br'"
                           smCols="12"
                           mdCols="6"
                           title="Preferred Name"
@@ -131,7 +187,7 @@
                           class="pb-0 bb"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br'"
+                          :class="mobile ? 'bb' : 'br'"
                           smCols="12"
                           mdCols="6"
                           title="Other names"
@@ -148,11 +204,11 @@
                       </v-row>
                     </template>
                   </ProfileCard>
-                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                  <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'bb br'"
+                          :class="mobile ? 'bb' : 'bb br'"
                           smCols="12"
                           mdCols="6"
                           title="Age"
@@ -167,7 +223,7 @@
                           class="pb-0 bb"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br'"
+                          :class="mobile ? 'bb' : 'br'"
                           smCols="12"
                           mdCols="6"
                           title="Skills"
@@ -184,11 +240,11 @@
                       </v-row>
                     </template>
                   </ProfileCard>
-                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                  <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br'"
+                          :class="mobile ? 'bb' : 'br'"
                           smCols="12"
                           mdCols="6"
                           title="City"
@@ -211,15 +267,15 @@
 
               <!-- STEP 3: Share Kaitiaki information  -->
               <v-stepper-step
-                :complete="step > 3"
-                step="3"
+                :complete="step > 4"
+                step="4"
                 :color="checkbox2 ? 'green' : 'black'"
               >
                 Share your information with the Community Kaitiaki
                 <small></small>
               </v-stepper-step>
 
-              <v-stepper-content step="3">
+              <v-stepper-content step="4">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -233,11 +289,11 @@
                     </strong>
                     community kaitiaki
                   </v-card-text>
-                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                  <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12" class="pt-0">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br bb'"
+                          :class="mobile ? 'bb' : 'br bb'"
                           smCols="12"
                           mdCols="6"
                           title="Date of birth"
@@ -245,7 +301,7 @@
                           class="pb-0"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'bb'"
+                          :class="mobile ? 'bb' : 'bb'"
                           smCols="12"
                           mdCols="6"
                           title="Phone"
@@ -253,7 +309,7 @@
                           class="pb-0"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br bb'"
+                          :class="mobile ? 'bb' : 'br bb'"
                           smCols="12"
                           mdCols="6"
                           title="Email"
@@ -281,55 +337,20 @@
                 <v-checkbox v-model="checkbox2" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- Joining Questions -->
-              <v-stepper-step
-                v-if="hasJoiningQuestions"
-                :complete="step > 4"
-                step="4"
-                :color="step > 4 ? 'green' : 'black'"
-              >
-                Please answer these questions to join this community
-              </v-stepper-step>
-
-              <v-stepper-content step="4" v-if="hasJoiningQuestions">
-                <v-card
-                  color="grey lighten-5"
-                  class="mb-6"
-                  height="auto"
-                  outlined
-                >
-                  <v-row>
-                    <v-col cols="12" sm="12" v-for="(question, i) in answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-                      <v-text-field
-                        v-model="answers[i].answer"
-                        v-bind="customProps"
-                        :label="answers[i].question"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-card>
-                <v-btn
-                  color="primary"
-                  @click="step = 5"
-                >
-                  Next
-                </v-btn>
-              </v-stepper-content>
-
               <!-- comment -->
               <v-stepper-step
-                :step="lastStep"
+                step="5"
               >
                 Send a comment with your request
               </v-stepper-step>
-              <v-stepper-content :step="lastStep">
+              <v-stepper-content step="5">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
                   height="auto"
                   outlined
                 >
-                  <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                  <v-col cols="12" :class="mobile ? 'pt-4 px-0' : 'pt-6 px-5'">
                     <v-textarea
                       v-model="comment"
                       label="Send a comment with your request"
@@ -357,6 +378,15 @@
         </v-btn>
       </template>
     </Dialog>
+    <EditPersonDialog
+      v-if="showEditDialog"
+      :show="showEditDialog"
+      isRegistration
+      :title="$t('addPersonForm.addPersonFormTitle', { displayName })"
+      @submit="processUpdatePerson"
+      @close="showEditDialog = false"
+      :nodeProfile="personalProfile"
+    />
   </div>
 </template>
 
@@ -366,14 +396,16 @@ import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
+
+import { mapGetters, mapActions } from 'vuex'
+
 import calculateAge from '@/lib/calculate-age'
-
-import { mapGetters } from 'vuex'
-
 import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { findInvalidProfileProps } from '@/lib/tribes-application-helpers.js'
+import { findMissingRequiredFields, getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 import clone from 'lodash.clonedeep'
+import isEmpty from 'lodash.isempty'
 
 export default {
   name: 'NewRegistrationDialog',
@@ -381,11 +413,12 @@ export default {
     Dialog,
     Avatar,
     ProfileCard,
-    ProfileInfoItem
+    ProfileInfoItem,
+    EditPersonDialog
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: 'Join Community' },
+    title: { type: String, default: 'Join Tribe' },
     hideDetails: { type: Boolean, default: false },
     profile: { type: Object, default () { return {} } }
   },
@@ -395,13 +428,14 @@ export default {
       checkbox1: null,
       checkbox2: null,
       formData: clone(this.profile),
+      showEditDialog: false,
+
+      // fields to submit
       comment: '',
       answers: [],
-      personalProfile: {}
+      customFields: [],
+      rawCustomFields: {}
     }
-  },
-  mounted () {
-    this.personalProfile = this.whoami.personal.profile
   },
   watch: {
     profile: {
@@ -419,22 +453,32 @@ export default {
         this.formData = profile
       }
     },
+    step (step) {
+      if (step === 2 && !this.hasJoiningQuestions) this.step = 3
+    },
     checkbox1 (checkbox) {
-      if (checkbox) this.step = 3 // step to the next section
+      if (checkbox) this.step = 4 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) this.step = 4
-    },
-    personalProfile: {
-      deep: true,
-      handler () {
-        if (this.isValidPersonalProfile && this.step === 1) this.step = 2
-      }
+      if (checkbox) this.step = 5
     }
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapGetters('tribe', ['tribeJoiningQuestions']),
+    ...mapGetters('alerts', ['alertSettings']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields']),
+    personalProfile () {
+      return {
+        ...this.whoami.personal.profile,
+        customFields: this.rawCustomFields
+      }
+    },
+    isLoadingProfile () {
+      return this.alertSettings.delay === -1
+    },
+    displayName () {
+      return this.personalProfile.preferredName
+    },
     altNames () {
       if (this.personalProfile.altNames && this.personalProfile.altNames.length) return this.personalProfile.altNames.join(', ')
       return ''
@@ -477,51 +521,98 @@ export default {
       }
       return ''
     },
-    invalidPersonalProfileProps () {
+    missingRequiredFields () {
       if (!this.personalProfile) return []
-      return findInvalidProfileProps(this.personalProfile)
+      const profile = clone(this.personalProfile)
+      profile.dateOfBirth = this.dob
+
+      return findMissingRequiredFields(profile, this.tribeRequiredFields)
+        .filter(({ prop }) => {
+          const field = this.tribeCustomFields.find(field => field.label === prop) || this.tribeDefaultFields.find(field => field.label === prop)
+          if (!field) return false
+          return !this.customFields.some(customField => customField.key === field.key)
+        })
     },
     isValidPersonalProfile () {
-      return this.invalidPersonalProfileProps.length === 0
+      return this.missingRequiredFields.length === 0
     },
     hasJoiningQuestions () {
       return this.answers && this.answers.length > 0
     },
-    lastStep () {
-      return this.hasJoiningQuestions
-        ? 5
-        : 4
-    },
     disableSubmission () {
-      return this.step !== this.lastStep
+      return this.step !== 5
+    },
+    submission () {
+      return {
+        comment: this.comment,
+        answers: this.answers,
+        customFields: this.customFields
+      }
     }
   },
   methods: {
+    ...mapActions(['setWhoami']),
+    ...mapActions('person', ['updatePerson']),
+    ...mapActions('alerts', ['showAlert']),
     close () {
       this.$emit('close')
     },
     submit () {
-      this.$emit('submit', { comment: this.comment, answers: this.answers })
+      this.$emit('submit', this.submission)
       this.close()
     },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
     goProfile () {
-      this.$router.push({
-        name: 'person/profile',
-        params: {
-          tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id,
-          application: {
-            dialog: 'edit-node',
-            source: {
-              tribeId: this.$route.params.tribeId,
-              profileId: this.$route.params.profileId
-            }
+      this.showEditDialog = true
+    },
+    async processUpdatePerson (input) {
+      this.showEditDialog = false
+      this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
+
+      const customFields = input.customFields
+      /*
+        input is of form:
+          input = {
+            ...personalProfileChanges,
+            customFields: {
+              [tribeId]: {
+                [key]: value,
+                ...
+              }
+            },
+            ...
           }
-        }
-      }).catch(() => {})
+      */
+      await this.updatePersonalProfile(input)
+
+      const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+      if (!isEmpty(customFieldValues)) {
+        this.rawCustomFields = customFields
+        this.customFields = customFieldValues
+      }
+
+      // reload your personal profiles
+      await this.setWhoami()
+
+      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
+    },
+    async updatePersonalProfile (input) {
+      delete input.customFields
+
+      // TODO: show an alert which tells you its saving things....
+      // because updating personal profile takes a while
+      // if you have a lot of profiles!
+
+      // NOTE: it sometimes is slow to update the UI because this is very slow!!
+      // TODO: reduce bulk update to only update profiles that arent tombstoned
+      // can use linkedProfileIds (this will be a backend change)
+
+      await this.updatePerson({
+        id: this.personalProfile.id,
+        ...input
+      })
     }
   }
 }

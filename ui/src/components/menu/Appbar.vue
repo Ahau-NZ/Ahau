@@ -53,7 +53,7 @@
         <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-6 ml-12">
           <Avatar
             v-if="!mobile"
-            size="45px"
+            size="46px"
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
@@ -83,7 +83,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
         <v-row align="center" class="ml-2 mt-6">
-          <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-3">
+          <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-3" small>
             <Avatar
               size="45px"
               :image="whoami.personal.profile.avatarImage"
@@ -107,11 +107,12 @@
               active-class="no-active"
               fab
               @click.native="goTribeProfile(tribe)"
-              class="ml-1 mr-3 red--text my-2"
+              class="ml-1 mr-3 red--text my-1"
               :outlined="isOutlinedTribe(tribe)"
+              small
             >
               <Avatar
-                size="45px"
+                size="35px"
                 :image="tribe.private[0].avatarImage"
                 :alt="tribe.private[0].preferredName"
                 :isView="!tribe.private[0].avatarImage"

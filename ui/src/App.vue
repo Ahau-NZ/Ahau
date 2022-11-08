@@ -17,18 +17,15 @@
       <span>version</span> {{version}}
     </div>
 
-    <AlertMessage
-      :show="alertSettings.show"
-      :message="alertSettings.message"
-      :color="alertSettings.color"
-    />
-
+    <AlertMessage />
     <DialogHandler /> <!-- TODO: find out what uses this? -->
+    <ErrorSnackDialog />
   </v-app>
 </template>
 
 <script>
 import Appbar from '@/components/menu/Appbar.vue'
+import ErrorSnackDialog from '@/components/ErrorSnackDialog.vue'
 import Spinner from '@/components/Spinner.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -51,6 +48,7 @@ export default {
   },
   components: {
     Appbar,
+    ErrorSnackDialog,
     Spinner,
     DialogHandler,
     AlertMessage
@@ -131,7 +129,6 @@ export default {
     ...mapGetters(['isKaitiaki']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
     ...mapGetters(['storeDialog', 'loadingState']),
-    ...mapGetters('alerts', ['alertSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

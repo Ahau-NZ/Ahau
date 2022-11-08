@@ -24,7 +24,7 @@
           <v-col cols="12 overline" align="start" class="mt-n10 mb-2">
             <h1>{{ t('settings') }}</h1>
           </v-col>
-          <FilterInput :reset="resetData" @whakapapa="toggleWhakapapa()"/>
+          <FilterInput :reset="resetData" @toggleShow="toggleWhakapapa()"/>
           <SortInput v-if="!isList" :reset="resetData"  @whakapapa="toggleWhakapapa()"/>
           <OptionsInput :reset="resetData" :isList="isList" :headers.sync="headers" :activeHeaders="activeHeaders" />
 
@@ -39,6 +39,12 @@
           </v-list-item>
 
           <!-- Hide WhakapapaLinks -->
+          <!--
+            TODO 2022-07-11 (mix) re-enable
+              this was disabled in order to get faster graph drawing merged. The data needed to draw this
+              nested was lost during refactoring. Was decided search/ filter/ export were most important and to
+              keep moving
+
           <v-list-item v-if="!isList" class="pb-4">
             <v-list-item-content>
               <v-list-item-title align="start" v-text="'Show whakapapa'"/>
@@ -47,6 +53,7 @@
               <v-switch v-model="showWhakapapa" />
             </v-list-item-action>
           </v-list-item>
+          -->
 
           <v-row>
             <v-col cols="12" class="mt-10">

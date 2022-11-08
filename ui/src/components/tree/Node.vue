@@ -2,20 +2,42 @@
   <g
     v-if="profile"
     class="node"
-    :style="position"
+    :transform="`translate(${x} ${y})`"
     @mouseover="setHover(true)"
     @mouseleave="setHover(false)"
     @mousedown.right="openMenu"
     @contextmenu.prevent
   >
 
-    <g v-if="showAvatars" :style="textStyle">
-      <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ displayName }}</text>
+    <g v-if="showAvatars" :transform="`translate(0 ${radius + 12})`">
+      <rect
+        :width="textWidth"
+        :height="textHeight"
+        :x="-textWidth / 2"
+        y="-16"
+        fill="#fff"
+      />
+      <text x="0" y="-16" text-anchor="middle">
+        <tspan v-for="(line, i) in splitDisplayName" :key="i"
+          x="0" dy="1.2em"
+          text-anchor="middle"
+        >
+          {{ line }}
+        </tspan>
+      </text>
     </g>
-    <g v-else :style="nameTextStyle" @click="$emit('click')" >
-      <rect :width="textWidth*2" y="-25" height="30" />
-      <text :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }">
+    <g v-else @click="$emit('click')" >
+      <rect
+        :width="textWidth * 2"
+        :x="-textWidth"
+        y="-24"
+        height="30"
+        fill="#fff"
+      />
+      <text y="0rem"
+        :style="{ fontSize: 30, fill: isSelected ? 'rgb(178, 37, 38)' : '#555' }"
+        text-anchor="middle"
+      >
         {{ displayName }}
       </text>
     </g>
@@ -23,24 +45,27 @@
     <g v-if="showAvatars" class="avatar" @click="$emit('click')" >
       <defs v-if="imageSrc">
         <clipPath :id="clipPathId">
-          <circle :cx="radius" :cy="radius" :r="radius"/>
+          <circle cx="0" cy="0" :r="radius"/>
         </clipPath>
       </defs>
 
       <circle v-if="isSelected"
         :style="{ fill: 'rgb(178, 37, 38)' }"
-        :cx="radius"
-        :cy="radius"
+        cx="0"
+        cy="0"
         :r="radius + 4"
       />
-      <circle v-if="!imageSrc"
+      <circle
         :style="{ fill: 'white'}"
-        :cx="radius"
-        :cy="radius"
+        cx="0"
+        cy="0"
         :r="radius"
       />
       <image
+        :href="imageSrc || defaultImage()"
         :xlink:href="imageSrc || defaultImage()"
+        :x="-radius"
+        :y="-radius"
         :width="diameter"
         :height="diameter"
         :clip-path="`url(#${clipPathId})`"
@@ -48,7 +73,7 @@
       />
       <NodeMenuButton
         v-if="showMenuButton"
-        :transform="`translate(${1.44 * radius}, ${1.44 * radius})`"
+        :transform="`translate(${0.6 * radius} ${0.6 * radius})`"
         @click="openMenu"
       />
     </g>
@@ -62,13 +87,13 @@
     </g>
 
     <g v-if="isPartner && hasAncestors && !isDuplicate"
-      :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
+      :transform="`translate(${1 * radius - 2} ${radius * -0.5})`"
     >
       <text
         font-size="30"
         font-weight="600"
         cursor="initial"
-        style="fill:#000;"
+        style="fill: #000;"
         transform="rotate(90)"
       >..</text>
     </g>
@@ -113,7 +138,7 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['person', 'selectedProfileId', 'isLoadingProfiles']),
-    ...mapGetters('whakapapa', ['getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
     ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     isCollapsed () {
       if (this.isLoadingProfiles) return
@@ -160,6 +185,7 @@ export default {
     },
     showMenuButton () {
       // if (this.isPartner) return false
+      if (!this.whakapapaView.canEdit) return false
       if (this.isCollapsed) return false
       return this.hoveredProfileId === this.profileId
     },
@@ -179,25 +205,12 @@ export default {
     imageSrc () {
       return get(this.profile, 'avatarImage.uri')
     },
-    position () {
-      return {
-        transform: `translate(${this.x - this.radius}px, ${this.y - this.radius}px)`
-      }
-    },
     textWidth () {
-      const width = (this.displayName || '').length * 8
-      return width
+      const width = (this.splitDisplayName.join('') || '').length * 8
+      return width < 100 ? width : 100
     },
-    textStyle () {
-      return {
-        transform: `translate(${this.radius - this.textWidth / 2}px, ${this
-          .diameter + 16}px)`
-      }
-    },
-    nameTextStyle () {
-      return {
-        transform: `translate(${this.radius - this.textWidth}px, ${this.radius + 10}px)`
-      }
+    textHeight () {
+      return this.splitDisplayName.length > 1 ? 44 : 22
     },
     avatarStyle () {
       return this.profile.deceased
@@ -206,33 +219,37 @@ export default {
     },
     dotsUnderNode () {
       // centers the three dots underneath a nodes name
-      const y = (
-        (this.showAvatars ? this.radius : 0) +
-        (this.isPartner ? 55 : 70)
-      )
+      const y = this.isPartner ? 55 : this.splitDisplayName.length > 1 ? 90 : 70
 
       return {
         fontSize: '22px',
         fontWeight: 600,
         transform: `
-          translate(${this.radius - 2}px, ${y}px)
+          translate(0, ${y}px)
           rotate(90deg)
         `
       }
     },
     dotsAboveNode () {
+      const y = this.isPartner ? -57 : -72
+
       // centers the three dots above a node
       return {
         fontSize: '22px',
         fontWeight: 600,
         transform: `
-          translate(${this.radius - 2}px, ${this.radius - (this.isPartner ? 57 : 72)}px)
+          translate(0, ${y}px)
           rotate(90deg)
         `
       }
     },
     displayName () {
       return getDisplayName(this.profile)
+    },
+    splitDisplayName () {
+      return !this.displayName.includes(' ')
+        ? this.displayName.match(/(.{1,15})/g)
+        : this.displayName.match(/(.{1,15})(\s|$)/g)
     }
   },
   methods: {
@@ -266,12 +283,6 @@ g {
         filter: contrast(1.4) brightness(1.4);
       }
     }
-  }
-  rect {
-    fill: #fff;
-  }
-  text {
-    fill: #555;
   }
 
   &:not(:root) {

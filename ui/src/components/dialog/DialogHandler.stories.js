@@ -21,27 +21,15 @@ export const NoDialog = () => ({
   components: { DialogHandler }
 })
 
-export const ShowNewNodeDialog = () => ({
+export const ShowNewPersonDialog = () => ({
   template:
-    '<DialogHandler dialog="new-node"/>',
-  components: { DialogHandler }
-})
-
-export const ShowViewEditNodeDialog = () => ({
-  template:
-    '<DialogHandler :dialog="type" :selectedProfile="profileComplete" @update="type = $event"/>',
-  data () {
-    return {
-      type: 'view-edit-node',
-      profileComplete: personComplete
-    }
-  },
+    '<DialogHandler dialog="new-person"/>',
   components: { DialogHandler }
 })
 
 export const ShowRemovePersonDialog = () => ({
   template:
-    '<DialogHandler dialog="delete-node" :selectedProfile="profileComplete"/>',
+    '<DialogHandler dialog="delete-person" :selectedProfile="profileComplete"/>',
   data () {
     return {
       profileComplete: personComplete

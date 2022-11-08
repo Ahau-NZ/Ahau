@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import get from 'lodash.get'
 import Dialog from '@/components/dialog/Dialog.vue'
 
 // mode for the type of remove
@@ -53,11 +54,11 @@ const DELETE = 'delete'
 
 // for the type of delete
 const WHAKAPAPA_SHOW = 'whakapapaShow' // delete a person from a whakapapa
-const PERSON_INDEX = 'personIndex' // general delete a person
+const PERSON_INDEX = 'personIndex' // delete a person from person index
 
 export default {
+  name: 'RemovePersonDialog',
   props: {
-    context: { type: String, default: WHAKAPAPA_SHOW },
     show: { type: Boolean, required: true },
     profile: { type: Object, required: true },
     warnAboutChildren: { type: Boolean, default: true }
@@ -71,17 +72,27 @@ export default {
     }
   },
   mounted () {
-    if (this.type === PERSON_INDEX) this.removeProfile = DELETE
+    if (this.isPersonIndex) this.removeProfile = DELETE
   },
   computed: {
+    context () {
+      const name = get(this.$route, 'name')
+
+      if (name === PERSON_INDEX) return PERSON_INDEX
+
+      return WHAKAPAPA_SHOW
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     isWhakapapaShow () {
-      return this.type === WHAKAPAPA_SHOW
+      return this.context === WHAKAPAPA_SHOW
+    },
+    isPersonIndex () {
+      return this.context === PERSON_INDEX
     },
     confirmationMessage () {
-      if (this.removeProfile === IGNORE && this.isWhakapapaShow) return this.t('whakapapa.hideConfirmation')
+      if (this.removeProfile === IGNORE && this.isWhakapapaShow) return this.t('whakapapaShow.hideConfirmation')
 
       return this.t(`${this.context}.deleteConfirmation`)
     },
@@ -98,7 +109,7 @@ export default {
       this.close()
     },
     t (key, vars) {
-      return this.$t('deleteNode.' + key, vars)
+      return this.$t('deletePerson.' + key, vars)
     }
   }
 }

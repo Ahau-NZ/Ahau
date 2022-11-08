@@ -2,8 +2,8 @@ const env = require('ahau-env')()
 
 const pataka = {
   dev: {
-    id: '%3PJOD7S8fUcCA2B2m58czDqIcf2Wn8btHXpkkqLSvGI=.sha256',
-    code: 'devpataka.ahau.io:8068:@10wXMFBhxDycNWjgdx2Ql/YUz59wtUh0wJSTv3MB7rs=.ed25519~3hTHR84WMwrebtNZKM+rzRTziT8Q/KCpnjAQbuzuuug='
+    id: '%AvTMz4IckBBGXaAetQLbXfM6yx3KB+9ldXGie8HUogQ=.sha256',
+    code: 'devcloud.ahau.io:8068:@zKG25OpT1uKlc8rt4FDYLEHPUDLC8dCkRqJKGyhZdmg=.ed25519~fM9cF3DUcaZvGBQwQDvzTLdLEJIAKwy/tLbbrO0qKwg='
   },
   prod: {
     id: '%BypHtE1Mz2evI2a27yuNPa/2AyUP7FWANYOKXa4KLQQ=.sha256',

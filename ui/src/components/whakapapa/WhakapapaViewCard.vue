@@ -9,6 +9,14 @@
         <v-list-item-subtitle class="no-flex mt-n1 mr-n3" :style="mobile ? 'font-size:0.7rem':'font-size:0.8rem'">Kaitiaki</v-list-item-subtitle>
         <AvatarGroup :profiles="view.tiaki" customClass="ma-0 pa-0 pt-1" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
       </v-list-item-icon>
+      <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:50px; right:5px; margin-right:0px">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon v-on="on" small color="#555">{{ accessIcon }}</v-icon>
+          </template>
+          <span>{{ accessText }}</span>
+        </v-tooltip>
+      </v-list-item-icon>
       <div class="d-flex flex-no-wrap flex-start align-stretch">
         <div class="cover-image" :style="background(view)"></div>
         <div class="information">
@@ -27,6 +35,7 @@
 <script>
 import whakapapa from '@/assets/whakapapa.png'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -40,6 +49,7 @@ export default {
     AvatarGroup
   },
   computed: {
+    ...mapGetters('tribe', ['isPersonalTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -60,6 +70,15 @@ export default {
         return description.substring(0, 80) + '...'
       }
       return description
+    },
+    accessIcon () {
+      if (this.isPersonalTribe) return 'mdi-lock'
+      return this.view.permission === 'view' ? 'mdi-eye' : 'mdi-pencil'
+    },
+    accessText () {
+      if (this.isPersonalTribe) return this.t('onlyYouHaveAccess')
+      if (this.view.canEdit) return this.t('youCanMakeChanges')
+      return this.view.permission === 'view' ? this.t('onlyKaitiakiCanMakeChanges') : this.t('youCanMakeChanges')
     }
   },
   methods: {
@@ -85,6 +104,9 @@ export default {
         backgroundImage: `url(${whakapapa})`,
         backgroundSize: 'cover'
       }
+    },
+    t (key, vars) {
+      return this.$t('whakapapaIndex.' + key, vars)
     }
   }
 }

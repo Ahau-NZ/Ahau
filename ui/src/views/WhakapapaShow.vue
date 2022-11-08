@@ -7,7 +7,7 @@
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-          <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
+          <template v-slot:edit v-if="whakapapaView && isKaitiaki">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -53,9 +53,20 @@
         <div class="icon-button" v-if="isKaitiaki">
           <TableButton :table="whakapapaView.table" @table="toggleTable()" />
         </div>
-        <div v-if="whakapapaView.table" class="icon-button">
-          <ExportButton @export="toggleDownload()" />
+
+        <div class="icon-button">
+          <ExportButton
+            v-if="whakapapaView.table"
+            alt="Export CSV"
+            @export="toggleDownload()"
+          />
+          <ExportButton
+            v-else
+            alt="Export SVG"
+            @export="exportSVG()"
+          />
         </div>
+
         <div class="icon-button">
           <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
           <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -111,12 +122,11 @@
       </v-expand-transition>
       <Tree
         v-if="whakapapaView.tree"
-
         :class="mobile? 'mobile-tree':'tree'"
-
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         @change-focus="setFocusToAncestorOf($event)"
+        @toggleSideDialog="toggleSideDialog($event)"
       />
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -176,6 +186,7 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
+import svgExport from '@/lib/svg-export.js'
 
 export default {
   name: 'WhakapapaShow',
@@ -222,7 +233,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
-    ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles']),
+    ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
     ...mapGetters('tree', ['getNode', 'getPartnerNode']),
@@ -255,6 +266,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alerts', ['showAlert']),
     ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', [
@@ -263,6 +275,25 @@ export default {
       'setViewFocus', 'toggleViewMode'
     ]),
     ...mapActions('table', ['resetTableFilters']),
+    toggleSideDialog (id) {
+      if (this.dialog.active === 'view-edit-person' && this.selectedProfileId === id) {
+        this.updateDialog(null, null)
+      } else if (!this.whakapapaView.canEdit) {
+        this.updateDialog('view-edit-person', 'preview')
+      } else {
+        this.updateDialog('view-edit-person', null)
+      }
+    },
+    exportSVG () {
+      const tree = document.body.querySelector('svg.tree #baseGroup')
+      const { width, height } = tree.getBBox()
+
+      const fileName = [
+        (this.whakapapaView.name || '').replace(/\s+/g, '-'),
+        'whakapapa'
+      ].join('-')
+      svgExport(document.body.querySelector('svg.tree'), width, height, fileName)
+    },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars
     },
@@ -281,7 +312,7 @@ export default {
     // },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfileById(profile)
-      if (this.dialog.active === 'view-edit-node') {
+      if (this.dialog.active === 'view-edit-person') {
         this.updateDialog(null, null)
       }
       this.updateDialog(dialog, type)
@@ -362,7 +393,7 @@ export default {
     },
     openTableContextMenu (event) {
       this.setSelectedProfileById(event.profile)
-      if (this.dialog.active === 'view-edit-node') {
+      if (this.dialog.active === 'view-edit-person') {
         this.updateDialog(null, null)
       }
       this.$refs.menu.open(event.$event)
@@ -384,12 +415,15 @@ export default {
 
       await this.saveWhakapapaView(input)
     },
+    closeDialog () {
+      this.updateDialog(null, null)
+      this.dialog.active = null
+    },
     async deleteWhakapapa () {
-      const input = {
-        tombstone: { date: new Date() }
-      }
+      this.closeDialog()
+      this.showAlert({ message: 'Deleting the whakapapa...', color: 'green', delay: -1 })
 
-      await this.processSaveWhakapapa(input)
+      await this.processSaveWhakapapa({ tombstone: { date: new Date() } })
 
       // check the group we are going to is an admin one
       const parentGroup = this.tribes.find(tribe => tribe.admin && tribe.admin.id === this.$route.params.tribeId)
@@ -401,6 +435,8 @@ export default {
       } else {
         this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
       }
+
+      this.showAlert({ message: 'Whakapapa successfully deleted', color: 'green' })
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)

@@ -68,7 +68,8 @@ export function setDefaultStory (newStory) {
     protocols: story.protocols,
     relatedRecords,
     artefacts,
-    tiaki: story.tiaki
+    tiaki: story.tiaki,
+    permission: story.permission
   }
 }
 
@@ -99,7 +100,8 @@ export const EMPTY_STORY = {
   relatedRecords: [],
   artefacts: [],
   timeInterval: null,
-  submissionDate: null
+  submissionDate: null,
+  permission: null
 }
 
 export const PERMITTED_STORY_ATTRS = [
@@ -118,6 +120,7 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
+  'permission',
   'recps'
 ]
 

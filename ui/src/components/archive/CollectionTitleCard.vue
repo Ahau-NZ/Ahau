@@ -11,7 +11,7 @@
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
           {{ collection.name + ' collection'}}
         </h4>
-        <div v-if="collection && collection.canEdit">
+        <div v-if="collection && isKaitiaki">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -27,10 +27,10 @@
           </v-tooltip>
         </div>
       </v-row>
-      <div>
+      <div class="description">
         <p
           v-if="collection.description"
-          class="black--text mb-0 py-2 caption"
+          class="black--text mb-0 py-2 caption line-clamp"
         >
           {{ collection.description }}
         </p>
@@ -39,7 +39,7 @@
 
     <v-spacer />
 
-    <v-col v-if="access && access.length" cols="auto" class="pb-0">
+    <v-col v-if="access && access.length && desktop" cols="auto" class="pb-0">
       <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
       <AvatarGroup
         style="position:relative; bottom:15px; right:15px"
@@ -76,8 +76,11 @@ export default {
     collection: Object
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('tribe', ['tribeProfile']),
+    desktop () {
+      return this.$vuetify.breakpoint.lg
+    },
     access () {
       return [this.tribeProfile].filter(Boolean)
     },
@@ -97,6 +100,15 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.description {
+  width: 100%;
+  overflow: hidden;
+}
 
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 </style>

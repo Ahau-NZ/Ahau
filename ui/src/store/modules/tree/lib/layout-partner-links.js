@@ -1,9 +1,9 @@
 import linkStyle from './link-style'
 import linkKey from './link-key'
-import offsetIncrement from './offset-increment'
+// import offsetIncrement from './offset-increment'
 import settings from '../../../../lib/link'
 
-const Y_GAP = 5
+const Y_GAP = 10
 
 export default function layoutPartnerLinks (rootNode, { getPartnerType }) {
   if (!rootNode.partners) throw new Error('missing partners')
@@ -20,7 +20,7 @@ export default function layoutPartnerLinks (rootNode, { getPartnerType }) {
     .filter(isDrawnLink)
     .reduce((acc, partnerNode, i, partners) => {
       // the position the link sits on, on the Y axis
-      const partnerLinkY = rootNode.y + offsetIncrement(i, partners.length) * Y_GAP
+      const partnerLinkY = rootNode.y + (i * Y_GAP) - (partners.length / 2 * Y_GAP)
 
       acc.push({
         key: linkKey('partner', [rootNode, partnerNode]),

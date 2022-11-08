@@ -1,3 +1,6 @@
+import get from 'lodash.get'
+import Vue from 'vue'
+
 import { whoami } from '../lib/person-helpers.js'
 import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants.js'
 
@@ -29,6 +32,7 @@ export default function rootModule (apollo) {
           }
         }
       },
+      linkedProfiles: {},
       loading: false, // boolean
       loadingLabel: '',
       loadingTimeout: 2 * SECOND,
@@ -46,14 +50,26 @@ export default function rootModule (apollo) {
       allowSubmissions: true, // TODO extract to specific domain,
 
       // TODO mix 2021-12-09 move these to the tribe module (?) :
-      currentAccess: null,
-      isKaitiaki: false
+      currentAccess: null
     },
 
     getters: {
       whoami: state => state.whoami,
+      linkedProfiles: state => state.linkedProfiles,
+      getPersonalProfileInTribe: (_, getters) => {
+        return (tribeId) => {
+          return Object.values(getters.linkedProfiles)
+            .find(profile => {
+              return (
+                profile.recps &&
+                profile.recps[0] === tribeId // TODO: extend this to search for poBoxId as well
+              )
+            })
+        }
+      },
       isMyProfile: state => (profileId) => {
-        return state.whoami.linkedProfileIds.includes(profileId)
+        if (!profileId) return false
+        return get(state, 'whoami.linkedProfileIds', []).includes(profileId)
       },
       navComponent: state => state.navComponent,
       loadingState: state => {
@@ -145,18 +161,32 @@ export default function rootModule (apollo) {
       setAllowSubmissions (state, allow) {
         state.allowSubmissions = allow
       },
-      setIsKaitiaki (state, kaitiaki) {
-        state.isKaitiaki = kaitiaki
+      updateLinkedProfile (state, profile) {
+        Vue.set(state.linkedProfiles, profile.id, profile)
       }
     },
 
     actions: {
-      async setWhoami ({ commit }) {
+      async setWhoami ({ commit, dispatch }) {
         const result = await apollo.query(whoami)
 
         if (result.errors) throw result.errors
 
         commit('updateWhoami', result.data.whoami)
+
+        await dispatch('updateLinkedProfiles', result.data.whoami.linkedProfileIds)
+      },
+      async updateLinkedProfiles ({ commit, dispatch }, linkedProfileIds = []) {
+        await Promise.all(
+          linkedProfileIds.map(async profileId => {
+            // TODO: should this include admin profiles
+            // where recps = [poBoxId, feedId]
+            const profile = await dispatch('person/getPersonCustomFields', profileId, { root: true })
+            commit('updateLinkedProfile', profile)
+
+            return profile
+          })
+        )
       },
       setCurrentAccess ({ commit }, access) {
         commit('setCurrentAccess', access)
@@ -179,9 +209,6 @@ export default function rootModule (apollo) {
       },
       setNavComponent ({ commit }, component) {
         commit('setNavComponent', component)
-      },
-      setIsKaitiaki ({ commit }, bool = false) {
-        commit('setIsKaitiaki', bool)
       }
     }
   }

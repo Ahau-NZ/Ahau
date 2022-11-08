@@ -1,6 +1,9 @@
 <template>
 <svg :width="width - 50">
-  <g :id="node.id" :style="groupStyle">
+  <g
+    :id="node.id"
+    :transform="`translate(${node.x}, ${node.y})`"
+  >
     <g
       class="avatar -main"
       @mouseover="hover = true"
@@ -114,11 +117,6 @@ export default {
       // const { x, y } = textElm.getBBox();
       const width = (this.profile.preferredName || '').length * 8
       return width
-    },
-    groupStyle () {
-      return {
-        transform: `translate(${this.node.x}px, ${this.node.y}px)`
-      }
     },
     displayNameStyle () {
       return {

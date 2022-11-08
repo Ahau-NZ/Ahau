@@ -6,48 +6,78 @@ export default function layoutPartnerNodes (rootNode, rootGetters) {
   if (!partnerIds.length) return []
 
   const childNodes = rootNode.children || []
-  let leftPartners = 0
-  let rightPartners = 0
 
-  function meanChildX (partnerId) {
+  function meanChildX (partnerId, partnerX) {
+    // get the children of partner
     const partnerChildren = rootGetters['whakapapa/getChildIds'](partnerId)
+      // keep only the birth children
       .filter(childId => rootGetters['whakapapa/getChildType'](partnerId, childId) === 'birth')
+      // get the nodes from the graph that are also a child of the rootNode
       .map(partnerChildId => childNodes.find(node => node.data.id === partnerChildId))
-      // find the position of partnerId's children below the the rootNode (if it exists)
-      .filter(Boolean) // filters out empty entries
+      // filters out empty entries
+      .filter(Boolean)
 
-    if (!partnerChildren.length) return 0
+    if (!partnerChildren.length) return null
+    // if no children push them way to the right.
+    // We did this to priortise the position of partners with children over the order in which the partner were created
+    // the core problem is that we dont record the order or dates of relationships currently.
+    // This needs some design if we want to add this feature
+
+    // this return the average x position of the partners children
     return meanX(partnerChildren)
   }
 
-  return partnerIds
-    // sort partners by where most of their children are
-    .sort((A, B) => meanChildX(A) - meanChildX(B))
-    // then alternate placing them on each side (starting with left)
-    .map((partnerId, i) => {
-      // set partners to be on side where most of their birth children are
-      // OR fall back to making it evenly placed
+  const hopDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
 
-      let sign = -1 // default to the left
-      if (leftPartners > rightPartners) { sign = 1 }
-
-      // update the count of the partners on each side
-      (sign > 0) ? rightPartners++ : leftPartners++
-
-      const hops = (sign > 0) ? rightPartners : leftPartners
-      let hopsDistance = RADIUS + PARTNER_SPACE + PARTNER_RADIUS
-      if (hops > 1) hopsDistance += (hops - 1) * PARTNER_RADIUS + PARTNER_SPACE + PARTNER_RADIUS
-
-      // how far sideways the partner sits from the root node at 0
-      const x = (
-        rootNode.x + // avatar center
-        sign * hopsDistance
-      )
+  return partnerIds.reverse()// TODO: do this reverse upstream
+    // calcuate where most of their children are
+    .map(partnerId => {
+      let meanX = meanChildX(partnerId)
+      if (meanX === null) {
+        // when we couldn't calculate a meanChildX, make up a meanX
+        // on the right or left of the rootNode
+        // (based on how many partners total at the moment)
+        meanX = rootNode.x + ((partnerIds.length <= 1) ? -1 : 10000)
+        // if only one partner, put on left
+        // if more then one partner, throw them waaaay right
+      }
 
       return {
-        x,
-        y: rootNode.y,
-        data: { id: partnerId }
+        id: partnerId,
+        relativeChildX: meanX - rootNode.x// shift x average to be relative to the rootNode
+      }
+    })
+    // put the partners in order of child position
+    .sort((A, B) => {
+      return (A.relativeChildX - B.relativeChildX)
+    })
+    .map((A, i, arr) => {
+      // get the medium number of partners
+      const middle = Math.ceil(arr.length / 2)
+      // split arr down the middle
+      if (i < middle) {
+        const firstHalf = arr.slice(0, middle).map(A => A.id)
+        // figure out which one this is
+        const index = firstHalf.indexOf(A.id)
+        // figure how many hops it is from the rootNode
+        const hops = firstHalf.length - index
+        return {
+          // set how many hops based on their position in that set
+          x: rootNode.x - hops * hopDistance,
+          y: rootNode.y,
+          data: { id: A.id }
+        }
+      } else {
+        const secondHalf = arr.slice(middle).map(A => A.id)
+        // // get an arr of elements that are on the right of the rootNode
+        const index = secondHalf.indexOf(A.id)
+
+        return {
+          // set how many hops based on their position in that set
+          x: rootNode.x + (index + 1) * hopDistance,
+          y: rootNode.y,
+          data: { id: A.id }
+        }
       }
     })
 }

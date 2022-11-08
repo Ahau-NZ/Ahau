@@ -10,6 +10,7 @@
           ? 'dialog-bottom-transition'
           : 'scale-transition'"
     @input="close"
+    persistent
   >
     <v-card>
       <!-- bar at the top of the dialog with title + close button -->
@@ -89,7 +90,7 @@
                       color="blue"
                       :disabled="!allowSubmissions"
                     >
-                      {{ t('save') }}
+                      {{ submitLabel ? submitLabel : t('save') }}
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -125,6 +126,7 @@ export default {
       type: String,
       default: ''
     },
+    submitLabel: String,
     goBack: Function,
     enableMenu: Boolean,
     enableBar: {
@@ -190,6 +192,9 @@ export default {
     submit () {
       if (this.isSubmitting) return
       this.isSubmitting = true
+      setTimeout(() => {
+        this.isSubmitting = false
+      }, 1000)
       this.$emit('submit')
     },
     closeDialog () {

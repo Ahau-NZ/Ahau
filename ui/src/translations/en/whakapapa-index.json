@@ -6,7 +6,9 @@
   "adminWhakapapaRecords": "Admin-only Records",
   "privateRecords": "My private",
   "backToWhakapapa": "Back to whakapapa records",
-  "onlyYouHaveAccess": "Only you have access to this whakapapa",
   "showDetails": "Show Whakapapa details",
-  "editDescription": "Edit whakapapa description"
+  "editDescription": "Edit whakapapa description",
+  "onlyYouHaveAccess": "Only you have access to this whakapapa",
+  "youCanMakeChanges": "You can make changes to this whakapapa",
+  "onlyKaitiakiCanMakeChanges" : "Only kaitiaki can make changes to this whakapapa"
 }

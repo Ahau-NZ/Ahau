@@ -25,6 +25,7 @@ export function setPersonProfile (input) {
     placeOfBirth: profile.placeOfBirth,
     placeOfDeath: profile.placeOfDeath,
     buriedLocation: profile.buriedLocation,
+    customFields: profile.customFields || {},
 
     // relationship
     relationshipType: profile.relationshipType,
@@ -76,7 +77,8 @@ export const PERMITTED_PERSON_NESTED_PROPS = [
   'headerImage',
   'avatarImage',
   'tombstone',
-  'authors'
+  'authors',
+  'customFields'
 ]
 
 export const PERMITTED_PERSON_ATTRS = [
@@ -119,6 +121,7 @@ export const PERSON_FRAGMENT = gql`
     ${PERMITTED_PERSON_PROPS}
     avatarImage { ...AvatarFragment }
     headerImage { ...AvatarFragment }
+    customFields { key value }
     originalAuthor
   }
 `
@@ -330,7 +333,8 @@ export function setDefaultData (withRelationships) {
     placeOfDeath: '',
     buriedLocation: '',
     education: [],
-    school: []
+    school: [],
+    customFields: []
   }
 
   if (!withRelationships) {
@@ -342,17 +346,20 @@ export function setDefaultData (withRelationships) {
 }
 
 export function mergeAdminProfile (profile) {
+  if (!profile) return {}
   if (!profile.adminProfile) return profile
 
   const adminProfile = profile.adminProfile
   profile.adminProfile = null // faster than delete
 
-  for (const [key, value] of Object.entries(adminProfile)) {
+  for (const key in adminProfile) {
     if (key === 'id') continue
-    if (isEmpty(value)) continue
+    // TODO: need to figure out how to handle adminProfile.customFields
+    if (key === 'customFields') continue
+    if (isEmpty(adminProfile[key])) continue
 
     // over-ride!
-    profile[key] = value
+    profile[key] = adminProfile[key]
   }
 
   return profile

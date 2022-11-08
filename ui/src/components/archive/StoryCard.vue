@@ -7,7 +7,8 @@
       :class="customClass"
       :ripple="false"
       :light="!showArtefact"
-      :elevation="(!mobile && !showArtefact && fullStory) ? 24 : 3"
+      :elevation="(!mobile && !showArtefact && fullStory) ? 24 : 0"
+      outlined
       @click.passive="showStory()"
     >
       <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:0">
@@ -90,11 +91,6 @@
             :clickable="fullStory"
           />
         </v-col>
-        <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
-          <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
-          <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
-        </v-col>
-
         <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
           <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
           <AvatarGroup
@@ -106,6 +102,11 @@
             :clickable="fullStory"
           />
         </v-col>
+        <v-col v-if="story.location" cols="auto">
+          <v-list-item-subtitle style="color:#a7a3a3" class="pb-1">Location</v-list-item-subtitle>
+          <p class="mt-3">{{ story.location }}</p>
+        </v-col>
+
         <v-col v-if="fullStory">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Submission date</v-list-item-subtitle>
           <p class="mt-3">{{ submissionDate }}</p>
@@ -217,11 +218,11 @@
         </v-row>
       </div>
       <v-card-actions v-if="fullStory" class="justify-end">
-        <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
-          <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
+        <v-list-item-icon v-if="fullStory && !showArtefact && !viewOnly" class="pt-0 mt-0">
+          <EditStoryButton @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
-        <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-artefact')"/>
+        <v-list-item-icon v-if="showArtefact && !viewOnly" class="pt-0 mt-12">
+          <EditArtefactButton @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
         style="position:absolute; top:0px; right:0px;">
@@ -276,6 +277,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import get from 'lodash.get'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
@@ -340,9 +342,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['storeDialog', 'whoami']),
+    ...mapGetters(['storeDialog', 'whoami', 'isMyProfile', 'isKaitiaki']),
     ...mapGetters('archive', ['showArtefact']),
     ...mapGetters('tribe', ['tribeProfile']),
+    viewOnly () {
+      return !this.isKaitiaki && !this.isContributor && this.story.permission === 'view'
+    },
+    isContributor () {
+      return get(this.story, 'contributors', [])
+        .some(contributor => this.isMyProfile(contributor.profile.id))
+    },
     access () {
       return [this.tribeProfile].filter(Boolean)
     },

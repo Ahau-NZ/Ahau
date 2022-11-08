@@ -1,17 +1,76 @@
 # Changelog | Ahau desktop
 
-## v2.14.0 (Draft)
+## v2.16.1
+
+### Bug Fixes
+* fixed correct partner spacing
+* fixed updating whakapapa count
+
+Tweak Feature
+* changed the installer names-pattern
+
+## v2.16.0
+
+### Features
+* added "export to SVG" for whakapapa graphs
+
+### Improvements
+* better layout for complex multi-partner scenarios
+* better relationship line layout
+
+### Bug Fixes
+* fixed auto-updating for windows (this version onwards should work)
+
+
+## v2.15.0
+
+### Features
+* added option to select whether a member can edit or view a whakapapa record
+* auto open sideNodeDialog when clicking on a person, add
+* update whakapapa card in whakapapa index to show whakapapa permissions
+* members cannot update view only records
+### Bug Fixes
+- fixed sorting of children
+- fixed sorting of partners
+- SideNodeDialog now showing admin fields for admin users
+- NewRegistrationDialog now recongnises required DOB inputs
+
+## v2.14.2
+
+patched a bug introduced by ssb-tribes removing deprecated `application` API - this was still used
+in ssb-ahau's database migrations
+
+## v2.14.0
 
 ### Features
 
 - tree search bar
-  - uncollapses all nodes from the root/focus node to the searched profile
-  - highlights the path
-- can add person from database view
+    - uncollapses all nodes from the root/focus node to the searched profile
+    - highlights the path
+- error handling
+    - network / graphql errors will now open a little alert (for whakapapa queries)
+- custom community fields
+    - admins can now set "custom fields" for tribes.
+    - these are fields which people will be able to fill in in a future release
+    - TODO
+        - connecting it to person profile
+        - connecting it to group registrations
+- highlight-path from root node ==> searched node
+    - also uncollapses path to this
+
+## Improvements
+
+- faster graph loading
+    - reworked data loading to significantly speed up whakapapa loading for large graphs
+- styling improved
+    - person list
 
 ## Bug Fixes
 
-- N/A
+- group tangle bug
+    - Ben had a group which had out of control tangle meta-data (too many "previous" messages referenced)
+    - added a fix which ensures message never exceeds size limit because of this meta-data
+- updating items on person-list
 
 ### Improvements
 
@@ -104,7 +163,7 @@ WhakapapaIndex
 - registration form
     - fixes ui for joining questions
     - add placeholders
-    - hide comments section when there are no comments 
+    - hide comments section when there are no comments
 
 ## v2.9.6
 
@@ -134,7 +193,7 @@ WhakapapaIndex
 ### Features
 
 - updated various front-end dependencies
-  
+
 ### Bug Fixes
 
 - fixed bug where ignored profiles werent showing up in the SideNodeDialog
@@ -389,7 +448,7 @@ Features:
 - In tribe profile view you can now click on a member to view there profile info
 - Updated Pataka onboarding
   - updated the Pataka dialog to provided users with other options
-  - Users will now be prompted to join a Pātaka upon creating a profile 
+  - Users will now be prompted to join a Pātaka upon creating a profile
 - Translation updates
 
 ### Bug Fixes
@@ -534,9 +593,9 @@ This updates `electron`, `electron-builder` and `electron-notarize`
 - artifact zoomer on mobile
 - can filter by name on table
 
-### Bug Fixes 
+### Bug Fixes
 - fix showing collection photos on stories
-- fix date picker input 
+- fix date picker input
 
 ---
 
@@ -562,7 +621,7 @@ This updates `electron`, `electron-builder` and `electron-notarize`
  - back button:
     - back to archive button
  - wording changes around the app
-    
+
 ---
 
 ## Version 1.0.0
@@ -575,5 +634,3 @@ This updates `electron`, `electron-builder` and `electron-notarize`
 **We have also updated**
 - the profile information section to include the place of birth, if deceased location buried and changed legal name to full name. We have also added a selection avatar for 'other' gender
 - we have updated the date input to a dropdown list
-
-

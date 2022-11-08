@@ -54,5 +54,6 @@
     "save":"Save"
   },
   "dataDescription": "Description",
-  "kaitiakiOnly": "Kaitiaki only"
+  "kaitiakiOnly": "Kaitiaki only",
+  "communityFieldsTitle": "Community fields"
 }

@@ -1,9 +1,9 @@
 // import Dialog from '@/dialogs/Dialog.vue'
-import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 
 export default [
   // { path: '/dialog', name: 'dialog', component: Dialog },
-  { path: '', name: 'new-node-dialog', component: NewNodeDialog, props: { show: true } }
+  { path: '', name: 'new-person-dialog', component: NewPersonDialog, props: { show: true } }
 ]
 
 /*

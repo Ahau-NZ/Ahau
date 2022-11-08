@@ -2,7 +2,6 @@
   <v-btn
     @click="click"
     :class="customClass"
-    elevation="1"
     :fab="mobile"
     :rounded="!mobile"
     light

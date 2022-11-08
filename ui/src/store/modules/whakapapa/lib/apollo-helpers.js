@@ -7,11 +7,11 @@ export const WhakapapaFragment = gql`
     name
     description
     focus
-    canEdit
     recps
     ignoredProfiles
     image { uri }
     recordCount
+    permission
     importantRelationships {
       profileId
       primary {
@@ -33,6 +33,18 @@ export const getWhakapapaView = id => ({
     query($id: String!) {
       whakapapaView(id: $id) {
         ...WhakapapaFragment
+
+        links {
+          childLinks {
+            parent
+            child
+            relationshipType
+          }
+          partnerLinks {
+            parent
+            child
+          }
+        }
         tiaki {
           ...PublicProfileFields
         }
@@ -40,6 +52,27 @@ export const getWhakapapaView = id => ({
     }
   `,
   variables: { id },
+  fetchPolicy: 'no-cache'
+})
+
+const GET_DESCENDANT_LINKS_QUERY = gql`
+  query($profileId: String!) {
+    getDescendantLinks(profileId: $profileId) {
+      childLinks {
+        parent
+        child
+        relationshipType
+      }
+      partnerLinks {
+        parent
+        child
+      }
+    }
+  }
+`
+export const getDescendantLinks = profileId => ({
+  query: GET_DESCENDANT_LINKS_QUERY,
+  variables: { profileId },
   fetchPolicy: 'no-cache'
 })
 

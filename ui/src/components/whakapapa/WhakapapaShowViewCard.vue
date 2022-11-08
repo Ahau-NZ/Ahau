@@ -116,6 +116,7 @@ export default {
 
       if (this.currentAccess.type === ACCESS_PRIVATE) return this.t('onlyYouHaveAccess')
       else if (this.currentAccess.type === ACCESS_KAITIAKI) return `Only ${this.currentAccessProfile.preferredName} kaitiaki have access to this whakapapa` // TODO: translate
+      else if (this.view.permission === 'view') return `Only ${this.currentAccessProfile.preferredName} kaitiaki can make changes to this whakapapa`
       else return `Only ${this.currentAccessProfile.preferredName} members have access to this whakapapa` // TODO: translate
     },
     image () {
@@ -152,7 +153,7 @@ export default {
     ...mapActions('person', ['setSelectedProfileById']),
     openProfile (profile) {
       this.setSelectedProfileById(profile.id)
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.setDialog({ active: 'view-edit-person', type: 'preview' })
     },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)

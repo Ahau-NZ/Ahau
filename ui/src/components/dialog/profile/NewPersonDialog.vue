@@ -1,8 +1,7 @@
 <template>
-  <Dialog :show="show" :title="noRelationship ? noRelationshipTitle : title" width="720px" :goBack="close" enableMenu
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
-    :hideActions="noRelationship && hasSelection"
   >
 
     <!-- Content Slot -->
@@ -18,7 +17,7 @@
           :displayName="getDisplayName(selectedProfile)"
           :isDuplicate="isDuplicate"
           :moveDup.sync="moveDup"
-          :fullForm="true"
+          show-custom-fields
         >
 
           <!-- Slot = Search -->
@@ -112,7 +111,7 @@
 
       </v-col>
     </template>
-    <template v-if="currentAccess && !isPersonIndex" v-slot:before-actions>
+    <template v-if="currentAccess" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="[currentAccess]"  disabled/>
     </template>
   </Dialog>
@@ -136,11 +135,11 @@ import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, s
 import { parseInterval } from '@/lib/date-helpers.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
-const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
+const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
 const isNotEmpty = (array) => array && array.length > 0
 
 export default {
-  name: 'NewNodeDialog',
+  name: 'NewPersonDialog',
   components: {
     Avatar,
     Dialog,
@@ -211,6 +210,7 @@ export default {
       }
     },
     async 'formData.preferredName' (name) {
+      if (this.isLogin) return
       clearTimeout(this.timer)
 
       if (!name) {
@@ -256,15 +256,11 @@ export default {
     ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
-    ...mapGetters('tribe', ['currentTribe']),
-    isPersonIndex () {
-      return this.$route.name === 'personIndex'
-    },
-    noRelationship () {
-      return this.type === 'person'
+    isLogin () {
+      return this.$route.name === 'login'
     },
     allowRelationships () {
-      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null) && this.type !== 'person'
+      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },
     isWhakapapaIndex () {
       return ['community/whakapapa', 'person/whakapapa'].includes(this.$route.name)
@@ -344,9 +340,6 @@ export default {
       })
 
       return submission
-    },
-    noRelationshipTitle () {
-      return this.hasSelection ? this.t('existingPerson') : this.t('addPerson')
     }
   },
   methods: {
@@ -504,6 +497,7 @@ export default {
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }
+
       this.$emit('create', submission)
       this.close()
     },
@@ -571,7 +565,7 @@ export default {
       this.suggestions = []
     },
     t (key, vars) {
-      return this.$t('newNode.' + key, vars)
+      return this.$t('newPerson.' + key, vars)
     },
 
     async findSuggestionsByGroup (name) {
@@ -591,11 +585,11 @@ export default {
       const rawSuggestions = await this.findPersonByName({
         name,
         type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
-        groupId: this.whakapapaView.recps ? this.whakapapaView.recps[0] : this.currentTribe.id
+        groupId: this.whakapapaView.recps[0]
       })
       // reset the ancestors array
       this.ancestors = []
-      if (!this.noRelationship) await this.loadPersonsAncestors(this.selectedProfile.id) // Get the ancestors of the current node
+      await this.loadPersonsAncestors(this.selectedProfile.id) // Get the ancestors of the current node
 
       return rawSuggestions
         .filter(person => {
@@ -606,7 +600,7 @@ export default {
             !this.ancestors.some(ancestorId => ancestorId === person.id) &&
 
             // dont suggest direct descendants already in the tree
-            !this.selectedProfile?.children.some(child => child.id === person.id)
+            !this.selectedProfile.children.some(child => child.id === person.id)
           )
         })
     },

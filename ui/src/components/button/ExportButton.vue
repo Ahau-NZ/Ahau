@@ -5,13 +5,19 @@
            <v-icon light > mdi-download-circle </v-icon>
         </v-btn>
     </template>
-    <span>Export to csv</span>
+    <span>{{ alt }}</span>
   </v-tooltip>
 </template>
 
 <script>
 export default {
   name: 'ExportButton',
+  props: {
+    alt: {
+      type: String,
+      default: 'Export'
+    }
+  },
   methods: {
     toggle () {
       this.$emit('export')

@@ -1,6 +1,9 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import { getCustomFields, getDefaultFields } from '@/lib/custom-field-helpers'
+
 import pick from 'lodash.pick'
+import get from 'lodash.get'
 
 const defaultTribeSettings = {
   allowWhakapapaViews: true,
@@ -52,15 +55,42 @@ export default function (apollo) {
       return null
     },
     tribeJoiningQuestions: (state, getters) => {
-      const tribe = state.currentTribe
-      if (!tribe) return []
-
       if (getters.isPersonalTribe) return []
 
-      if (tribe.public && tribe.public.length) return tribe.public[0].joiningQuestions || []
-
-      return []
+      return get(state, 'currentTribe.public[0].joiningQuestions')
     },
+
+    /*
+     =========== CUSTOM FIELDS =================
+    */
+    rawTribeCustomFields: (state, getters) => {
+      if (getters.isPersonalTribe) return []
+
+      return get(state, 'currentTribe.public[0].customFields', [])
+    },
+    tribeDefaultFields (state, getters) {
+      return getDefaultFields(getters.rawTribeCustomFields)
+        .filter(field => !field.tombstone)
+    },
+    tribeCustomFields (state, getters) {
+      return getCustomFields(getters.rawTribeCustomFields)
+        .filter(field => !field.tombstone)
+    },
+    tribeRequiredCustomFields: (state, getters) => {
+      return getters.tribeCustomFields
+        .filter(field => field.required)
+    },
+    tribeRequiredDefaultFields: (state, getters) => {
+      return getters.tribeDefaultFields
+        .filter(field => field.required)
+    },
+    tribeRequiredFields: (state, getters) => {
+      return [...getters.tribeRequiredCustomFields, ...getters.tribeRequiredDefaultFields]
+    },
+    /*
+     =========== CUSTOM FIELDS END =================
+    */
+
     tribeKaitiaki: (state, getters) => {
       const tribe = state.currentTribe
       if (!tribe) return []
@@ -147,8 +177,19 @@ export default function (apollo) {
 
       return options
     },
-    tribes: state => {
-      return state.tribes
+    tribes: state => state.tribes,
+    joinedTribes: (state, getters) => getters.tribes.filter(tribe => get(tribe, 'private.length') && get(tribe, 'public.length')),
+    customFieldsByTribe: (state, getters) => {
+      return getters.joinedTribes.map(tribe => {
+        return {
+          tribeId: tribe.id,
+          profileId: get(tribe, 'private[0].id'),
+          preferredName: get(tribe, 'private[0].preferredName'),
+          customFields: getCustomFields(get(tribe, 'public[0].customFields', []))
+            .filter(field => !field.tombstone)
+        }
+      })
+        .filter(tribe => get(tribe, 'customFields.length'))
     }
   }
 
@@ -194,9 +235,10 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        const members = await dispatch('getMembers', id)
+        const tribe = res.data.tribe
+        tribe.members = await dispatch('getMembers', id)
 
-        return { ...res.data.tribe, members }
+        return tribe
       } catch (err) {
         console.error('Something went wrong while fetching tribe: ', id)
         console.error(err)
@@ -228,7 +270,6 @@ export default function (apollo) {
         const res = await apollo.query(getTribes)
 
         if (res.errors) throw res.errors
-
         commit('updateTribes', res.data.tribes)
 
         return res.data.tribes

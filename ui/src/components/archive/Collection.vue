@@ -5,7 +5,7 @@
     light
     class="pa-0 ma-1"
     @click="$emit('click')"
-    :elevation='3'
+    outlined
   >
     <v-img
       :src="image"
@@ -53,9 +53,7 @@ export default {
       return formatSubmissionDate(this.collection.submissionDate, this.monthTranslations)
     },
     countText () {
-      if (this.collection.type === 'collection') return 'Records: ' + this.collection.recordCount
-
-      return `${this.collection.recordCount} ${this.collection.recordCount === 1 ? 'person' : 'people'}`
+      return `${this.collection.recordCount} ${this.collection.recordCount === 1 ? 'record' : 'records'}`
     }
   },
   methods: {
