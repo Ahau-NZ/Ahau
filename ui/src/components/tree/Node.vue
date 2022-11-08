@@ -12,7 +12,7 @@
     <g v-if="showAvatars" :transform="`translate(0 ${radius + 12})`">
       <rect
         :width="textWidth"
-        height="22"
+        :height="textHeight"
         :x="-textWidth / 2"
         y="-16"
         fill="#fff"
@@ -209,6 +209,9 @@ export default {
       const width = (this.splitDisplayName.join('') || '').length * 8
       return width < 100 ? width : 100
     },
+    textHeight () {
+      return this.splitDisplayName.length > 1 ? 44 : 22
+    },
     avatarStyle () {
       return this.profile.deceased
         ? { filter: 'grayscale(1) sepia(0.2)', opacity: '0.4' }
@@ -216,7 +219,7 @@ export default {
     },
     dotsUnderNode () {
       // centers the three dots underneath a nodes name
-      const y = this.isPartner ? 55 : 70
+      const y = this.isPartner ? 55 : this.splitDisplayName.length > 1 ? 90 : 70
 
       return {
         fontSize: '22px',
@@ -245,8 +248,8 @@ export default {
     },
     splitDisplayName () {
       return !this.displayName.includes(' ')
-        ? this.displayName.match(/(.{1,12})/g)
-        : this.displayName.match(/(.{1,20})(\s|$)/g)
+        ? this.displayName.match(/(.{1,15})/g)
+        : this.displayName.match(/(.{1,15})(\s|$)/g)
     }
   },
   methods: {
