@@ -6,7 +6,7 @@ import uniqby from 'lodash.uniqby'
 import importFromCsvActions from './import-from-csv-actions'
 import { getWhakapapaView, getDescendantLinks, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers'
 import getExtendedFamily from './lib/get-extended-family'
-// import FindPathToRoot from './lib/find-path-to-root'
+import FindPathToRoot from './lib/find-path-to-root'
 
 import { saveLink, whakapapaLink } from '../../../lib/link-helpers'
 
@@ -100,31 +100,17 @@ export default function (apollo) {
     showExtendedFamily: state => Boolean(state.view.viewChanges.showExtendedFamily),
     autoCollapse: state => state.view.viewChanges.autoCollapse,
     isLoadingWhakapapa: state => state.activeQueryCount > 0,
-    recordCount: (state, getters) => {
-      const profiles = new Set([])
-      const opts = { showCollapsed: true, showExtendedFamily: false }
 
-      walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
-        profiles.add(profileId)
-        getters.getPartnerIds(profileId, opts).forEach(p => profiles.add(p))
-        getters.getChildIds(profileId, opts).forEach(p => profiles.add(p))
-      })
-
-      return profiles.size
+    findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
+    pathToRoot: (state, getters, rootState, rootGetters) => {
+      const id = rootGetters['tree/searchedProfileId']
+      if (!id) return []
+      return getters.findPathToRoot(id)
     },
-
-    // findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
-    // pathToRoot: (state, getters, rootState, rootGetters) => {
-    //   const id = rootGetters['tree/searchedProfileId']
-    //   if (!id) return []
-    //   return getters.findPathToRoot(id)
-    // },
-    pathToRoot: state => state.path,
-
     /* getter methods */
     isCollapsedNode: (state, getters) => (id) => {
-      // const path = getters.pathToRoot
-      // if (path && path.length && path.includes(id)) return false
+      const path = getters.pathToRoot
+      if (path && path.length && path.includes(id)) return false
       return Boolean(state.view.viewChanges.collapsed[id])
     },
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
@@ -179,7 +165,10 @@ export default function (apollo) {
           .filter(childId => getters.isNotIgnored(childId) && !childIds.includes(childId))
 
         new Set([...childIds, ...partnerChildIds])
-          .forEach(childId => queue.push(childId))
+          .forEach(childId => {
+            console.log('isDuplicate')
+            queue.push(childId)
+          })
       }
 
       return foundCount > 1
@@ -279,10 +268,15 @@ export default function (apollo) {
       const queue = [parentId]
       while (result === false && queue.length) {
         const parentId = queue.shift()
-        getters.getChildIds(parentId).forEach(id => {
+        for (const id of getters.getChildIds(parentId)) {
           if (id === childId) result = true
           queue.push(id)
-        })
+        }
+        // getters.getChildIds(parentId).forEach(id => {
+        //   console.log('isDescendant')
+        //   if (id === childId) result = true
+        //   queue.push(id)
+        // })
       }
       return result
     },
@@ -402,6 +396,7 @@ export default function (apollo) {
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
       childLinks.forEach(({ parent, child, relationshipType }) => {
+        console.log('addLinks/childLinks')
         const newChildren = {
           ...(state.childLinks[parent] || {}),
           [child]: relationshipType || FALLBACK_CHILD_REL
@@ -411,6 +406,7 @@ export default function (apollo) {
       })
 
       partnerLinks.forEach(({ parent, child, relationshipType }) => {
+        console.log('addLinks/partnerLinks')
         const [partnerA, partnerB] = [parent, child].sort()
         const newPartners = {
           ...(state.partnerLinks[partnerA] || {}),
@@ -425,10 +421,11 @@ export default function (apollo) {
           console.error('expected state.view.focus to be set for auto-collapsing')
           return
         }
+        console.log('addlinks walkTree ')
         walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
           if (shouldCollapseChildren(processed.size, depth, isLoadingFocus)) {
             // copy of setNodeCollapsed mutation
-            Vue.set(state.viewChanges.collapsed, profileId, true)
+            Vue.set(state.view.viewChanges.collapsed, profileId, true)
           }
         })
       }
@@ -560,7 +557,7 @@ export default function (apollo) {
       const links = await dispatch('getFamilyLinks', { profileId })
       if (links) dispatch('addLinks', links)
     },
-    async loadWhakapapaView ({ commit, dispatch, rootGetters }, id) {
+    async loadWhakapapaView ({ commit, dispatch, rootGetters, state }, id) {
       commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
       if (!view) return
@@ -569,17 +566,22 @@ export default function (apollo) {
       // set canEdit here instead of with graphql
       view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
 
+      // console.log('loadWhakapapaView: setView', view)
       commit('setView', view)
       const links = await dispatch('getDescendantLinks', view.focus)
       if (!links) return
-      dispatch('addLinks', { ...links, isLoadingFocus: true })
+
+      const isLoadingFocus = !state.views[id]
+      dispatch('addLinks', { ...links, isLoadingFocus })
     },
 
-    async saveWhakapapaView ({ commit, dispatch }, input) {
+    async saveWhakapapaView ({ commit, dispatch, rootGetters }, input) {
       const result = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
       if (!result) return
 
       const view = await dispatch('getWhakapapaView', result)
+      view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
+
       if (view) commit('setView', view)
 
       return result
@@ -758,6 +760,19 @@ export default function (apollo) {
     setAutoCollapse ({ commit }, autoCollapse) {
       commit('setAutoCollapse', autoCollapse)
       if (!autoCollapse) commit('resetCollapsed')
+    },
+    getRecordCount ({ state, getters }) {
+      const profiles = new Set([])
+      const opts = { showCollapsed: true, showExtendedFamily: false }
+
+      console.log('recordCount: walkTree')
+      walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
+        profiles.add(profileId)
+        getters.getPartnerIds(profileId, opts).forEach(p => profiles.add(p))
+        getters.getChildIds(profileId, opts).forEach(p => profiles.add(p))
+      })
+
+      return profiles.size
     }
   }
 
@@ -796,6 +811,7 @@ function uniqueId (array) {
 }
 
 function walkTree (childLinks, start, fn) {
+  console.log('walking Tree')
   // NOTE only walks childLinks
   // depth-first walk
   const queue = [[start, 0]]

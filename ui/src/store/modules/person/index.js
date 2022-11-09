@@ -324,9 +324,9 @@ export default function (apollo) {
         if (res.errors) throw res.errors
         const profiles = res.data.listPerson.map(mergeAdminProfile)
         commit('setProfilesArr', profiles)
-        profiles.forEach(profile => {
+        for (const profile of profiles) {
           commit('setPerson', profile)
-        })
+        }
       } catch (err) {
         console.error('Something went wrong while trying to load person list for group: ' + tribeId)
         console.error(err)

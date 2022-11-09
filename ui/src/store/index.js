@@ -28,6 +28,7 @@ import story from './modules/story/'
 import table from './modules/table'
 
 import { apolloProvider } from '../plugins/vue-apollo'
+import router from '@/router'
 
 const apollo = apolloProvider.defaultClient
 
@@ -98,6 +99,7 @@ export default new Vuex.Store({
 })
 
 function updateTree (store) {
+  console.log('updateTree')
   // this plugin listens for changes to whakapapa/nestedDescendants
   // triggers graph data updates
   const slowedRefreshTree = debounce(
@@ -113,8 +115,13 @@ function updateTree (store) {
 
   store.subscribe(mutation => {
     if (
-      mutation.type.startsWith('whakapapa') ||
-      mutation.type === 'person/setPerson' // includes birthOrder info
-    ) slowedRefreshTree()
+      mutation.type.startsWith('whakapapa')
+      // || mutation.type === 'person/setPerson' // includes birthOrder info
+    ) {
+      if (router.currentRoute?.name?.includes('whakapapa')) {
+        console.log('slowRefreshTree called: ', mutation.type)
+        slowedRefreshTree()
+      }
+    }
   })
 }

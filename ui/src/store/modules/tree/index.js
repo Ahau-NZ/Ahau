@@ -14,7 +14,7 @@ import {
 
 import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE, COUSIN_SPACE } from './constants'
 import calculateAge from '../../../lib/calculate-age'
-import FindPathToRoot from '../whakapapa/lib/find-path-to-root'
+// import FindPathToRoot from '../whakapapa/lib/find-path-to-root'
 
 export default function () {
   const state = {
@@ -32,6 +32,7 @@ export default function () {
   const getters = {
     tree: state => state.tree,
     descendants (state, getters) {
+      console.log('getDescendants called')
       if (state.tree) return state.tree.descendants()
       else return []
       // returns the array of descendants starting with the root node, then followed by each child in topological order
@@ -146,8 +147,6 @@ export default function () {
     },
     setSearchedProfileId ({ commit, dispatch, rootGetters }, id) {
       // expand profiles to path
-      const path = FindPathToRoot(rootGetters)(id)
-      dispatch('whakapapa/openPath', path, { root: true })
       commit('setSearchedProfileId', id)
     },
     refreshWhakapapaData ({ rootGetters, commit }) {
@@ -171,6 +170,7 @@ export function buildTree (rootGetters) {
   const treeLayout = rootGetters['tree/layout'](root)
 
   const getChildType = (parentNode, childNode) => {
+    console.log('buildTree/getChildType')
     return rootGetters['whakapapa/getChildType'](parentNode.data.id, childNode.data.id)
   }
   const getPartnerType = (A, B) => {

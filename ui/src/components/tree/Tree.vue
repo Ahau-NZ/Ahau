@@ -78,7 +78,7 @@ export default {
     this.zoom()
     this.scale()
   },
-  beforeDestroy () {
+  async beforeDestroy () {
     if (!this.whakapapaView) return
     if (this.whakapapaView.name === 'Loading') return
     if (!this.whakapapaView.canEdit) return
@@ -88,18 +88,20 @@ export default {
       return
     }
 
-    if (!this.recordCount) return
-    if (this.whakapapaView.recordCount === this.recordCount) return
+    const recordCount = await this.getRecordCount()
+
+    if (!recordCount) return
+    if (this.whakapapaView.recordCount === recordCount) return
 
     // if there are more records here than are recorded, update the whakapapa-view
     this.saveWhakapapaView({
       id: this.whakapapaView.id,
-      recordCount: this.recordCount
+      recordCount: recordCount
     })
   },
 
   computed: {
-    ...mapGetters('whakapapa', ['whakapapaView', 'recordCount']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     radius () {
       return settings.radius
@@ -147,7 +149,7 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
-    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
+    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse', 'getRecordCount']),
 
     zoom () {
       const svg = d3Select('#baseSvg')
