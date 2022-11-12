@@ -48,7 +48,7 @@
             <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
-          <template v-slot:item.image="{ item }" > <!-- eslint-disable-line -->
+          <template v-slot:item.avatarImage="{ item }" > <!-- eslint-disable-line -->
             <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
           </template>
           <!-- Handle max description charachters -->
@@ -164,7 +164,7 @@ export default {
     }
     return {
       defaultHeaders: [
-        header('image', '80px', true, true),
+        header('avatarImage', '80px', true, true),
         header('preferredName', '120px', true),
         header('legalName', '150px', true),
         header('altNames', '150px', true),

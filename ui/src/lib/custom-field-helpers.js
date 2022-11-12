@@ -13,6 +13,7 @@ export const DEFAULT_NEW_FIELD = {
 }
 
 export const DEFAULT_PROFILE_MODEL = [
+  { label: 'profile image', type: 'image', required: false, visibleBy: 'members' },
   { label: 'first name', type: 'text', required: true, visibleBy: 'members' },
   { label: 'full name', type: 'text', required: false, visibleBy: 'members' },
   { label: 'other names', type: 'array', required: false, visibleBy: 'members' },
@@ -93,6 +94,7 @@ export function mapPropToLabel (prop) {
 }
 
 const mappings = {
+  'profile image': 'avatarImage',
   'first name': 'preferredName',
   'full name': 'legalName',
   'other names': 'altNames',
