@@ -95,8 +95,13 @@ export default function (apollo) {
     setProfile (state, profile) {
       state.profilesArr.unshift(profile)
     },
+    updateProfile (state, profile) {
+      const index = state.profilesArr.findIndex((el) => el.id === profile.id)
+      state.profilesArr[index] = profile
+    },
     removeProfile (state, id) {
-      state.profilesArr.filter(profile => profile.id !== id)
+      const index = state.profilesArr.findIndex((el) => el.id === id)
+      state.profilesArr.splice(index, 1)
     },
     resetProfiles (state) {
       state.profilesArr = []
@@ -356,10 +361,8 @@ export default function (apollo) {
           .map(mergeAdminProfile)
           .concat(adminProfiles.data.listPerson)
 
-        console.log({ profiles })
         commit('setProfilesArr', profiles)
         for (const profile of profiles) {
-          console.log('const ... of setPerson')
           commit('setPerson', profile)
         }
       } catch (err) {

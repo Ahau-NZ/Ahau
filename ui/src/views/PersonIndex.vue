@@ -41,7 +41,6 @@
             itemsPerPageOptions: [15, 50, 100, -1],
             }"
           light
-
           @click:row="handleShow"
         >
           <template v-if="hiddenColumns" v-slot:header.actions> <!-- eslint-disable-line -->
@@ -100,14 +99,14 @@
       @saved="handleSaved"
     /> -->
 
-    <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
+    <!-- <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
       :show="showDelete"
 
       :profile="selectedProfile"
 
       @submit="handleDelete"
       @close="showDelete = false"
-    />
+    /> -->
     <ImportPeopleDialog v-if="showImportDialog"
       :show="showImportDialog"
       @submit="importCsv"
@@ -136,7 +135,7 @@ import { mapNodeToCsvRow } from '@/lib/csv.js'
 import { determineFilter } from '@/lib/filters.js'
 
 // import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
-import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
+// import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -146,7 +145,7 @@ export default {
   name: 'PersonIndex',
   components: {
     // SideNodeDialog,
-    RemovePersonDialog,
+    // RemovePersonDialog,
     ImportPeopleDialog,
     FilterMenu,
     Avatar
@@ -211,11 +210,17 @@ export default {
     this.$root.$on('PersonListAdd', (id) => {
       this.handleAdd(id)
     })
+    this.$root.$on('PersonListRemove', (id) => {
+      this.handleDelete(id)
+    })
     this.populateHeaders()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
-      if (isKaitiaki) await this.loadData()
+      if (isKaitiaki) {
+        await this.loadData()
+        this.populateHeaders()
+      }
     }
   },
   computed: {
@@ -265,7 +270,7 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
-    ...mapMutations('person', ['setProfile', 'removeProfile']),
+    ...mapMutations('person', ['setProfile', 'removeProfile', 'updateProfile']),
     addPerson () {
       this.setDialog({
         active: 'new-person',
@@ -399,30 +404,28 @@ export default {
       this.isLoading = true
 
       const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
-      const search = this.search
-      this.search = ''
+      this.updateProfile(newProfile)
       this.profilesIndex = this.profilesIndex
         .map(profile => {
           return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
         })
+      const search = this.search
+      this.search = ''
       this.search = search
       this.isLoading = false
     },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
       this.close()
-      this.showDelete = true
+      this.setDialog({
+        active: 'delete-person',
+        type: null,
+        source: null
+      })
     },
-    async handleDelete () {
-      this.showDelete = false
-
-      const updateId = await this.deletePerson({ id: this.selectedProfileId })
-
-      // handle removing the profile from the list
-      if (updateId) {
-        this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
-        this.removeProfile(this.selectedProfileId)
-      }
+    async handleDelete (id) {
+      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
+      this.removeProfile(id)
       this.setSelectedProfileId(null)
     },
     altNames (altArray) {

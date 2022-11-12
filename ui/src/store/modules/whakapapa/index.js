@@ -579,7 +579,8 @@ export default function (apollo) {
 
       const view = await dispatch('getWhakapapaView', result)
 
-      if (view) commit('setView', view)
+      if (state.view.id) commit('setView', view)
+      else state.views[view.id] = view
 
       return result
     },

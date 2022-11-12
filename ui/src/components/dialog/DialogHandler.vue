@@ -470,9 +470,13 @@ export default {
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },
     async removeProfile (deleteOrIgnore) {
-      await this.deleteProfileFromImportantRelationships(this.selectedProfile.id)
+      const id = this.selectedProfile.id
+      await this.deleteProfileFromImportantRelationships(id)
       if (deleteOrIgnore === 'delete') await this.processDeletePerson()
       else await this.ignoreProfile()
+      if (this.$route.name === 'personIndex') {
+        this.$root.$emit('PersonListRemove', id)
+      }
     },
 
     // TODO 2022-03-12 mix - move to vuex?

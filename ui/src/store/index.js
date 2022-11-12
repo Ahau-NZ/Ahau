@@ -99,7 +99,6 @@ export default new Vuex.Store({
 })
 
 function updateTree (store) {
-  console.log('updateTree')
   // this plugin listens for changes to whakapapa/nestedDescendants
   // triggers graph data updates
   const slowedRefreshTree = debounce(
