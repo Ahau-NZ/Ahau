@@ -1,5 +1,4 @@
 export default function FindPathToRoot (getters) {
-  console.log('getters: ', getters)
   const {
     getRawParentIds: getParentIds,
     getRawPartnerIds: getPartnerIds,

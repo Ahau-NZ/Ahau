@@ -179,6 +179,7 @@ export function buildTree (rootGetters) {
 
   // for each node in the tree:
   treeLayout.each(node => {
+    console.log('buildTree/treeLayout')
     // add partners (sorted by children)
     node.partners = layoutPartnerNodes(node, rootGetters)
 

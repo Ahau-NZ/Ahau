@@ -51,7 +51,7 @@
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
         <v-divider light class="mt-12" style="max-width:80%"></v-divider>
         <v-row class=" pb-3">
-          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${profile.preferredName} -- ${t('adminWhakapapaRecords')}`}}</p>
+          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ t('adminWhakapapaRecords') }}</p>
         </v-row>
         <CollectionGroup v-if="mobile" :collections="adminViews" @click="goWhakapapaShow"/>
         <div v-else>

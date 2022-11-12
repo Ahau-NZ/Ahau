@@ -373,10 +373,6 @@ export default {
     deleteable: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
   },
-  mounted () {
-    this.loadPersonFull(this.profileId)
-    this.loadFamilyLinks(this.profileId)
-  },
   data () {
     return {
       formData: {},
@@ -499,9 +495,14 @@ export default {
         if (this.mobile) window.scrollTo(0, 0)
       }
     },
+    profileId: {
+      immediate: true,
+      handler (newVal) {
+        this.loadProfile()
+      }
+    },
     scopedProfile: {
       deep: true,
-      immediate: true,
       async handler (profile) {
         if (!profile) return
         this.formData = this.defaultData()
@@ -521,8 +522,21 @@ export default {
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
-    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau']),
     getDisplayName,
+    async loadProfile () {
+      if (this.$route.name === 'personIndex') {
+        const profile = await this.loadPersonAndWhanau(this.profileId)
+        if (profile.parents.length) {
+          profile.parents.forEach(parent => {
+            this.loadFamilyLinks(parent.id)
+          })
+        }
+      } else {
+        this.loadPersonFull(this.profileId)
+      }
+      this.loadFamilyLinks(this.profileId)
+    },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },

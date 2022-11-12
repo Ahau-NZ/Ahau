@@ -17,7 +17,7 @@
     <NewPersonDialog
       v-if="isActive('new-person')"
       :show="isActive('new-person')"
-      :title="t('newPersonTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
+      :title="newPersonDialogTitle"
       :type="dialogType"
       withView
       @create="addPerson($event, dialogType)"
@@ -168,6 +168,11 @@ export default {
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
     ...mapGetters('tribe', ['currentTribe', 'tribeCustomFields']),
+    newPersonDialogTitle () {
+      return this.dialogType === 'person'
+        ? this.t('addPerson')
+        : this.t('newPersonTitle', { dialogType: this.dialogType, displayName: getDisplayName(this.selectedProfile) })
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

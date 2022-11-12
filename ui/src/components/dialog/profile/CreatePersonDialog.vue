@@ -357,7 +357,7 @@ export default {
   methods: {
     ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['findPersonByName', 'getPerson', 'findPersonsByNameWithinGroup']),
+    ...mapActions('person', ['findPersonByName', 'findPersonsByNameWithinGroup']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       const index = this.quickAdd[selectedArray].findIndex(x => x.id === profile.id)

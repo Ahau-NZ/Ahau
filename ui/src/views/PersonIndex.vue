@@ -185,7 +185,7 @@ export default {
         header('birthOrder', '100px', false),
         header('placeOfDeath', '100px', false),
         header('buriedLocation', '100px', false),
-        header('profession', '100px', true),
+        header('profession', '110px', true),
         header('education', '150px', true),
         header('school', '150px', true)
       ],
@@ -222,7 +222,7 @@ export default {
     ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields', 'currentTribe']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
@@ -265,10 +265,10 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
-    ...mapMutations('person', ['setProfile']),
+    ...mapMutations('person', ['setProfile', 'removeProfile']),
     addPerson () {
       this.setDialog({
-        active: 'new-node',
+        active: 'new-person',
         type: 'person',
         source: null
       })
@@ -304,9 +304,8 @@ export default {
     },
     async loadData (refresh) {
       this.isLoading = true
-      const { tribeId } = this.$route.params
       // if dont have the profiles, wait for them to load before showing them
-      if (!this.profilesArr.length || refresh) await this.loadPersonList({ type: 'group', tribeId })
+      if (!this.profilesArr.length || refresh) await this.loadPersonList()
 
       this.profilesIndex = this.profilesArr.map(this.mapProfileData)
 
@@ -356,7 +355,7 @@ export default {
     async handleEdit (item) {
       this.setSelectedProfileId(item.id)
       this.setDialog({
-        active: 'view-edit-node',
+        active: 'view-edit-person',
         type: 'editing',
         source: null
       })
@@ -364,7 +363,7 @@ export default {
     async handleShow (item) {
       this.setSelectedProfileId(item.id)
       this.setDialog({
-        active: 'view-edit-node',
+        active: 'view-edit-person',
         type: null,
         source: null
       })
@@ -420,8 +419,10 @@ export default {
       const updateId = await this.deletePerson({ id: this.selectedProfileId })
 
       // handle removing the profile from the list
-      if (updateId) this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
-
+      if (updateId) {
+        this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
+        this.removeProfile(this.selectedProfileId)
+      }
       this.setSelectedProfileId(null)
     },
     altNames (altArray) {

@@ -33,6 +33,7 @@ const mutations = {
 
 const actions = {
   setDialog ({ commit }, dialog) {
+    console.log('setting dialog: ', dialog)
     if (dialog === null) {
       commit('updateDialog', dialog)
       commit('updateType', null)

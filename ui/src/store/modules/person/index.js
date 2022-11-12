@@ -95,6 +95,9 @@ export default function (apollo) {
     setProfile (state, profile) {
       state.profilesArr.unshift(profile)
     },
+    removeProfile (state, id) {
+      state.profilesArr.filter(profile => profile.id !== id)
+    },
     resetProfiles (state) {
       state.profilesArr = []
       state.profiles = {}
@@ -253,6 +256,26 @@ export default function (apollo) {
         return {}
       }
     },
+    async loadPersonAndWhanau ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+      commit('incrementLoading')
+
+      try {
+        const profile = await dispatch('getPerson', profileId)
+        if (profile.tombstone) {
+          commit('tombstoneId', profileId)
+          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+        } // eslint-disable-line
+        else commit('setPerson', profile)
+
+        commit('decrementLoading')
+        return profile
+      } catch (err) {
+        console.error('loadPersonFull error', err) // TODO error alert message
+        commit('decrementLoading')
+        return {}
+      }
+    },
     async setSelectedProfileById ({ dispatch }, id) {
       // legacy : TODO go through app and change to setSelectedProfileId
       dispatch('setSelectedProfileId', id)
@@ -317,18 +340,30 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonList ({ commit }, { type, tribeId }) {
+    async loadPersonList ({ commit, rootGetters }) {
       try {
-        const res = await apollo.query(loadPersonList(type, tribeId))
+        // const res = await apollo.query(loadPersonList(type, tribeId))
+        // get member profiles
+        const groupId = rootGetters['tribe/currentTribe'].id
+        const membersProfiles = await apollo.query(loadPersonList('group', groupId))
+        if (membersProfiles.errors) throw membersProfiles.errors
+        // get admin profiles
+        const adminTribeId = rootGetters['tribe/currentTribe'].admin.id
+        const adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
+        if (adminProfiles.errors) throw adminProfiles.errors
 
-        if (res.errors) throw res.errors
-        const profiles = res.data.listPerson.map(mergeAdminProfile)
+        const profiles = membersProfiles.data.listPerson
+          .map(mergeAdminProfile)
+          .concat(adminProfiles.data.listPerson)
+
+        console.log({ profiles })
         commit('setProfilesArr', profiles)
         for (const profile of profiles) {
+          console.log('const ... of setPerson')
           commit('setPerson', profile)
         }
       } catch (err) {
-        console.error('Something went wrong while trying to load person list for group: ' + tribeId)
+        console.error('Something went wrong while trying to load person list')
         console.error(err)
       }
     }

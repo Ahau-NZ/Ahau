@@ -214,6 +214,7 @@ export default function (apollo) {
 
     /* higher order getters */
     getChildIds: (state, getters) => (parentId, opts) => {
+      console.log('getchildIds')
       // NOTE this gets the ids of childrenNodes in the graph
       if (!parentId) return []
 
@@ -351,8 +352,6 @@ export default function (apollo) {
 
   const mutations = {
     setView (state, view) {
-      Vue.set(state.views, state.view.id, state.view)
-
       // convert the importantRelationships to an easier lookup
       if (Array.isArray(view.importantRelationships)) {
         view.importantRelationships = view.importantRelationships.reduce(
@@ -363,12 +362,11 @@ export default function (apollo) {
           {}
         )
       }
-      view.viewChanges = defaultViewChanges()
-      // set the tree settings to display the tree by default
-      view.tree = state.view.tree ? state.view.tree : true
-      view.table = state.view.tree ? !state.view.tree : false
-      // if whakapapa has aready been loaded, load previous settings
-      state.view = state.views[view.id] || view
+      // update state.view values with those passed in here
+      state.view = {
+        ...state.view,
+        ...view
+      }
     },
     setViewFocus (state, profileId) {
       state.view.viewChanges.focus = profileId
@@ -406,7 +404,6 @@ export default function (apollo) {
       })
 
       partnerLinks.forEach(({ parent, child, relationshipType }) => {
-        console.log('addLinks/partnerLinks')
         const [partnerA, partnerB] = [parent, child].sort()
         const newPartners = {
           ...(state.partnerLinks[partnerA] || {}),
@@ -558,7 +555,9 @@ export default function (apollo) {
       if (links) dispatch('addLinks', links)
     },
     async loadWhakapapaView ({ commit, dispatch, rootGetters, state }, id) {
-      commit('resetWhakapapaView')
+      // If whakapapa had been opened, open previous view settings
+      if (state.views[id]) return commit('setView', state.views[id])
+      // console.log('loading whakapapa')
       const view = await dispatch('getWhakapapaView', id)
       if (!view) return
       // if no permission set then set as edit
@@ -566,7 +565,6 @@ export default function (apollo) {
       // set canEdit here instead of with graphql
       view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
 
-      // console.log('loadWhakapapaView: setView', view)
       commit('setView', view)
       const links = await dispatch('getDescendantLinks', view.focus)
       if (!links) return
@@ -575,12 +573,11 @@ export default function (apollo) {
       dispatch('addLinks', { ...links, isLoadingFocus })
     },
 
-    async saveWhakapapaView ({ commit, dispatch, rootGetters }, input) {
+    async saveWhakapapaView ({ commit, dispatch, rootGetters, state }, input) {
       const result = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
       if (!result) return
 
       const view = await dispatch('getWhakapapaView', result)
-      view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
 
       if (view) commit('setView', view)
 
