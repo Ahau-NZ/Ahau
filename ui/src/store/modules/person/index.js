@@ -267,7 +267,7 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPerson', profileId)
-        if (profile.tombstone) {
+        if (profile && profile.tombstone) {
           commit('tombstoneId', profileId)
           dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
         } // eslint-disable-line
