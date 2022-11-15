@@ -119,7 +119,6 @@ function updateTree (store) {
       mutation.type === 'person/setPerson' // includes birthOrder info
     ) {
       if (router.currentRoute?.name?.includes('whakapapa')) {
-        console.log('mutation called: ', mutation.type)
         slowedRefreshTree()
       }
     }

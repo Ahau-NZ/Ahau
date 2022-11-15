@@ -166,7 +166,6 @@ export default function (apollo) {
 
         new Set([...childIds, ...partnerChildIds])
           .forEach(childId => {
-            console.log('isDuplicate')
             queue.push(childId)
           })
       }
@@ -214,7 +213,6 @@ export default function (apollo) {
 
     /* higher order getters */
     getChildIds: (state, getters) => (parentId, opts) => {
-      console.log('getchildIds')
       // NOTE this gets the ids of childrenNodes in the graph
       if (!parentId) return []
 
@@ -394,7 +392,6 @@ export default function (apollo) {
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
       childLinks.forEach(({ parent, child, relationshipType }) => {
-        console.log('addLinks/childLinks')
         const newChildren = {
           ...(state.childLinks[parent] || {}),
           [child]: relationshipType || FALLBACK_CHILD_REL
@@ -418,7 +415,6 @@ export default function (apollo) {
           console.error('expected state.view.focus to be set for auto-collapsing')
           return
         }
-        console.log('addlinks walkTree ')
         walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
           if (shouldCollapseChildren(processed.size, depth, isLoadingFocus)) {
             // copy of setNodeCollapsed mutation
@@ -557,7 +553,6 @@ export default function (apollo) {
     async loadWhakapapaView ({ commit, dispatch, rootGetters, state }, id) {
       // If whakapapa had been opened, open previous view settings
       if (state.views[id]) return commit('setView', state.views[id])
-      // console.log('loading whakapapa')
       const view = await dispatch('getWhakapapaView', id)
       if (!view) return
       // if no permission set then set as edit
@@ -763,7 +758,6 @@ export default function (apollo) {
       const profiles = new Set([])
       const opts = { showCollapsed: true, showExtendedFamily: false }
 
-      console.log('recordCount: walkTree')
       walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
         profiles.add(profileId)
         getters.getPartnerIds(profileId, opts).forEach(p => profiles.add(p))
@@ -809,7 +803,6 @@ function uniqueId (array) {
 }
 
 function walkTree (childLinks, start, fn) {
-  console.log('walking Tree')
   // NOTE only walks childLinks
   // depth-first walk
   const queue = [[start, 0]]

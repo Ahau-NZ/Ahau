@@ -453,7 +453,7 @@ export default {
         type: 'link/profile-profile/child',
         child,
         parent,
-        recps: this.view.recps || this.currentTribe.id,
+        recps: this.view.recps || [this.currentTribe.id],
         ...relationshipAttrs
       })
         .then(() => {
@@ -465,7 +465,7 @@ export default {
         type: 'link/profile-profile/partner',
         child,
         parent,
-        recps: this.view.recps || this.currentTribe.id
+        recps: this.view.recps || [this.currentTribe.id],
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },

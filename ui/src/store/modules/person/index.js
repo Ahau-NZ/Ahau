@@ -347,12 +347,11 @@ export default function (apollo) {
     },
     async loadPersonList ({ commit, rootGetters }) {
       try {
-        // const res = await apollo.query(loadPersonList(type, tribeId))
-        // get member profiles
+        // get member profiles (NOTE this also has .adminProfile)
         const groupId = rootGetters['tribe/currentTribe'].id
         const membersProfiles = await apollo.query(loadPersonList('group', groupId))
         if (membersProfiles.errors) throw membersProfiles.errors
-        // get admin profiles
+        // get admin profiles (NOTE this gets the admin-only profiles)
         const adminTribeId = rootGetters['tribe/currentTribe'].admin.id
         const adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
         if (adminProfiles.errors) throw adminProfiles.errors
