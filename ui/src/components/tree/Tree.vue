@@ -175,7 +175,6 @@ export default {
         .on('dblclick.zoom', null)
     },
     scale () {
-      console.log('scale called')
       const svg = d3Select('#baseSvg')
       const g = d3Select('#baseGroup')
       const zoom = d3Zoom()

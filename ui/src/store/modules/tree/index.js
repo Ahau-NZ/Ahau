@@ -37,7 +37,6 @@ export default function () {
       return state.loadingTree
     },
     descendants (state, getters) {
-      console.log('getDescendants called')
       if (state.tree) return state.tree.descendants()
       else return []
       // returns the array of descendants starting with the root node, then followed by each child in topological order
@@ -171,7 +170,6 @@ export default function () {
 }
 
 export function buildTree (rootGetters, state) {
-  console.log('==========BUILD TREE CALLED==========')
   state.loadingTree = true
   const root = buildRoot(rootGetters)
   const treeLayout = rootGetters['tree/layout'](root)
@@ -184,7 +182,6 @@ export function buildTree (rootGetters, state) {
   }
   // for each node in the tree:
   treeLayout.each(node => {
-    console.log('buildTree/treeLayout')
     // add partners (sorted by children)
     node.partners = layoutPartnerNodes(node, rootGetters)
 
@@ -201,7 +198,6 @@ export function buildTree (rootGetters, state) {
       ...partnerLinks
     ]
   })
-  console.log('==========BUILD TREE FINISHED==========')
   // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
   // NOTE ideally we could do this here ... but results in an infinite loop
   // NOTE done after above round as partners are added there
