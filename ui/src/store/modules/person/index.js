@@ -45,7 +45,6 @@ export default function (apollo) {
     person: state => (profileId) => state.profiles[profileId],
     profilesArr: state => state.profilesArr,
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
-      console.log('personPlusFamily called')
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
       // NOTE this only builds on links already in the whakapapa store
