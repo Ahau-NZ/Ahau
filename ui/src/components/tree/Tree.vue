@@ -10,6 +10,8 @@
           :children="tree.children"
           :partners="tree.partners"
           :links="tree.links"
+          :zooming="zooming"
+          :scale="zoomScale"
 
           :showAvatars="showAvatars"
           @root-node-click="handleRootNodeClick"
@@ -69,7 +71,9 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
 
-      nonFocusedPartners: []
+      nonFocusedPartners: [],
+      zooming: false,
+      zoomScale: 0
     }
   },
   mounted () {
@@ -99,7 +103,6 @@ export default {
       recordCount: recordCount
     })
   },
-
   computed: {
     ...mapGetters('whakapapa', ['whakapapaView']),
     ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode', 'searchedProfileId']),
@@ -158,15 +161,28 @@ export default {
       svg.call(
         d3Zoom()
           .scaleExtent([0.01, 5])
-          .on('zoom', (event) => g.attr('transform', event.transform))
+          .on('start', () => {
+            this.zooming = true
+          })
+          .on('zoom', (event) => {
+            this.zoomScale = event.transform.k
+            g.attr('transform', event.transform)
+          })
+          .on('end', () => {
+            this.zooming = false
+          })
       )
         .on('dblclick.zoom', null)
     },
     scale () {
+      console.log('scale called')
       const svg = d3Select('#baseSvg')
       const g = d3Select('#baseGroup')
       const zoom = d3Zoom()
-        .on('zoom', (event) => g.attr('transform', event.transform))
+        .on('zoom', (event) => {
+          this.zoomScale = event.transform.k
+          g.attr('transform', event.transform)
+        })
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 

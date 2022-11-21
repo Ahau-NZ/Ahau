@@ -37,13 +37,15 @@ export default function (apollo) {
     },
     profilesArr: [],
     tombstoned: new Set(),
-    loadingCount: 0
+    activeLoadingCount: 0,
+    loadingProfiles: false
   }
 
   const getters = {
     person: state => (profileId) => state.profiles[profileId],
     profilesArr: state => state.profilesArr,
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
+      console.log('personPlusFamily called')
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
       // NOTE this only builds on links already in the whakapapa store
@@ -70,7 +72,7 @@ export default function (apollo) {
       return getters.personPlusFamily(state.selectedProfileId)
     },
     isTombstoned: state => (profileId) => state.tombstoned.has(profileId),
-    isLoadingProfiles: state => state.loadingCount > 0
+    isLoadingProfiles: state => state.loadingProfiles
   }
 
   const mutations = {
@@ -84,10 +86,11 @@ export default function (apollo) {
       state.tombstoned.add(profileId)
     },
     incrementLoading (state) {
-      state.loadingCount = state.loadingCount + 1
+      state.activeLoadingCount = state.activeLoadingCount + 1
     },
     decrementLoading (state) {
-      state.loadingCount = state.loadingCount - 1
+      state.activeLoadingCount = state.activeLoadingCount - 1
+      state.loadingProfiles = state.activeLoadingCount > 0
     },
     setProfilesArr (state, profiles) {
       state.profilesArr = profiles
@@ -352,14 +355,18 @@ export default function (apollo) {
         const groupId = rootGetters['tribe/currentTribe'].id
         const membersProfiles = await apollo.query(loadPersonList('group', groupId))
         if (membersProfiles.errors) throw membersProfiles.errors
-        // get admin profiles
-        const adminTribeId = rootGetters['tribe/currentTribe'].admin.id
-        const adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
-        if (adminProfiles.errors) throw adminProfiles.errors
 
+        // get admin profiles
+        const adminTribeId = rootGetters['tribe/currentTribe'].admin?.id
+        var adminProfiles
+        // check if admin tribe exists (there is no adminTribeId in a personal tribe)
+        if (adminTribeId) {
+          adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
+          if (adminProfiles.errors) throw adminProfiles.errors
+        }
         const profiles = membersProfiles.data.listPerson
           .map(mergeAdminProfile)
-          .concat(adminProfiles.data.listPerson)
+          .concat(adminProfiles?.data.listPerson || [])
 
         commit('setProfilesArr', profiles)
         for (const profile of profiles) {

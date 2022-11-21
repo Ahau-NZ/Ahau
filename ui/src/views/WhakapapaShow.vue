@@ -33,14 +33,14 @@
         @more-info="updateDialog('whakapapa-view', null)"
       />
 
-      <v-row class="select mt-4" v-if="isLoadingProfiles || isLoadingWhakapapa">
+      <v-row class="select mt-4" v-if="isLoading">
         <v-progress-circular
           indeterminate
           :width="2"
           color="#b12526"
           class="pa-4"
         />
-        <p class="overline pl-4" style="color:#b12526">{{isLoadingProfiles ? 'loading profiles...' : 'loading connections...'}}</p>
+        <p class="overline pl-4" style="color:#b12526">{{isLoadingText}}</p>
       </v-row>
       <v-expand-transition v-else-if="!mobile">
         <v-row class="select">
@@ -236,7 +236,17 @@ export default {
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
-    ...mapGetters('tree', ['getNode', 'getPartnerNode']),
+    ...mapGetters('tree', ['getNode', 'getPartnerNode', 'isLoadingTree']),
+    isLoading () {
+      return this.isLoadingWhakapapa || this.isLoadingTree || this.isLoadingProfiles
+    },
+    isLoadingText () {
+      return this.isLoadingWhakapapa
+        ? 'Loading whakapapa...'
+        : this.isLoadingTree
+          ? 'Loading relationships...'
+          : 'Loading profiles...'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

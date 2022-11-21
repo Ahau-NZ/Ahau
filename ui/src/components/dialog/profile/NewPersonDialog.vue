@@ -269,6 +269,9 @@ export default {
     isWhakapapaIndex () {
       return ['community/whakapapa', 'person/whakapapa'].includes(this.$route.name)
     },
+    isPersonIndex () {
+      return this.$route.name === 'personIndex'
+    },
     generateSuggestions () {
       if (this.hasSelection) return []
 
@@ -575,7 +578,7 @@ export default {
     async findSuggestionsByGroup (name) {
       if (!name) return []
 
-      if (this.isWhakapapaIndex) return this.findPersonsByNameWithinGroup(name)
+      if (this.isWhakapapaIndex || this.isPersonIndex) return this.findPersonsByNameWithinGroup(name)
 
       // find persons in the group who arent an ancestor
       return this.findAndFilterSuggestions(name)

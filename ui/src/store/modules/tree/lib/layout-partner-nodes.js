@@ -1,6 +1,7 @@
 import { RADIUS, PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 
 export default function layoutPartnerNodes (rootNode, rootGetters) {
+  console.log('layoutPartnerNodes called')
   const partnerIds = rootGetters['whakapapa/getPartnerIds'](rootNode.data.id)
 
   if (!partnerIds.length) return []

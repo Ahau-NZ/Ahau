@@ -103,7 +103,6 @@ function updateTree (store) {
   // triggers graph data updates
   const slowedRefreshTree = debounce(
     () => {
-      console.log('slowedRefreshTree')
       store.getters['whakapapa/whakapapaView'].tree
         ? store.dispatch('tree/refreshWhakapapaData')
         : store.dispatch('table/refreshWhakapapaData')
@@ -115,8 +114,8 @@ function updateTree (store) {
 
   store.subscribe(mutation => {
     if (
-      mutation.type.startsWith('whakapapa') ||
-      mutation.type === 'person/setPerson' // includes birthOrder info
+      mutation.type.startsWith('whakapapa')
+      // mutation.type === 'person/setPerson' // includes birthOrder info
     ) {
       if (router.currentRoute?.name?.includes('whakapapa')) {
         console.log('mutation called: ', mutation.type)

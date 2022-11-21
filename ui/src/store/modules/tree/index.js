@@ -22,7 +22,9 @@ export default function () {
     secondaryLinks: {},
     mouseEvent: null,
     hoveredProfileId: null,
-    searchedProfileId: null
+    searchedProfileId: null,
+    nodes: [],
+    loadingTree: false
   }
 
   // we need to know the x/y of each drawn profile (d3 nodes + partners),
@@ -31,6 +33,9 @@ export default function () {
 
   const getters = {
     tree: state => state.tree,
+    isLoadingTree (state) {
+      return state.loadingTree
+    },
     descendants (state, getters) {
       console.log('getDescendants called')
       if (state.tree) return state.tree.descendants()
@@ -149,8 +154,8 @@ export default function () {
       // expand profiles to path
       commit('setSearchedProfileId', id)
     },
-    refreshWhakapapaData ({ rootGetters, commit }) {
-      const tree = buildTree(rootGetters)
+    refreshWhakapapaData ({ rootGetters, commit, state }) {
+      const tree = buildTree(rootGetters, state)
 
       commit('setTree', tree)
     }
@@ -165,18 +170,18 @@ export default function () {
   }
 }
 
-export function buildTree (rootGetters) {
+export function buildTree (rootGetters, state) {
+  console.log('==========BUILD TREE CALLED==========')
+  state.loadingTree = true
   const root = buildRoot(rootGetters)
   const treeLayout = rootGetters['tree/layout'](root)
 
   const getChildType = (parentNode, childNode) => {
-    console.log('buildTree/getChildType')
     return rootGetters['whakapapa/getChildType'](parentNode.data.id, childNode.data.id)
   }
   const getPartnerType = (A, B) => {
     return rootGetters['whakapapa/getPartnerType'](A.data.id, B.data.id)
   }
-
   // for each node in the tree:
   treeLayout.each(node => {
     console.log('buildTree/treeLayout')
@@ -196,11 +201,11 @@ export function buildTree (rootGetters) {
       ...partnerLinks
     ]
   })
-
+  console.log('==========BUILD TREE FINISHED==========')
   // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
   // NOTE ideally we could do this here ... but results in an infinite loop
   // NOTE done after above round as partners are added there
-
+  state.loadingTree = false
   return treeLayout
 }
 
