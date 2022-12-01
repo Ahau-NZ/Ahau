@@ -22,7 +22,7 @@
         <div class="information">
           <v-card-title v-text="view.name" class="py-3" style="word-break: break-word;"/>
           <v-card-subtitle v-if="description" v-text="description" class="py-1"/>
-          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} ${personText}`" class="mt-n2"/>
+          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} records`" class="mt-n2"/>
           <v-card-text v-if="hasSlotContent">
             <slot></slot>
           </v-card-text>

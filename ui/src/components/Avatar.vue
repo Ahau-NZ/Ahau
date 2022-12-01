@@ -1,7 +1,7 @@
 <template>
   <!-- no avatar placeholder -->
   <div v-if="placeHolder">
-    <img :src="require('@/assets/account.svg')"/>
+    <img :src="require('@/assets/account-outlined.svg')"/>
     <div :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>

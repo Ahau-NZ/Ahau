@@ -6,6 +6,9 @@
       </v-col>
       <v-spacer v-if="!mobile" />
       <v-col class="d-flex justify-end d-inline">
+        <v-icon color="blue-grey" class="mx-3" @click="addPerson">mdi-account-plus</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="loadData(true)">mdi-refresh</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="toggleSettings">mdi-cog</v-icon>
         <v-text-field
           light
           append-icon="mdi-magnify"
@@ -19,7 +22,6 @@
           ref="search"
           @input="handleSearchInput"
         />
-        <v-icon color="blue-grey" class="px-3" @click="toggleSettings">mdi-cog</v-icon>
       </v-col>
     </v-row>
     <v-row :class="mobile && 'pt-6'">
@@ -39,14 +41,13 @@
             itemsPerPageOptions: [15, 50, 100, -1],
             }"
           light
-
           @click:row="handleShow"
         >
           <template v-if="hiddenColumns" v-slot:header.actions> <!-- eslint-disable-line -->
             <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
-          <template v-slot:item.image="{ item }" > <!-- eslint-disable-line -->
+          <template v-slot:item.avatarImage="{ item }" > <!-- eslint-disable-line -->
             <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
           </template>
           <!-- Handle max description charachters -->
@@ -83,29 +84,6 @@
         </v-data-table>
       </v-col>
     </v-row>
-
-    <SideNodeDialog v-if="showEditor && selectedProfileId"
-      :show="showEditor"
-      :profileId="selectedProfileId"
-
-      deleteable
-      :editing="isEditing"
-      fullForm
-
-      @close="close"
-      @cancel="close"
-      @delete="showDeleteConfirmation"
-      @saved="handleSaved"
-    />
-
-    <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
-      :show="showDelete"
-
-      :profile="selectedProfile"
-
-      @submit="handleDelete"
-      @close="showDelete = false"
-    />
     <ImportPeopleDialog v-if="showImportDialog"
       :show="showImportDialog"
       @submit="importCsv"
@@ -126,15 +104,12 @@
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import isEmpty from 'lodash.isempty'
-import { mergeAdminProfile } from '@/lib/person-helpers.js'
+// import { mergeAdminProfile } from '@/lib/person-helpers.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
 import { determineFilter } from '@/lib/filters.js'
-
-import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
-import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -143,8 +118,6 @@ import { mapLabelToProp } from '../lib/custom-field-helpers'
 export default {
   name: 'PersonIndex',
   components: {
-    SideNodeDialog,
-    RemovePersonDialog,
     ImportPeopleDialog,
     FilterMenu,
     Avatar
@@ -162,7 +135,7 @@ export default {
     }
     return {
       defaultHeaders: [
-        header('image', '80px', true, true),
+        header('avatarImage', '80px', true, true),
         header('preferredName', '120px', true),
         header('legalName', '150px', true),
         header('altNames', '150px', true),
@@ -183,7 +156,7 @@ export default {
         header('birthOrder', '100px', false),
         header('placeOfDeath', '100px', false),
         header('buriedLocation', '100px', false),
-        header('profession', '100px', true),
+        header('profession', '110px', true),
         header('education', '150px', true),
         header('school', '150px', true)
       ],
@@ -195,7 +168,8 @@ export default {
       showDelete: false,
       search: '',
       showImportDialog: false,
-      settingsPanel: false
+      settingsPanel: false,
+      unsubscribe: null
     }
   },
   async mounted () {
@@ -203,19 +177,31 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-
+    // watch mutations to know when to update a profile in the table
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'person/setProfileInArr') return this.handleAdd(mutation.payload)
+      if (mutation.type === 'person/updateProfileInArr') return this.handleSaved(mutation.payload)
+      if (mutation.type === 'person/deleteProfileInArr') return this.handleDelete(mutation.payload)
+    })
     this.populateHeaders()
+  },
+  destroyed () {
+    // unsubscribe from store mutations when component is destroyed
+    this.unsubscribe()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
-      if (isKaitiaki) await this.loadData()
+      if (isKaitiaki) {
+        await this.loadData()
+        this.populateHeaders()
+      }
     }
   },
   computed: {
     ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields', 'currentTribe']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
@@ -254,10 +240,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson']),
+    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
-    ...mapActions(['setLoading']),
+    ...mapActions(['setLoading', 'setDialog']),
+    addPerson () {
+      this.setDialog({
+        active: 'new-person',
+        type: 'person',
+        source: null
+      })
+    },
     populateHeaders () {
       const defaultHeaders = this.defaultHeaders
         .filter(header => {
@@ -287,11 +280,10 @@ export default {
     t (key) {
       return this.$t('personIndex.' + key)
     },
-    async loadData () {
+    async loadData (refresh) {
       this.isLoading = true
-      const { tribeId } = this.$route.params
-
-      await this.loadPersonList({ type: 'group', tribeId })
+      // if dont have the profiles, wait for them to load before showing them
+      if (!this.profilesArr.length || refresh) await this.loadPersonList()
 
       this.profilesIndex = this.profilesArr.map(this.mapProfileData)
 
@@ -323,13 +315,6 @@ export default {
         return value.toString().toLocaleLowerCase().includes(_search)
       })
     },
-    // modified from vuetify :
-    // function defaultFilter (value: any, search: string | null, item: any) {
-    //   return value != null &&
-    //     search != null &&
-    //     typeof value !== 'boolean' &&
-    //     value.toString().toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-    // }
     handleSearchInput (search) {
       this.updateSearch(search)
     },
@@ -340,48 +325,51 @@ export default {
     }, 500),
     async handleEdit (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
-      this.isEditing = true
+      this.setDialog({
+        active: 'view-edit-person',
+        type: 'editing',
+        source: null
+      })
     },
     async handleShow (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
+      this.setDialog({
+        active: 'view-edit-person',
+        type: null,
+        source: null
+      })
     },
     close () {
       this.showEditor = false
       this.isEditing = false
     },
-    handleSaved () {
-      // Noted save has already been handled by component
-      this.close()
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
+    async handleAdd (profile) {
+      if (!this.profilesIndex.find(a => a.id === profile.id)) {
+        this.showAlert({ message: this.$t('viewPerson.profileAdded'), color: 'green' })
+        this.profilesIndex.unshift(this.mapProfileData(profile))
+      }
+    },
+    handleSaved (newProfile) {
       this.isLoading = true
-
-      const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
-      const search = this.search
-      this.search = ''
       this.profilesIndex = this.profilesIndex
         .map(profile => {
           return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
         })
-      this.search = search
       this.isLoading = false
+    },
+    async handleDelete (id) {
+      this.showAlert({ message: this.$t('viewPerson.profileDeleted'), color: 'green' })
+      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
+      this.setSelectedProfileId(null)
     },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
       this.close()
-      this.showDelete = true
-    },
-    async handleDelete () {
-      this.showDelete = false
-
-      const updateId = await this.deletePerson({ id: this.selectedProfileId })
-
-      // handle removing the profile from the list
-      if (updateId) this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
-
-      this.setSelectedProfileId(null)
+      this.setDialog({
+        active: 'delete-person',
+        type: null,
+        source: null
+      })
     },
     altNames (altArray) {
       if (isEmpty(altArray)) return ''
@@ -425,6 +413,9 @@ export default {
       hiddenElement.download = 'people.csv'
       hiddenElement.click()
     }
+  },
+  beforeDestroy () {
+    this.setDialog(null)
   }
 }
 </script>

@@ -229,10 +229,8 @@ export default {
   },
   async mounted () {
     window.scrollTo(0, 0)
-
     this.loadWhakapapaView(this.$route.params.whakapapaId)
   },
-
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),

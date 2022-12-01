@@ -28,6 +28,7 @@ import story from './modules/story/'
 import table from './modules/table'
 
 import { apolloProvider } from '../plugins/vue-apollo'
+import router from '@/router'
 
 const apollo = apolloProvider.defaultClient
 
@@ -102,6 +103,7 @@ function updateTree (store) {
   // triggers graph data updates
   const slowedRefreshTree = debounce(
     () => {
+      console.log('slowedRefreshTree')
       store.getters['whakapapa/whakapapaView'].tree
         ? store.dispatch('tree/refreshWhakapapaData')
         : store.dispatch('table/refreshWhakapapaData')
@@ -115,6 +117,10 @@ function updateTree (store) {
     if (
       mutation.type.startsWith('whakapapa') ||
       mutation.type === 'person/setPerson' // includes birthOrder info
-    ) slowedRefreshTree()
+    ) {
+      if (router.currentRoute?.name?.includes('whakapapa')) {
+        slowedRefreshTree()
+      }
+    }
   })
 }

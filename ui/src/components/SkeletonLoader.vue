@@ -12,6 +12,7 @@
           <v-skeleton-loader
           :width="skeletonWidth"
           :type="skeletonType"
+          height="200px"
           />
         </v-col>
       </v-row>

@@ -2,6 +2,7 @@
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
   "createCommunityTitle": "Create New Tribe",
   "newPersonTitle": "Add {dialogType} to {displayName}",
+  "addPerson": "Add person",
   "editPersonTitle": "Edit {displayName}",
   "whakapapaShowHelperTitle": "Family tree",
   "whakapapaRegistryTitle": "Whakapapa registry",

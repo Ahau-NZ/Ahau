@@ -31,10 +31,12 @@ pull(
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
+    // Object used for whakapapa tree
     profiles: {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
+    // Array used for personIndex page
     profilesArr: [],
     tombstoned: new Set(),
     loadingCount: 0
@@ -77,6 +79,7 @@ export default function (apollo) {
     setSelectedProfileId (state, id) {
       state.selectedProfileId = id
     },
+    // Set used for building the whakapapa tree
     setPerson (state, profile) {
       Vue.set(state.profiles, profile.id, profile)
     },
@@ -89,8 +92,20 @@ export default function (apollo) {
     decrementLoading (state) {
       state.loadingCount = state.loadingCount - 1
     },
-    setProfiles (state, profiles) {
+    // Array used for personIndex
+    setProfilesArr (state, profiles) {
       state.profilesArr = profiles
+    },
+    setProfileInArr (state, profile) {
+      state.profilesArr.unshift(profile)
+    },
+    updateProfileInArr (state, profile) {
+      const index = state.profilesArr.findIndex((el) => el.id === profile.id)
+      state.profilesArr[index] = profile
+    },
+    deleteProfileInArr (state, id) {
+      const index = state.profilesArr.findIndex((el) => el.id === id)
+      state.profilesArr.splice(index, 1)
     },
     resetProfiles (state) {
       state.profilesArr = []
@@ -106,6 +121,16 @@ export default function (apollo) {
   }
 
   const actions = {
+    async personListAdd ({ commit, dispatch, getters }, id) {
+      const profile = await dispatch('loadPersonFull', id)
+      commit('setProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListUpdate ({ commit }, profile) {
+      commit('updateProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListDelete ({ commit }, id) {
+      commit('deleteProfileInArr', id)
+    },
     async createPerson (_, input) {
       try {
         if (!input.type) throw new Error('a profile type is required to create a person')
@@ -250,6 +275,26 @@ export default function (apollo) {
         return {}
       }
     },
+    async loadPersonAndWhanau ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+      commit('incrementLoading')
+
+      try {
+        const profile = await dispatch('getPerson', profileId)
+        if (profile && profile.tombstone) {
+          commit('tombstoneId', profileId)
+          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+        } // eslint-disable-line
+        else commit('setPerson', profile)
+
+        commit('decrementLoading')
+        return profile
+      } catch (err) {
+        console.error('loadPersonFull error', err) // TODO error alert message
+        commit('decrementLoading')
+        return {}
+      }
+    },
     async setSelectedProfileById ({ dispatch }, id) {
       // legacy : TODO go through app and change to setSelectedProfileId
       dispatch('setSelectedProfileId', id)
@@ -314,18 +359,27 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonList ({ commit }, { type, tribeId }) {
+    async loadPersonList ({ commit, rootGetters }) {
       try {
-        const res = await apollo.query(loadPersonList(type, tribeId))
+        // get member profiles (NOTE this also has .adminProfile)
+        const groupId = rootGetters['tribe/currentTribe'].id
+        const membersProfiles = await apollo.query(loadPersonList('group', groupId))
+        if (membersProfiles.errors) throw membersProfiles.errors
+        // get admin profiles (NOTE this gets the admin-only profiles)
+        const adminTribeId = rootGetters['tribe/currentTribe'].admin.id
+        const adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
+        if (adminProfiles.errors) throw adminProfiles.errors
 
-        if (res.errors) throw res.errors
-        const profiles = res.data.listPerson.map(mergeAdminProfile)
-        commit('setProfiles', profiles) // QUESTION 2020-07-11 why have this as well?
-        profiles.forEach(profile => {
+        const profiles = membersProfiles.data.listPerson
+          .map(mergeAdminProfile)
+          .concat(adminProfiles.data.listPerson)
+
+        commit('setProfilesArr', profiles)
+        for (const profile of profiles) {
           commit('setPerson', profile)
-        })
+        }
       } catch (err) {
-        console.error('Something went wrong while trying to load person list for group: ' + tribeId)
+        console.error('Something went wrong while trying to load person list')
         console.error(err)
       }
     }

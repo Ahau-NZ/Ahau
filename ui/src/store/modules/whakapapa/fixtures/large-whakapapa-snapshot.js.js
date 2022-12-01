@@ -66,83 +66,32 @@ export default function LargeWhakapapa () {
         }
       ],
       tree: true,
-      table: false
-    },
-    viewChanges: {
-      focus: null,
-      autoCollapse: true,
-      collapsed: {
-        '%AzIhtFs0bxJgLRcSR3jHE7l6EWC5WK654CbCnUo/nRw=.sha256': true,
-        '%wI6CXDlfTPmU6FfhZe5Tcj4Gkf1TrlDpCHqvXDCfL4g=.sha256': true,
-        '%xLpCqeD5XRXI1RICWiJz+ss1YQ9yn1p1rEGIjQzbrw0=.sha256': true,
-        '%A/nRUb6WNPeNrE8D7vugl2q86GvSsZfX/0WGJBR04hI=.sha256': true,
-        '%KdUxuHJwfmCzBxfwzvNHY/pN+oihzGpGx9IPrHJIudI=.sha256': true,
-        '%b05PqDjkMG/pxmu9IJMFqOrNW0hENfPC5q6MynmQSyQ=.sha256': true,
-        '%YJEMMMnn/pC+EwISmfbwFdWd4yfBKPapO065gYYsPEU=.sha256': true,
-        '%rl6x246tJu/ZqkbgTMT7rFDbwt1exqiGoP81AK9whJ0=.sha256': true,
-        '%uC5WUuPTkEZ5ZgJmHbdHB0qPEBEvJSY1xfwCUFQ3tBo=.sha256': true,
-        '%7l6AcAMOeW/qyIWmhBz2kMbaFj7oecDlEUour8PLJ+c=.sha256': true,
-        '%LXht2pLQIJmKzVog8RbXxSc7Iwj0ajy1Y8wOV3VL4F8=.sha256': true,
-        '%oeQEN31KIomEnDAxqhpBUDUtXEeKeUrwrOCKF3DNRCY=.sha256': true,
-        '%dF8EtYDx27U3y2Zd6l/gyoGIoZkDQEaJI7ET2RyINi0=.sha256': true,
-        '%cUAPScLGGj1z16ZPxeLq9WH0BqHXAA8kaL3JjUkb+EA=.sha256': true,
-        '%eR4cl9kPluDNfFYqnTT4k7fS+YgLQRuUD8oraeREWdU=.sha256': true,
-        '%cUNHwuwkKuc5M1pgynnnnldAr4e7hSiiw/den2ssMeA=.sha256': true
-      },
-      showExtendedFamily: false
-    },
-    lastView: {
-      id: '%i4AdyvKNm9FODamUDaAj6qSyXs8a/lQGtcJFhVgfBg8=.sha256',
-      name: 'Cherese (Large Tree) (with IR)',
-      description: 'I te taha o toku mama\n\nA larger example of a tree\n\nHI',
-      focus: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-      canEdit: true,
-      recps: [
-        '%qmnYMwFgQ5P5kYH4Ar8fcgqBfYivt/9WQ4KYhcpxGe8=.cloaked'
-      ],
-      ignoredProfiles: [
-        '%GrQV72wqpi0Swi5GvuZykjX8FIiC5H475UbOrm/C438=.sha256'
-      ],
-      image: null,
-      recordCount: 165,
-      importantRelationships: {
-        '%flWpbYme/UH6GldslUo8Shdomh6RfzrX2m5ctdIWauI=.sha256': {
-          profileId: '%flWpbYme/UH6GldslUo8Shdomh6RfzrX2m5ctdIWauI=.sha256',
-          primary: {
-            profileId: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-            relationshipType: 'whangai',
-            __typename: 'Relationship'
-          },
-          other: [
-            {
-              profileId: '%yCJeYffyCgbNoXpvYZIbI1DaU3lfqWkvfRSUbS0K/S4=.sha256',
-              relationshipType: 'birth',
-              __typename: 'Relationship'
-            }
-          ],
-          __typename: 'ImportantRelationship'
+      table: false,
+      changes: {
+        focus: null,
+        autoCollapse: true,
+        collapsed: {
+          '%AzIhtFs0bxJgLRcSR3jHE7l6EWC5WK654CbCnUo/nRw=.sha256': true,
+          '%wI6CXDlfTPmU6FfhZe5Tcj4Gkf1TrlDpCHqvXDCfL4g=.sha256': true,
+          '%xLpCqeD5XRXI1RICWiJz+ss1YQ9yn1p1rEGIjQzbrw0=.sha256': true,
+          '%A/nRUb6WNPeNrE8D7vugl2q86GvSsZfX/0WGJBR04hI=.sha256': true,
+          '%KdUxuHJwfmCzBxfwzvNHY/pN+oihzGpGx9IPrHJIudI=.sha256': true,
+          '%b05PqDjkMG/pxmu9IJMFqOrNW0hENfPC5q6MynmQSyQ=.sha256': true,
+          '%YJEMMMnn/pC+EwISmfbwFdWd4yfBKPapO065gYYsPEU=.sha256': true,
+          '%rl6x246tJu/ZqkbgTMT7rFDbwt1exqiGoP81AK9whJ0=.sha256': true,
+          '%uC5WUuPTkEZ5ZgJmHbdHB0qPEBEvJSY1xfwCUFQ3tBo=.sha256': true,
+          '%7l6AcAMOeW/qyIWmhBz2kMbaFj7oecDlEUour8PLJ+c=.sha256': true,
+          '%LXht2pLQIJmKzVog8RbXxSc7Iwj0ajy1Y8wOV3VL4F8=.sha256': true,
+          '%oeQEN31KIomEnDAxqhpBUDUtXEeKeUrwrOCKF3DNRCY=.sha256': true,
+          '%dF8EtYDx27U3y2Zd6l/gyoGIoZkDQEaJI7ET2RyINi0=.sha256': true,
+          '%cUAPScLGGj1z16ZPxeLq9WH0BqHXAA8kaL3JjUkb+EA=.sha256': true,
+          '%eR4cl9kPluDNfFYqnTT4k7fS+YgLQRuUD8oraeREWdU=.sha256': true,
+          '%cUNHwuwkKuc5M1pgynnnnldAr4e7hSiiw/den2ssMeA=.sha256': true
         },
-        '%GXP1GyoYqGVth0XvuVJ1zZ6mES7JrLLihxyOTUTiBBg=.sha256': {
-          profileId: '%GXP1GyoYqGVth0XvuVJ1zZ6mES7JrLLihxyOTUTiBBg=.sha256',
-          primary: {
-            profileId: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-            relationshipType: 'whangai',
-            __typename: 'Relationship'
-          },
-          other: [
-            {
-              profileId: '%yCJeYffyCgbNoXpvYZIbI1DaU3lfqWkvfRSUbS0K/S4=.sha256',
-              relationshipType: 'birth',
-              __typename: 'Relationship'
-            }
-          ],
-          __typename: 'ImportantRelationship'
-        }
-      },
-      __typename: 'WhakapapaView',
-      tree: true,
-      table: false
+        showExtendedFamily: false
+      }
     },
+    lastView: '%i4AdyvKNm9FODamUDaAj6qSyXs8a/lQGtcJFhVgfBg8=.sha256',
     activeQueryCount: 0,
     childLinks: {
       '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256': {

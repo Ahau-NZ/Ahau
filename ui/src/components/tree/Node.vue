@@ -186,7 +186,7 @@ export default {
     showMenuButton () {
       // if (this.isPartner) return false
       if (!this.whakapapaView.canEdit) return false
-      if (this.isCollapsed) return false
+      if (this.isCollapsed && (this.hasUndrawnSubtree || this.hasUndrawnAscendants)) return false
       return this.hoveredProfileId === this.profileId
     },
     hasAncestors () {

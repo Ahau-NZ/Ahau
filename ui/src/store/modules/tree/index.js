@@ -143,7 +143,8 @@ export default function () {
     setHoveredProfileId ({ commit }, id) {
       commit('setHoveredProfileId', id)
     },
-    setSearchedProfileId ({ commit }, id) {
+    setSearchedProfileId ({ commit, dispatch, rootGetters }, id) {
+      // expand profiles to path
       commit('setSearchedProfileId', id)
     },
     refreshWhakapapaData ({ rootGetters, commit }) {
