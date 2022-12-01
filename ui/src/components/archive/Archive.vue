@@ -10,7 +10,7 @@
         <v-col v-show="!showStory">
           <BigAddButton :label="$t('viewArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile && profile.canEdit ? openContextMenu($event): dialog = 'new-story' " />
           <!-- Only Kaitiaki can create collections -->
-          <BigAddButton v-if="!mobile && profile.canEdit" :label="$t('viewArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
+          <BigAddButton v-if="showCollectionButton" :label="$t('viewArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
       <v-row :class="mobile ? '':'mt-4'">
@@ -130,7 +130,10 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'storeDialog', 'currentAccess']),
-    ...mapGetters('archive', ['showStory', 'currentStory', 'showArtefact']),
+    ...mapGetters('archive', ['showStory', 'currentStory', 'showArtefact', 'isFromWhakapapaShow', 'isFromPersonIndex']),
+    showCollectionButton () {
+      return !this.mobile && !this.isFromWhakapapaShow && !this.isFromPersonIndex && this.profile.canEdit
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

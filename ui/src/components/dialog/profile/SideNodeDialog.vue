@@ -518,8 +518,8 @@ export default {
   },
   methods: {
     ...mapMutations(['updateDialog', 'updateType']),
+    ...mapMutations('archive', ['setIsFromWhakapapaShow', 'setIsFromPersonIndex']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
     ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
@@ -658,6 +658,7 @@ export default {
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
       ) this.setIsFromWhakapapaShow(true)
+      else if (this.$route.name === 'personIndex') this.setIsFromPersonIndex(true)
       this.$router.push({
         name: 'person/archive',
         params: {

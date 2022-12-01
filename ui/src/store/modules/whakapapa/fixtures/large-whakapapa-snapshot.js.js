@@ -91,58 +91,7 @@ export default function LargeWhakapapa () {
         showExtendedFamily: false
       }
     },
-    lastView: {
-      id: '%i4AdyvKNm9FODamUDaAj6qSyXs8a/lQGtcJFhVgfBg8=.sha256',
-      name: 'Cherese (Large Tree) (with IR)',
-      description: 'I te taha o toku mama\n\nA larger example of a tree\n\nHI',
-      focus: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-      canEdit: true,
-      recps: [
-        '%qmnYMwFgQ5P5kYH4Ar8fcgqBfYivt/9WQ4KYhcpxGe8=.cloaked'
-      ],
-      ignoredProfiles: [
-        '%GrQV72wqpi0Swi5GvuZykjX8FIiC5H475UbOrm/C438=.sha256'
-      ],
-      image: null,
-      recordCount: 165,
-      importantRelationships: {
-        '%flWpbYme/UH6GldslUo8Shdomh6RfzrX2m5ctdIWauI=.sha256': {
-          profileId: '%flWpbYme/UH6GldslUo8Shdomh6RfzrX2m5ctdIWauI=.sha256',
-          primary: {
-            profileId: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-            relationshipType: 'whangai',
-            __typename: 'Relationship'
-          },
-          other: [
-            {
-              profileId: '%yCJeYffyCgbNoXpvYZIbI1DaU3lfqWkvfRSUbS0K/S4=.sha256',
-              relationshipType: 'birth',
-              __typename: 'Relationship'
-            }
-          ],
-          __typename: 'ImportantRelationship'
-        },
-        '%GXP1GyoYqGVth0XvuVJ1zZ6mES7JrLLihxyOTUTiBBg=.sha256': {
-          profileId: '%GXP1GyoYqGVth0XvuVJ1zZ6mES7JrLLihxyOTUTiBBg=.sha256',
-          primary: {
-            profileId: '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256',
-            relationshipType: 'whangai',
-            __typename: 'Relationship'
-          },
-          other: [
-            {
-              profileId: '%yCJeYffyCgbNoXpvYZIbI1DaU3lfqWkvfRSUbS0K/S4=.sha256',
-              relationshipType: 'birth',
-              __typename: 'Relationship'
-            }
-          ],
-          __typename: 'ImportantRelationship'
-        }
-      },
-      __typename: 'WhakapapaView',
-      tree: true,
-      table: false
-    },
+    lastView: '%i4AdyvKNm9FODamUDaAj6qSyXs8a/lQGtcJFhVgfBg8=.sha256',
     activeQueryCount: 0,
     childLinks: {
       '%ZwP0oQ/k2saKf87gjo5dTpZCcxZmvGezBaO5hn3itlM=.sha256': {
