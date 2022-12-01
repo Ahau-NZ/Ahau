@@ -35,7 +35,7 @@ test('vuex/whakapapa getters.getChildIds (with importantRelationships - children
   t.deepEqual(getChildIds('Son'), [], 'Son')
   t.deepEqual(getChildIds('Grandaughter'), ['Baby'], 'Grandaughter')
 
-  state.viewChanges.collapsed = { Son: true }
+  state.view.changes.collapsed = { Son: true }
   t.deepEqual(getChildIds('Grandad'), ['Son', 'Grandaughter'], 'Grandad')
   t.deepEqual(getChildIds('Son'), [], 'Son')
   t.deepEqual(getChildIds('Grandaughter'), ['Baby'], 'Grandaughter')
@@ -92,11 +92,11 @@ test('vuex/whakapapa getters.getChildIds (with collapsed)', t => {
 
   const state = State({
     view: {
-      focus: 'A'
-    },
-    viewChanges: {
-      collapsed: {
-        A: true
+      focus: 'A',
+      changes: {
+        collapsed: {
+          A: true
+        }
       }
     },
     childLinks: {
@@ -120,10 +120,10 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
 
   const state = State({
     view: {
-      focus: 'Y'
-    },
-    viewChanges: {
-      extendedFamily: false
+      focus: 'Y',
+      changes: {
+        extendedFamily: false
+      }
     },
     childLinks: {
       Y: { ay: 'birth' },
@@ -136,7 +136,7 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
   t.deepEqual(getChildIds('X'), ['ay'])
 
   console.log('extendedFamily')
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
 

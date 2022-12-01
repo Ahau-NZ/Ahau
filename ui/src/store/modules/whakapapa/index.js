@@ -22,7 +22,7 @@ const MIN_LOADED_PROFILES = 10
 const FALLBACK_CHILD_REL = 'birth'
 const FALLBACK_PARTNER_REL = 'partners'
 
-const defaultViewChanges = () => ({
+const defaultChanges = () => ({
   focus: null, // can temporarily over-ride the saved view.focus
   autoCollapse: true,
   collapsed: { // maps node.data.id to Boolean (default false)
@@ -53,7 +53,7 @@ const defaultView = () => ({
   // settings
   tree: true,
   table: false,
-  viewChanges: defaultViewChanges()
+  changes: defaultChanges()
 })
 
 // vuex/whakapapa is about creating a whakapapa graph and what should be in it.
@@ -88,17 +88,16 @@ export default function (apollo) {
       //   [partnerB]: relationshipType
       // }
     },
-    loaded: new Set(),
     path: []
   }
 
   const getters = {
     whakapapaView: state => state.view,
     lastWhakapapaView: state => state.lastView,
-    focus: state => state.view.viewChanges.focus || state.view.focus,
+    focus: state => state.view.changes.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
-    showExtendedFamily: state => Boolean(state.view.viewChanges.showExtendedFamily),
-    autoCollapse: state => state.view.viewChanges.autoCollapse,
+    showExtendedFamily: state => Boolean(state.view.changes.showExtendedFamily),
+    autoCollapse: state => state.view.changes.autoCollapse,
     isLoadingWhakapapa: state => state.activeQueryCount > 0,
 
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
@@ -111,7 +110,7 @@ export default function (apollo) {
     isCollapsedNode: (state, getters) => (id) => {
       const path = getters.pathToRoot
       if (path && path.length && path.includes(id)) return false
-      return Boolean(state.view.viewChanges.collapsed[id])
+      return Boolean(state.view.changes.collapsed[id])
     },
     isNotIgnored: state => (id) => !state.view.ignoredProfiles.includes(id),
     getImportantRelationship: (state, getters) => (targetId) => {
@@ -271,11 +270,6 @@ export default function (apollo) {
           if (id === childId) result = true
           queue.push(id)
         }
-        // getters.getChildIds(parentId).forEach(id => {
-        //   console.log('isDescendant')
-        //   if (id === childId) result = true
-        //   queue.push(id)
-        // })
       }
       return result
     },
@@ -367,24 +361,23 @@ export default function (apollo) {
       }
     },
     setViewFocus (state, profileId) {
-      state.view.viewChanges.focus = profileId
+      state.view.changes.focus = profileId
     },
     toggleViewMode (state) {
       state.view.tree = !state.view.tree
       state.view.table = !state.view.tree
     },
     setExtendedFamily (state, bool = false) {
-      state.view.viewChanges.showExtendedFamily = bool
+      state.view.changes.showExtendedFamily = bool
     },
     setNodeCollapsed (state, { nodeId, isCollapsed }) {
-      Vue.set(state.view.viewChanges.collapsed, nodeId, isCollapsed)
+      Vue.set(state.view.changes.collapsed, nodeId, isCollapsed)
     },
     resetWhakapapaView (state) {
-      // Preserve state of previously opened sessions for reentry
-      state.view.viewChanges.focus = null
+      state.view.changes.focus = null
+      // Preserve state of previously opened sessions for quick reloading
       Vue.set(state.views, state.view.id, state.view)
       state.view = defaultView()
-      state.loaded = new Set()
     },
 
     // methods for manipulating whakapapa links
@@ -418,7 +411,7 @@ export default function (apollo) {
         walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
           if (shouldCollapseChildren(processed.size, depth, isLoadingFocus)) {
             // copy of setNodeCollapsed mutation
-            Vue.set(state.view.viewChanges.collapsed, profileId, true)
+            Vue.set(state.view.changes.collapsed, profileId, true)
           }
         })
       }
@@ -476,10 +469,10 @@ export default function (apollo) {
     },
 
     setAutoCollapse (state, autoCollapse) {
-      state.view.viewChanges.autoCollapse = autoCollapse
+      state.view.changes.autoCollapse = autoCollapse
     },
     resetCollapsed (state) {
-      state.view.viewChanges.collapsed = {}
+      state.view.changes.collapsed = {}
     },
     setPath (state, path) {
       state.path = path
@@ -494,7 +487,7 @@ export default function (apollo) {
     toggleNodeCollapse ({ state, commit }, nodeId) {
       commit('setNodeCollapsed', {
         nodeId,
-        isCollapsed: !state.view.viewChanges.collapsed[nodeId]
+        isCollapsed: !state.view.changes.collapsed[nodeId]
       })
     },
     removeLinksToProfile ({ state, commit }, profileId) {
@@ -574,7 +567,9 @@ export default function (apollo) {
 
       const view = await dispatch('getWhakapapaView', result)
 
+      // if updating whakapapa while in whakapapa view
       if (state.view.id) commit('setView', view)
+      // else if updating recordCount after leaving whakapapa view
       else state.views[view.id] = view
 
       return result

@@ -17,7 +17,7 @@ test('vuex/whakapapa getters.getPartnerIds', t => {
     'returns correct partners of A'
   )
 
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
 
   t.deepEqual(
     getPartnerIds('A'),
@@ -79,7 +79,7 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - childr
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
   console.log('set showExtendedFamily = true')
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandad'), [], 'Grandad has no partners')
   t.deepEqual(getPartnerIds('Son'), [], 'Son has no partners')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
@@ -119,7 +119,7 @@ test('vuex/whakapapa getters.getPartnerIds (whangai grandparent complex)', t => 
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
   console.log('set showExtendedFamily = true')
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandma'), ['Grandad'], 'Grandma partners = Grandad')
   t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
@@ -179,7 +179,7 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - partne
   t.deepEqual(getPartnerIds('Daughter'), ['Son'])
   t.deepEqual(getPartnerIds('Son'), ['Daughter'])
 
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Daughter'), ['Son'], 'extendedFamily ok')
 
   state.view.importantRelationships = {
@@ -206,11 +206,11 @@ test('vuex/whakapapa getters.getPartnerIds (with collapsed)', t => {
 
   const state = State({
     view: {
-      focus: 'B'
-    },
-    viewChanges: {
-      collapsed: {
-        B: true
+      focus: 'B',
+      changes: {
+        collapsed: {
+          B: true
+        }
       }
     },
     childLinks: {},

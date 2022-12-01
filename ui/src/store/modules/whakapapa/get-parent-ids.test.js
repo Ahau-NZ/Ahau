@@ -118,7 +118,7 @@ test('vuex/whakapapa getters.getParentIds (with importantRelationships - partner
   t.deepEqual(getParentIds('Daughter'), ['Parent'])
   t.deepEqual(getParentIds('Son'), ['Parent'])
 
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getParentIds('Daughter'), ['Parent'], 'extendedFamily ok')
 
   state.view.importantRelationships = [{
@@ -179,7 +179,7 @@ test('vuex/whakapapa getters.getParentIds (mixed childLinks)', t => {
   t.deepEqual(getParentIds('ay'), ['Y'])
 
   console.log('extendedFamily')
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(getParentIds('ay'), ['Y', 'X'])
 
   t.end()
