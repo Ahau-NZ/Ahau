@@ -31,10 +31,12 @@ pull(
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
+    // Object used for whakapapa tree
     profiles: {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
+    // Array used for personIndex
     profilesArr: [],
     tombstoned: new Set(),
     loadingCount: 0
@@ -77,6 +79,7 @@ export default function (apollo) {
     setSelectedProfileId (state, id) {
       state.selectedProfileId = id
     },
+    // Set used for building the whakapapa tree
     setPerson (state, profile) {
       Vue.set(state.profiles, profile.id, profile)
     },
@@ -89,17 +92,18 @@ export default function (apollo) {
     decrementLoading (state) {
       state.loadingCount = state.loadingCount - 1
     },
+    // Array used for personIndex
     setProfilesArr (state, profiles) {
       state.profilesArr = profiles
     },
-    setProfile (state, profile) {
+    setProfileInArr (state, profile) {
       state.profilesArr.unshift(profile)
     },
-    updateProfile (state, profile) {
+    updateProfileInArr (state, profile) {
       const index = state.profilesArr.findIndex((el) => el.id === profile.id)
       state.profilesArr[index] = profile
     },
-    removeProfile (state, id) {
+    removeProfileInArr (state, id) {
       const index = state.profilesArr.findIndex((el) => el.id === id)
       state.profilesArr.splice(index, 1)
     },
