@@ -51,6 +51,9 @@ const actions = {
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
+  },
+  submitProfileChanges (_, output) {
+    console.log('changes submitted: ' + output)
   }
 }
 
