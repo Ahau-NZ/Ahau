@@ -289,7 +289,7 @@ export default {
       else this.setHoveredProfileId(null)
     },
     calculateInView () {
-      // Check zoomed for out dont consider in view
+      // Check if zoomed too far out to consider in view, or if node isn't mounted yet
       if (this.scale < 0.22 || !this.$refs.node) {
         this.isInView = false
         return
