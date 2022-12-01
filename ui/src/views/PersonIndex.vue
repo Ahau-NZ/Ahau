@@ -101,10 +101,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import isEmpty from 'lodash.isempty'
-import { mergeAdminProfile } from '@/lib/person-helpers.js'
+// import { mergeAdminProfile } from '@/lib/person-helpers.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
@@ -168,7 +168,8 @@ export default {
       showDelete: false,
       search: '',
       showImportDialog: false,
-      settingsPanel: false
+      settingsPanel: false,
+      unsubscribe: null
     }
   },
   async mounted () {
@@ -176,16 +177,17 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-    this.$root.$on('PersonListSave', () => {
-      this.handleSaved()
-    })
-    this.$root.$on('PersonListAdd', (id) => {
-      this.handleAdd(id)
-    })
-    this.$root.$on('PersonListRemove', (id) => {
-      this.handleDelete(id)
+    // watch mutations to know when to update a profile in the table
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'person/setProfileInArr') return this.handleAdd(mutation.payload)
+      if (mutation.type === 'person/updateProfileInArr') return this.handleSaved(mutation.payload)
+      if (mutation.type === 'person/deleteProfileInArr') return this.handleDelete(mutation.payload)
     })
     this.populateHeaders()
+  },
+  destroyed () {
+    // unsubscribe from store mutations when component is destroyed
+    this.unsubscribe()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -242,7 +244,6 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
-    ...mapMutations('person', ['setProfileInArr', 'removeProfileInArr', 'updateProfileInArr']),
     addPerson () {
       this.setDialog({
         active: 'new-person',
@@ -342,35 +343,24 @@ export default {
       this.showEditor = false
       this.isEditing = false
     },
-    async handleAdd (id) {
-      if (!this.profilesIndex.some(a => a.id === id)) {
+    async handleAdd (profile) {
+      if (!this.profilesIndex.find(a => a.id === profile.id)) {
         this.showAlert({ message: this.$t('viewPerson.profileAdded'), color: 'green' })
-
-        this.isLoading = true
-        await this.loadPersonFull(id)
-        const newProfile = mergeAdminProfile(this.person(id))
-        if (newProfile.aliveInterval) {
-          newProfile.dob = this.computeDate('dob', newProfile.aliveInterval)
-          newProfile.dod = this.computeDate('dod', newProfile.aliveInterval)
-          newProfile.age = this.age(newProfile.aliveInterval)
-        }
-        this.setProfileInArr(newProfile)
-        this.profilesIndex.unshift(newProfile)
-        this.isLoading = false
+        this.profilesIndex.unshift(this.mapProfileData(profile))
       }
     },
-    handleSaved () {
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
+    handleSaved (newProfile) {
       this.isLoading = true
-
-      const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
-      this.updateProfileInArr(newProfile)
       this.profilesIndex = this.profilesIndex
         .map(profile => {
           return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
         })
       this.isLoading = false
+    },
+    async handleDelete (id) {
+      this.showAlert({ message: this.$t('viewPerson.profileDeleted'), color: 'green' })
+      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
+      this.setSelectedProfileId(null)
     },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
@@ -380,11 +370,6 @@ export default {
         type: null,
         source: null
       })
-    },
-    async handleDelete (id) {
-      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
-      this.removeProfileInArr(id)
-      this.setSelectedProfileId(null)
     },
     altNames (altArray) {
       if (isEmpty(altArray)) return ''

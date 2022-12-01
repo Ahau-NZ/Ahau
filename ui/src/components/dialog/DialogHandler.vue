@@ -210,7 +210,10 @@ export default {
       'loadPersonFull',
       'updatePerson',
       'deletePerson',
-      'setSelectedProfileId'
+      'setSelectedProfileId',
+      'personListAdd',
+      'personListDelete',
+      'personListUpdate'
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
@@ -301,7 +304,7 @@ export default {
       // if adding a person direct to database
       if (type && type === 'person') {
         // setSelectedProfile to trigger personIndex watcher and load person
-        return this.$root.$emit('PersonListAdd', id)
+        return this.personListAdd(id)
       }
 
       let isIgnoredProfile
@@ -340,7 +343,7 @@ export default {
           if (parents) await this.quickAddParents(id, parents)
 
           if (this.$route.name === 'personIndex') {
-            this.$root.$emit('PersonListAdd', child)
+            this.personListAdd(child)
           }
           break
 
@@ -378,7 +381,10 @@ export default {
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
-          this.$root.$emit('PersonListAdd', parent)
+          // only update personList if we are on personIndex
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         case 'partner':
           parent = this.selectedProfile.id
@@ -389,7 +395,9 @@ export default {
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
-          this.$root.$emit('PersonListAdd', parent)
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         default:
           console.error('wrong type for add person')
@@ -464,7 +472,7 @@ export default {
         type: 'link/profile-profile/partner',
         child,
         parent,
-        recps: this.view.recps || [this.currentTribe.id],
+        recps: this.view.recps || [this.currentTribe.id]
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },
@@ -474,7 +482,7 @@ export default {
       if (deleteOrIgnore === 'delete') await this.processDeletePerson()
       else await this.ignoreProfile()
       if (this.$route.name === 'personIndex') {
-        this.$root.$emit('PersonListRemove', id)
+        this.personListDelete(id)
       }
     },
 
