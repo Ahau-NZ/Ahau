@@ -36,7 +36,7 @@ export default function (apollo) {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
-    // Array used for personIndex
+    // Array used for personIndex page
     profilesArr: [],
     tombstoned: new Set(),
     loadingCount: 0
@@ -103,7 +103,7 @@ export default function (apollo) {
       const index = state.profilesArr.findIndex((el) => el.id === profile.id)
       state.profilesArr[index] = profile
     },
-    removeProfileInArr (state, id) {
+    deleteProfileInArr (state, id) {
       const index = state.profilesArr.findIndex((el) => el.id === id)
       state.profilesArr.splice(index, 1)
     },
@@ -121,6 +121,16 @@ export default function (apollo) {
   }
 
   const actions = {
+    async personListAdd ({ commit, dispatch, getters }, id) {
+      const profile = await dispatch('loadPersonFull', id)
+      commit('setProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListUpdate ({ commit }, profile) {
+      commit('updateProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListDelete ({ commit }, id) {
+      commit('deleteProfileInArr', id)
+    },
     async createPerson (_, input) {
       try {
         if (!input.type) throw new Error('a profile type is required to create a person')

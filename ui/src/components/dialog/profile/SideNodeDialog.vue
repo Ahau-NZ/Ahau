@@ -522,7 +522,7 @@ export default {
     ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
-    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -730,8 +730,8 @@ export default {
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
 
       // loads their full profile for changes in the tree as well as the side node dialog
-      await this.loadPersonFull(this.profileId)
-      this.$root.$emit('PersonListSave')
+      const profile = await this.loadPersonFull(this.profileId)
+      this.personListUpdate(profile)
     },
     handleReload () {
       this.formData = this.defaultData()

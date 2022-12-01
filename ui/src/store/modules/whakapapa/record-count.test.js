@@ -21,13 +21,13 @@ test('vuex/whakapapa getters.recordCount (whangai grandparent complex)', t => {
 
   t.equal(getters.recordCount, 5)
 
-  state.veiw.changes.collapsed.Grandma = true
+  state.view.changes.collapsed.Grandma = true
   t.equal(getters.recordCount, 5, 'collapsing nodes doesnt effect count')
 
   state.view.importantRelationships = {}
   t.equal(getters.recordCount, 5, 'wiping importantRelationships doesnt effect count')
 
-  state.veiw.changes.focus = 'Daughter'
+  state.view.changes.focus = 'Daughter'
   t.equal(getters.recordCount, 5, 'temporarily changing focus doesnt effect count')
 
   t.end()
@@ -47,7 +47,7 @@ test('vuex/whakapapa getters.recordCount (extended family)', t => {
 
   t.equal(getters.recordCount, 5) // A, X, B, ax, ab
 
-  state.veiw.changes.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.equal(getters.recordCount, 5)
   // NOTE in future if we want to persist extendedFamily state,
   // then our definition of "recordCount" may change
