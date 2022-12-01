@@ -70,7 +70,7 @@ const defaultView = () => ({
 export default function (apollo) {
   const state = {
     view: defaultView(),
-    lastView: defaultView(),
+    lastViewId: '',
     // a store to save previous whakapapa sessions
     views: {
       // [viewId]: { view }
@@ -93,7 +93,7 @@ export default function (apollo) {
 
   const getters = {
     whakapapaView: state => state.view,
-    lastWhakapapaView: state => state.lastView,
+    lastWhakapapaView: state => state.views[state.lastViewId],
     focus: state => state.view.changes.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.view.changes.showExtendedFamily),
@@ -377,6 +377,7 @@ export default function (apollo) {
       state.view.changes.focus = null
       // Preserve state of previously opened sessions for quick reloading
       Vue.set(state.views, state.view.id, state.view)
+      state.lastViewId = state.view.id
       state.view = defaultView()
     },
 
