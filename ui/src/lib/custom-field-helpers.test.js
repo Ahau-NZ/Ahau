@@ -80,9 +80,9 @@ test('getCustomFields', t => {
   defaultFields[1] = customFields[0]
 
   t.deepEqual(
-    getDefaultFields(customFields),
-    defaultFields,
-    'returns the default fields including the one that was updated'
+    getDefaultFields(customFields).map(f => f.label),
+    defaultFields.map(f => f.label),
+    'returns all the default field labels including the one that was updated'
   )
 
   t.deepEqual(
