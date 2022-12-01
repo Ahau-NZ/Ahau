@@ -1,5 +1,9 @@
 # Changelog | Ahau desktop
 
+## v2.17.0
+### Features
+* added ability to submit changes in submit-only whakapapa
+
 ## v2.16.1
 
 ### Bug Fixes
