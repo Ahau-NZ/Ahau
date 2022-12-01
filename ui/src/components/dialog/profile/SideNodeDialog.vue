@@ -107,9 +107,15 @@
               <v-btn @click="cancel" text large class="secondary--text">
                 {{ t('cancel') }}
               </v-btn>
-              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
+
+              <v-btn v-if="canSubmit" @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
+                {{ t('submit') }}
+              </v-btn>
+
+              <v-btn v-else @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
                 {{ t('save') }}
               </v-btn>
+
             </v-col>
           </v-row>
 
@@ -390,7 +396,7 @@ export default {
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
-      'getPartnerType'
+      'getPartnerType', 'whakapapaView'
     ]),
     isLoadingProfile () {
       return this.alertSettings.delay === -1
@@ -497,6 +503,10 @@ export default {
         placeholder: ' ',
         class: !this.isEditing ? 'custom' : ''
       }
+    },
+    canSubmit () {
+      // TODO: change to !this.isKaitiaki
+      return this.isKaitiaki && this.whakapapaView.permission === 'submit'
     }
   },
   watch: {
@@ -535,6 +545,7 @@ export default {
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
     ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
+    ...mapActions(['submitProfileChanges']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -715,6 +726,10 @@ export default {
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) {
+        if (this.canSubmit) {
+          this.showAlert({ message: 'Submitted for review', color: 'green' })
+          return this.submitProfileChanges(output)
+        }
         await this.processUpdate(output)
       } else {
         this.showAlert({ message: 'No changes were submitted', color: 'green' })
