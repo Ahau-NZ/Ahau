@@ -70,7 +70,7 @@ const defaultView = () => ({
 export default function (apollo) {
   const state = {
     view: defaultView(),
-    lastViewId: '',
+    lastViewId: null,
     // a store to save previous whakapapa sessions
     views: {
       // [viewId]: { view }
@@ -93,7 +93,7 @@ export default function (apollo) {
 
   const getters = {
     whakapapaView: state => state.view,
-    lastWhakapapaView: state => state.views[state.lastViewId],
+    lastWhakapapaView: state => state.lastViewId ? state.views[state.lastViewId] : null,
     focus: state => state.view.changes.focus || state.view.focus,
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.view.changes.showExtendedFamily),
