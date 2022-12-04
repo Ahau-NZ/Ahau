@@ -107,7 +107,7 @@ import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -210,7 +210,10 @@ export default {
       'loadPersonFull',
       'updatePerson',
       'deletePerson',
-      'setSelectedProfileId'
+      'setSelectedProfileId',
+      'personListAdd',
+      'personListDelete',
+      'personListUpdate'
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
@@ -221,7 +224,7 @@ export default {
       'removeLinksToProfile',
       'deleteProfileFromImportantRelationships'
     ]),
-    ...mapMutations('person', ['setProfile']),
+
     isActive (type) {
       return (type === this.dialog || type === this.storeDialog)
     },
@@ -255,7 +258,7 @@ export default {
       if (profile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
-      if (this.view && profile.id === this.view.focus) {
+      if (this.view && this.view.id && profile.id === this.view.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(profile))
       }
@@ -301,12 +304,12 @@ export default {
       // if adding a person direct to database
       if (type && type === 'person') {
         // setSelectedProfile to trigger personIndex watcher and load person
-        return this.$root.$emit('PersonListAdd', id)
+        return this.personListAdd(id)
       }
 
       let isIgnoredProfile
 
-      if (this.view) {
+      if (this.view && this.view.id) {
         isIgnoredProfile = this.view.ignoredProfiles.includes(id)
         if (isIgnoredProfile) await this.removeIgnoredProfile(id)
       }
@@ -339,9 +342,8 @@ export default {
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
 
-          // TODO: keep or remove this block????
           if (this.$route.name === 'personIndex') {
-            this.$root.$emit('PersonListAdd', child)
+            this.personListAdd(child)
           }
           break
 
@@ -379,7 +381,10 @@ export default {
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
-          this.$root.$emit('PersonListAdd', parent)
+          // only update personList if we are on personIndex
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         case 'partner':
           parent = this.selectedProfile.id
@@ -390,7 +395,9 @@ export default {
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
-          this.$root.$emit('PersonListAdd', parent)
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         default:
           console.error('wrong type for add person')
@@ -453,7 +460,7 @@ export default {
         type: 'link/profile-profile/child',
         child,
         parent,
-        recps: this.view.recps || this.currentTribe.id,
+        recps: this.view.recps || [this.currentTribe.id],
         ...relationshipAttrs
       })
         .then(() => {
@@ -465,7 +472,7 @@ export default {
         type: 'link/profile-profile/partner',
         child,
         parent,
-        recps: this.view.recps || this.currentTribe.id
+        recps: this.view.recps || [this.currentTribe.id]
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },
@@ -475,7 +482,7 @@ export default {
       if (deleteOrIgnore === 'delete') await this.processDeletePerson()
       else await this.ignoreProfile()
       if (this.$route.name === 'personIndex') {
-        this.$root.$emit('PersonListRemove', id)
+        this.personListDelete(id)
       }
     },
 

@@ -1,5 +1,6 @@
 import { Getters } from './lib/test-helpers'
 import { WhangaiGrandparentComplex, ExtendedFamilyA } from './fixtures'
+const { actions } = require('./').default()
 
 const test = require('tape')
 
@@ -18,17 +19,18 @@ test('vuex/whakapapa getters.recordCount (whangai grandparent complex)', t => {
         Grandaughter╌╌╌╌╌╌╌╌╌╌┘
 
   */
+  const getRecordCount = actions.getRecordCount({ state: state, getters: getters })
 
-  t.equal(getters.recordCount, 5)
+  t.equal(getRecordCount, 5)
 
-  state.viewChanges.collapsed.Grandma = true
-  t.equal(getters.recordCount, 5, 'collapsing nodes doesnt effect count')
+  state.view.changes.collapsed.Grandma = true
+  t.equal(getRecordCount, 5, 'collapsing nodes doesnt effect count')
 
   state.view.importantRelationships = {}
-  t.equal(getters.recordCount, 5, 'wiping importantRelationships doesnt effect count')
+  t.equal(getRecordCount, 5, 'wiping importantRelationships doesnt effect count')
 
-  state.viewChanges.focus = 'Daughter'
-  t.equal(getters.recordCount, 5, 'temporarily changing focus doesnt effect count')
+  state.view.changes.focus = 'Daughter'
+  t.equal(getRecordCount, 5, 'temporarily changing focus doesnt effect count')
 
   t.end()
 })
@@ -44,11 +46,12 @@ test('vuex/whakapapa getters.recordCount (extended family)', t => {
       xy  ax   ab  bc
 
   */
+  const getRecordCount = actions.getRecordCount({ state: state, getters: getters })
 
-  t.equal(getters.recordCount, 5) // A, X, B, ax, ab
+  t.equal(getRecordCount, 5) // A, X, B, ax, ab
 
-  state.viewChanges.showExtendedFamily = true
-  t.equal(getters.recordCount, 5)
+  state.view.changes.showExtendedFamily = true
+  t.equal(getRecordCount, 5)
   // NOTE in future if we want to persist extendedFamily state,
   // then our definition of "recordCount" may change
 

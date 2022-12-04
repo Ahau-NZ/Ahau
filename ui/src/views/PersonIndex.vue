@@ -84,29 +84,6 @@
         </v-data-table>
       </v-col>
     </v-row>
-
-    <!-- <SideNodeDialog v-if="showEditor && selectedProfileId"
-      :show="showEditor"
-      :profileId="selectedProfileId"
-
-      deleteable
-      :editing="isEditing"
-      fullForm
-
-      @close="close"
-      @cancel="close"
-      @delete="showDeleteConfirmation"
-      @saved="handleSaved"
-    /> -->
-
-    <!-- <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
-      :show="showDelete"
-
-      :profile="selectedProfile"
-
-      @submit="handleDelete"
-      @close="showDelete = false"
-    /> -->
     <ImportPeopleDialog v-if="showImportDialog"
       :show="showImportDialog"
       @submit="importCsv"
@@ -124,18 +101,14 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import isEmpty from 'lodash.isempty'
-import { mergeAdminProfile } from '@/lib/person-helpers.js'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
 import { determineFilter } from '@/lib/filters.js'
-
-// import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
-// import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -144,8 +117,6 @@ import { mapLabelToProp } from '../lib/custom-field-helpers'
 export default {
   name: 'PersonIndex',
   components: {
-    // SideNodeDialog,
-    // RemovePersonDialog,
     ImportPeopleDialog,
     FilterMenu,
     Avatar
@@ -196,7 +167,8 @@ export default {
       showDelete: false,
       search: '',
       showImportDialog: false,
-      settingsPanel: false
+      settingsPanel: false,
+      unsubscribe: null
     }
   },
   async mounted () {
@@ -204,16 +176,17 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-    this.$root.$on('PersonListSave', () => {
-      this.handleSaved()
-    })
-    this.$root.$on('PersonListAdd', (id) => {
-      this.handleAdd(id)
-    })
-    this.$root.$on('PersonListRemove', (id) => {
-      this.handleDelete(id)
+    // watch mutations to know when to update a profile in the table
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'person/setProfileInArr') return this.handleAdd(mutation.payload)
+      if (mutation.type === 'person/updateProfileInArr') return this.handleSaved(mutation.payload)
+      if (mutation.type === 'person/deleteProfileInArr') return this.handleDelete(mutation.payload)
     })
     this.populateHeaders()
+  },
+  destroyed () {
+    // unsubscribe from store mutations when component is destroyed
+    this.unsubscribe()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -270,7 +243,6 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading', 'setDialog']),
-    ...mapMutations('person', ['setProfile', 'removeProfile', 'updateProfile']),
     addPerson () {
       this.setDialog({
         active: 'new-person',
@@ -312,7 +284,8 @@ export default {
       // if dont have the profiles, wait for them to load before showing them
       if (!this.profilesArr.length || refresh) await this.loadPersonList()
 
-      this.profilesIndex = this.profilesArr.map(this.mapProfileData)
+      
+      // this.profilesIndex = this.profilesArr.map(this.mapProfileData)
 
       this.isLoading = false
     },
@@ -321,6 +294,7 @@ export default {
         profile.dob = this.computeDate('dob', profile.aliveInterval)
         profile.dod = this.computeDate('dod', profile.aliveInterval)
         profile.age = this.age(profile.aliveInterval)
+        profile.altNames = this.altNames(profile.altNames)
       }
 
       if (profile.customFields && Array.isArray(profile.customFields)) {
@@ -342,13 +316,6 @@ export default {
         return value.toString().toLocaleLowerCase().includes(_search)
       })
     },
-    // modified from vuetify :
-    // function defaultFilter (value: any, search: string | null, item: any) {
-    //   return value != null &&
-    //     search != null &&
-    //     typeof value !== 'boolean' &&
-    //     value.toString().toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-    // }
     handleSearchInput (search) {
       this.updateSearch(search)
     },
@@ -377,42 +344,24 @@ export default {
       this.showEditor = false
       this.isEditing = false
     },
-    async handleAdd (id) {
-      if (!this.profilesIndex.some(a => a.id === id)) {
+    async handleAdd (profile) {
+      if (!this.profilesIndex.find(a => a.id === profile.id)) {
         this.showAlert({ message: this.$t('viewPerson.profileAdded'), color: 'green' })
-
-        this.isLoading = true
-        await this.loadPersonFull(id)
-        const newProfile = mergeAdminProfile(this.person(id))
-        if (newProfile.aliveInterval) {
-          newProfile.dob = this.computeDate('dob', newProfile.aliveInterval)
-          newProfile.dod = this.computeDate('dod', newProfile.aliveInterval)
-          newProfile.age = this.age(newProfile.aliveInterval)
-        }
-        this.setProfile(newProfile)
-        this.profilesIndex.unshift(newProfile)
-        const search = this.search
-        this.search = ''
-        this.search = search
-        this.isLoading = false
+        this.profilesIndex.unshift(this.mapProfileData(profile))
       }
     },
-    handleSaved () {
-      // Noted save has already been handled by component
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
+    handleSaved (newProfile) {
       this.isLoading = true
-
-      const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
-      this.updateProfile(newProfile)
       this.profilesIndex = this.profilesIndex
         .map(profile => {
           return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
         })
-      const search = this.search
-      this.search = ''
-      this.search = search
       this.isLoading = false
+    },
+    async handleDelete (id) {
+      this.showAlert({ message: this.$t('viewPerson.profileDeleted'), color: 'green' })
+      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
+      this.setSelectedProfileId(null)
     },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
@@ -422,11 +371,6 @@ export default {
         type: null,
         source: null
       })
-    },
-    async handleDelete (id) {
-      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
-      this.removeProfile(id)
-      this.setSelectedProfileId(null)
     },
     altNames (altArray) {
       if (isEmpty(altArray)) return ''

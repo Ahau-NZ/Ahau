@@ -14,7 +14,6 @@ import {
 
 import { NODE_SIZE_X, NODE_SIZE_Y, RADIUS, PARTNER_RADIUS, PARTNER_SPACE, SIBLING_SPACE, COUSIN_SPACE } from './constants'
 import calculateAge from '../../../lib/calculate-age'
-// import FindPathToRoot from '../whakapapa/lib/find-path-to-root'
 
 export default function () {
   const state = {
@@ -23,7 +22,6 @@ export default function () {
     mouseEvent: null,
     hoveredProfileId: null,
     searchedProfileId: null,
-    nodes: [],
     loadingTree: false
   }
 

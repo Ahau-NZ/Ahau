@@ -31,10 +31,12 @@ pull(
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
+    // Object used for whakapapa tree
     profiles: {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
+    // Array used for personIndex page
     profilesArr: [],
     tombstoned: new Set(),
     activeLoadingCount: 0,
@@ -43,7 +45,7 @@ export default function (apollo) {
 
   const getters = {
     person: state => (profileId) => state.profiles[profileId],
-    profilesArr: state => state.profilesArr,
+    profilesArr: state => state.profilesArr, // Array needed for personIndex page
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
@@ -78,6 +80,8 @@ export default function (apollo) {
     setSelectedProfileId (state, id) {
       state.selectedProfileId = id
     },
+
+    // Set used for building the whakapapa tree =============
     setPerson (state, profile) {
       Vue.set(state.profiles, profile.id, profile)
     },
@@ -91,20 +95,25 @@ export default function (apollo) {
       state.activeLoadingCount = state.activeLoadingCount - 1
       state.loadingProfiles = state.activeLoadingCount > 0
     },
+    // =======================================================
+
+    // Array used for personIndex ============================
     setProfilesArr (state, profiles) {
       state.profilesArr = profiles
     },
-    setProfile (state, profile) {
+    setProfileInArr (state, profile) {
       state.profilesArr.unshift(profile)
     },
-    updateProfile (state, profile) {
+    updateProfileInArr (state, profile) {
       const index = state.profilesArr.findIndex((el) => el.id === profile.id)
       state.profilesArr[index] = profile
     },
-    removeProfile (state, id) {
+    deleteProfileInArr (state, id) {
       const index = state.profilesArr.findIndex((el) => el.id === id)
       state.profilesArr.splice(index, 1)
     },
+    // =======================================================
+
     resetProfiles (state) {
       state.profilesArr = []
       state.profiles = {}
@@ -119,6 +128,16 @@ export default function (apollo) {
   }
 
   const actions = {
+    async personListAdd ({ commit, dispatch, getters }, id) {
+      const profile = await dispatch('loadPersonFull', id)
+      commit('setProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListUpdate ({ commit }, profile) {
+      commit('updateProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListDelete ({ commit }, id) {
+      commit('deleteProfileInArr', id)
+    },
     async createPerson (_, input) {
       try {
         if (!input.type) throw new Error('a profile type is required to create a person')
@@ -205,9 +224,7 @@ export default function (apollo) {
         const res = await apollo.mutate(deletePerson(id, details, allowPublic))
 
         if (res.errors) throw res.errors
-
-        commit('tombstoneId', id)
-        dispatch('whakapapa/removeLinksToProfile', id, { root: true })
+        dispatch('tombstoneProfile', id)
         dispatch('alerts/showMessage', 'Person successfully deleted!', { root: true })
         return res.data.tombstoneProfileAndLinks
       } catch (err) {
@@ -228,11 +245,7 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPersonMinimal', profileId)
-        if (profile.tombstone) {
-          commit('tombstoneId', profileId)
-          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-          commit('decrementLoading')
-        } // eslint-disable-line
+        if (profile.tombstone) dispatch('tombstoneProfile', profileId)
         else commit('setPerson', profile)
 
         commit('decrementLoading')
@@ -249,10 +262,7 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPersonFull', profileId)
-        if (profile.tombstone) {
-          commit('tombstoneId', profileId)
-          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-        } // eslint-disable-line
+        if (profile.tombstone) dispatch('tombstoneProfile', profileId)
         else commit('setPerson', profile)
 
         commit('decrementLoading')
@@ -269,10 +279,7 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPerson', profileId)
-        if (profile.tombstone) {
-          commit('tombstoneId', profileId)
-          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-        } // eslint-disable-line
+        if (profile && profile.tombstone) dispatch('tombstoneProfile', profileId)
         else commit('setPerson', profile)
 
         commit('decrementLoading')
@@ -349,15 +356,14 @@ export default function (apollo) {
     },
     async loadPersonList ({ commit, rootGetters }) {
       try {
-        // const res = await apollo.query(loadPersonList(type, tribeId))
-        // get member profiles
+        // get member profiles (NOTE this also has .adminProfile)
         const groupId = rootGetters['tribe/currentTribe'].id
         const membersProfiles = await apollo.query(loadPersonList('group', groupId))
         if (membersProfiles.errors) throw membersProfiles.errors
 
         // get admin profiles
         const adminTribeId = rootGetters['tribe/currentTribe'].admin?.id
-        var adminProfiles
+        let adminProfiles
         // check if admin tribe exists (there is no adminTribeId in a personal tribe)
         if (adminTribeId) {
           adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
@@ -375,6 +381,10 @@ export default function (apollo) {
         console.error('Something went wrong while trying to load person list')
         console.error(err)
       }
+    },
+    tombstoneProfile ({ commit, dispatch }, profileId) {
+      commit('tombstoneId', profileId)
+      dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
     }
   }
 

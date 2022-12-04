@@ -211,10 +211,12 @@ export default {
       )
     },
     showMenuButton () {
+      // requires early return to prevent recompuiting with every profile loaded
       if (this.isLoading || !this.isInView) return
-      if (this.isPartner) return false
-      if (!this.whakapapaView.canEdit) return false
-      if (this.isCollapsed) return false
+      if (this.isPartner ||
+        !this.whakapapaView.canEdit ||
+        this.isCollapsed
+      ) return false
       return this.hoveredProfileId === this.profileId
     },
     clipPathId () {

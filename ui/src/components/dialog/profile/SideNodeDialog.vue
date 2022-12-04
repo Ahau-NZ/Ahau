@@ -518,11 +518,11 @@ export default {
   },
   methods: {
     ...mapMutations(['updateDialog', 'updateType']),
+    ...mapMutations('archive', ['setIsFromWhakapapaShow', 'setIsFromPersonIndex']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
-    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -658,6 +658,7 @@ export default {
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
       ) this.setIsFromWhakapapaShow(true)
+      else if (this.$route.name === 'personIndex') this.setIsFromPersonIndex(true)
       this.$router.push({
         name: 'person/archive',
         params: {
@@ -730,8 +731,8 @@ export default {
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
 
       // loads their full profile for changes in the tree as well as the side node dialog
-      await this.loadPersonFull(this.profileId)
-      this.$root.$emit('PersonListSave')
+      const profile = await this.loadPersonFull(this.profileId)
+      this.personListUpdate(profile)
     },
     handleReload () {
       this.formData = this.defaultData()
