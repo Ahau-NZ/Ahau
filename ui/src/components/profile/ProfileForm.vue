@@ -175,288 +175,285 @@
 
     <!-- Start of advanced section -->
     <v-divider />
-      <v-card-actions class="pt-2 pb-2 pr-5 pointer">
-        <v-row @click="showAdvanced = !showAdvanced" class="clickable">
-          <v-col>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
-          </v-col>
-          <v-btn icon right>
-            <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-          </v-btn>
-        </v-row>
-      </v-card-actions>
-    <v-divider v-if="!showAdvanced" />
-    <v-expand-transition>
-      <div v-show="showAdvanced" :class="readonly && !mobile ? 'ml-5' : ''">
-        <v-row>
-          <!-- Full Name -->
-          <v-col v-if="hasDefaultField('legalName')" :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.legalName"
-              :label="t('legalName')"
-              v-bind="customProps"
-              :rules="getFieldRules('legalName')"
-            />
-          </v-col>
-          <!-- Alt names -->
-          <template v-if="hasDefaultField('altNames')" >
-            <!-- TODO: configure required -->
-            <v-col v-for="(altName, index) in currentAltNames"
-              :key="`value-alt-name-${index}`"
-              cols="12"
-              :sm="smScreen ? '12' : '6'"
-              class="pa-1"
-            >
-              <v-text-field
-                v-model="formData.altNames.currentState[index]"
-                :label="t('aka')"
-                :append-icon="readonly ? '' : 'mdi-delete'"
-                @click:append="removeAltName(formData.altNames.currentState[index], index)"
-                readonly
-                v-bind="customProps"
-              />
-            </v-col>
-          </template>
-
+    <v-card-actions class="pt-2 pb-2 pr-5 pointer">
+      <v-row @click="showAdvanced = !showAdvanced" class="clickable">
+        <v-col>
+          <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
+        </v-col>
+        <v-btn icon right>
+          <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </v-btn>
+      </v-row>
+    </v-card-actions>
+    <v-divider />
+    <div :class="readonly && !mobile ? 'ml-5' : ''">
+      <v-row>
+        <!-- Full Name -->
+        <v-col v-if="hasDefaultField('legalName')" :cols="sideViewCols" class="pa-1">
+          <v-text-field
+            v-model="formData.legalName"
+            :label="t('legalName')"
+            v-bind="customProps"
+            :rules="getFieldRules('legalName')"
+          />
+        </v-col>
+        <!-- Alt names -->
+        <template v-if="hasDefaultField('altNames')" >
           <!-- TODO: configure required -->
-          <template v-if="!readonly && hasDefaultField('legalName')">
-            <v-col v-for="(altName, index) in newAltNames"
-              :key="`add-alt-name-${index}`"
-              cols="12"
-              :sm="smScreen ? '12' : '6'"
-              class="pa-1"
-            >
-              <v-text-field
-                v-model="formData.altNames.add[index]"
-                label="Also known as"
-                :append-icon="readonly ? '' : 'mdi-delete'"
-                @click:append="removeAltNameField(index)"
-                v-bind="customProps"
-                cols="12"
-              />
-            </v-col>
-            <v-col>
-              <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('addName')" @click="addAltNameField" row/>
-            </v-col>
-          </template>
-        </v-row>
-        <v-row>
-          <!-- DATE OF BIRTH + DATE OF DEATH-->
-          <v-col cols="12" class="py-0">
-            <DateIntervalPicker
-              :label="t('dob.title')"
-              :endLabel="t('dod')"
-              allowInterval
-              :interval.sync="formData.aliveInterval"
-              :hasEndDate.sync="formData.deceased"
-              :cols='sideViewCols'
-              :readonly="readonly"
-              :rules="getFieldRules('dateOfBirth')"
-            />
-          </v-col>
-
-        </v-row>
-        <!-- Editing: relationship type-->
-        <v-row>
-          <!-- <v-col v-if="(withRelationships || editRelationship || $route.name !== 'login') && !readonly" :cols="sideViewCols" class="pa-1">
-            <v-select
-              v-model="formData.relationshipType"
-              label="Related by"
-              :items="relationshipTypes"
-              :menu-props="{ light: true }"
-              outlined
-              hide-details
-            />
-          </v-col> -->
-          <v-col v-if="hasDefaultField('placeOfBirth')"  :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.placeOfBirth"
-              :label="t('birthPlace')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <template v-if="formData.deceased && hasDefaultField('placeOfDeath')">
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.placeOfDeath"
-                :label="t('deathPlace')"
-                v-bind="customProps"
-              />
-            </v-col>
-            <v-col v-if="formData.deceased && hasDefaultField('buriedLocation')" :cols="sideViewCols" class="pa-1">
-              <!-- Burial Location -->
-              <v-text-field
-                v-model="formData.buriedLocation"
-                :label="t('burialLocation')"
-                v-bind="customProps"
-              />
-            </v-col>
-          </template>
-
-          <v-col cols="12" sm="12" class="pa-1" >
-            <!-- Description textarea -->
-              <v-textarea
-                v-model="formData.description"
-                :label="t('description', {displayName: formData.preferredName})"
-                v-bind="customProps"
-                no-resize
-                :rows="readonly ? 0 : 3"
-                auto-grow
-              />
-          </v-col>
-        </v-row>
-
-        <!-- Skills and Qualifications -->
-        <v-row v-if="hasOneField(['profession', 'qualifications', 'education'])" class="pt-2">
-          <v-col cols="12" class="px-0">
-            <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
-          </v-col>
-        </v-row>
-
-        <v-row v-if="hasDefaultField('profession')">
-          <!-- Profession-->
-          <v-col cols="12" class="pa-0">
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.profession"
-                :label="t('skills.profession')"
-                v-bind="customProps"
-                :rules="getFieldRules('profession')"
-              />
-            </v-col>
-          </v-col>
-        </v-row>
-
-          <!-- Skills -->
-          <!-- TODO: configure required -->
-        <v-row v-if="hasDefaultField('qualifications')">
-          <v-col v-for="(qualification, index) in formData.education"
-            :key="`add-qual-name-${index}`"
-            :cols="smScreen ? '12' : '6'"
+          <v-col v-for="(altName, index) in currentAltNames"
+            :key="`value-alt-name-${index}`"
+            cols="12"
+            :sm="smScreen ? '12' : '6'"
             class="pa-1"
           >
             <v-text-field
-              v-model="formData.education[index]"
-              :label="t('skills.skillsQuals')"
-              :append-icon="!readonly ? 'mdi-delete' : ''"
-              @click:append="removeItem(formData.education, index)"
-              v-bind="customProps"
-              :readonly="readonly"
-            />
-          </v-col>
-          <v-col v-if="!readonly">
-            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
-          </v-col>
-        </v-row>
-
-        <!-- Education -->
-        <!-- TODO: configure required -->
-        <v-row v-if="hasDefaultField('education')" class="pb-1">
-          <v-col v-for="(school, index) in formData.school"
-            :key="`add-school-name-${index}`"
-            :cols="smScreen ? '12' : '6'"
-            class="pa-1"
-          >
-            <v-text-field
-              v-model="formData.school[index]"
-              :label="t('skills.placeOfEducation')"
+              v-model="formData.altNames.currentState[index]"
+              :label="t('aka')"
               :append-icon="readonly ? '' : 'mdi-delete'"
-              @click:append="removeItem(formData.school, index)"
+              @click:append="removeAltName(formData.altNames.currentState[index], index)"
+              readonly
               v-bind="customProps"
-              :readonly="readonly"
             />
           </v-col>
-          <v-col v-if="!readonly">
-            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
-          </v-col>
-        </v-row>
+        </template>
 
-        <v-row v-if="!formData.deceased && hasOneField(['email', 'phone', 'address', 'postCode', 'city', 'country'])">
-          <!-- Personal Information -->
-          <template v-if="showPersonalInfo">
-            <v-col cols="12" class="px-0">
-              <v-divider class="py-2"/>
-              <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
-              <span class="pa-0 pl-2 ma-0" style="font-style:italic">({{ t('kaitiakiOnly') }})</span>
-            </v-col>
-            <!-- Email -->
-            <v-col v-if="hasDefaultField('email')" :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.email"
-                :label="t('personalInfo.email')"
-                v-bind="customProps"
-                :rules="getFieldRules('email')"
-              />
-            </v-col>
-            <!-- Phone -->
-            <v-col v-if="hasDefaultField('phone')" :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.phone"
-                :label="t('personalInfo.phone')"
-                v-bind="customProps"
-                :rules="getFieldRules('phone')"
-              />
-            </v-col>
-            <!-- Address -->
-            <v-col v-if="hasDefaultField('address')" :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.address"
-                :label="t('personalInfo.address')"
-                v-bind="customProps"
-                :rules="getFieldRules('address')"
-              />
-            </v-col>
-          </template>
-          <!-- Post Code -->
-          <v-col v-if="hasDefaultField('postCode')" :cols="sideViewCols" class="pa-1">
+        <!-- TODO: configure required -->
+        <template v-if="!readonly && hasDefaultField('legalName')">
+          <v-col v-for="(altName, index) in newAltNames"
+            :key="`add-alt-name-${index}`"
+            cols="12"
+            :sm="smScreen ? '12' : '6'"
+            class="pa-1"
+          >
             <v-text-field
-              v-model="formData.postCode"
-              :label="t('personalInfo.postCode')"
+              v-model="formData.altNames.add[index]"
+              label="Also known as"
+              :append-icon="readonly ? '' : 'mdi-delete'"
+              @click:append="removeAltNameField(index)"
               v-bind="customProps"
-              :rules="getFieldRules('postCode')"
+              cols="12"
             />
           </v-col>
-          <!-- City -->
-          <v-col v-if="hasDefaultField('city')" :cols="sideViewCols" class="pa-1">
+          <v-col>
+            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('addName')" @click="addAltNameField" row/>
+          </v-col>
+        </template>
+      </v-row>
+      <v-row>
+        <!-- DATE OF BIRTH + DATE OF DEATH-->
+        <v-col cols="12" class="py-0">
+          <DateIntervalPicker
+            :label="t('dob.title')"
+            :endLabel="t('dod')"
+            allowInterval
+            :interval.sync="formData.aliveInterval"
+            :hasEndDate.sync="formData.deceased"
+            :cols='sideViewCols'
+            :readonly="readonly"
+            :rules="getFieldRules('dateOfBirth')"
+          />
+        </v-col>
+
+      </v-row>
+      <!-- Editing: relationship type-->
+      <v-row>
+        <!-- <v-col v-if="(withRelationships || editRelationship || $route.name !== 'login') && !readonly" :cols="sideViewCols" class="pa-1">
+          <v-select
+            v-model="formData.relationshipType"
+            label="Related by"
+            :items="relationshipTypes"
+            :menu-props="{ light: true }"
+            outlined
+            hide-details
+          />
+        </v-col> -->
+        <v-col v-if="hasDefaultField('placeOfBirth')"  :cols="sideViewCols" class="pa-1">
+          <v-text-field
+            v-model="formData.placeOfBirth"
+            :label="t('birthPlace')"
+            v-bind="customProps"
+          />
+        </v-col>
+        <template v-if="formData.deceased && hasDefaultField('placeOfDeath')">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
-              v-model="formData.city"
-              :label="t('personalInfo.city')"
+              v-model="formData.placeOfDeath"
+              :label="t('deathPlace')"
               v-bind="customProps"
-              :rules="getFieldRules('city')"
             />
           </v-col>
-          <!-- Country -->
-          <v-col v-if="hasDefaultField('country')" :cols="sideViewCols" class="pa-1">
+          <v-col v-if="formData.deceased && hasDefaultField('buriedLocation')" :cols="sideViewCols" class="pa-1">
+            <!-- Burial Location -->
             <v-text-field
-              v-model="formData.country"
-              :label="t('personalInfo.country')"
+              v-model="formData.buriedLocation"
+              :label="t('burialLocation')"
               v-bind="customProps"
-              :rules="getFieldRules('country')"
             />
           </v-col>
-        </v-row>
-        <template v-if="showCustomFieldsSection">
-          <!-- ====COMMUNITY FIELDS======== -->
+        </template>
+
+        <v-col cols="12" sm="12" class="pa-1" >
+          <!-- Description textarea -->
+            <v-textarea
+              v-model="formData.description"
+              :label="t('description', {displayName: formData.preferredName})"
+              v-bind="customProps"
+              no-resize
+              :rows="readonly ? 0 : 3"
+              auto-grow
+            />
+        </v-col>
+      </v-row>
+
+      <!-- Skills and Qualifications -->
+      <v-row v-if="hasOneField(['profession', 'qualifications', 'education'])" class="pt-2">
+        <v-col cols="12" class="px-0">
+          <v-divider class="py-2"/>
+          <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="hasDefaultField('profession')">
+        <!-- Profession-->
+        <v-col cols="12" class="pa-0">
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.profession"
+              :label="t('skills.profession')"
+              v-bind="customProps"
+              :rules="getFieldRules('profession')"
+            />
+          </v-col>
+        </v-col>
+      </v-row>
+
+        <!-- Skills -->
+        <!-- TODO: configure required -->
+      <v-row v-if="hasDefaultField('qualifications')">
+        <v-col v-for="(qualification, index) in formData.education"
+          :key="`add-qual-name-${index}`"
+          :cols="smScreen ? '12' : '6'"
+          class="pa-1"
+        >
+          <v-text-field
+            v-model="formData.education[index]"
+            :label="t('skills.skillsQuals')"
+            :append-icon="!readonly ? 'mdi-delete' : ''"
+            @click:append="removeItem(formData.education, index)"
+            v-bind="customProps"
+            :readonly="readonly"
+          />
+        </v-col>
+        <v-col v-if="!readonly">
+          <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
+        </v-col>
+      </v-row>
+
+      <!-- Education -->
+      <!-- TODO: configure required -->
+      <v-row v-if="hasDefaultField('education')" class="pb-1">
+        <v-col v-for="(school, index) in formData.school"
+          :key="`add-school-name-${index}`"
+          :cols="smScreen ? '12' : '6'"
+          class="pa-1"
+        >
+          <v-text-field
+            v-model="formData.school[index]"
+            :label="t('skills.placeOfEducation')"
+            :append-icon="readonly ? '' : 'mdi-delete'"
+            @click:append="removeItem(formData.school, index)"
+            v-bind="customProps"
+            :readonly="readonly"
+          />
+        </v-col>
+        <v-col v-if="!readonly">
+          <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="!formData.deceased && hasOneField(['email', 'phone', 'address', 'postCode', 'city', 'country'])">
+        <!-- Personal Information -->
+        <template v-if="showPersonalInfo">
           <v-col cols="12" class="px-0">
             <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('communityFieldsTitle') }}</span>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
+            <span class="pa-0 pl-2 ma-0" style="font-style:italic">({{ t('kaitiakiOnly') }})</span>
           </v-col>
-          <!-- Groups custom fields into tribes -->
-          <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
-            <CustomFieldGroup
-              :tribe="tribe"
-              :profile="tribe.profileInTribe"
-              :readonly="readonly"
-              :sideView="isSideViewDialog"
-              :fieldValues.sync="formData.customFields[tribe.tribeId]"
-              :isRegistration="isRegistration"
+          <!-- Email -->
+          <v-col v-if="hasDefaultField('email')" :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.email"
+              :label="t('personalInfo.email')"
+              v-bind="customProps"
+              :rules="getFieldRules('email')"
             />
-          </v-row>
+          </v-col>
+          <!-- Phone -->
+          <v-col v-if="hasDefaultField('phone')" :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.phone"
+              :label="t('personalInfo.phone')"
+              v-bind="customProps"
+              :rules="getFieldRules('phone')"
+            />
+          </v-col>
+          <!-- Address -->
+          <v-col v-if="hasDefaultField('address')" :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.address"
+              :label="t('personalInfo.address')"
+              v-bind="customProps"
+              :rules="getFieldRules('address')"
+            />
+          </v-col>
         </template>
-      </div>
-    </v-expand-transition>
-    <!-- End of advanced section -->
+        <!-- Post Code -->
+        <v-col v-if="hasDefaultField('postCode')" :cols="sideViewCols" class="pa-1">
+          <v-text-field
+            v-model="formData.postCode"
+            :label="t('personalInfo.postCode')"
+            v-bind="customProps"
+            :rules="getFieldRules('postCode')"
+          />
+        </v-col>
+        <!-- City -->
+        <v-col v-if="hasDefaultField('city')" :cols="sideViewCols" class="pa-1">
+          <v-text-field
+            v-model="formData.city"
+            :label="t('personalInfo.city')"
+            v-bind="customProps"
+            :rules="getFieldRules('city')"
+          />
+        </v-col>
+        <!-- Country -->
+        <v-col v-if="hasDefaultField('country')" :cols="sideViewCols" class="pa-1">
+          <v-text-field
+            v-model="formData.country"
+            :label="t('personalInfo.country')"
+            v-bind="customProps"
+            :rules="getFieldRules('country')"
+          />
+        </v-col>
+      </v-row>
+      <template v-if="showCustomFieldsSection">
+        <!-- ====COMMUNITY FIELDS======== -->
+        <v-col cols="12" class="px-0">
+          <v-divider class="py-2"/>
+          <span class="pa-0 ma-0" style="font-weight:bold">{{ t('communityFieldsTitle') }}</span>
+        </v-col>
+        <!-- Groups custom fields into tribes -->
+        <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
+          <CustomFieldGroup
+            :tribe="tribe"
+            :profile="tribe.profileInTribe"
+            :readonly="readonly"
+            :sideView="isSideViewDialog"
+            :fieldValues.sync="formData.customFields[tribe.tribeId]"
+            :isRegistration="isRegistration"
+          />
+        </v-row>
+      </template>
+    </div>
   </v-form>
 </template>
 

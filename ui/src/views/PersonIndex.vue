@@ -30,7 +30,7 @@
           :headers="activeHeaders"
           fixed-header
           height="calc(100vh - 255px)"
-          :items="filteredProfiles"
+          :items="profilesArr"
           item-key="id"
           :items-per-page="15"
           :loading="isLoading"
@@ -103,12 +103,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
-import isEmpty from 'lodash.isempty'
-import { dateIntervalToString } from '@/lib/date-helpers.js'
-import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
-import { determineFilter } from '@/lib/filters.js'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -176,17 +172,7 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-    // watch mutations to know when to update a profile in the table
-    this.unsubscribe = this.$store.subscribe((mutation, state) => {
-      if (mutation.type === 'person/setProfileInArr') return this.handleAdd(mutation.payload)
-      if (mutation.type === 'person/updateProfileInArr') return this.handleSaved(mutation.payload)
-      if (mutation.type === 'person/deleteProfileInArr') return this.handleDelete(mutation.payload)
-    })
     this.populateHeaders()
-  },
-  destroyed () {
-    // unsubscribe from store mutations when component is destroyed
-    this.unsubscribe()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
@@ -230,9 +216,6 @@ export default {
       if (!this.selectedProfileId) return null
 
       return this.person(this.selectedProfileId)
-    },
-    filteredProfiles () {
-      return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
     },
     hiddenColumns () {
       return (this.headers.length - this.activeHeaders.length) + 1
@@ -283,28 +266,7 @@ export default {
       this.isLoading = true
       // if dont have the profiles, wait for them to load before showing them
       if (!this.profilesArr.length || refresh) await this.loadPersonList()
-
-      
-      // this.profilesIndex = this.profilesArr.map(this.mapProfileData)
-
       this.isLoading = false
-    },
-    mapProfileData (profile) {
-      if (profile.aliveInterval) {
-        profile.dob = this.computeDate('dob', profile.aliveInterval)
-        profile.dod = this.computeDate('dod', profile.aliveInterval)
-        profile.age = this.age(profile.aliveInterval)
-        profile.altNames = this.altNames(profile.altNames)
-      }
-
-      if (profile.customFields && Array.isArray(profile.customFields)) {
-        profile.customFields = profile.customFields
-          .reduce((acc, field) => {
-            return { ...acc, [field.key]: field.value }
-          }, {})
-      }
-
-      return profile
     },
     searchFilter (value, search, item) {
       const _search = search.toLocaleLowerCase()
@@ -344,25 +306,6 @@ export default {
       this.showEditor = false
       this.isEditing = false
     },
-    async handleAdd (profile) {
-      if (!this.profilesIndex.find(a => a.id === profile.id)) {
-        this.showAlert({ message: this.$t('viewPerson.profileAdded'), color: 'green' })
-        this.profilesIndex.unshift(this.mapProfileData(profile))
-      }
-    },
-    handleSaved (newProfile) {
-      this.isLoading = true
-      this.profilesIndex = this.profilesIndex
-        .map(profile => {
-          return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
-        })
-      this.isLoading = false
-    },
-    async handleDelete (id) {
-      this.showAlert({ message: this.$t('viewPerson.profileDeleted'), color: 'green' })
-      this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== id)
-      this.setSelectedProfileId(null)
-    },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
       this.close()
@@ -371,38 +314,6 @@ export default {
         type: null,
         source: null
       })
-    },
-    altNames (altArray) {
-      if (isEmpty(altArray)) return ''
-      return altArray.join(', ')
-    },
-    computeDate (requiredDate, age) {
-      if (!age) {
-        return ''
-      }
-      let ageString = ''
-      const dateSplit = dateIntervalToString(age, this.monthTranslations).split('-')
-      if (requiredDate === 'dob') {
-        if (dateSplit[0]) {
-          ageString = dateSplit[0]
-        }
-      }
-      if (requiredDate === 'dod') {
-        if (dateSplit[1]) {
-          ageString = dateSplit[1]
-        }
-      }
-      return ageString
-    },
-    age (born) {
-      const age = calculateAge(born)
-      if (age || age === 0) {
-        return age.toString()
-      }
-      return age
-    },
-    monthTranslations (key, vars) {
-      return this.$t('months.' + key, vars)
     },
     downloadCsv () {
       const profiles = this.profilesIndex.map(profile => mapNodeToCsvRow(profile))

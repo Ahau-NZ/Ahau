@@ -9,8 +9,13 @@ import {
   findPersonByName,
   loadPersonList
 } from './apollo-helpers'
+import isEmpty from 'lodash.isempty'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
+import calculateAge from '@/lib/calculate-age'
+import { determineFilter } from '@/lib/filters.js'
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import i18n from '@/plugins/i18n'
 
 const pull = require('pull-stream')
 const pullParaMap = require('pull-paramap')
@@ -45,7 +50,9 @@ export default function (apollo) {
 
   const getters = {
     person: state => (profileId) => state.profiles[profileId],
-    profilesArr: state => state.profilesArr, // Array needed for personIndex page
+    profilesArr: (state, getters, rootState, rootGetters) => {
+      return state.profilesArr.filter(d => determineFilter({ data: d }, rootGetters['table/tableFilter'])) // Array needed for personIndex page
+    },
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
@@ -102,11 +109,11 @@ export default function (apollo) {
       state.profilesArr = profiles
     },
     setProfileInArr (state, profile) {
-      state.profilesArr.unshift(profile)
+      state.profilesArr.unshift(mapProfileData(profile))
     },
     updateProfileInArr (state, profile) {
       const index = state.profilesArr.findIndex((el) => el.id === profile.id)
-      state.profilesArr[index] = profile
+      state.profilesArr.splice(index, 1, mapProfileData(profile))
     },
     deleteProfileInArr (state, id) {
       const index = state.profilesArr.findIndex((el) => el.id === id)
@@ -372,6 +379,7 @@ export default function (apollo) {
         const profiles = membersProfiles.data.listPerson
           .map(mergeAdminProfile)
           .concat(adminProfiles?.data.listPerson || [])
+          .map(mapProfileData)
 
         commit('setProfilesArr', profiles)
         for (const profile of profiles) {
@@ -413,4 +421,57 @@ function pruneInput (input) {
   }
 
   return input
+}
+
+function mapProfileData (profile) {
+  if (profile.aliveInterval) {
+    profile.dob = computeDate('dob', profile.aliveInterval)
+    profile.dod = computeDate('dod', profile.aliveInterval)
+    profile.age = age(profile.aliveInterval)
+    profile.altNames = altNames(profile.altNames)
+  }
+
+  if (profile.customFields && Array.isArray(profile.customFields)) {
+    profile.customFields = profile.customFields
+      .reduce((acc, field) => {
+        return { ...acc, [field.key]: field.value }
+      }, {})
+  }
+  return profile
+}
+
+function altNames (altArray) {
+  if (isEmpty(altArray)) return ''
+  return altArray.join(', ')
+}
+
+function computeDate (requiredDate, age) {
+  if (!age) {
+    return ''
+  }
+  let ageString = ''
+  const dateSplit = dateIntervalToString(age, monthTranslations).split('-')
+  if (requiredDate === 'dob') {
+    if (dateSplit[0]) {
+      ageString = dateSplit[0]
+    }
+  }
+  if (requiredDate === 'dod') {
+    if (dateSplit[1]) {
+      ageString = dateSplit[1]
+    }
+  }
+  return ageString
+}
+
+function age (born) {
+  const age = calculateAge(born)
+  if (age || age === 0) {
+    return age.toString()
+  }
+  return age
+}
+
+function monthTranslations (key, vars) {
+  return i18n.t('months.' + key, vars)
 }
