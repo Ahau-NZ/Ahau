@@ -295,7 +295,7 @@
       </v-row>
 
       <!-- Skills and Qualifications -->
-      <v-row v-if="hasOneField(['profession', 'qualifications', 'education'])" class="pt-2">
+      <v-row v-if="hasOneField(['profession', 'school', 'education'])" class="pt-2">
         <v-col cols="12" class="px-0">
           <v-divider class="py-2"/>
           <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
@@ -318,7 +318,7 @@
 
         <!-- Skills -->
         <!-- TODO: configure required -->
-      <v-row v-if="hasDefaultField('qualifications')">
+      <v-row v-if="hasDefaultField('education')">
         <v-col v-for="(qualification, index) in formData.education"
           :key="`add-qual-name-${index}`"
           :cols="smScreen ? '12' : '6'"
@@ -340,7 +340,7 @@
 
       <!-- Education -->
       <!-- TODO: configure required -->
-      <v-row v-if="hasDefaultField('education')" class="pb-1">
+      <v-row v-if="hasDefaultField('school')" class="pb-1">
         <v-col v-for="(school, index) in formData.school"
           :key="`add-school-name-${index}`"
           :cols="smScreen ? '12' : '6'"
@@ -699,8 +699,6 @@ export default {
 
       const field = this.tribeRequiredDefaultFields.find(field => field.label === label)
       if (!field) return []
-
-      console.log('field: ', field)
 
       return field.required ? this.rules : []
     },

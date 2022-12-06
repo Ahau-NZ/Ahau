@@ -114,11 +114,10 @@ const mappings = {
   'place of death': 'placeOfDeath',
   'buried location': 'buriedLocation',
   profession: 'profession',
-  'skills/qualifications': 'qualifications',
-  schools: 'education',
+  'skills/qualifications': 'education',
+  schools: 'school',
   'date of birth': 'dob',
-  'date of death': 'dod',
-  age: 'age'
+  'date of death': 'dod'
 }
 
 /**

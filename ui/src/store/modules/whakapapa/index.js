@@ -515,7 +515,10 @@ export default function (apollo) {
         }
       }
 
-      return dispatch('saveWhakapapaView', input)
+      const result = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
+      if (!result) return
+
+      return result
     },
     async getWhakapapaView ({ dispatch }, viewId) {
       return apollo.niceQuery(dispatch, getWhakapapaView(viewId))

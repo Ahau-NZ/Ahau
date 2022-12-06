@@ -27,7 +27,6 @@ export function Getters (state) {
         })
       }
     } catch (err) {
-      console.log(getterName)
       // not ready yet!
       getterNames.push(getterName)
     }
