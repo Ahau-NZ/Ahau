@@ -175,17 +175,6 @@
 
     <!-- Start of advanced section -->
     <v-divider />
-    <v-card-actions class="pt-2 pb-2 pr-5 pointer">
-      <v-row @click="showAdvanced = !showAdvanced" class="clickable">
-        <v-col>
-          <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
-        </v-col>
-        <v-btn icon right>
-          <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-        </v-btn>
-      </v-row>
-    </v-card-actions>
-    <v-divider />
     <div :class="readonly && !mobile ? 'ml-5' : ''">
       <v-row>
         <!-- Full Name -->

@@ -186,7 +186,7 @@ export default {
     ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields', 'currentTribe']),
+    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields', 'currentTribe', 'accessOptions']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
@@ -225,13 +225,17 @@ export default {
     ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
-    ...mapActions(['setLoading', 'setDialog']),
+    ...mapActions(['setCurrentAccess']),
+    ...mapActions(['setLoading', 'setDialog', 'setCurrentAccess']),
     addPerson () {
       this.setDialog({
         active: 'new-person',
         type: 'person',
         source: null
       })
+      // if adding a person to personIndex than make it a kaitiaki only profile
+      const access = this.accessOptions.filter(option => option.type === 'kaitiaki')
+      this.setCurrentAccess(access[0])
     },
     populateHeaders () {
       const defaultHeaders = this.defaultHeaders

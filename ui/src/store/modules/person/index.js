@@ -80,6 +80,7 @@ export default function (apollo) {
       return getters.personPlusFamily(state.selectedProfileId)
     },
     isTombstoned: state => (profileId) => state.tombstoned.has(profileId),
+    // changed to boolean to avoid unnecessary re-renders
     isLoadingProfiles: state => state.loadingProfiles
   }
 
@@ -146,6 +147,7 @@ export default function (apollo) {
       commit('deleteProfileInArr', id)
     },
     async createPerson (_, input) {
+      console.log('createPerson index', input)
       try {
         if (!input.type) throw new Error('a profile type is required to create a person')
         if (!input.authors) throw new Error('profile authors is required to create a person')

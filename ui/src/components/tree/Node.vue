@@ -300,10 +300,10 @@ export default {
       const height = window.innerHeight
       const width = window.innerWidth
       // this checks if the node is in the users view window
-      this.isInView = rect.top < height &&
-        rect.bottom > 0 &&
-        rect.left < width &&
-        rect.right > 0
+      this.isInView = (
+        rect.bottom <= height && rect.top >= 0 &&
+        rect.right >= 0 && rect.left <= width
+      )
     }
   }
 }
