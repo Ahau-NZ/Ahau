@@ -153,7 +153,6 @@ export default function () {
     },
     refreshWhakapapaData ({ rootGetters, commit, state }) {
       const tree = buildTree(rootGetters, state)
-
       commit('setTree', tree)
     }
   }
