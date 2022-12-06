@@ -51,12 +51,14 @@ export default {
   },
   methods: {
     ...mapActions('settings', ['getBackup', 'updateKeyBackupSettings']),
+    ...mapActions('alerts', ['showAlert']),
     async downloadKeys () {
       const backupContent = await this.getBackup()
 
       downloadBackup(backupContent)
 
       await this.updateKeyBackupSettings(true)
+      this.showAlert({ message: 'Backup key successfully downloaded', color: 'green' })
     },
     t (key, vars) {
       return this.$t('keyBackupForm.' + key, vars)

@@ -268,7 +268,7 @@ export default {
     },
     async processCreateFromCsv (rows) {
       const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaViewInput: this.newView, rows })
-      this.goToWhakapapaView(whakapapaId)
+      if (whakapapaId) this.goToWhakapapaView(whakapapaId)
     },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)

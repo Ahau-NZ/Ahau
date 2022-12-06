@@ -189,10 +189,10 @@
                     <ProfileInfoItem v-if="hasDefaultField('buriedLocation')" class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
                   </template>
                 </v-row>
-                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'qualifications'])" class="rounded-border">
+                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'school'])" class="rounded-border">
                   <ProfileInfoItem v-if="hasDefaultField('profession')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
                   <ProfileInfoItem v-if="hasDefaultField('education')" class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
-                  <ProfileInfoItem v-if="hasDefaultField('qualifications')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('school')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
                 </v-row>
                 <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>

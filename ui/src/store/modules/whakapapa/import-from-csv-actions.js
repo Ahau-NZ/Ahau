@@ -82,6 +82,7 @@ export default {
         profile.authors = {
           add: ['*']
         }
+        console.log('creating profile:', profile)
         const profileId = await dispatch('person/createPerson', profile, { root: true })
 
         // importing from peoples list doesnt require a csvId we may not be building relaiotnships
@@ -109,7 +110,7 @@ export default {
           child: totalProfiles[childCsvId],
           recps
         }
-
+        console.log('create relationship:', relationship)
         if (relationshipType === 'partner') return dispatch('createPartnerLink', relationship)
 
         // // TODO: check if this is important
