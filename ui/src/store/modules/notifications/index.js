@@ -52,8 +52,20 @@ const actions = {
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
   },
-  submitProfileChanges (_, output) {
-    console.log('changes submitted: ' + output)
+  submitProfileChanges ({ commit }, output) {
+    const testobj = {
+      from: 'bob',
+      group: '_group',
+      applicant: null,
+      id: 'id',
+      answers: [],
+      history: [],
+      isPersonal: false,
+      isAccepted: true,
+      isNew: true
+    }
+    commit('updateNotifications', [testobj, testobj, testobj])
+    console.log('changes submitted: ' + JSON.stringify(output))
   }
 }
 
@@ -75,7 +87,6 @@ function mapValues (whoami) {
 
     // TODO: not sure which admin, find out later: look at the history instead
     const from = isPersonal ? whoami.personal.profile : applicant
-
     return {
       from,
       group: _group,
