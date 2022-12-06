@@ -75,9 +75,6 @@ export default function (apollo) {
     views: {
       // [viewId]: { view }
     },
-
-    activeQueryCount: 0,
-
     childLinks: {
       // [parentId]: {
       //   [childId]: relationshipType
@@ -88,6 +85,9 @@ export default function (apollo) {
       //   [partnerB]: relationshipType
       // }
     },
+    activeQueryCount: 0,
+    // loading needs to be a boolean so that watcher isnt triggered when count changes
+    loadingWhakapapa: false,
     path: []
   }
 
@@ -98,7 +98,7 @@ export default function (apollo) {
     ignoredProfileIds: state => state.view.ignoredProfiles,
     showExtendedFamily: state => Boolean(state.view.changes.showExtendedFamily),
     autoCollapse: state => state.view.changes.autoCollapse,
-    isLoadingWhakapapa: state => state.activeQueryCount > 0,
+    isLoadingWhakapapa: state => state.loadingCount || state.loadingWhakapapa,
 
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
     pathToRoot: (state, getters, rootState, rootGetters) => {
@@ -359,6 +359,8 @@ export default function (apollo) {
         ...state.view,
         ...view
       }
+      // set loadingwhakapapa:true in loadWhakapapaView
+      state.loadingWhakapapa = false
     },
     setViewFocus (state, profileId) {
       state.view.changes.focus = profileId
@@ -383,6 +385,8 @@ export default function (apollo) {
 
     // methods for manipulating whakapapa links
     addLinks (state, { childLinks = [], partnerLinks = [], isLoadingFocus = false }) {
+      state.loadingWhakapapa = true
+
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
       childLinks.forEach(({ parent, child, relationshipType }) => {
@@ -407,6 +411,7 @@ export default function (apollo) {
       if (isLoadingFocus) {
         if (!state.view.focus) {
           console.error('expected state.view.focus to be set for auto-collapsing')
+          state.loadingWhakapapa = false
           return
         }
         walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
@@ -416,6 +421,7 @@ export default function (apollo) {
           }
         })
       }
+      state.loadingWhakapapa = false
     },
     removeLinksToProfile (state, profileId) {
       // NOTE this exists to be able to disconnect nodes which should not be in graph
@@ -467,6 +473,7 @@ export default function (apollo) {
     modifyActiveQueryCount (state, number) {
       if (!number) return
       state.activeQueryCount = state.activeQueryCount + number
+      state.loadingWhakapapa = state.activeQueryCount > 0
     },
 
     setAutoCollapse (state, autoCollapse) {
@@ -545,20 +552,23 @@ export default function (apollo) {
       if (links) dispatch('addLinks', links)
     },
     async loadWhakapapaView ({ commit, dispatch, rootGetters, state }, id) {
+      // set loadingwhakapapa:true here and false loading after we have setView
+      state.loadingWhakapapa = true
       // If whakapapa had been opened, open previous view settings
       if (state.views[id]) return commit('setView', state.views[id])
       const view = await dispatch('getWhakapapaView', id)
-      if (!view) return
+      if (!view) {
+        state.loadingWhakapapa = false
+        return
+      }
       // if no permission set then set as edit
       if (!view.permission) view.permission = 'edit'
       // set canEdit here instead of with graphql
       view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
-
-      commit('setView', view)
       const links = await dispatch('getDescendantLinks', view.focus)
       if (!links) return
-
       const isLoadingFocus = !state.views[id]
+      commit('setView', view)
       dispatch('addLinks', { ...links, isLoadingFocus })
     },
 
@@ -754,7 +764,7 @@ export default function (apollo) {
       const profiles = new Set([])
       const opts = { showCollapsed: true, showExtendedFamily: false }
 
-      walkTree(state.childLinks, state.view.focus, (profileId, depth, processed) => {
+      walkTree(state.childLinks, state.view.focus, (profileId) => {
         profiles.add(profileId)
         getters.getPartnerIds(profileId, opts).forEach(p => profiles.add(p))
         getters.getChildIds(profileId, opts).forEach(p => profiles.add(p))

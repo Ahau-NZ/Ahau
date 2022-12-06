@@ -30,8 +30,10 @@
     "school": "School",
     "dob": "Date of birth", 
     "dod": "Date of passing",
-    "age": "Age"
- 
+    "age": "Age",
+    "dateOfBirth": "Date of birth",
+    "dateOfDeath": "Date of passing"
+
   },
   "loading": "Loading profiles..."
 }

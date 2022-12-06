@@ -7,6 +7,7 @@
     @mouseleave="setHover(false)"
     @mousedown.right="openMenu"
     @contextmenu.prevent
+    ref="node"
   >
 
     <g v-if="showAvatars" :transform="`translate(0 ${radius + 12})`">
@@ -72,7 +73,7 @@
         :style="avatarStyle"
       />
       <NodeMenuButton
-        v-if="showMenuButton"
+        v-if="!isLoading && showMenuButton"
         :transform="`translate(${0.6 * radius} ${0.6 * radius})`"
         @click="openMenu"
       />
@@ -82,7 +83,6 @@
     </g>
     <g v-if="hasUndrawnSubtree" :style="dotsUnderNode" @click="toggleNodeCollapse(profileId)" >
       <rect width="40" height="40" y="-20" style="fill: rgba(0,0,0,0);" />
-      <!-- this rect helps the group be big enough to easily click on -->
       <text> ...  </text>
     </g>
 
@@ -118,7 +118,9 @@ export default {
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
     isPartner: Boolean,
-    showAvatars: Boolean
+    showAvatars: Boolean,
+    zooming: Boolean,
+    scale: Number
   },
   components: {
     NodeMenuButton
@@ -130,7 +132,22 @@ export default {
         deceased: DECEASED_COLOUR
       },
       radius: this.isPartner ? PARTNER_RADIUS : RADIUS,
-      staticProfile: null
+      staticProfile: null,
+      isInView: false
+    }
+  },
+  watch: {
+    // Recheck which nodes are in view after pannig/zooming
+    zooming (newVal) {
+      if (!newVal) {
+        if (this.isLoading) return
+        this.calculateInView()
+      }
+    },
+    // Check if profile is in view once profile has loaded
+    profile () {
+      if (this.isLoading) return
+      this.calculateInView()
     }
   },
   async mounted () {
@@ -138,24 +155,27 @@ export default {
   },
   computed: {
     ...mapGetters('person', ['person', 'selectedProfileId', 'isLoadingProfiles']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds']),
-    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode', 'searchedProfileId']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getImportantRelationship', 'isCollapsedNode', 'getParentIds', 'getRawChildIds', 'getRawPartnerIds', 'isLoadingWhakapapa']),
+    ...mapGetters('tree', ['hoveredProfileId', 'getNode', 'getPartnerNode', 'searchedProfileId', 'isLoadingTree']),
+    isLoading () {
+      return this.isLoadingProfiles || this.isLoadingWhakapapa || this.isLoadingTree
+    },
     isCollapsed () {
-      if (this.isLoadingProfiles) return
+      if (this.isLoading || !this.isInView) return
       return this.isCollapsedNode(this.profileId)
     },
     isSelected () {
       return this.selectedProfileId === this.profileId || this.searchedProfileId === this.profileId
     },
     profile () {
-      if (this.isLoadingProfiles) {
+      if (this.isLoading || !this.isInView) {
         return this.staticProfile
       } else {
         return this.person(this.profileId)
       }
     },
     isDuplicate () {
-      if (this.isLoadingProfiles) return
+      if (this.isLoading || !this.isInView) return
       const rule = this.getImportantRelationship(this.profileId)
       if (!rule) return false
       return rule.other.length > 1
@@ -163,7 +183,7 @@ export default {
       // Idea - make a getAllNodes + getAllParterNodes (which doesn't just find the first)
     },
     hasUndrawnSubtree () {
-      if (this.isLoadingProfiles) return
+      if (this.isLoading || !this.isInView) return
       if (this.isCollapsed) {
         const undrawnDescendants = this.getRawChildIds(this.profileId)
           .filter(id => !this.getNode(id))
@@ -178,23 +198,26 @@ export default {
       return false
     },
     hasUndrawnAscendants () {
-      if (this.isLoadingProfiles) return
+      if (this.isLoading || !this.isInView) return
       return this.getParentIds(this.profileId)
         .filter(id => !this.getNode(id) && !this.getPartnerNode(id))
         .length > 0
     },
-    showMenuButton () {
-      // if (this.isPartner) return false
-      if (!this.whakapapaView.canEdit) return false
-      if (this.isCollapsed && (this.hasUndrawnSubtree || this.hasUndrawnAscendants)) return false
-      return this.hoveredProfileId === this.profileId
-    },
     hasAncestors () {
-      if (this.isLoadingProfiles) return
+      if (this.isLoading || !this.isInView) return
       return (
         this.getParentIds(this.profileId) > 0 ||
         (this.profile.parents && this.profile.parents.length > 0)
       )
+    },
+    showMenuButton () {
+      // requires early return to prevent recompuiting with every profile loaded
+      if (this.isLoading || !this.isInView) return
+      if (this.isPartner ||
+        !this.whakapapaView.canEdit ||
+        this.isCollapsed
+      ) return false
+      return this.hoveredProfileId === this.profileId
     },
     clipPathId () {
       return this.isPartner ? 'partnerCirlce' : 'myCircle'
@@ -266,6 +289,21 @@ export default {
     setHover (bool = false) {
       if (bool) this.setHoveredProfileId(this.profileId)
       else this.setHoveredProfileId(null)
+    },
+    calculateInView () {
+      // Check if zoomed too far out to consider in view, or if node isn't mounted yet
+      if (this.scale < 0.22 || !this.$refs.node) {
+        this.isInView = false
+        return
+      }
+      const rect = this.$refs.node.getBoundingClientRect()
+      const height = window.innerHeight
+      const width = window.innerWidth
+      // this checks if the node is in the users view window
+      this.isInView = (
+        rect.bottom <= height && rect.top >= 0 &&
+        rect.right >= 0 && rect.left <= width
+      )
     }
   }
 }

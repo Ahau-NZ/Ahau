@@ -35,7 +35,8 @@ export const DEFAULT_PROFILE_MODEL = [
   { label: 'buried location', type: 'text', required: false, visibleBy: 'members' },
   { label: 'profession', type: 'text', required: false, visibleBy: 'members' },
   { label: 'skills/qualifications', type: 'array', required: false, visibleBy: 'members' },
-  { label: 'schools', type: 'array', required: false, visibleBy: 'members' }
+  { label: 'schools', type: 'array', required: false, visibleBy: 'members' },
+  { label: 'age', type: 'number', required: false, visibleBy: 'members' }
 ]
 
 // these are default fields which are disabled (you cant change or remove them)
@@ -115,8 +116,9 @@ const mappings = {
   profession: 'profession',
   'skills/qualifications': 'qualifications',
   schools: 'education',
-  'date of birth': 'dateOfBirth',
-  'date of death': 'dateOfDeath'
+  'date of birth': 'dob',
+  'date of death': 'dod',
+  age: 'age'
 }
 
 /**

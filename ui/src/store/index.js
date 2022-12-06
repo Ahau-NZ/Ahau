@@ -103,7 +103,6 @@ function updateTree (store) {
   // triggers graph data updates
   const slowedRefreshTree = debounce(
     () => {
-      console.log('slowedRefreshTree')
       store.getters['whakapapa/whakapapaView'].tree
         ? store.dispatch('tree/refreshWhakapapaData')
         : store.dispatch('table/refreshWhakapapaData')
@@ -112,15 +111,16 @@ function updateTree (store) {
     { maxWait: 2000 }
   )
   // we debounce this refresh to slow the degree to which d3 calculations and graph redraw are done
-
   store.subscribe(mutation => {
     if (
-      mutation.type.startsWith('whakapapa') ||
-      mutation.type === 'person/setPerson' // includes birthOrder info
+      router.currentRoute?.name?.includes('whakapapa') &&
+      !store.getters['person/isLoadingProfiles'] &&
+      (
+        mutation.type.startsWith('whakapapa') ||
+        mutation.type === 'person/setPerson'
+      ) // includes birthOrder info
     ) {
-      if (router.currentRoute?.name?.includes('whakapapa')) {
-        slowedRefreshTree()
-      }
+      slowedRefreshTree()
     }
   })
 }

@@ -21,7 +21,8 @@ export default function () {
     secondaryLinks: {},
     mouseEvent: null,
     hoveredProfileId: null,
-    searchedProfileId: null
+    searchedProfileId: null,
+    loadingTree: false
   }
 
   // we need to know the x/y of each drawn profile (d3 nodes + partners),
@@ -30,6 +31,9 @@ export default function () {
 
   const getters = {
     tree: state => state.tree,
+    isLoadingTree (state) {
+      return state.loadingTree
+    },
     descendants (state, getters) {
       if (state.tree) return state.tree.descendants()
       else return []
@@ -147,9 +151,8 @@ export default function () {
       // expand profiles to path
       commit('setSearchedProfileId', id)
     },
-    refreshWhakapapaData ({ rootGetters, commit }) {
-      const tree = buildTree(rootGetters)
-
+    refreshWhakapapaData ({ rootGetters, commit, state }) {
+      const tree = buildTree(rootGetters, state)
       commit('setTree', tree)
     }
   }
@@ -163,7 +166,8 @@ export default function () {
   }
 }
 
-export function buildTree (rootGetters) {
+export function buildTree (rootGetters, state) {
+  state.loadingTree = true
   const root = buildRoot(rootGetters)
   const treeLayout = rootGetters['tree/layout'](root)
 
@@ -173,7 +177,6 @@ export function buildTree (rootGetters) {
   const getPartnerType = (A, B) => {
     return rootGetters['whakapapa/getPartnerType'](A.data.id, B.data.id)
   }
-
   // for each node in the tree:
   treeLayout.each(node => {
     // add partners (sorted by children)
@@ -192,11 +195,10 @@ export function buildTree (rootGetters) {
       ...partnerLinks
     ]
   })
-
   // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
   // NOTE ideally we could do this here ... but results in an infinite loop
   // NOTE done after above round as partners are added there
-
+  state.loadingTree = false
   return treeLayout
 }
 

@@ -138,13 +138,6 @@ export default {
   },
   mounted () {
     if (!this.permission) this.type === 'whakapapa' ? this.setPermission('edit') : this.setPermission('view')
-
-    // if adding a person to personIndex than make it a kaitiaki only profile
-    if (this.$route.name === 'personIndex') {
-      const access = this.accessOptions
-        .filter(option => option.type === 'kaitiaki')
-      this.setCurrentAccess(access[0])
-    }
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess']),

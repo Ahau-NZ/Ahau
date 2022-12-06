@@ -1,5 +1,14 @@
 # Changelog | Ahau desktop
 
+## v2.17
+
+### New Features
+* can now add people direct to people database
+
+### Bug fixtures
+* improved whakapapa to svg printing
+* improved loading large whakapapa charts
+
 ## v2.16.1
 
 ### Bug Fixes
