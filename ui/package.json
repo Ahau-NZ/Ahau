@@ -5,7 +5,6 @@
   "author": "Āhau Ltd.",
   "scripts": {
     "dev": "vue-cli-service serve",
-    "storybook": "start-storybook -p 6001",
     "build:desktop": "vue-cli-service build --dest ../desktop/dist",
     "build:mobile": "vue-cli-service build --dest ../mobile/www",
     "lint": "vue-cli-service lint",
@@ -72,9 +71,6 @@
     "@babel/eslint-parser": "^7.12.16",
     "@babel/eslint-plugin": "^7.17.7",
     "@babel/parser": "^7.21.2",
-    "@storybook/addon-actions": "^5.2.8",
-    "@storybook/addon-viewport": "^5.3.12",
-    "@storybook/vue": "^5.2.8",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-plugin-router": "^5.0.8",
