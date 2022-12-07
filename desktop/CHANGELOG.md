@@ -1,6 +1,7 @@
 # Changelog | Ahau desktop
 
-## v2.17
+## v2.17.0
+
 ### New Features
 * can now add people direct to people database
 
