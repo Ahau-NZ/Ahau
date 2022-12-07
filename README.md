@@ -3,7 +3,7 @@
 A whakapapa app that works peer-to-peer, and doesn't require internet.
 All data is held by you and those friends you connect with, and is cryptographically secured.
 
-Built on [scuttlebutt](www.scuttlebutt.nz)
+Built on [scuttlebutt](https://scuttlebutt.nz)
 
 For more info see ahau.io
 
