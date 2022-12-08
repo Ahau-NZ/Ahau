@@ -38,6 +38,7 @@ export default {
     openNotification (notification) {
       this.setCurrentNotification(notification)
       if (notification.isSystem) this.$emit('click')
+      else if (notification.isSubmission) this.setDialog({ active: 'review-submission' })
       else this.setDialog({ active: 'review-registration' })
     }
   }

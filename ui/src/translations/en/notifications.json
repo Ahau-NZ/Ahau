@@ -6,6 +6,12 @@
   "groupNew": "Has requested to join {groupName}",
   "groupAccepted": "Has joined {groupName}",
   "groupDeclined": "Has been declined to join {groupName}",
+  "personalSubmissionNew": "Your submission to {groupName} is pending",
+  "personalSubmissionAccepted": "Your submission to {groupName} has been accepted",
+  "personalSubmissionDeclined": "Your submission to {groupName} has been accepted",
+  "submissionNew": "Has submitted a change to {groupName}",
+  "submissionAccepted": "'s submission has been accepted",
+  "submissionDeclined": "'s submission has been declined",
   "noDetails": "No details",
 
   "systemTitle": "System",

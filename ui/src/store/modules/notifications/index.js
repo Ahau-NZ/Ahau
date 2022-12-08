@@ -34,6 +34,124 @@ const actions = {
       const res = await apollo.query(
         listGroupApplications()
       )
+      const testobj = {
+        from: 'bob',
+        group: {
+          id: '%vNqmX1qk2JUEKW0Hr7b6h5mrM/pOOZ7+R5soLMOSZ0M=.sha256',
+          preferredName: 'Test tribe'
+        },
+        userToBeChanged: {
+          id: '%UZTS3z+xpOX0hI4eYrz0YCcodwulelUqxB7q5wbyOx0=.sha256',
+          canEdit: true,
+          type: 'person',
+          preferredName: 'Fin Mountfort',
+          legalName: null,
+          altNames: [],
+          description: null,
+          gender: 'male',
+          postCode: null,
+          city: 'Hamilton',
+          country: 'NZ',
+          profession: null,
+          aliveInterval: null,
+          birthOrder: 1,
+          deceased: false,
+          placeOfBirth: null,
+          placeOfDeath: null,
+          buriedLocation: null,
+          education: [
+            ''
+          ],
+          school: [
+            ''
+          ],
+          recps: [
+            'ssb:identity/po-box/YzNORxzK3Cpvk-kCC3a5h1JoVaAogCzBgMKUS-2sbQc=',
+            '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519'
+          ],
+          address: null,
+          email: null,
+          phone: null,
+          avatarImage: null,
+          headerImage: null,
+          customFields: [],
+          originalAuthor: '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519',
+          __typename: 'Person'
+        },
+        submitter: {
+          id: '%PLYl1cTU5/bMjTWRCRvT9MjUNTXPMU9J7s95mOZ+L7w=.sha256',
+          canEdit: true,
+          type: 'person/admin',
+          preferredName: 'Big Man',
+          legalName: null,
+          altNames: [],
+          description: null,
+          gender: 'male',
+          postCode: null,
+          city: 'Hamilton',
+          country: 'NZ',
+          profession: null,
+          aliveInterval: null,
+          birthOrder: 1,
+          deceased: false,
+          placeOfBirth: null,
+          placeOfDeath: null,
+          buriedLocation: null,
+          education: [
+            ''
+          ],
+          school: [
+            ''
+          ],
+          recps: [
+            'ssb:identity/po-box/YzNORxzK3Cpvk-kCC3a5h1JoVaAogCzBgMKUS-2sbQc=',
+            '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519'
+          ],
+          address: null,
+          email: null,
+          phone: null,
+          avatarImage: null,
+          headerImage: null,
+          customFields: [],
+          originalAuthor: '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519',
+          __typename: 'Person'
+        },
+        changes: {
+          preferredName: 'blam',
+          address: 'blah',
+          email: 'brug'
+        },
+        id: 'id',
+        answers: [],
+        history: [
+          {
+            type: 'answers',
+            authorId: '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519',
+            author: {
+              id: '%PLYl1cTU5/bMjTWRCRvT9MjUNTXPMU9J7s95mOZ+L7w=.sha256'
+            },
+            timestamp: '1670206345610',
+            answers: [],
+            __typename: 'GroupApplicationAnswerHistory'
+          },
+          {
+            type: 'comment',
+            authorId: '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519',
+            author: {
+              id: '%PLYl1cTU5/bMjTWRCRvT9MjUNTXPMU9J7s95mOZ+L7w=.sha256'
+            },
+            timestamp: '1670206345610',
+            comment: 'This is a test comment :D',
+            __typename: 'GroupApplicationCommentHistory'
+          }
+        ],
+        isPersonal: true,
+        isAccepted: false,
+        isSubmission: true,
+        isNew: true
+      }
+      // res.data.unseen.push(testobj)
+      // console.log(JSON.stringify(res, null, 4))
 
       if (res.errors) throw res.errors
 
@@ -44,6 +162,9 @@ const actions = {
         .filter(n => n.group)
         .reverse()
 
+      // console.log(JSON.stringify(applications, null, 4))
+      // appending test notification to notif list
+      applications.push(testobj)
       commit('updateNotifications', applications)
     } catch (err) {
       console.error('Something went wrong while trying to get all group applications', err)
@@ -53,18 +174,8 @@ const actions = {
     commit('updateCurrentNotification', notification)
   },
   submitProfileChanges ({ commit }, output) {
-    const testobj = {
-      from: 'bob',
-      group: '_group',
-      applicant: null,
-      id: 'id',
-      answers: [],
-      history: [],
-      isPersonal: false,
-      isAccepted: true,
-      isNew: true
-    }
-    commit('updateNotifications', [testobj, testobj, testobj])
+    // commit('updateNotifications', [testobj, testobj, testobj])
+
     console.log('changes submitted: ' + JSON.stringify(output))
   }
 }
@@ -83,6 +194,8 @@ function mapValues (whoami) {
     const isPersonal = applicantId === whoami.public.feedId
     const isNew = decision === null
     const isAccepted = (decision && decision.accepted) || false
+    // defaults to false as currently only join requests are mapped
+    const isSubmission = false
     const _group = (group && group.public[0]) || null
 
     // TODO: not sure which admin, find out later: look at the history instead
@@ -96,6 +209,7 @@ function mapValues (whoami) {
       history,
       isPersonal,
       isAccepted,
+      isSubmission,
       isNew
     }
   }

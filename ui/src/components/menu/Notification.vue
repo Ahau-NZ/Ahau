@@ -36,18 +36,27 @@ export default {
       return this.showBadge ? 'font-weight-medium' : ''
     },
     text () {
-      const { isPersonal, isNew, isAccepted, isSystem } = this.notification
+      const { isPersonal, isNew, isAccepted, isSubmission, isSystem } = this.notification
 
       if (isSystem) return this.t('system')
 
       const groupName = this.notification.group.preferredName
-
-      if (isPersonal && isNew) return this.t('personalNew', { groupName: groupName })
-      if (isPersonal && isAccepted) return this.t('personalAccepted', { groupName: groupName })
-      if (isPersonal && !isAccepted) return this.t('personalDeclined', { groupName: groupName })
-      if (!isPersonal && isNew) return this.t('groupNew', { groupName: groupName })
-      if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
-      if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
+      // if isSubmission is true then request is submission
+      if (!isSubmission) {
+        if (isPersonal && isNew) return this.t('personalNew', { groupName: groupName })
+        if (isPersonal && isAccepted) return this.t('personalAccepted', { groupName: groupName })
+        if (isPersonal && !isAccepted) return this.t('personalDeclined', { groupName: groupName })
+        if (!isPersonal && isNew) return this.t('groupNew', { groupName: groupName })
+        if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
+        if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
+      } else if (isSubmission) {
+        if (isPersonal && isNew) return this.t('personalSubmissionNew', { groupName: groupName })
+        if (isPersonal && isAccepted) return this.t('personalSubmissionAccepted', { groupName: groupName })
+        if (isPersonal && !isAccepted) return this.t('personalSubmissionDeclined', { groupName: groupName })
+        if (!isPersonal && isNew) return this.t('submissionNew', { groupName: groupName })
+        if (!isPersonal && isAccepted) return this.t('submissionAccepted', { groupName: groupName })
+        if (!isPersonal && !isAccepted) return this.t('submissionDeclined', { groupName: groupName })
+      }
       return this.t('noDetails')
     },
     author () {

@@ -98,6 +98,7 @@
         />
       </v-card>
     </v-expand-transition>
+
     <KeyBackupDialog
       v-if="showKeyBackup"
       :show="showKeyBackup"

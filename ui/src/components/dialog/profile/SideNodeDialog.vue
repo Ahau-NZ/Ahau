@@ -697,6 +697,7 @@ export default {
       if (!isEmpty(output)) {
         if (this.canSubmit) {
           this.showAlert({ message: 'Submitted for review', color: 'green' })
+
           return this.submitProfileChanges(output)
         }
         await this.processUpdate(output)

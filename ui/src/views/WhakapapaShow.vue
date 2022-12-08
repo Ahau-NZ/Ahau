@@ -232,7 +232,6 @@ export default {
 
     this.loadWhakapapaView(this.$route.params.whakapapaId)
   },
-
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),
