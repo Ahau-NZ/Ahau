@@ -4,11 +4,13 @@
 
       <!-- Content Slot -->
       <template v-slot:content>
+
         <v-col>
           <span class="subtitle-2 black--text">
             {{ text }}
           </span>
         </v-col>
+
         <v-col>
           <v-card outlined class="py-6">
             <v-row align="center" class="pt-5">
@@ -49,10 +51,28 @@
           </v-card>
         </v-col>
 
-        <!-- TODO: add logic to check if the request is to add or change value -->
-        <label>Changes requested:</label>
+        <!-- Header for changes -->
+        <span :class="headerClass">
+          Changes requested:
+        </span>
+
+        <!-- Content for changes -->
         <v-col v-for="(value, key) in changes" :key="key">
-          <label> Changed {{ updatedKeys[key] }} from {{ userToBeChanged[key] }} to {{ value }}</label>
+          <div v-if="userToBeChanged[key] == null">
+            <v-checkbox
+              hide-details
+              color="green"
+              :label="'Added new ' + updatedKeys[key] + ' : ' + value"
+            ></v-checkbox>
+          </div>
+          <div v-else>
+            <v-checkbox
+              hide-details
+              class="shrink mr-2 mt-0"
+              color="green"
+              :label="'Changed ' + updatedKeys[key] + ' from ' + userToBeChanged[key] + ' to ' + value"
+            ></v-checkbox>
+          </div>
         </v-col>
 
         <!-- Header for question answers -->
@@ -99,21 +119,25 @@
             </v-row>
           </v-card>
         </v-col>
+
       </template>
       <template v-slot:actions>
-        <div v-if="showActions">
-          <v-btn @click="submit(false)" text large class="secondary--text">
-            <span>{{ t('decline') }}</span>
-          </v-btn>
-          <v-btn @click="submit(true)" text large class="blue--text mx-5">
-            <span>{{ t('approve') }}</span>
-          </v-btn>
-        </div>
-        <div v-else>
-          <v-btn @click="close" text large class="blue--text mx-5">
-            <span>{{ t('close') }}</span>
-          </v-btn>
-        </div>
+        <!-- <div v-if="showActions"></div> -->
+        <!-- <div v-else> -->
+
+        <v-btn @click="submit(false)" text large class="secondary--text">
+          <span>{{ t('decline') }}</span>
+        </v-btn>
+
+        <v-btn @click="submit(true)" text large class="blue--text mx-5">
+          <span>{{ t('approve') }}</span>
+        </v-btn>
+
+        <v-btn @click="close" text large class="blue--text mx-5">
+          <span>{{ t('close') }}</span>
+        </v-btn>
+
+        <!-- </div> -->
       </template>
     </Dialog>
   </div>
