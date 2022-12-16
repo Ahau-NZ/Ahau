@@ -12,8 +12,8 @@
         </v-col>
 
         <v-col>
-          <v-card outlined class="py-6">
-            <v-row align="center" class="pt-5">
+          <v-card outlined class="py-1">
+            <v-row align="center" class="pt-0">
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
@@ -29,18 +29,15 @@
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12" class="pa-0">
-                    <v-icon large>mdi-transfer-right</v-icon>
-                  </v-col>
-                  <v-col cols="12" class="pa-0">
-                    <v-icon large>mdi-transfer-left</v-icon>
+                    <v-icon large>mdi-account-edit</v-icon>
                   </v-col>
                 </v-row>
               </v-col>
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
-                    <Avatar class="small-avatar" size="50px" :image="userToBeChanged.avatarImage" :alt="userToBeChanged.preferredName"
-                      isView />
+                    <Avatar class="small-avatar" size="50px" :image="userToBeChanged.avatarImage"
+                      :alt="userToBeChanged.preferredName" isView />
                   </v-col>
                   <v-col cols="12">
                     <h4> {{ userToBeChanged.preferredName }} </h4>
@@ -59,19 +56,12 @@
         <!-- Content for changes -->
         <v-col v-for="(value, key) in changes" :key="key">
           <div v-if="userToBeChanged[key] == null">
-            <v-checkbox
-              hide-details
-              color="green"
-              :label="'Added new ' + updatedKeys[key] + ' : ' + value"
-            ></v-checkbox>
+            <v-checkbox hide-details color="green" class="shrink pl-6 mt-0 black-label"
+              :label="'Added new ' + updatedKeys[key] + ' : ' + value"></v-checkbox>
           </div>
           <div v-else>
-            <v-checkbox
-              hide-details
-              class="shrink mr-2 mt-0"
-              color="green"
-              :label="'Changed ' + updatedKeys[key] + ' from ' + userToBeChanged[key] + ' to ' + value"
-            ></v-checkbox>
+            <v-checkbox hide-details class="shrink pl-6 mt-0 black-label" color="green"
+              :label="'Changed ' + updatedKeys[key] + ' from ' + userToBeChanged[key] + ' to ' + value"></v-checkbox>
           </div>
         </v-col>
 
@@ -102,39 +92,35 @@
         </v-col>
 
         <!-- Content for comments -->
-        <v-col v-if="showComments" :class="mobile ? 'px-0' : ''">
-          <v-card outlined :class="mobile ? '' : 'ml-2'">
-            <v-row align="center">
-              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`"
-                :class="mobile ? 'px-0 pl-5' : 'px-5'">
-                <v-text-field v-if="author" :value="comment" v-bind="customProps"
-                  :label="author.preferredName || author.legalName" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col v-if="allowNewComments">
-                <v-textarea v-model="comment" :label="t('message')" no-resize rows="3" auto-grow outlined
-                  placeholder=" " class="px-4" hide-details></v-textarea>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
+        <!-- removed <v-card :class="mobile ? '' : 'ml-2'">, ask ben if this is important-->
+
+        <v-form :class="mobile ? '' : 'ml-2'" ref="form">
+        <v-row align="center">
+          <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`"
+            :class="mobile ? 'px-0 pl-5' : 'px-5'">
+            <v-text-field v-if="author" clearable :value="comment" label="Send a message with your response"
+              outlined />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col v-if="allowNewComments">
+            <v-textarea v-model="comment" :label="t('message')" no-resize rows="3" auto-grow outlined placeholder=""
+              class="px-4" hide-details></v-textarea>
+          </v-col>
+        </v-row>
+      </v-form>
 
       </template>
       <template v-slot:actions>
         <!-- <div v-if="showActions"></div> -->
         <!-- <div v-else> -->
 
-        <v-btn @click="submit(false)" text large class="secondary--text">
-          <span>{{ t('decline') }}</span>
-        </v-btn>
-
         <v-btn @click="submit(true)" text large class="blue--text mx-5">
           <span>{{ t('approve') }}</span>
         </v-btn>
 
-        <v-btn @click="close" text large class="blue--text mx-5">
-          <span>{{ t('close') }}</span>
+        <v-btn @click="submit(false)" text large class="secondary--text">
+          <span>{{ t('decline') }}</span>
         </v-btn>
 
         <!-- </div> -->
@@ -263,18 +249,8 @@ export default {
       return age.toString()
     },
     text () {
-      const { isPersonal, isNew, isAccepted } = this.notification
-
-      const groupName = this.notification.group.preferredName
       const from = this.notification.from.preferredName
-
-      if (!isPersonal && isNew) return `A new request has been received from ${from} to join ${groupName}. please review their information and respond below`
-      if (!isPersonal && isAccepted) return `${from}'s application to join ${groupName} has been accepted`
-      if (!isPersonal && !isAccepted) return `${from}'s application to join ${groupName} has been declined`
-      if (isPersonal && isNew) return `Your request to join ${groupName} has been sent and is yet to be reviewed`
-      if (isPersonal && isAccepted) return `Your application to join ${groupName} has been accepted`
-      if (isPersonal && !isAccepted) return `Your application to join ${groupName} has been declined`
-      return 'No details'
+      return 'A submission has been received from ' + from + 'to edit x'
     },
     changes () {
       return this.notification.changes
@@ -355,5 +331,9 @@ export default {
 
 .v-input--radio-group__input label {
   font-size: 14px;
+}
+
+.black-label label {
+  color: red !important;
 }
 </style>
