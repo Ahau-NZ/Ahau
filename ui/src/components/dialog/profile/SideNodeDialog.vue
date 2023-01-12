@@ -717,6 +717,7 @@ export default {
 
       if (this.isMyProfile(this.profileId) && input.customFields) {
         // update separately to prevent bulk update
+
         await this.updatePerson({ id: this.profileId, customFields: input.customFields })
         delete input.customFields
       }
@@ -730,7 +731,7 @@ export default {
 
       // update their profile in the db
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
-
+      console.log('the input we need: ', { id: this.profileId, ...input })
       // loads their full profile for changes in the tree as well as the side node dialog
       await this.loadPersonFull(this.profileId)
       this.$emit('saved')

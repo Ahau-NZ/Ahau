@@ -1,4 +1,6 @@
 // import gql from 'graphql-tag'
+import account2 from '@/assets/account-fill.svg'
+import koro from '@/assets/koro.svg'
 import { createProvider } from '@/plugins/vue-apollo'
 import { listGroupApplications } from '@/lib/tribes-application-helpers'
 
@@ -41,7 +43,7 @@ const actions = {
           preferredName: 'Test tribe'
         },
         userToBeChanged: {
-          id: '%UZTS3z+xpOX0hI4eYrz0YCcodwulelUqxB7q5wbyOx0=.sha256',
+          id: '%AK3Ujg5KQxoI0Z0+UxXEt6a15C7giEEhaiAvpOXYkPE=.sha256',
           canEdit: true,
           type: 'person',
           preferredName: 'Fin Mountfort',
@@ -72,7 +74,7 @@ const actions = {
           address: null,
           email: null,
           phone: null,
-          avatarImage: null,
+          avatarImage: { uri: account2 },
           headerImage: null,
           customFields: [],
           originalAuthor: '@mhoGMBpX3KGiurX+wZ3KrD45T7+foCvJtUxvJgIhpXk=.ed25519',
@@ -117,9 +119,20 @@ const actions = {
           __typename: 'Person'
         },
         changes: {
-          preferredName: 'blam',
-          address: 'blah',
-          email: 'brug'
+          preferredName: 'Fin M',
+          legalName: 'Full name here',
+          description: 'about section',
+          gender: 'male',
+          profession: 'programmer',
+          aliveInterval: '2022-01-01/2023-01-01',
+          birthOrder: 1,
+          deceased: true,
+          placeOfBirth: 'waiheke',
+          placeOfDeath: 'auckland',
+          buriedLocation: 'waiheke',
+          education: ['master\'s degree', 'another masters degree'],
+          school: ['waikato uni'],
+          avatarImage: { uri: koro }
         },
         id: 'id',
         answers: [],
