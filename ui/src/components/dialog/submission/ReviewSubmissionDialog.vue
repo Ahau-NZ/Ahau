@@ -5,15 +5,10 @@
       <!-- Content Slot -->
       <template v-slot:content>
 
-        <v-col>
-          <span class="subtitle-2 black--text">
-            {{ text }}
-          </span>
-        </v-col>
-
-        <v-col>
-          <v-card outlined class="py-1">
-            <v-row align="center" class="pt-0">
+        <!-- v-card showing who edited who-->
+        <v-col class="pb-4">
+          <v-card label="test" outlined class="py-1" >
+            <v-row align="center" class="ma-n2 pt-0">
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
@@ -45,8 +40,20 @@
                 </v-row>
               </v-col>
             </v-row>
+            <v-card-subtitle align="center" class="pt-0">{{ text }}</v-card-subtitle>
           </v-card>
         </v-col>
+
+        <!-- User comment -->
+        <v-form class="ma-0 pa-0" ref="form">
+          <v-row align="center" class="ma-0 pa-0">
+            <v-col cols="12" sm="12" v-for="({comment}, i) in comments" :key="`j-q-${i}`">
+              <!-- :class="mobile ? 'px-0 pl-5 mb-n3' : 'px-5 mb-n3'" -->
+              <v-text-field v-if="comment" :value="comment" label="User comment"
+                outlined :readonly="true" class="mb-n6"/>
+            </v-col>
+          </v-row>
+        </v-form>
 
         <!-- Header for changes -->
         <span :class="headerClass">
@@ -58,13 +65,23 @@
           <div v-if="key == 'avatarImage'">
             <div v-if="userToBeChanged[key] == null">
               <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
-                class="shrink pl-6 mt-0 black-label" label="Added new profile picture:">
+                class="shrink pl-6 mt-0 black-label">
+                <template v-slot:label>
+                  <span class="checkbox_label">
+                    Added new profile picture:
+                  </span>
+                </template>
               </v-checkbox>
               <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"/>
             </div>
             <div v-else>
               <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
-                class="shrink pl-6 mt-0 black-label" label="Changed profile picture">
+                class="shrink pl-6 mt-0 black-label">
+                <template v-slot:label>
+                  <span class="checkbox_label">
+                    Changed profile picture
+                  </span>
+                </template>
               </v-checkbox>
 
               <v-col>
@@ -99,58 +116,40 @@
               </v-col>
             </div>
           </div>
-          <div v-else-if="userToBeChanged[key] == null">
+          <div v-else-if="userToBeChanged[key] == null || userToBeChanged[key] == ''">
             <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
-              class="shrink pl-6 mt-0 black-label" :label="'Added new ' + updatedKeys[key] + ': ' + value"></v-checkbox>
+              class="shrink pl-6 mt-0 black-label">
+              <template v-slot:label>
+                <span class="checkbox_label">
+                  Added new {{ updatedKeys[key] }}: {{ value }}
+                </span>
+              </template>
+            </v-checkbox>
           </div>
           <div v-else>
-            <v-checkbox hide-details v-model="selectedChanges" :value="key" class="shrink pl-6 mt-0 black-label"
-              color="green"
-              :label="'Changed ' + updatedKeys[key] + ' from ' + userToBeChanged[key] + ' to ' + value"></v-checkbox>
+            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
+              class="shrink pl-6 mt-0 black-label">
+              <template v-slot:label>
+                <span class="checkbox_label">
+                  Changed {{ updatedKeys[key] }}
+                  from {{ userToBeChanged[key] }}
+                  to {{ value }}
+                </span>
+              </template>
+            </v-checkbox>
+            <span></span>
           </div>
         </v-col>
 
-        <!-- Header for question answers -->
-        <v-col v-if="hasAnswers" :class="headerClass">
-          <span>
-            {{ t ('answers') }}
-          </span>
-        </v-col>
-
-        <!-- Content for question answers -->
-        <v-col v-if="hasAnswers" :class="mobile ? 'px-0' : ''">
-          <v-card outlined :class="mobile ? '' : 'ml-2'">
-            <v-row align="center">
-              <v-col cols="12" sm="12" v-for="({ question, answer }, i) in answers" :key="`q-a-${i}`"
-                :class="mobile ? 'px-0 pl-5' : 'px-5'">
-                <v-text-field v-bind="customProps" :label="question" :value="answer" />
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-
-        <!-- Header for comments -->
-        <v-col v-if="showComments" :class="headerClass">
-          <span>
-            {{ t ('comments') }}
-          </span>
-        </v-col>
-
-        <!-- Content for comments -->
+        <!-- Kaitiaki comment section -->
         <!-- removed <v-card :class="mobile ? '' : 'ml-2'">, ask ben if this is important-->
 
-        <v-form :class="mobile ? '' : 'ml-2'" ref="form">
-          <v-row align="center">
-            <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`"
-              :class="mobile ? 'px-0 pl-5' : 'px-5'">
-              <v-text-field v-if="author" clearable :value="comment" label="Send a message with your response"
+        <v-form class="ma-0 pa-0" ref="form">
+          <!-- :class="mobile ? '' : 'ml-2'"-->
+          <v-row align="center" class="ma-0 pa-0">
+            <v-col cols="12" sm="12" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'" >
+              <v-text-field clearable label="Send a message with your response"
                 outlined />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col v-if="allowNewComments">
-              <v-textarea v-model="comment" :label="t('message')" no-resize rows="3" auto-grow outlined placeholder=""
-                class="px-4" hide-details></v-textarea>
             </v-col>
           </v-row>
         </v-form>
@@ -204,11 +203,11 @@ export default {
       comment: '',
       selectedChanges: [],
       updatedKeys: {
-        preferredName: this.t('reviewRegistration.preferredName'),
+        preferredName: this.t('preferredName'),
         profession: this.t('profession'),
         email: this.t('email'),
         address: this.t('address'),
-        legalName: this.t('reviewRegistration.legalName'),
+        legalName: this.t('legalName'),
         altNames: this.t('altNames'),
         description: this.t('description'),
         gender: this.t('gender'),
@@ -363,13 +362,14 @@ export default {
       this.$emit('close')
     },
     t (key, vars) {
-      return this.$t('reviewRegistration.' + key, vars)
+      return this.$t('reviewSubmissionDialog.' + key, vars)
     }
   }
 }
 </script>
 
 <style scoped>
+
 .close {
   top: -25px;
   right: -10px;
@@ -380,16 +380,25 @@ export default {
   top: -20px;
 }
 
-.v-input--checkbox label {
+.v-input--checkbox label, .checkbox_label{
   font-size: 14px;
+  color: black;
 }
 
 .v-input--radio-group__input label {
   font-size: 14px;
 }
 
+.v-checkbox__label {
+  color: black;
+}
+
 .black-label label {
   color: red !important;
+}
+
+.custom-outline {
+  border: 1px solid grey;
 }
 
 </style>

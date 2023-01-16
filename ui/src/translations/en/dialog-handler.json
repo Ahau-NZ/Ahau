@@ -1,6 +1,6 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
-  "reviewSubmissionTitle": "Submission request for {groupPreferredName}",
+  "reviewSubmissionTitle": "Review profile changes to {groupPreferredName}",
   "createCommunityTitle": "Create New Tribe",
   "newPersonTitle": "Add {dialogType} to {displayName}",
   "editPersonTitle": "Edit {displayName}",

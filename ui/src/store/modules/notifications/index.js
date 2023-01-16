@@ -154,7 +154,7 @@ const actions = {
               id: '%PLYl1cTU5/bMjTWRCRvT9MjUNTXPMU9J7s95mOZ+L7w=.sha256'
             },
             timestamp: '1670206345610',
-            comment: 'This is a test comment :D',
+            comment: 'This is a test comment',
             __typename: 'GroupApplicationCommentHistory'
           }
         ],
