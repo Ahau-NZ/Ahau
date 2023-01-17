@@ -16,7 +16,7 @@
     "address": "address",
     "city": "city",
     "country": "country",
-    "postcode": "postcode",
+    "postCode": "postcode",
     "editProfile": "edit profile",
     "approve": "approve",
     "decline": "decline",

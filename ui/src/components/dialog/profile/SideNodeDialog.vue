@@ -97,6 +97,15 @@
                 <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
+            <!-- Displays textbox for user comment when in a submit only whakapapa-->
+            <v-form v-if="canSubmit" class="ma-0 pa-0" ref="form">
+              <!-- :class="mobile ? '' : 'ml-2'"-->
+              <v-row align="center" class="ma-0 pa-0">
+                <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'">
+                  <v-text-field clearable label="Add a comment" outlined />
+                </v-col>
+              </v-row>
+            </v-form>
 
             <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col

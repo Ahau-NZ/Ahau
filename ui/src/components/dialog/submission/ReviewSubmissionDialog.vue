@@ -48,7 +48,6 @@
         <v-form class="ma-0 pa-0" ref="form">
           <v-row align="center" class="ma-0 pa-0">
             <v-col cols="12" sm="12" v-for="({comment}, i) in comments" :key="`j-q-${i}`">
-              <!-- :class="mobile ? 'px-0 pl-5 mb-n3' : 'px-5 mb-n3'" -->
               <v-text-field v-if="comment" :value="comment" label="User comment"
                 outlined :readonly="true" class="mb-n6"/>
             </v-col>
@@ -116,11 +115,46 @@
               </v-col>
             </div>
           </div>
-          <div v-else-if="userToBeChanged[key] == null || userToBeChanged[key] == ''">
+          <!-- Improving readability of deceased changes -->
+          <div v-else-if="key == 'deceased'">
             <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
               class="shrink pl-6 mt-0 black-label">
               <template v-slot:label>
                 <span class="checkbox_label">
+                  User is no longer living set to: {{ value }}
+                </span>
+              </template>
+            </v-checkbox>
+          </div>
+          <!-- Alt names has different structure {add:[],remove:[]} -->
+          <div v-else-if="key == 'altNames'">
+            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green" class="shrink pl-6 mt-0 black-label">
+              <template v-slot:label>
+                <!-- newbie dev note, is using "&nbsp;" an acceptable way to add a space in an html span or will this cause issues somehow? -->
+                <span class="checkbox_label">
+                  Updated alternative names:&nbsp;
+                </span>
+                <span v-if="value.add && value.add != null && value.add != ''" class="checkbox_label">
+                  added {{ formatArray(value.add) }}
+                </span>
+                <span v-if="value.remove && value.remove != null && value.add && value.add != null" class="checkbox_label">
+                  &nbsp;and&nbsp;
+                </span>
+                <span v-if="value.remove && value.remove != null" class="checkbox_label">
+                  removed {{ formatArray(value.remove) }}
+                </span>
+              </template>
+            </v-checkbox>
+          </div>
+
+          <div v-else-if="userToBeChanged[key] == null || userToBeChanged[key] == ''">
+            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
+              class="shrink pl-6 mt-0 black-label">
+              <template v-slot:label>
+                <span v-if="Array.isArray(value)" class="checkbox_label">
+                  Added new {{ updatedKeys[key] }}: {{ formatArray(value) }}
+                </span>
+                <span v-else class="checkbox_label">
                   Added new {{ updatedKeys[key] }}: {{ value }}
                 </span>
               </template>
@@ -130,7 +164,13 @@
             <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
               class="shrink pl-6 mt-0 black-label">
               <template v-slot:label>
-                <span class="checkbox_label">
+
+                <span v-if="Array.isArray(value)" class="checkbox_label">
+                  Changed {{ updatedKeys[key] }}
+                  from {{ userToBeChanged[key] }}
+                  to {{ formatArray(value) }}
+                </span>
+                <span v-else class="checkbox_label">
                   Changed {{ updatedKeys[key] }}
                   from {{ userToBeChanged[key] }}
                   to {{ value }}
@@ -147,7 +187,7 @@
         <v-form class="ma-0 pa-0" ref="form">
           <!-- :class="mobile ? '' : 'ml-2'"-->
           <v-row align="center" class="ma-0 pa-0">
-            <v-col cols="12" sm="12" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'" >
+            <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'" >
               <v-text-field clearable label="Send a message with your response"
                 outlined />
             </v-col>
@@ -199,13 +239,13 @@ export default {
   },
   data () {
     return {
+      i: 0,
       formData: '',
       comment: '',
       selectedChanges: [],
       updatedKeys: {
         preferredName: this.t('preferredName'),
         profession: this.t('profession'),
-        email: this.t('email'),
         address: this.t('address'),
         legalName: this.t('legalName'),
         altNames: this.t('altNames'),
@@ -222,7 +262,6 @@ export default {
         buriedLocation: this.t('buriedLocation'),
         education: this.t('education'),
         school: this.t('school')
-
       }
     }
   },
@@ -353,6 +392,17 @@ export default {
     },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
+    },
+    formatArray (values) {
+      let string = ''
+      for (let i = 0; i < values.length; i++) {
+        if (i === values.length - 1) {
+          string += values[i]
+        } else {
+          string += values[i] + ', '
+        }
+      }
+      return string
     },
     async submit (approved) {
       const obj = { id: this.notification.userToBeChanged.id, ...this.formatChanges }
