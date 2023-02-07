@@ -97,6 +97,15 @@
                 <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
+            <!-- Displays textbox for user comment when in a submit only whakapapa-->
+            <v-form v-if="canSubmit" class="ma-0 pa-0" ref="form">
+              <!-- :class="mobile ? '' : 'ml-2'"-->
+              <v-row align="center" class="ma-0 pa-0">
+                <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'">
+                  <v-text-field v-model="comment" clearable label="Add a comment" outlined />
+                </v-col>
+              </v-row>
+            </v-form>
 
             <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
@@ -344,6 +353,7 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers.js'
+import { editProfileSubmission } from '@/lib/submission-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -385,6 +395,7 @@ export default {
       showDescription: false,
       drawer: false,
       authors: [],
+      comment: '',
       allowRemoveChildren: false,
       isEditing: this.editing
     }
@@ -726,9 +737,40 @@ export default {
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) {
+        // Submiting request
         if (this.canSubmit) {
           this.showAlert({ message: 'Submitted for review', color: 'green' })
-          return this.submitProfileChanges(output)
+          console.log('output', output)
+          // here we need to add the profileId (profile to be changed), the submitter profileId, the comment (optional) and the recps
+          // HACK: add the submitter's profile id to the output
+          // output['id'] = this.whoami.personal.profile.id
+          // this.whoami.personal.groupId
+          // TODO: replace groupId with poBoxId (recps: [groupId])
+          console.log('recordId: ', this.profileId)
+          console.log('recordId: ', this.formData.id)
+          console.log('output: ', JSON.stringify(output))
+          console.log('recps', this.whoami.personal.groupId)
+          console.log('comment', this.comment)
+          // Creating submission
+          try {
+            const res = this.$apollo.mutate(
+              editProfileSubmission({
+                profileId: this.formData.id,
+                details: output,
+                comment: this.comment,
+                recps: [this.whoami.personal.groupId]
+              })
+            )
+            res.then(function (result) {
+              console.log('result2: ', result)
+            })
+            console.log('result', res)
+            if (res.errors) throw res.errors
+            return
+          } catch (err) {
+            console.error('error creating the profile edit submission: ', err)
+            return
+          }
         }
         await this.processUpdate(output)
       } else {
@@ -736,11 +778,13 @@ export default {
         this.handleReload()
         return
       }
-
       // handle reload
       this.showAlert({ message: 'Profile updated', color: 'green' })
       this.handleReload()
     },
+    // for the following method we need the profileID, comment (optional), recps and details involving the changes
+    // async submitProfileChanges ({ commit }, profileId, details, comment, recps) {
+    // },
     async processUpdate (input) {
       this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
       if (input.recps) delete input.recps
