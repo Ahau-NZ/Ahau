@@ -349,13 +349,11 @@ export function mergeAdminProfile (profile) {
   if (!profile) return {}
   if (!profile.adminProfile) return profile
 
-  const adminProfile = profile.adminProfile
+  const adminProfile = clone(profile.adminProfile)
   profile.adminProfile = null // faster than delete
 
   for (const key in adminProfile) {
     if (key === 'id') continue
-    // TODO: need to figure out how to handle adminProfile.customFields
-    if (key === 'customFields') continue
     if (isEmpty(adminProfile[key])) continue
 
     // over-ride!

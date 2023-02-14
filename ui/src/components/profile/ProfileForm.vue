@@ -35,7 +35,7 @@
             text
             medium
             class="blue--text"
-            style='z-index: 100;'
+            style="z-index: 100;"
           >
             <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
           </v-btn>
@@ -91,7 +91,7 @@
         </v-row>
 
         <!-- No longer living -->
-        <v-row v-if="!isLoginPage && !readonly" class="mb-8">
+        <v-row v-if="!isLoginPage && !readonly && hasDefaultField('isDeceased')" class="mb-8">
           <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ' : 'pt-0'">
             <v-checkbox
               v-model="formData.deceased"
@@ -104,7 +104,7 @@
       </v-col>
     </v-row>
 
-    <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'" justify='start'>
+    <v-row v-if="hasDefaultField('gender')" :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'" justify='start'>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('genderIdentity') }}</p>
@@ -174,7 +174,7 @@
     </v-row>
 
     <!-- Start of advanced section -->
-    <v-divider />
+    <v-divider v-if="hasDefaultField('gender')"/>
     <div :class="readonly && !mobile ? 'ml-5' : ''">
       <v-row>
         <!-- Full Name -->
@@ -207,7 +207,7 @@
         </template>
 
         <!-- TODO: configure required -->
-        <template v-if="!readonly && hasDefaultField('legalName')">
+        <template v-if="!readonly && hasDefaultField('altNames')">
           <v-col v-for="(altName, index) in newAltNames"
             :key="`add-alt-name-${index}`"
             cols="12"
@@ -281,7 +281,7 @@
           </v-col>
         </template>
 
-        <v-col cols="12" sm="12" class="pa-1" >
+        <v-col v-if="hasDefaultField('description')" cols="12" sm="12" class="pa-1" >
           <!-- Description textarea -->
             <v-textarea
               v-model="formData.description"
@@ -565,6 +565,7 @@ export default {
       return this.isKaitiaki || this.isMyProfile(this.profile.id)
     },
     showBirthOrder () {
+      if (!this.hasDefaultField('birthOrder')) return false
       if (this.dialogType === 'parent') return false
       if (this.readonly && !this.formData.birthOrder) return false
       else return true
@@ -662,7 +663,6 @@ export default {
       if (!this.currentTribe) return false // avoid displaying any fields until the tribe has loaded
 
       const label = mapPropToLabel(key)
-
       if (!label) return
 
       // find in defaultCustomFields
