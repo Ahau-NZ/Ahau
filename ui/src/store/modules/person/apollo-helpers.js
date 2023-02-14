@@ -191,6 +191,10 @@ query($type: String!, $tribeId: String!) {
       education
       school
 
+      customFields {
+        key value
+      }
+
       address
       email
       phone

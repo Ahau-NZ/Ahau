@@ -337,7 +337,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel, mapLabelToProp } from '@/lib/custom-field-helpers.js'
+import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -562,12 +562,6 @@ export default {
     hasOneField (keys) {
       return keys.some(key => this.hasDefaultField(key))
     },
-    getFieldValueFromProfile (fieldDef) {
-      const key = mapLabelToProp(fieldDef.label)
-      if (!key) return '' // something went wrong?
-
-      return get(this.profile, key, '')
-    },
     getProfileChanges  () {
       const changes = {}
 
@@ -615,8 +609,12 @@ export default {
     getFieldValue (fieldDef) {
       if (!Array.isArray(this.profile.customFields)) return ''
 
+      const findThisField = field => field.key === fieldDef.key
       // find the value from the applicants profile (if there is one)
-      let field = this.profile.customFields.find(field => field.key === fieldDef.key)
+      const adminProfile = this.profile.adminProfile
+      let field = adminProfile
+        ? adminProfile?.customFields?.find(findThisField)
+        : this.profile?.customFields?.find(findThisField)
 
       // if the field wasnt found
       // it could mean that they havent defined a value for it yet

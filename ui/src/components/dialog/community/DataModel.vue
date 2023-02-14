@@ -15,21 +15,14 @@
 
         <!-- TODO: this is disabled for now as we do not implement this yet -->
         <template v-slot:item.visibleBy="{ item }"> <!-- eslint-disable-line -->
-          <v-tooltip left open-delay="700">
-            <template v-slot:activator="{ on }">
-              <div v-on="on">
-                <v-select
-                  v-model="item.visibleBy"
-                  :items="items"
-                  single-line
-                  class="custom-select"
-                  v-bind="customProps"
-                  disabled
-                ></v-select>
-              </div>
-            </template>
-            <span>Access coming soon</span>
-          </v-tooltip>
+          <v-select
+            v-model="item.visibleBy"
+            :items="items"
+            single-line
+            class="custom-select"
+            v-bind="customProps"
+            :disabled="item.label === 'first name'"
+          ></v-select>
         </template>
         <template v-slot:item.required="{ item }"> <!-- eslint-disable-line -->
           <v-checkbox
@@ -114,22 +107,13 @@
                     cols="12"
                     sm="6"
                   >
-                    <!-- TODO: this is disabled until we add in this feature -->
-                    <v-tooltip bottom open-delay="700">
-                      <template v-slot:activator="{ on }">
-                        <div v-on="on">
-                          <v-select
-                            label="visible by"
-                            v-model="newField.visibleBy"
-                            :items="items"
-                            class="custom-select"
-                            v-bind="customProps"
-                            disabled
-                          ></v-select>
-                        </div>
-                      </template>
-                      <span>Access coming soon</span>
-                    </v-tooltip>
+                    <v-select
+                      label="visible by"
+                      v-model="newField.visibleBy"
+                      :items="items"
+                      class="custom-select"
+                      v-bind="customProps"
+                    ></v-select>
                   </v-col>
                   <v-col
                     cols="12"

@@ -89,9 +89,12 @@ export function mapLabelToProp (label) {
 }
 
 export function mapPropToLabel (prop) {
-  return Object.entries(mappings)
+  const found = Object.entries(mappings)
     .find(([key, label]) => label === prop)
-    .at(0)
+
+  if (found) return found.at(0)
+
+  return found ? found.at(0) : null
 }
 
 const mappings = {
@@ -116,8 +119,8 @@ const mappings = {
   profession: 'profession',
   'skills/qualifications': 'education',
   schools: 'school',
-  'date of birth': 'dob',
-  'date of death': 'dod'
+  'date of birth': 'dateOfBirth',
+  'date of death': 'dateOfDeath'
 }
 
 /**
