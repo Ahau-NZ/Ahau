@@ -17,6 +17,7 @@
 
 <script>
 import get from 'lodash.get'
+import isEmpty from 'lodash.isempty'
 
 import Vue from 'vue'
 import CustomField from './CustomField.vue'
@@ -69,6 +70,20 @@ export default {
     },
     sideViewCols () {
       return this.smScreen ? '12' : '6'
+    },
+    customFieldValuesFromProfile () {
+      if (!this.profile?.customFields) return []
+
+      return (Array.isArray(this.profile?.customFields))
+        ? this.profile?.customFields
+        : Object.entries(this.profile.customFields).map(([key, value]) => ({ key, value }))
+    },
+    adminCustomFieldValues () {
+      if (!this.profile?.adminProfile?.customFields) return []
+
+      return Array.isArray(this.profile.adminProfile.customFields)
+        ? this.profile.adminProfile.customFields
+        : Object.entries(this.profile.adminProfile).map(([key, value]) => ({ key, value }))
     }
   },
   methods: {
@@ -90,11 +105,26 @@ export default {
         return getDefaultFieldValue(fieldDef)
       }
 
-      const valueOnProfile = this.profile.customFields.find(customField => customField.key === fieldDef.key)
-      if (valueOnProfile !== undefined) return valueOnProfile.value
+      // TODO: cherese 23/02/23
+      // NOTE: i dont like this monkey patching, but there is a lot of logic here around profiles and how they are loading,
+      // that it is going to take longer if i take that route
+      // The problem i have here is that initially the custom fields are an array
+      // but for some reason, after a reload (like when saving changes to the profile)
+      // the customFields then become an object. So here i am monkey patching to turn it
+      // back into an array
+      const findThisField = field => field.key === fieldDef.key
+      // find the value from the applicants profile (if there is one)
+
+      // first we look if the field is on the adminProfile
+      let field = this.adminCustomFieldValues.find(findThisField)
+      const fallbackField = this.customFieldValuesFromProfile.find(findThisField)
+
+      if (!field) field = fallbackField
+      if (isEmpty(field?.value) && !isEmpty(fallbackField?.value)) field = fallbackField
+      if (!field) field = { value: getDefaultFieldValue(fieldDef) }
 
       // otherwise figure out a default value
-      return getDefaultFieldValue(fieldDef)
+      return field.value
     },
     calculateFieldCols (field) {
       if (field.type === 'array') return '12'
