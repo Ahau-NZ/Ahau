@@ -176,7 +176,7 @@
               <v-col cols="12" class="pt-0">
                 <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem v-if="hasDefaultField('legalName')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
-                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames"/>
                   <ProfileInfoItem :class="{ 'pb-0': true, bb: hasDefaultField('city') || hasDefaultField('country') }" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
                   <ProfileInfoItem v-if="hasDefaultField('city')" class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
                   <ProfileInfoItem v-if="hasDefaultField('country')" class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
@@ -410,6 +410,18 @@ export default {
     profile () {
       return this.person(this.profileId)
     },
+    customFieldValues () {
+      return (Array.isArray(this.profile.customFields))
+        ? this.profile?.customFields
+        : Object.entries(this.profile.customFields).map(([key, value]) => ({ key, value }))
+    },
+    adminCustomFieldValues () {
+      if (!this.profile?.adminProfile?.customFields) return []
+
+      return Array.isArray(this.profile.adminProfile.customFields)
+        ? this.profile.adminProfile.customFields
+        : Object.entries(this.profile.adminProfile).map(([key, value]) => ({ key, value }))
+    },
     parents () {
       return this.getRawParentIds(this.profileId)
         .map(this.findOrLoadProfile)
@@ -607,18 +619,24 @@ export default {
       return changes
     },
     getFieldValue (fieldDef) {
-      if (!Array.isArray(this.profile.customFields)) return ''
-
+      // TODO: cherese 23/02/23
+      // NOTE: i dont like this monkey patching, but there is a lot of logic here around profiles and how they are loading,
+      // that it is going to take longer if i take that route
+      // The problem i have here is that initially the custom fields are an array
+      // but for some reason, after a reload (like when saving changes to the profile)
+      // the customFields then become an object. So here i am monkey patching to turn it
+      // back into an array
       const findThisField = field => field.key === fieldDef.key
       // find the value from the applicants profile (if there is one)
-      const adminProfile = this.profile.adminProfile
-      let field = adminProfile
-        ? adminProfile?.customFields?.find(findThisField)
-        : this.profile?.customFields?.find(findThisField)
 
-      // if the field wasnt found
-      // it could mean that they havent defined a value for it yet
-      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
+      // first we look if the field is on the adminProfile
+      let field = this.adminCustomFieldValues.find(findThisField)
+      const fallbackField = this.customFieldValues.find(findThisField)
+
+      if (!field) field = fallbackField
+
+      if (isEmpty(field?.value) && !isEmpty(fallbackField?.value)) field = fallbackField
+      if (!field) field = { value: getDefaultFieldValue(fieldDef) }
 
       switch (fieldDef.type) {
         case 'array':
