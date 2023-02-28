@@ -151,13 +151,23 @@ export function getInitialCustomFieldChanges (rawCustomFields, customFieldDefs) 
  * Method to find the custom field changes against existing ones from the same profile.
  * This method is used when update a profile in a tribe that has custom fields (or doesnt)
  *
- * @param {Array} originalCustomFields the custom field values given by the profile
- * @param {Array} updatedCustomFields raw custom fields in this form { [key]: value }
+ * @param {Array|Object} originalCustomFields the custom field values given by the profile
+ * @param {Object} updatedCustomFields raw custom fields in this form { [key]: value }
  * @oaran {Array} customFieldDefs custom field definitions in this form [{ type, key, label, required, visibleBy, order, ... }]
  */
 export function getCustomFieldChanges (originalCustomFields, updatedCustomFields, customFieldDefs) {
+  if (!originalCustomFields || !updatedCustomFields || !customFieldDefs) return []
+
+  // sometimes the originalCustomFields given can be in a different format depending on where the profile came from
+  // here we check and convert it accordingly
+  if (!Array.isArray(originalCustomFields) && typeof originalCustomFields === 'object') {
+    // convert it to any array
+    originalCustomFields = Object.entries(originalCustomFields)
+      .map(convertCustomFieldObjectToArray)
+  }
+
   return Object.entries(updatedCustomFields)
-    .map(([key, value]) => ({ key, value }))
+    .map(convertCustomFieldObjectToArray)
     .filter(({ key, value }) => {
       // find the fields definition
       const fieldDef = customFieldDefs.find(field => field.key === key)
@@ -170,6 +180,8 @@ export function getCustomFieldChanges (originalCustomFields, updatedCustomFields
       return (!isEqual(get(fieldOriginalValue, 'value'), value) && !isEqual(value, getDefaultFieldValue(fieldDef)))
     })
 }
+
+const convertCustomFieldObjectToArray = ([key, value]) => ({ key, value })
 
 /**
  * This method returns the default value for a custom field, depending on its type

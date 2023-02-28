@@ -361,33 +361,31 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonList ({ commit, rootGetters }) {
+    async getPersonsList (context, { type, groupId }) {
+      if (!groupId) return []
+
       try {
-        // get member profiles (NOTE this also has .adminProfile)
-        const groupId = rootGetters['tribe/currentTribe'].id
-        const membersProfiles = await apollo.query(loadPersonList('group', groupId))
-        if (membersProfiles.errors) throw membersProfiles.errors
+        const res = await apollo.query(loadPersonList(type, groupId))
+        if (res.errors) throw res.errors
 
-        // get admin profiles
-        const adminTribeId = rootGetters['tribe/currentTribe'].admin?.id
-        let adminProfiles
-        // check if admin tribe exists (there is no adminTribeId in a personal tribe)
-        if (adminTribeId) {
-          adminProfiles = await apollo.query(loadPersonList('admin', adminTribeId))
-          if (adminProfiles.errors) throw adminProfiles.errors
-        }
-        const profiles = membersProfiles.data.listPerson
-          .map(mergeAdminProfile)
-          .concat(adminProfiles?.data.listPerson || [])
-          .map(mapProfileData)
-
-        commit('setProfilesArr', profiles)
-        for (const profile of profiles) {
-          commit('setPerson', profile)
-        }
+        return res.data.listPerson
       } catch (err) {
         console.error('Something went wrong while trying to load person list')
         console.error(err)
+      }
+    },
+    async loadPersonList ({ commit, dispatch, rootGetters }) {
+      // get member profiles (NOTE this also has .adminProfile)
+      const groupId = rootGetters['tribe/currentTribe'].id
+      const membersProfiles = await dispatch('getPersonsList', { type: 'group', groupId })
+
+      const profiles = membersProfiles
+        .map(mergeAdminProfile)
+        .map(mapProfileData)
+
+      commit('setProfilesArr', profiles)
+      for (const profile of profiles) {
+        commit('setPerson', profile)
       }
     },
     tombstoneProfile ({ commit, dispatch }, profileId) {
