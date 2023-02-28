@@ -242,6 +242,11 @@ export default {
         .filter(header => {
           return this.tribeDefaultFields.some(fieldDef => {
             const key = mapLabelToProp(fieldDef.label)
+
+            if (header.value === 'dob') return key === 'dateOfBirth'
+            if (header.value === 'dod') return key === 'dateOfDeath'
+            if (header.value === 'age') return true
+
             return header.value === key
           })
         })
