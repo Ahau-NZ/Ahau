@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const envPaths = require('env-paths')
 const merge = require('lodash.merge')
 
-const appPath = envPaths(env.ahau.appName, { suffix: '' }).data
+const appPath = envPaths(process.env.APP_NAME || env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
 const core = {
