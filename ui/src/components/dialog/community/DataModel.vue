@@ -205,9 +205,6 @@ export default {
         { text: 'list (choose single entry)', value: SINGLE_LIST, type: 'list', multiple: false },
         { text: 'list (choose multiple entries) ', value: MULTI_LIST, type: 'list', multiple: true },
         { text: 'multiple entries', value: 'array' }
-
-        // TODO: these are not supported yet
-        // { text: 'date', value: 'date' },
       ],
       rules: [value => !!value || 'Required.'],
       currentField: {},

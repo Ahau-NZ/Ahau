@@ -1,4 +1,4 @@
-parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,avatarImage,headerImage,phone,email,address
-,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,ssb:blob/classic/-Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image%2Fpng&unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs,,,,
-%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,,,
-%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,,,
+parentNumber,number,preferredName,legalName,altNames,gender,relationshipType,birthOrder,deceased,bornAt,diedAt,placeOfBirth,placeOfDeath,buriedLocation,city,postCode,country,profession,education,school,avatarImage,headerImage,phone,email,address,Vet location,Vet,Pet names,Number of pets
+,%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,Mum,,,female,,,,,,,,,,,,,,,ssb:blob/classic/-Kcwdy0rdeQaR0XhN6PTuFqpxpy8ipWD4vBGzGuRoiU=?mimeType=image%2Fpng&unbox=Ic28TLLsg6zVxMHTaMoIytL0M1XbuM7prqJ6rf5I%2BU8%3D.boxs,,,mum@email.com,,Cambridge...,Cambridge Vets,"Baby,Cookie,Manawa,Bubby",4
+%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%FG68A+C8RtkXZ90t/4G8+SGtX1TyisSTBttBnUl+JjI=.sha256,Dad,,,male,partner,,,,,,,,,,,,,,,,,,,,,,
+%avWkIxHA9ndSGKcs78DfkGMAYiOvf/QAwh2Ds5FuDXQ=.sha256,%PtyZnlSle1KsQU2lTlcj0GTbA0Z+NcaZjMKcu7Fg13M=.sha256,Child,,,male,birth,,,,,,,,,,,,,,,,,,,,,,

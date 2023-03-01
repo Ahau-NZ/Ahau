@@ -25,9 +25,13 @@
     "Pataka",
     "Community"
   ],
-  "CustomFieldInterface": [
+  "CommunityCustomFieldInterface": [
     "CommunityCustomField",
     "CommunityCustomFieldList"
+  ],
+  "PersonCustomFieldInterface": [
+    "PersonCustomField",
+    "PersonCustomFieldDate"
   ],
   "Artefact": [
     "Video",

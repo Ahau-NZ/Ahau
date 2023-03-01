@@ -355,7 +355,25 @@ export function mergeAdminProfile (profile) {
   for (const key in adminProfile) {
     if (key === 'id') continue
     if (isEmpty(adminProfile[key])) continue
-    if (key === 'customFields') continue
+    if (key === 'customFields') {
+      // go through all the custom fields on the adminProfile and merge them with the values on the group profile
+      adminProfile.customFields.forEach((customField) => {
+        const { key: _key, value: _value } = customField
+        // check if the field is on the group profile
+        const index = profile.customFields.findIndex(field => field.key === _key)
+        if (index > -1) {
+          // if it is, then we check if the adminProfiles value
+          if (!isEmpty(_value)) {
+            // if it isnt empty, we want to replace the value on the group profile
+            profile.customFields[index] = customField
+          }
+        } else {
+          // otherwise, if its not on the group profile, just add it
+          profile.customFields.push(customField)
+        }
+      })
+      continue
+    }
 
     // over-ride!
     profile[key] = adminProfile[key]
