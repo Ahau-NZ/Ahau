@@ -121,7 +121,7 @@ export default function (apollo) {
     },
     // =======================================================
 
-    resetProfiles (state) {
+    emptyAllProfiles (state) {
       state.profilesArr = []
       state.profiles = {}
     }
@@ -135,6 +135,9 @@ export default function (apollo) {
   }
 
   const actions = {
+    emptyAllProfiles ({ commit }) {
+      commit('emptyAllProfiles')
+    },
     async personListAdd ({ commit, dispatch, getters }, id) {
       const profile = await dispatch('loadPersonFull', id)
       commit('setProfileInArr', mergeAdminProfile(profile))
