@@ -172,6 +172,7 @@ query($type: String!, $tribeId: String!) {
     }
 
     adminProfile {
+      id
       preferredName
       legalName
       altNames
