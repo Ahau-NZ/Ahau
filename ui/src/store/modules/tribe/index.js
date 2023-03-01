@@ -18,6 +18,8 @@ export default function (apollo) {
   }
 
   const getters = {
+    tribeId: state => state?.currentTribe?.id,
+    adminTribeId: state => state?.currentTribe?.admin?.id,
     currentTribe: state => state.currentTribe,
     tribeSettings: (state, getters) => {
       const tribeProfile = getters.tribeProfile

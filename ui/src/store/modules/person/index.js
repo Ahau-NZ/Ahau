@@ -9,7 +9,10 @@ import {
   findPersonByName,
   loadPersonList
 } from './apollo-helpers'
+
 import isEmpty from 'lodash.isempty'
+import clone from 'lodash.clonedeep'
+
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import calculateAge from '@/lib/calculate-age'
 import { determineFilter } from '@/lib/filters.js'
@@ -379,11 +382,19 @@ export default function (apollo) {
     },
     async loadPersonList ({ commit, dispatch, rootGetters }) {
       // get member profiles (NOTE this also has .adminProfile)
-      const groupId = rootGetters['tribe/currentTribe'].id
-      const membersProfiles = await dispatch('getPersonsList', { type: 'group', groupId })
+      const groupId = rootGetters['tribe/tribeId']
+      const groupProfiles = await dispatch('getPersonsList', { type: 'group', groupId })
 
-      const profiles = membersProfiles
+      const adminGroupId = rootGetters['tribe/adminTribeId']
+      const adminProfiles = (await dispatch('getPersonsList', { type: 'admin', groupId: adminGroupId }))
+        .filter(adminProfile => {
+          // filter out profiles that are already linked to a profile in the groupProfiles array
+          return !groupProfiles.some(groupProfile => groupProfile?.adminProfile?.id === adminProfile.id)
+        })
+
+      const profiles = clone(groupProfiles)
         .map(mergeAdminProfile)
+        .concat(adminProfiles)
         .map(mapProfileData)
 
       commit('setProfilesArr', profiles)
