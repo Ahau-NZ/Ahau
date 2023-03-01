@@ -103,6 +103,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
+import get from 'lodash.get'
+
 import { csvFormat } from 'd3'
 import { mapNodeToCsvRow } from '@/lib/csv.js'
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
@@ -172,13 +174,11 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-    this.populateHeaders()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
       if (isKaitiaki) {
         await this.loadData()
-        this.populateHeaders()
       }
     }
   },
@@ -186,7 +186,7 @@ export default {
     ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields', 'currentTribe', 'accessOptions']),
+    ...mapGetters('tribe', ['currentTribe', 'tribes', 'tribeCustomFields', 'tribeDefaultFields', 'accessOptions']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
@@ -225,6 +225,9 @@ export default {
     ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
+    ...mapActions(['setLoading']),
+    ...mapActions('community', ['updateCommunity']),
+    ...mapActions('tribe', ['loadTribe']),
     ...mapActions(['setCurrentAccess']),
     ...mapActions(['setLoading', 'setDialog', 'setCurrentAccess']),
     addPerson () {
@@ -238,6 +241,8 @@ export default {
       this.setCurrentAccess(access[0])
     },
     populateHeaders () {
+      this.headers = []
+
       const defaultHeaders = this.defaultHeaders
         .filter(header => {
           return this.tribeDefaultFields.some(fieldDef => {
@@ -257,16 +262,40 @@ export default {
     toggleSettings () {
       this.settingsPanel = !this.settingsPanel
     },
-    async importCsv (csv) {
+    async importCsv ({ csvRows, customFieldDefs }) {
       this.showImportDialog = false
-      const whakapapaViewInput = { recps: [this.currentAccess.groupId] }
+      await this.updateCommunityFieldDefs(customFieldDefs)
+      const importedProfiles = await this.createWhakapapaView(csvRows)
+
+      // handle reload
+      if (csvRows.length === Object.keys(importedProfiles).length) {
+        // reload the tribe and data
+        await this.loadTribe(this.currentTribe.id)
+        await this.loadData(true)
+
+        this.setLoading(false)
+      }
+    },
+    async createWhakapapaView (rows) {
       // We set whakapapaViewInput so we can reuse bulkCreateWhakapapaView function for importing profiles and links (if there are links).
       // We add type: 'people' to ignore creating the whakapapa in the end
-      const importedProfiles = await this.bulkCreateWhakapapaView({ whakapapaViewInput, rows: csv, type: 'people' })
-      if (csv.length === Object.keys(importedProfiles).length) {
-        this.setLoading(false)
-        await this.loadData()
+      return this.bulkCreateWhakapapaView({
+        whakapapaViewInput: { recps: [this.currentAccess.groupId] },
+        rows,
+        type: 'people'
+      })
+    },
+    async updateCommunityFieldDefs (customFieldDefs) {
+      if (!get(customFieldDefs, 'length')) return
+
+      const input = {
+        customFields: customFieldDefs
       }
+
+      // update the community profile and add these new definitions
+      await this.updateCommunity({ tribe: this.currentTribe, input })
+
+      // TODO: snackbar?
     },
     t (key) {
       return this.$t('personIndex.' + key)
@@ -275,6 +304,7 @@ export default {
       this.isLoading = true
       // if dont have the profiles, wait for them to load before showing them
       if (!this.profilesArr.length || refresh) await this.loadPersonList()
+      this.populateHeaders()
       this.isLoading = false
     },
     searchFilter (value, search, item) {
@@ -325,7 +355,7 @@ export default {
       })
     },
     downloadCsv () {
-      const profiles = this.profilesIndex.map(profile => mapNodeToCsvRow(profile))
+      const profiles = this.profilesArr.map(profile => mapNodeToCsvRow(profile, this.tribeCustomFields))
       const csv = csvFormat(profiles)
 
       const hiddenElement = document.createElement('a')

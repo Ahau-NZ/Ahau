@@ -17,6 +17,12 @@ module.exports = {
   placeOfBirth: null,
   placeOfDeath: null,
   buriedLocation: null,
+  customFields: {
+    1657760306958: '4',
+    1657760322525: ['Baby', 'Cookie', 'Manawa', 'Bubby'],
+    1657760334524: 'Cambridge Vets',
+    1657760348525: 'Cambridge...'
+  },
   education: [
     ''
   ],

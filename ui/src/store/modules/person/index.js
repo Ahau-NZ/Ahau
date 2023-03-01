@@ -435,6 +435,7 @@ function mapProfileData (profile) {
         return { ...acc, [field.key]: field.value }
       }, {})
   }
+
   return profile
 }
 
