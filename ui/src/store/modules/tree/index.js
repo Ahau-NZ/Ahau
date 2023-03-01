@@ -22,7 +22,7 @@ export default function () {
     mouseEvent: null,
     hoveredProfileId: null,
     searchedProfileId: null,
-    loadingTree: false
+    isLoadingTree: false
   }
 
   // we need to know the x/y of each drawn profile (d3 nodes + partners),
@@ -32,7 +32,7 @@ export default function () {
   const getters = {
     tree: state => state.tree,
     isLoadingTree (state) {
-      return state.loadingTree
+      return state.isLoadingTree
     },
     descendants (state, getters) {
       if (state.tree) return state.tree.descendants()
@@ -137,6 +137,9 @@ export default function () {
     },
     setTree (state, tree) {
       state.tree = tree
+    },
+    setIsLoadingTree (state, loading) {
+      state.isLoadingTree = loading
     }
   }
 
@@ -152,8 +155,10 @@ export default function () {
       commit('setSearchedProfileId', id)
     },
     refreshWhakapapaData ({ rootGetters, commit, state }) {
+      commit('setIsLoadingTree', true)
       const tree = buildTree(rootGetters, state)
       commit('setTree', tree)
+      commit('setIsLoadingTree', false)
     }
   }
 
@@ -166,8 +171,7 @@ export default function () {
   }
 }
 
-export function buildTree (rootGetters, state) {
-  state.loadingTree = true
+export function buildTree (rootGetters) {
   const root = buildRoot(rootGetters)
   const treeLayout = rootGetters['tree/layout'](root)
 
@@ -198,7 +202,6 @@ export function buildTree (rootGetters, state) {
   // treeLayout.secondaryLinks = layoutSecondaryLinks(getters, rootGetters)
   // NOTE ideally we could do this here ... but results in an infinite loop
   // NOTE done after above round as partners are added there
-  state.loadingTree = false
   return treeLayout
 }
 
