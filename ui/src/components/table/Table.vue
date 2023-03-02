@@ -125,18 +125,10 @@ export default {
   async mounted () {
     this.componentLoaded = true
     this.tableOverflow()
-    const { loadPersonFull } = this
 
     // HACKY 2022-07-11 mix
     // uncollapse all nodes - needed to ensure all nodes are in d3 tree
     this.setAutoCollapse(false)
-
-    // async load full profiles for all nodes in graph
-    // can be quite extensive, and is not currently cancellable
-    this.descendants.forEach(node => {
-      loadPersonFull(node.data.id)
-      node.partners.forEach(node => loadPersonFull(node.data.id))
-    })
   },
 
   computed: {
@@ -166,12 +158,6 @@ export default {
     nodes () {
       const nodes = this.descendants
         .map(node => {
-          // if (node.data.customFields && Array.isArray(node.data.customFields)) {
-          //   node.data.customFields = node.data.customFields
-          //     .reduce((acc, field) => {
-          //       return { ...acc, [field.key]: field.value }
-          //     }, {})
-          // }
           return {
             ...node,
             data: {
@@ -314,7 +300,7 @@ export default {
     },
     download (newVal) {
       if (newVal) {
-        const csv = mapNodesToCsv(this.nodes)
+        const csv = mapNodesToCsv(this.nodes, this.tribeCustomFields)
 
         this.$emit('update:download', false)
 
@@ -365,7 +351,16 @@ export default {
     },
     getCustomFieldValue (node, fieldDef) {
       const customFields = get(node, 'data.customFields', []) // may not be loaded in the data yet
-      let customField = customFields.find(customField => customField.key === fieldDef.key)
+      // if its an object, we need to convert it
+      // TODO: cherese 02/03/23 this is horrible monkey patching, but its a quick and we dont have time to
+      // think about the bigger problen
+      let customField
+
+      if (Array.isArray(customFields)) {
+        customField = customFields.find(field => field.key === fieldDef.key)
+      } else {
+        customField = customFields[fieldDef.key]
+      }
 
       // if the field wasnt found
       // it could mean that they havent defined a value for it yet
