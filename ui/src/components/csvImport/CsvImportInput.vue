@@ -53,6 +53,7 @@
               :items="visibleByOptions"
               class="custom-select"
               v-bind="customProps"
+              :disabled="item.disabled || item.isExisting"
             ></v-select>
           </template>
           <template v-slot:item.required="{ item }">
@@ -165,6 +166,14 @@ export default {
               ]
             : [`Expected result = first person: ${csv[0].profile.preferredName}.`]
 
+          if (this.isPersonalTribe) {
+            // TODO: cherese 09/03/2023
+            // this is a temporary solution to disable custom fields in your personal group
+            // this should be reviewed when your personal group has a migration to add an admin subgroup
+            // NOTE: need to consider where the custom fields will be defined
+            return
+          }
+
           if (get(this.csv, 'additionalColumns.length')) {
             this.additionalColumns = this.getAdditionalColumns()
             this.showAdditionalColumns = true
@@ -181,16 +190,16 @@ export default {
         this.setAllowSubmissions(val)
       }
     },
-    csvData: {
+    importedData: {
       deep: true,
       handler (val) {
-        this.$emit('update:data', val)
+        this.$emit('update:importedData', val)
       }
     }
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapGetters('tribe', ['accessOptions', 'tribeCustomFields']),
+    ...mapGetters('tribe', ['accessOptions', 'tribeCustomFields', 'isPersonalTribe']),
     customProps () {
       return {
         hideDetails: true,
@@ -206,8 +215,25 @@ export default {
         .filter(column => !column.disabled)
         .every(column => column.type !== null)
     },
-    csvData () {
+    importedData () {
       if (!this.csv) return []
+
+      // TODO: cherese 09/03/2023
+      // this is a temporary solution to disable custom fields in your personal group
+      // this should be reviewed when your personal group has a migration to add an admin subgroup
+      // NOTE: need to consider where the custom fields will be defined
+      if (this.isPersonalTribe) {
+        return {
+          csvRows: clone(this.csv)
+            .map(csvRow => {
+              // remove all custom fields
+              delete csvRow?.profile?.customFields
+
+              return csvRow
+            }),
+          customFieldDefs: []
+        }
+      }
 
       let [removedCustomFields, oldCustomFieldDefs, customFieldDefs] = pileSort(
         this.additionalColumns, [
@@ -302,6 +328,11 @@ export default {
       this.file = null
       this.errorMsgs = []
       this.successMsg = []
+      this.additionalColumns = []
+      this.showAdditionalColumns = false
+
+      // clear the data
+      this.$emit('update:data', null)
     },
     toggleField (item) {
       this.additionalColumns[item.index].disabled = !this.additionalColumns[item.index].disabled

@@ -68,7 +68,10 @@ export default function (apollo) {
     rawTribeCustomFields: (state, getters) => {
       if (getters.isPersonalTribe) return []
 
-      return get(state, 'currentTribe.public[0].customFields', [])
+      // for admin subgroups, we just use the parent groups custom field definitions
+      const tribe = getters.parentTribe || state.currentTribe
+
+      return get(tribe, 'public[0].customFields', [])
     },
     tribeDefaultFields (state, getters) {
       return getDefaultFields(getters.rawTribeCustomFields)
