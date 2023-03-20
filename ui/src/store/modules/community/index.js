@@ -1,4 +1,10 @@
-import { saveCommunity, savePublicCommunity, updateTribe } from '@/lib/community-helpers.js' // TODO cherese 23-08-21 move these to ./apollo-helpers
+import get from 'lodash.get'
+
+import {
+  saveCommunity,
+  savePublicCommunity,
+  updateTribe
+} from '@/lib/community-helpers.js' // TODO cherese 23-08-21 move these to ./apollo-helpers
 
 export default function (apollo) {
   const state = {
@@ -48,6 +54,18 @@ export default function (apollo) {
         console.error('Error updating a community', err)
         dispatch('alerts/showError', 'Something went wrong while trying to update the community', { root: true })
       }
+    },
+    async updateCommunityFieldDefs ({ dispatch, rootGetters }, customFieldDefs) {
+      if (!get(customFieldDefs, 'length')) return
+
+      const input = {
+        customFields: customFieldDefs
+      }
+
+      // update the community profile and add these new definitions
+      await dispatch('updateCommunity', { tribe: rootGetters['tribe/currentTribe'], input })
+
+      // TODO: snackbar?
     }
   }
 

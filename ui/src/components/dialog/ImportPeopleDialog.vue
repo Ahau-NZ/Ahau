@@ -5,7 +5,7 @@
       @close="close"
     >
       <template v-slot:content>
-        <CsvImportInput :data.sync="data" :downloadTemplate="downloadTemplate" />
+        <CsvImportInput :importedData.sync="importedData" :downloadTemplate="downloadTemplate" />
       </template>
     </Dialog>
   </div>
@@ -34,7 +34,7 @@ export default {
   },
   data () {
     return {
-      data: null
+      importedData: null
     }
   },
   methods: {
@@ -44,7 +44,7 @@ export default {
     },
     submit () {
       this.setLoading(true)
-      this.$emit('submit', this.data)
+      this.$emit('submit', this.importedData)
       this.close()
     }
   }

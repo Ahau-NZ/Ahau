@@ -103,14 +103,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
-import get from 'lodash.get'
-
 import { csvFormat } from 'd3'
+
 import { mapNodeToCsvRow } from '@/lib/csv.js'
+import { mapLabelToProp } from '@/lib/custom-field-helpers'
+
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapLabelToProp } from '../lib/custom-field-helpers'
 
 export default {
   name: 'PersonIndex',
@@ -226,7 +226,7 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading']),
-    ...mapActions('community', ['updateCommunity']),
+    ...mapActions('community', ['updateCommunity', 'updateCommunityFieldDefs']),
     ...mapActions('tribe', ['loadTribe']),
     ...mapActions(['setCurrentAccess']),
     ...mapActions(['setLoading', 'setDialog', 'setCurrentAccess']),
@@ -284,18 +284,6 @@ export default {
         rows,
         type: 'people'
       })
-    },
-    async updateCommunityFieldDefs (customFieldDefs) {
-      if (!get(customFieldDefs, 'length')) return
-
-      const input = {
-        customFields: customFieldDefs
-      }
-
-      // update the community profile and add these new definitions
-      await this.updateCommunity({ tribe: this.currentTribe, input })
-
-      // TODO: snackbar?
     },
     t (key) {
       return this.$t('personIndex.' + key)

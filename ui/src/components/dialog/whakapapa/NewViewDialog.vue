@@ -6,7 +6,7 @@
       submit-label="next"
     >
       <template v-slot:content>
-        <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
+        <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :importedData.sync="importedData"/>
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
       <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
@@ -79,7 +79,7 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: ''
+      importedData: null
     }
   },
   computed: {
@@ -111,13 +111,10 @@ export default {
     },
     submit () {
       this.setLoading(true)
-      const csv = this.csv
+
       const output = whakapapaSubmission(this.formData)
-      const newOutput = {
-        ...output,
-        csv
-      }
-      this.$emit('submit', newOutput)
+
+      this.$emit('submit', { whakapapaInput: output, ...this.importedData })
       this.close()
     },
     setFormData (whakapapa) {

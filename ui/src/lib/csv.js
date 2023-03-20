@@ -315,7 +315,7 @@ function mapNodeToCsvRow (d, customFieldDefs) {
   customFieldDefs.forEach(fieldDef => {
     let val
     if (Array.isArray(d.customFields)) {
-      val = d.customFields.find(field => field.key === fieldDef.key)
+      val = (d.customFields.find(field => field.key === fieldDef.key) || {}).value
     } else {
       val = d.customFields[fieldDef.key]
     }
