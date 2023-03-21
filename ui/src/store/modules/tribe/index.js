@@ -251,10 +251,8 @@ export default function (apollo) {
     },
     async loadTribe ({ getters, dispatch, state }, id) {
       try {
-        if (state.currentTribe && state.currentTribe.id !== id) {
-          dispatch('resetCurrentTribe')
-          dispatch('person/emptyAllProfiles', null, { root: true })
-        }
+        dispatch('resetCurrentTribe')
+        dispatch('person/emptyAllProfiles', null, { root: true })
 
         const tribe = await dispatch('getTribe', id)
 
