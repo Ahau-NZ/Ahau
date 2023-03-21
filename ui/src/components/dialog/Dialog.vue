@@ -57,7 +57,7 @@
       <slot name="pinned"></slot>
 
       <!-- content section for main part of dialog -->
-      <v-card-text id="app-dialog" :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3 pb-0">
+      <v-card-text id="app-dialog" ref="content" v-if="showDialog" :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3 pb-0" @scroll="setScroll">
         <slot name="content"></slot>
       </v-card-text>
 
@@ -144,7 +144,24 @@ export default {
       listener: null,
       banner,
       isSubmitting: false,
-      keyboardVisible: false
+      keyboardVisible: false,
+      scrollTop: -1,
+      scrollCount: 0
+    }
+  },
+  mounted () {
+    this.listener = document.addEventListener('keydown', e => {
+      if (e.keyCode === 27) this.close()
+    })
+    document.body.style.top = `-${window.scrollY}px`
+    document.body.style.minWidth = '100%'
+    document.body.style.position = 'fixed'
+
+    if (isCordova()) {
+      this.setKeyboardVisible(window.Keyboard.isVisible)
+
+      window.addEventListener('keyboardWillShow', () => this.setKeyboardVisible(true))
+      window.addEventListener('keyboardWillHide', () => this.setKeyboardVisible(false))
     }
   },
   computed: {
@@ -189,6 +206,24 @@ export default {
   },
   methods: {
     ...mapMutations(['setAllowSubmissions']),
+    /*
+      NOTE: this scroll function is a quick fix for an intermittent bug where
+      the NewPersonDialog loads at the bottom of the dialog. Unsure what
+      was causing this, and why it wasnt always happening, but this fixes it
+
+      There are probably better solutions, this one is a naive approach
+    */
+    setScroll (e) {
+      if (this.scrollCount > 1) return
+      if (this.scrollCount === 1) {
+        this.scrollCount += 1
+        e.target.scrollTop = 0
+        return
+      }
+
+      this.scrollCount += 1
+      this.scrollTop = e.target.scrollTop
+    },
     submit () {
       if (this.isSubmitting) return
       this.isSubmitting = true
@@ -214,21 +249,6 @@ export default {
       if (!isCordova()) return
 
       this.keyboardVisible = isVisible
-    }
-  },
-  mounted () {
-    this.listener = document.addEventListener('keydown', e => {
-      if (e.keyCode === 27) this.close()
-    })
-    document.body.style.top = `-${window.scrollY}px`
-    document.body.style.minWidth = '100%'
-    document.body.style.position = 'fixed'
-
-    if (isCordova()) {
-      this.setKeyboardVisible(window.Keyboard.isVisible)
-
-      window.addEventListener('keyboardWillShow', () => this.setKeyboardVisible(true))
-      window.addEventListener('keyboardWillHide', () => this.setKeyboardVisible(false))
     }
   },
   destroyed () {
