@@ -178,6 +178,7 @@
                   <ProfileInfoItem v-if="hasDefaultField('legalName')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
                   <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames"/>
                   <ProfileInfoItem :class="{ 'pb-0': true, bb: hasDefaultField('city') || hasDefaultField('country') }" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem v-if="hasDefaultField('city')" class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
                   <ProfileInfoItem v-if="hasDefaultField('country')" class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
@@ -194,14 +195,13 @@
                   <ProfileInfoItem v-if="hasDefaultField('education')" class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
                   <ProfileInfoItem v-if="hasDefaultField('school')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
                     {{ t('contactInfoText') }}
                   </v-card-subtitle>
                 </v-row>
-                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" cols="12" class="rounded-border">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'phone', 'email'])" cols="12" class="rounded-border">
                   <ProfileInfoItem v-if="hasDefaultField('address')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
-                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem v-if="hasDefaultField('phone')" class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
                   <ProfileInfoItem v-if="hasDefaultField('email')" class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
                 </v-row>

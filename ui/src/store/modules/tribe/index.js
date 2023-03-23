@@ -78,7 +78,13 @@ export default function (apollo) {
     },
     tribeDefaultFields (state, getters) {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => !field.tombstone)
+        .filter(field => {
+          return (
+            // get rid of kaitiaki-only fields on your personal group
+            !(getters.isPersonalTribe && field.visibleBy === 'admin') &&
+            !field.tombstone
+          )
+        })
     },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
