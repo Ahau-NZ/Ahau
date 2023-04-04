@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '../../lib/calculate-age'
@@ -94,6 +94,7 @@ export default {
       if (!this.hasSelection) return null
       const profile = this.person(this.searchedProfileId)
       if (!profile) this.loadPersonMinimal(this.searchedProfileId)
+      else this.setPerson(profile)
       // HACK - make sure profile is loaded
 
       return profile
@@ -175,6 +176,7 @@ export default {
   methods: {
     ...mapActions('person', ['findPersonsByNameWithinGroup', 'loadPersonMinimal']),
     ...mapActions('tree', ['setSearchedProfileId', 'setMouseEvent']),
+    ...mapMutations('person', ['setPerson']),
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },

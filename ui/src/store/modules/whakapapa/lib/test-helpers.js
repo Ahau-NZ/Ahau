@@ -27,7 +27,6 @@ export function Getters (state) {
         })
       }
     } catch (err) {
-      // console.log(err)
       // not ready yet!
       getterNames.push(getterName)
     }
@@ -50,12 +49,12 @@ export function State (state) {
     view: {
       focus: 'TODO: set this',
       importantRelationships: {},
-      ignoredProfiles: []
-    },
-    viewChanges: {
-      focus: null,
-      collapsed: {},
-      showExtendedFamily: false // current default
+      ignoredProfiles: [],
+      changes: {
+        focus: null,
+        collapsed: {},
+        showExtendedFamily: false // current default
+      }
     },
     childLinks: {},
     partnerLinks: {}

@@ -6,6 +6,9 @@
       </v-col>
       <v-spacer v-if="!mobile" />
       <v-col class="d-flex justify-end d-inline">
+        <v-icon color="blue-grey" class="mx-3" @click="addPerson">mdi-account-plus</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="loadData(true)">mdi-refresh</v-icon>
+        <v-icon color="blue-grey" class="mx-3" @click="toggleSettings">mdi-cog</v-icon>
         <v-text-field
           light
           append-icon="mdi-magnify"
@@ -19,7 +22,6 @@
           ref="search"
           @input="handleSearchInput"
         />
-        <v-icon color="blue-grey" class="px-3" @click="toggleSettings">mdi-cog</v-icon>
       </v-col>
     </v-row>
     <v-row :class="mobile && 'pt-6'">
@@ -28,7 +30,7 @@
           :headers="activeHeaders"
           fixed-header
           height="calc(100vh - 255px)"
-          :items="filteredProfiles"
+          :items="profilesArr"
           item-key="id"
           :items-per-page="15"
           :loading="isLoading"
@@ -39,14 +41,13 @@
             itemsPerPageOptions: [15, 50, 100, -1],
             }"
           light
-
           @click:row="handleShow"
         >
           <template v-if="hiddenColumns" v-slot:header.actions> <!-- eslint-disable-line -->
             <v-icon>mdi-eye-off</v-icon> {{ hiddenColumns }}
           </template>
           <!-- Handle profile image -->
-          <template v-slot:item.image="{ item }" > <!-- eslint-disable-line -->
+          <template v-slot:item.avatarImage="{ item }" > <!-- eslint-disable-line -->
             <Avatar class="" size="35px" :image="item.avatarImage" :isView="false"  :gender="item.gender" :aliveInterval="item.aliveInterval" :deceased="item.deceased"/>
           </template>
           <!-- Handle max description charachters -->
@@ -83,29 +84,6 @@
         </v-data-table>
       </v-col>
     </v-row>
-
-    <SideNodeDialog v-if="showEditor && selectedProfileId"
-      :show="showEditor"
-      :profileId="selectedProfileId"
-
-      deleteable
-      :editing="isEditing"
-      fullForm
-
-      @close="close"
-      @cancel="close"
-      @delete="showDeleteConfirmation"
-      @saved="handleSaved"
-    />
-
-    <RemovePersonDialog v-if="showDelete && selectedProfileId && selectedProfile"
-      :show="showDelete"
-
-      :profile="selectedProfile"
-
-      @submit="handleDelete"
-      @close="showDelete = false"
-    />
     <ImportPeopleDialog v-if="showImportDialog"
       :show="showImportDialog"
       @submit="importCsv"
@@ -125,26 +103,18 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
-import isEmpty from 'lodash.isempty'
-import { mergeAdminProfile } from '@/lib/person-helpers.js'
-import { dateIntervalToString } from '@/lib/date-helpers.js'
-import calculateAge from '@/lib/calculate-age'
 import { csvFormat } from 'd3'
-import { mapNodeToCsvRow } from '@/lib/csv.js'
-import { determineFilter } from '@/lib/filters.js'
 
-import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
-import RemovePersonDialog from '@/components/dialog/profile/RemovePersonDialog.vue'
+import { mapNodeToCsvRow } from '@/lib/csv.js'
+import { mapLabelToProp } from '@/lib/custom-field-helpers'
+
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapLabelToProp } from '../lib/custom-field-helpers'
 
 export default {
   name: 'PersonIndex',
   components: {
-    SideNodeDialog,
-    RemovePersonDialog,
     ImportPeopleDialog,
     FilterMenu,
     Avatar
@@ -162,7 +132,7 @@ export default {
     }
     return {
       defaultHeaders: [
-        header('image', '80px', true, true),
+        header('avatarImage', '80px', true, true),
         header('preferredName', '120px', true),
         header('legalName', '150px', true),
         header('altNames', '150px', true),
@@ -183,7 +153,7 @@ export default {
         header('birthOrder', '100px', false),
         header('placeOfDeath', '100px', false),
         header('buriedLocation', '100px', false),
-        header('profession', '100px', true),
+        header('profession', '110px', true),
         header('education', '150px', true),
         header('school', '150px', true)
       ],
@@ -195,7 +165,8 @@ export default {
       showDelete: false,
       search: '',
       showImportDialog: false,
-      settingsPanel: false
+      settingsPanel: false,
+      unsubscribe: null
     }
   },
   async mounted () {
@@ -203,19 +174,19 @@ export default {
     // NOTE this is a crude protection against a person changing tribe selection
     // and then magically being able to load this list
     await this.loadData()
-
-    this.populateHeaders()
   },
   watch: {
     async isKaitiaki (isKaitiaki) {
-      if (isKaitiaki) await this.loadData()
+      if (isKaitiaki) {
+        await this.loadData()
+      }
     }
   },
   computed: {
     ...mapGetters(['isMyProfile']),
     ...mapGetters(['whoami', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfileId', 'profilesArr']),
-    ...mapGetters('tribe', ['tribes', 'tribeCustomFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['currentTribe', 'tribes', 'tribeCustomFields', 'tribeDefaultFields', 'accessOptions']),
     ...mapGetters('table', ['tableFilter']),
     activeHeaders () {
       return [
@@ -246,23 +217,41 @@ export default {
 
       return this.person(this.selectedProfileId)
     },
-    filteredProfiles () {
-      return this.profilesIndex.filter(d => determineFilter({ data: d }, this.tableFilter))
-    },
     hiddenColumns () {
       return (this.headers.length - this.activeHeaders.length) + 1
     }
   },
   methods: {
-    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson']),
+    ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
     ...mapActions(['setLoading']),
+    ...mapActions('community', ['updateCommunity', 'updateCommunityFieldDefs']),
+    ...mapActions('tribe', ['loadTribe']),
+    ...mapActions(['setCurrentAccess']),
+    ...mapActions(['setLoading', 'setDialog', 'setCurrentAccess']),
+    addPerson () {
+      this.setDialog({
+        active: 'new-person',
+        type: 'person',
+        source: null
+      })
+      // if adding a person to personIndex than make it a kaitiaki only profile
+      const access = this.accessOptions.filter(option => option.type === 'kaitiaki')
+      this.setCurrentAccess(access[0])
+    },
     populateHeaders () {
+      this.headers = []
+
       const defaultHeaders = this.defaultHeaders
         .filter(header => {
           return this.tribeDefaultFields.some(fieldDef => {
             const key = mapLabelToProp(fieldDef.label)
+
+            if (header.value === 'dob') return key === 'dateOfBirth'
+            if (header.value === 'dod') return key === 'dateOfDeath'
+            if (header.value === 'age') return true
+
             return header.value === key
           })
         })
@@ -273,45 +262,38 @@ export default {
     toggleSettings () {
       this.settingsPanel = !this.settingsPanel
     },
-    async importCsv (csv) {
+    async importCsv ({ csvRows, customFieldDefs }) {
       this.showImportDialog = false
-      const whakapapaViewInput = { recps: [this.currentAccess.groupId] }
+      await this.updateCommunityFieldDefs(customFieldDefs)
+      const importedProfiles = await this.createWhakapapaView(csvRows)
+
+      // handle reload
+      if (csvRows.length === Object.keys(importedProfiles).length) {
+        // reload the tribe and data
+        await this.loadTribe(this.currentTribe.id)
+        await this.loadData(true)
+
+        this.setLoading(false)
+      }
+    },
+    async createWhakapapaView (rows) {
       // We set whakapapaViewInput so we can reuse bulkCreateWhakapapaView function for importing profiles and links (if there are links).
       // We add type: 'people' to ignore creating the whakapapa in the end
-      const importedProfiles = await this.bulkCreateWhakapapaView({ whakapapaViewInput, rows: csv, type: 'people' })
-      if (csv.length === Object.keys(importedProfiles).length) {
-        this.setLoading(false)
-        await this.loadData()
-      }
+      return this.bulkCreateWhakapapaView({
+        whakapapaViewInput: { recps: [this.currentAccess.groupId] },
+        rows,
+        type: 'people'
+      })
     },
     t (key) {
       return this.$t('personIndex.' + key)
     },
-    async loadData () {
+    async loadData (refresh) {
       this.isLoading = true
-      const { tribeId } = this.$route.params
-
-      await this.loadPersonList({ type: 'group', tribeId })
-
-      this.profilesIndex = this.profilesArr.map(this.mapProfileData)
-
+      // if dont have the profiles, wait for them to load before showing them
+      if (!this.profilesArr.length || refresh) await this.loadPersonList()
+      this.populateHeaders()
       this.isLoading = false
-    },
-    mapProfileData (profile) {
-      if (profile.aliveInterval) {
-        profile.dob = this.computeDate('dob', profile.aliveInterval)
-        profile.dod = this.computeDate('dod', profile.aliveInterval)
-        profile.age = this.age(profile.aliveInterval)
-      }
-
-      if (profile.customFields && Array.isArray(profile.customFields)) {
-        profile.customFields = profile.customFields
-          .reduce((acc, field) => {
-            return { ...acc, [field.key]: field.value }
-          }, {})
-      }
-
-      return profile
     },
     searchFilter (value, search, item) {
       const _search = search.toLocaleLowerCase()
@@ -323,13 +305,6 @@ export default {
         return value.toString().toLocaleLowerCase().includes(_search)
       })
     },
-    // modified from vuetify :
-    // function defaultFilter (value: any, search: string | null, item: any) {
-    //   return value != null &&
-    //     search != null &&
-    //     typeof value !== 'boolean' &&
-    //     value.toString().toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-    // }
     handleSearchInput (search) {
       this.updateSearch(search)
     },
@@ -340,83 +315,35 @@ export default {
     }, 500),
     async handleEdit (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
-      this.isEditing = true
+      this.setDialog({
+        active: 'view-edit-person',
+        type: 'editing',
+        source: null
+      })
     },
     async handleShow (item) {
       this.setSelectedProfileId(item.id)
-      this.showEditor = true
+      this.setDialog({
+        active: 'view-edit-person',
+        type: null,
+        source: null
+      })
     },
     close () {
       this.showEditor = false
       this.isEditing = false
     },
-    handleSaved () {
-      // Noted save has already been handled by component
-      this.close()
-      this.showAlert({ message: this.$t('viewPerson.profileUpdated'), color: 'green' })
-
-      this.isLoading = true
-
-      const newProfile = mergeAdminProfile(this.person(this.selectedProfileId))
-      const search = this.search
-      this.search = ''
-      this.profilesIndex = this.profilesIndex
-        .map(profile => {
-          return this.mapProfileData(profile.id === this.selectedProfileId ? newProfile : profile)
-        })
-      this.search = search
-      this.isLoading = false
-    },
     showDeleteConfirmation (item) {
       if (item) this.setSelectedProfileId(item.id)
       this.close()
-      this.showDelete = true
-    },
-    async handleDelete () {
-      this.showDelete = false
-
-      const updateId = await this.deletePerson({ id: this.selectedProfileId })
-
-      // handle removing the profile from the list
-      if (updateId) this.profilesIndex = this.profilesIndex.filter(profile => profile.id !== this.selectedProfileId)
-
-      this.setSelectedProfileId(null)
-    },
-    altNames (altArray) {
-      if (isEmpty(altArray)) return ''
-      return altArray.join(', ')
-    },
-    computeDate (requiredDate, age) {
-      if (!age) {
-        return ''
-      }
-      let ageString = ''
-      const dateSplit = dateIntervalToString(age, this.monthTranslations).split('-')
-      if (requiredDate === 'dob') {
-        if (dateSplit[0]) {
-          ageString = dateSplit[0]
-        }
-      }
-      if (requiredDate === 'dod') {
-        if (dateSplit[1]) {
-          ageString = dateSplit[1]
-        }
-      }
-      return ageString
-    },
-    age (born) {
-      const age = calculateAge(born)
-      if (age || age === 0) {
-        return age.toString()
-      }
-      return age
-    },
-    monthTranslations (key, vars) {
-      return this.$t('months.' + key, vars)
+      this.setDialog({
+        active: 'delete-person',
+        type: null,
+        source: null
+      })
     },
     downloadCsv () {
-      const profiles = this.profilesIndex.map(profile => mapNodeToCsvRow(profile))
+      const profiles = this.profilesArr.map(profile => mapNodeToCsvRow(profile, this.tribeCustomFields))
       const csv = csvFormat(profiles)
 
       const hiddenElement = document.createElement('a')
@@ -425,6 +352,9 @@ export default {
       hiddenElement.download = 'people.csv'
       hiddenElement.click()
     }
+  },
+  beforeDestroy () {
+    this.setDialog(null)
   }
 }
 </script>

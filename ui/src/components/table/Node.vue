@@ -86,6 +86,9 @@ export default {
       }
     }
   },
+  async mounted () {
+    await this.loadPersonFull(this.profileId)
+  },
   computed: {
     ...mapGetters('whakapapa', ['isCollapsedNode']),
     mobile () {
@@ -132,7 +135,7 @@ export default {
   },
   methods: {
     ...mapActions('tree', ['setMouseEvent']),
-    ...mapActions('person', ['setSelectedProfileById']),
+    ...mapActions('person', ['setSelectedProfileById', 'loadPersonFull']),
     getDisplayName,
     click () {
       if (!this.isPartner) this.$emit('center')

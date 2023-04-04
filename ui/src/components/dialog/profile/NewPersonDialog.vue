@@ -111,8 +111,8 @@
 
       </v-col>
     </template>
-    <template v-if="currentAccess" v-slot:before-actions>
-      <AccessButton type="person" :accessOptions="[currentAccess]"  disabled/>
+    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
+      <AccessButton type="person" :accessOptions="accessOptions" permission="edit" disabled/>
     </template>
   </Dialog>
 </template>
@@ -135,7 +135,7 @@ import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, s
 import { parseInterval } from '@/lib/date-helpers.js'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
-const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner'])
+const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0
 
 export default {
@@ -252,18 +252,25 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('tribe', ['accessOptions', 'currentTribe']),
     ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
+    ...mapGetters('whakapapa', ['getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     isLogin () {
       return this.$route.name === 'login'
     },
     allowRelationships () {
-      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
+      return this.type &&
+        this.type !== 'partner' &&
+        this.type !== 'person' &&
+        (this.profile.relationshipType == null)
     },
     isWhakapapaIndex () {
       return ['community/whakapapa', 'person/whakapapa'].includes(this.$route.name)
+    },
+    isPersonIndex () {
+      return this.$route.name === 'personIndex'
     },
     generateSuggestions () {
       if (this.hasSelection) return []
@@ -345,7 +352,7 @@ export default {
   methods: {
     ...mapActions('whakapapa', ['suggestedChildren', 'suggestedParents']),
     ...mapActions('profile', ['getProfile']),
-    ...mapActions('person', ['findPersonByName', 'getPerson', 'findPersonsByNameWithinGroup']),
+    ...mapActions('person', ['findPersonByName', 'findPersonsByNameWithinGroup']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       const index = this.quickAdd[selectedArray].findIndex(x => x.id === profile.id)
@@ -571,7 +578,7 @@ export default {
     async findSuggestionsByGroup (name) {
       if (!name) return []
 
-      if (this.isWhakapapaIndex) return this.findPersonsByNameWithinGroup(name)
+      if (this.isWhakapapaIndex || this.isPersonIndex) return this.findPersonsByNameWithinGroup(name)
 
       // find persons in the group who arent an ancestor
       return this.findAndFilterSuggestions(name)
@@ -585,7 +592,7 @@ export default {
       const rawSuggestions = await this.findPersonByName({
         name,
         type: this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person',
-        groupId: this.whakapapaView.recps[0]
+        groupId: this.currentTribe.id
       })
       // reset the ancestors array
       this.ancestors = []

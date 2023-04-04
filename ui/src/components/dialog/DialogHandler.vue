@@ -26,10 +26,10 @@
     <NewPersonDialog
       v-if="isActive('new-person')"
       :show="isActive('new-person')"
-      :title="t('newPersonTitle', { dialogType, displayName: getDisplayName(selectedProfile) })"
+      :title="newPersonDialogTitle"
       :type="dialogType"
       withView
-      @create="addPerson"
+      @create="addPerson($event, dialogType)"
       @close="close"
     />
     <SideNodeDialog
@@ -37,6 +37,7 @@
       :show="isActive('view-edit-person')"
       :profileId="selectedProfile.id"
       :deleteable="canDelete(selectedProfile)"
+      :editing="dialogType === 'editing'"
       @close="close"
       @new="toggleDialog('new-person', $event, 'view-edit-person')"
       @delete="toggleDialog('delete-person', null, null)"
@@ -86,7 +87,10 @@
       :title="t('whakapapaRegistryTitle')"
       @close="close"
     />
-    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
+    <ComingSoonDialog
+      v-if="isActive('coming-soon')"
+      :show="isActive('coming-soon')" @close="close"
+    />
   </div>
 </template>
 
@@ -171,10 +175,16 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
     ...mapGetters('person', ['selectedProfile']),
+    ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),
     ...mapGetters('whakapapa', { view: 'whakapapaView' }),
     ...mapGetters('tree', ['getParentNodeId', 'getNode', 'getPartnerNode', 'isInTree']),
     ...mapGetters('tribe', ['currentTribe', 'tribeCustomFields']),
+    newPersonDialogTitle () {
+      return this.dialogType === 'person'
+        ? this.t('addPerson')
+        : this.t('newPersonTitle', { dialogType: this.dialogType, displayName: getDisplayName(this.selectedProfile) })
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -212,7 +222,10 @@ export default {
       'loadPersonFull',
       'updatePerson',
       'deletePerson',
-      'setSelectedProfileById'
+      'setSelectedProfileId',
+      'personListAdd',
+      'personListDelete',
+      'personListUpdate'
     ]),
     ...mapActions('whakapapa', [
       'loadWhakapapaView',
@@ -223,6 +236,7 @@ export default {
       'removeLinksToProfile',
       'deleteProfileFromImportantRelationships'
     ]),
+
     isActive (type) {
       return (type === this.dialog || type === this.storeDialog)
     },
@@ -240,7 +254,7 @@ export default {
     toggleDialog (dialog, type, source) {
       this.source = source
       if (this.storeDialog) {
-        this.setDialog(dialog, type, source)
+        this.setDialog({ active: dialog, type, source })
         return
       }
       this.$emit('update:dialog', dialog)
@@ -256,7 +270,7 @@ export default {
       if (profile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
-      if (this.view && profile.id === this.view.focus) {
+      if (this.view && this.view.id && profile.id === this.view.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(profile))
       }
@@ -277,7 +291,7 @@ export default {
         })
       }
     },
-    async addPerson (input) {
+    async addPerson (input, type) {
       let { id, children, parents, partners, moveDup, customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
@@ -299,8 +313,18 @@ export default {
       const isNewProfile = !input.id
       if (isNewProfile) id = await this.createNewPerson(input)
 
-      const isIgnoredProfile = this.view.ignoredProfiles.includes(id)
-      if (isIgnoredProfile) await this.removeIgnoredProfile(id)
+      // if adding a person direct to database
+      if (type && type === 'person') {
+        // setSelectedProfile to trigger personIndex watcher and load person
+        return this.personListAdd(id)
+      }
+
+      let isIgnoredProfile
+
+      if (this.view && this.view.id) {
+        isIgnoredProfile = this.view.ignoredProfiles.includes(id)
+        if (isIgnoredProfile) await this.removeIgnoredProfile(id)
+      }
 
       const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
 
@@ -329,6 +353,10 @@ export default {
 
           // Add parents if parent quick links
           if (parents) await this.quickAddParents(id, parents)
+
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(child)
+          }
           break
 
         case 'parent':
@@ -365,6 +393,10 @@ export default {
               this.$emit('set-focus-to-ancestor-of', parent)
             }
           }
+          // only update personList if we are on personIndex
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         case 'partner':
           parent = this.selectedProfile.id
@@ -375,6 +407,9 @@ export default {
 
           // Add children if children quick add links
           if (children) await this.quickAddChildren(id, children)
+          if (this.$route.name === 'personIndex') {
+            this.personListAdd(parent)
+          }
           break
         default:
           console.error('wrong type for add person')
@@ -437,7 +472,7 @@ export default {
         type: 'link/profile-profile/child',
         child,
         parent,
-        recps: this.view.recps,
+        recps: this.view.recps || [this.currentTribe.id],
         ...relationshipAttrs
       })
         .then(() => {
@@ -449,14 +484,18 @@ export default {
         type: 'link/profile-profile/partner',
         child,
         parent,
-        recps: this.view.recps
+        recps: this.view.recps || [this.currentTribe.id]
       })
         .then(() => this.addLinks({ partnerLinks: [{ parent, child }] }))
     },
     async removeProfile (deleteOrIgnore) {
-      await this.deleteProfileFromImportantRelationships(this.selectedProfile.id)
+      const id = this.selectedProfile.id
+      await this.deleteProfileFromImportantRelationships(id)
       if (deleteOrIgnore === 'delete') await this.processDeletePerson()
       else await this.ignoreProfile()
+      if (this.$route.name === 'personIndex') {
+        this.personListDelete(id)
+      }
     },
 
     // TODO 2022-03-12 mix - move to vuex?
@@ -531,7 +570,7 @@ export default {
         }
       }
 
-      this.setSelectedProfileById(null)
+      this.setSelectedProfileId(null)
     },
     async processDeletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
@@ -550,7 +589,7 @@ export default {
       } else {
         this.removeLinksToProfile(this.selectedProfile.id)
       }
-      this.setSelectedProfileById(null)
+      this.setSelectedProfileId(null)
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)

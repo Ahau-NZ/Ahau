@@ -51,7 +51,7 @@
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
         <v-divider light class="mt-12" style="max-width:80%"></v-divider>
         <v-row class=" pb-3">
-          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${profile.preferredName} -- ${t('adminWhakapapaRecords')}`}}</p>
+          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ t('adminWhakapapaRecords') }}</p>
         </v-row>
         <CollectionGroup v-if="mobile" :collections="adminViews" @click="goWhakapapaShow"/>
         <div v-else>
@@ -163,6 +163,8 @@ export default {
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),
+    ...mapActions('community', ['updateCommunityFieldDefs']),
+    ...mapActions('tribe', ['loadTribe']),
     goWhakapapaShow (view) {
       this.$router.push({
         name: this.$route.name + '/:whakapapaId',
@@ -206,32 +208,39 @@ export default {
         }
       }).catch(() => {})
     },
-    async handleStepOne (input) {
-      if (this.currentAccess.groupId) input.recps = [this.currentAccess.groupId]
+    async handleStepOne ({ customFieldDefs, csvRows, whakapapaInput }) {
+      if (this.currentAccess.groupId) whakapapaInput.recps = [this.currentAccess.groupId]
       else throw new Error('Recps field missing from whakapapa input')
 
+      // check for custom fields and create any that are needed
+      if (customFieldDefs) {
+        await this.updateCommunityFieldDefs(customFieldDefs)
+        // reload the tribe
+        await this.loadTribe(this.currentTribe.id)
+      }
+
       this.newView = {
-        ...pick(input, ['name', 'description', 'image', 'recps', 'permission']),
+        ...pick(whakapapaInput, ['name', 'description', 'image', 'recps', 'permission']),
         focus: null, // To complete
         // change this fo profile in the current group
         mode: 'descendants' // hard-coded at the moment
       }
 
-      if (input.focus === 'self') {
+      if (whakapapaInput.focus === 'self') {
         const profileId = this.whoami.private
         this.newView.focus = profileId
       }
 
-      switch (input.focus) {
+      switch (whakapapaInput.focus) {
         case 'self':
           return this.processCreateWhakapapaView(this.newView)
         case 'new':
           return this.toggleProfileForm()
         case 'file':
-          return this.processCreateFromCsv(input.csv)
+          return this.processCreateFromCsv(csvRows)
         default:
           this.setLoading(false)
-          console.error('Something went wrong while creating a new whakapapa', input)
+          console.error('Something went wrong while creating a new whakapapa', whakapapaInput)
       }
     },
     async handleDoubleStep (input) {
@@ -268,7 +277,7 @@ export default {
     },
     async processCreateFromCsv (rows) {
       const whakapapaId = await this.bulkCreateWhakapapaView({ whakapapaViewInput: this.newView, rows })
-      this.goToWhakapapaView(whakapapaId)
+      if (whakapapaId) this.goToWhakapapaView(whakapapaId)
     },
     t (key, vars) {
       return this.$t('whakapapaIndex.' + key, vars)

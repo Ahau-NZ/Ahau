@@ -24,6 +24,8 @@
       :y="partner.y"
       isPartner
       :showAvatars="showAvatars"
+      :zooming="zooming"
+      :scale="scale"
       @click="$emit('partner-node-click', partner.data.id)"
     />
 
@@ -37,6 +39,8 @@
       :children="child.children"
       :partners="child.partners"
       :links="child.links"
+      :zooming="zooming"
+      :scale="scale"
 
       :showAvatars="showAvatars"
       @partner-node-click="$emit('partner-node-click', $event)"
@@ -49,6 +53,8 @@
       :x="x"
       :y="y"
       :showAvatars="showAvatars"
+      :zooming="zooming"
+      :scale="scale"
       @click="$emit('root-node-click', data.id)"
       />
   </g>
@@ -70,7 +76,9 @@ export default {
     children: Array,
     partners: Array,
     links: Array,
-    showAvatars: Boolean
+    showAvatars: Boolean,
+    zooming: Boolean,
+    scale: Number
   },
   components: {
     Node,

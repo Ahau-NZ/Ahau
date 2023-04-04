@@ -5,7 +5,7 @@
     </v-row>
     <v-row v-if="value" class="justify-center px-2 pb-6">
       <p class="ma-0 profile-info">
-        <span v-for="(line, index) in value.split('\n')" :key="index">{{line}}<br></span>
+        <span v-for="(line, index) in formatValue(value)" :key="index">{{line}}<br></span>
       </p>
     </v-row>
     <v-row v-if="subValue" class="justify-center">
@@ -20,7 +20,7 @@ export default {
   name: 'ProfileInfoItem',
   props: {
     title: String,
-    value: String || Number,
+    value: [String, Number, Array],
     subValue: String,
     smCols: {
       type: String,
@@ -34,6 +34,16 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  methods: {
+    formatValue (value) {
+      if (Array.isArray(value)) {
+        return value.join(', ')
+      }
+
+      // NOTE: not sure why we need this
+      return value.split('\n')
     }
   }
 }

@@ -2,7 +2,8 @@ const state = {
   currentStory: {},
   showStory: false,
   showArtefact: false,
-  isFromWhakapapaShow: false
+  isFromWhakapapaShow: false,
+  isFromPersonIndex: false
 }
 
 const getters = {
@@ -17,6 +18,9 @@ const getters = {
   },
   isFromWhakapapaShow: state => {
     return state.isFromWhakapapaShow
+  },
+  isFromPersonIndex: state => {
+    return state.isFromPersonIndex
   }
 }
 
@@ -30,8 +34,11 @@ const mutations = {
   updateShowArtefact (state, payload) {
     state.showArtefact = (payload !== undefined) ? payload : !state.showArtefact
   },
-  updateIsFromWhakapapaShow (state, update) {
+  setIsFromWhakapapaShow (state, update) {
     state.isFromWhakapapaShow = update
+  },
+  setIsFromPersonIndex (state, update) {
+    state.isFromPersonIndex = update
   }
 }
 
@@ -44,9 +51,6 @@ const actions = {
   },
   setShowArtefact ({ commit }, state) {
     commit('updateShowArtefact', state)
-  },
-  setIsFromWhakapapaShow ({ commit }, state) {
-    commit('updateIsFromWhakapapaShow', state)
   }
 }
 

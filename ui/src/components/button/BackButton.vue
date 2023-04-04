@@ -42,8 +42,20 @@
         </div>
         <v-row v-else align="center">
           <v-icon large>mdi-chevron-left</v-icon>
-          <WhakapapaIcon size="small" color="white"/>
+          <ArchiveIcon size="small" color="white"/>
           <span class="pl-2 caption">Back to archive</span>
+        </v-row>
+      </v-btn>
+    </div>
+    <div v-else-if="isFromPersonIndex" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+      <v-btn @click="goPersonIndex()" text>
+        <div v-if="mobile">
+          <v-icon dark>mdi-arrow-left</v-icon>
+        </div>
+        <v-row v-else align="center">
+          <v-icon large>mdi-chevron-left</v-icon>
+          <PersonListIcon size="small" color="white"/>
+          <span class="pl-2 caption">Back to People</span>
         </v-row>
       </v-btn>
     </div>
@@ -56,15 +68,19 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
+import PersonListIcon from '@/components/button/PersonListIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   components: {
     Avatar,
-    WhakapapaIcon
+    WhakapapaIcon,
+    ArchiveIcon,
+    PersonListIcon
   },
   mixins: [
     mapProfileMixins({
@@ -106,7 +122,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('archive', ['showStory', 'isFromWhakapapaShow']),
+    ...mapGetters('archive', ['showStory', 'isFromWhakapapaShow', 'isFromPersonIndex']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['lastWhakapapaView']),
     hasPreviousRoute () {
@@ -143,7 +159,6 @@ export default {
         this.$route.name === 'community/collection'
       )
     },
-
     // if we are showing the mobile BackButton: hide logo
     mobileBackButton () {
       return (
@@ -152,10 +167,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions('archive', ['toggleShowStory', 'setIsFromWhakapapaShow']),
+    ...mapActions('archive', ['toggleShowStory']),
+    ...mapMutations('archive', ['setIsFromWhakapapaShow', 'setIsFromPersonIndex']),
     goWhakapapaShow () {
       this.setIsFromWhakapapaShow(false)
       this.$router.push({ path: this.whakapapaRoute }).catch(() => {})
+    },
+    goPersonIndex () {
+      this.setIsFromPersonIndex(false)
+      this.goBack()
     },
     goWhakapapaIndex () {
       // check the group we are going to is an admin one

@@ -10,6 +10,8 @@
           :children="tree.children"
           :partners="tree.partners"
           :links="tree.links"
+          :zooming="zooming"
+          :scale="zoomScale"
 
           :showAvatars="showAvatars"
           @root-node-click="handleRootNodeClick"
@@ -69,7 +71,9 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
 
-      nonFocusedPartners: []
+      nonFocusedPartners: [],
+      zooming: false,
+      zoomScale: 0
     }
   },
   mounted () {
@@ -78,7 +82,7 @@ export default {
     this.zoom()
     this.scale()
   },
-  beforeDestroy () {
+  async beforeDestroy () {
     if (!this.whakapapaView) return
     if (this.whakapapaView.name === 'Loading') return
     if (!this.whakapapaView.canEdit) return
@@ -88,18 +92,19 @@ export default {
       return
     }
 
-    if (!this.recordCount) return
-    if (this.whakapapaView.recordCount === this.recordCount) return
+    const recordCount = await this.getRecordCount()
+
+    if (!recordCount) return
+    if (this.whakapapaView.recordCount === recordCount) return
 
     // if there are more records here than are recorded, update the whakapapa-view
     this.saveWhakapapaView({
       id: this.whakapapaView.id,
-      recordCount: this.recordCount
+      recordCount: recordCount
     })
   },
-
   computed: {
-    ...mapGetters('whakapapa', ['whakapapaView', 'recordCount']),
+    ...mapGetters('whakapapa', ['whakapapaView']),
     ...mapGetters('tree', ['tree', 'getNode', 'getPartnerNode', 'searchedProfileId']),
     radius () {
       return settings.radius
@@ -147,7 +152,7 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
-    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse']),
+    ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse', 'getRecordCount']),
 
     zoom () {
       const svg = d3Select('#baseSvg')
@@ -156,7 +161,16 @@ export default {
       svg.call(
         d3Zoom()
           .scaleExtent([0.01, 5])
-          .on('zoom', (event) => g.attr('transform', event.transform))
+          .on('start', () => {
+            this.zooming = true
+          })
+          .on('zoom', (event) => {
+            this.zoomScale = event.transform.k
+            g.attr('transform', event.transform)
+          })
+          .on('end', () => {
+            this.zooming = false
+          })
       )
         .on('dblclick.zoom', null)
     },
@@ -164,7 +178,10 @@ export default {
       const svg = d3Select('#baseSvg')
       const g = d3Select('#baseGroup')
       const zoom = d3Zoom()
-        .on('zoom', (event) => g.attr('transform', event.transform))
+        .on('zoom', (event) => {
+          this.zoomScale = event.transform.k
+          g.attr('transform', event.transform)
+        })
       zoom.scaleBy(svg.transition().duration(0), 0.8)
     },
 

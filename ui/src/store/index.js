@@ -28,6 +28,7 @@ import story from './modules/story/'
 import table from './modules/table'
 
 import { apolloProvider } from '../plugins/vue-apollo'
+import router from '@/router'
 
 const apollo = apolloProvider.defaultClient
 
@@ -110,11 +111,16 @@ function updateTree (store) {
     { maxWait: 2000 }
   )
   // we debounce this refresh to slow the degree to which d3 calculations and graph redraw are done
-
   store.subscribe(mutation => {
     if (
-      mutation.type.startsWith('whakapapa') ||
-      mutation.type === 'person/setPerson' // includes birthOrder info
-    ) slowedRefreshTree()
+      router.currentRoute?.name?.includes('whakapapa') &&
+      !store.getters['person/isLoadingProfiles'] &&
+      (
+        mutation.type.startsWith('whakapapa') ||
+        mutation.type === 'person/setPerson'
+      ) // includes birthOrder info
+    ) {
+      slowedRefreshTree()
+    }
   })
 }

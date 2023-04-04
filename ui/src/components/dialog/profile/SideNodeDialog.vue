@@ -191,8 +191,9 @@
               <v-col cols="12" class="pt-0">
                 <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem v-if="hasDefaultField('legalName')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
-                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames && profile.altNames.join(', ')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('altNames')" class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames"/>
                   <ProfileInfoItem :class="{ 'pb-0': true, bb: hasDefaultField('city') || hasDefaultField('country') }" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem v-if="hasDefaultField('city')" class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
                   <ProfileInfoItem v-if="hasDefaultField('country')" class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
@@ -204,19 +205,18 @@
                     <ProfileInfoItem v-if="hasDefaultField('buriedLocation')" class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
                   </template>
                 </v-row>
-                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'qualifications'])" class="rounded-border">
+                <v-row cols="12" v-if="hasOneField(['profession', 'education', 'school'])" class="rounded-border">
                   <ProfileInfoItem v-if="hasDefaultField('profession')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
                   <ProfileInfoItem v-if="hasDefaultField('education')" class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school && formData.school.join('\n')"/>
-                  <ProfileInfoItem v-if="hasDefaultField('qualifications')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
+                  <ProfileInfoItem v-if="hasDefaultField('school')" class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education && formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'phone', 'email'])" class="d-flex flex-column justify-center align-center">
                   <v-card-subtitle>
                     {{ t('contactInfoText') }}
                   </v-card-subtitle>
                 </v-row>
-                <v-row v-if="isKaitiaki && hasOneField(['address', 'postCode', 'phone', 'email'])" cols="12" class="rounded-border">
+                <v-row v-if="isKaitiaki && hasOneField(['address', 'phone', 'email'])" cols="12" class="rounded-border">
                   <ProfileInfoItem v-if="hasDefaultField('address')" class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
-                  <ProfileInfoItem v-if="hasDefaultField('postCode')" class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem v-if="hasDefaultField('phone')" class="pb-0 bb" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
                   <ProfileInfoItem v-if="hasDefaultField('email')" class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
                 </v-row>
@@ -352,7 +352,7 @@ import calculateAge from '@/lib/calculate-age'
 import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel, mapLabelToProp } from '@/lib/custom-field-helpers.js'
+import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -387,10 +387,6 @@ export default {
     fullForm: { type: Boolean, default: false },
     deleteable: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
-  },
-  mounted () {
-    this.loadPersonFull(this.profileId)
-    this.loadFamilyLinks(this.profileId)
   },
   data () {
     return {
@@ -428,6 +424,18 @@ export default {
     },
     profile () {
       return this.person(this.profileId)
+    },
+    customFieldValues () {
+      return (Array.isArray(this.profile.customFields))
+        ? this.profile?.customFields
+        : Object.entries(this.profile.customFields).map(([key, value]) => ({ key, value }))
+    },
+    adminCustomFieldValues () {
+      if (!this.profile?.adminProfile?.customFields) return []
+
+      return Array.isArray(this.profile.adminProfile.customFields)
+        ? this.profile.adminProfile.customFields
+        : Object.entries(this.profile.adminProfile).map(([key, value]) => ({ key, value }))
     },
     parents () {
       return this.getRawParentIds(this.profileId)
@@ -518,9 +526,14 @@ export default {
         if (this.mobile) window.scrollTo(0, 0)
       }
     },
+    profileId: {
+      immediate: true,
+      handler (newVal) {
+        this.loadProfile()
+      }
+    },
     scopedProfile: {
       deep: true,
-      immediate: true,
       async handler (profile) {
         if (!profile) return
         this.formData = this.defaultData()
@@ -536,13 +549,26 @@ export default {
   },
   methods: {
     ...mapMutations(['updateDialog', 'updateType']),
+    ...mapMutations('archive', ['setIsFromWhakapapaShow', 'setIsFromPersonIndex']),
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('archive', ['setIsFromWhakapapaShow']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
-    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal']),
+    ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
     ...mapActions(['submitProfileChanges']),
     getDisplayName,
+    async loadProfile () {
+      if (this.$route.name === 'personIndex') {
+        const profile = await this.loadPersonAndWhanau(this.profileId)
+        if (profile.parents.length) {
+          profile.parents.forEach(parent => {
+            this.loadFamilyLinks(parent.id)
+          })
+        }
+      } else {
+        this.loadPersonFull(this.profileId)
+      }
+      this.loadFamilyLinks(this.profileId)
+    },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
@@ -567,12 +593,6 @@ export default {
     },
     hasOneField (keys) {
       return keys.some(key => this.hasDefaultField(key))
-    },
-    getFieldValueFromProfile (fieldDef) {
-      const key = mapLabelToProp(fieldDef.label)
-      if (!key) return '' // something went wrong?
-
-      return get(this.profile, key, '')
     },
     getProfileChanges  () {
       const changes = {}
@@ -619,14 +639,24 @@ export default {
       return changes
     },
     getFieldValue (fieldDef) {
-      if (!Array.isArray(this.profile.customFields)) return ''
-
+      // TODO: cherese 23/02/23
+      // NOTE: i dont like this monkey patching, but there is a lot of logic here around profiles and how they are loading,
+      // that it is going to take longer if i take that route
+      // The problem i have here is that initially the custom fields are an array
+      // but for some reason, after a reload (like when saving changes to the profile)
+      // the customFields then become an object. So here i am monkey patching to turn it
+      // back into an array
+      const findThisField = field => field.key === fieldDef.key
       // find the value from the applicants profile (if there is one)
-      let field = this.profile.customFields.find(field => field.key === fieldDef.key)
 
-      // if the field wasnt found
-      // it could mean that they havent defined a value for it yet
-      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
+      // first we look if the field is on the adminProfile
+      let field = this.adminCustomFieldValues.find(findThisField)
+      const fallbackField = this.customFieldValues.find(findThisField)
+
+      if (!field) field = fallbackField
+
+      if (isEmpty(field?.value) && !isEmpty(fallbackField?.value)) field = fallbackField
+      if (!field) field = { value: getDefaultFieldValue(fieldDef) }
 
       switch (fieldDef.type) {
         case 'array':
@@ -664,6 +694,7 @@ export default {
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
       ) this.setIsFromWhakapapaShow(true)
+      else if (this.$route.name === 'personIndex') this.setIsFromPersonIndex(true)
       this.$router.push({
         name: 'person/archive',
         params: {
@@ -742,8 +773,8 @@ export default {
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
       console.log('the input we need: ', { id: this.profileId, ...input })
       // loads their full profile for changes in the tree as well as the side node dialog
-      await this.loadPersonFull(this.profileId)
-      this.$emit('saved')
+      const profile = await this.loadPersonFull(this.profileId)
+      this.personListUpdate(profile)
     },
     handleReload () {
       this.formData = this.defaultData()

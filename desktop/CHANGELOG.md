@@ -1,8 +1,22 @@
 # Changelog | Ahau desktop
 
-## v2.17.0
-### Features
+## Current
+### New Features
+* custom fields are saved to the correct profile (admin or group) upon registration and your registration being accepted, as well as whenever you make changes to your profiles
+  * only community defined database fields (custom fields) will be saved to profiles, any other fields not defined there will be discarded
 * added ability to submit changes in submit-only whakapapa
+
+## v2.17.0
+
+### New Features
+* can now add people direct to people database
+
+### Bug fixtures
+* improved whakapapa to svg printing
+* improved loading large whakapapa charts
+* fixed editing profile customfields from personIndex
+* fixed getting adminProfiles in personIndex  
+>>>>>>> origin/master
 
 ## v2.16.1
 

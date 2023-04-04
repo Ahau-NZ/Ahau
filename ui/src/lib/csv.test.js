@@ -16,7 +16,7 @@ const ALL_COLUMNS = csv.PERMITTED_CSV_COLUMNS.join(',')
 const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city,avatarImage,headerImage'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
-const MISPELLED_COLUMNS = 'parentNumber,number,preferredName,legalName,genda,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education,avatarImage,headerImage'
+// const MISPELLED_COLUMNS = 'parentNumber,number,preferredName,legalName,genda,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education,avatarImage,headerImage'
 
 // for parentNumber
 const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}
@@ -46,7 +46,7 @@ const INCORRECT_PERSONS = `${ALL_COLUMNS}
 `
 
 test('header columns', t => {
-  t.plan(4)
+  t.plan(2)
   csv.parse(ALL_COLUMNS)
     .then(res => {
       t.deepEqual(res.columns, csv.PERMITTED_CSV_COLUMNS, 'validates correct columns given')
@@ -59,20 +59,45 @@ test('header columns', t => {
       ], 'returns errors for missing columns')
     })
 
-  csv.parse(EXTRA_COLUMNS)
-    .catch(err => {
-      t.deepEqual(err, [
-        { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['extra1', 'extra2'] }
-      ], 'returns error for additional columns')
-    })
+  // csv.parse(EXTRA_COLUMNS)
+  //   .catch(err => {
+  //     t.deepEqual(err, [
+  //       { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['extra1', 'extra2'] }
+  //     ], 'returns error for additional columns')
+  //   })
 
-  csv.parse(MISPELLED_COLUMNS)
-    .catch(err => {
-      t.deepEqual(err[1], {
-        row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['genda']
-      },
-      'returns error for wrong columns'
-      )
+  // csv.parse(MISPELLED_COLUMNS)
+  //   .catch(err => {
+  //     t.deepEqual(err[1], {
+  //       row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['genda']
+  //     },
+  //     'returns error for wrong columns'
+  //     )
+  //   })
+})
+
+test('additional columns', t => {
+  t.plan(2)
+
+  csv.parse(EXTRA_COLUMNS)
+    .then(res => {
+      t.deepEqual(res.additionalColumns, ['extra1', 'extra2'], 'returns the additional columns')
+      t.deepEqual(res.columns, [
+        'parentNumber', 'number',
+        'preferredName', 'legalName',
+        'gender', 'relationshipType',
+        'birthOrder', 'bornAt',
+        'placeOfBirth', 'deceased',
+        'diedAt', 'placeOfDeath',
+        'buriedLocation', 'phone',
+        'email', 'address',
+        'city', 'postCode',
+        'country', 'profession',
+        'altNames', 'school',
+        'education', 'avatarImage',
+        'headerImage', 'description',
+        'extra1', 'extra2'
+      ], 'returns all columns including the additional ones')
     })
 })
 
@@ -136,7 +161,8 @@ test('csv.parse', t => {
           address: '123 Happy Lane',
 
           headerImage: null,
-          avatarImage: null
+          avatarImage: null,
+          customFields: {}
         }
       }, 'returns correct profile')
     })
@@ -357,8 +383,47 @@ test('csv.mapNodesToCsv', t => {
   const nodes = d3Hierarchy(simpleNestedDescendants)
     .descendants()
 
+  const customFieldDefs = [
+    {
+      key: '1657760348525',
+      label: 'Vet location',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    },
+    {
+      key: '1657760334524',
+      label: 'Vet',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    },
+    {
+      key: '1657760322525',
+      label: 'Pet names',
+      type: 'array',
+      required: true,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    },
+    {
+      key: '1657760306958',
+      label: 'Number of pets',
+      type: 'number',
+      required: true,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    }
+  ]
+
   // run the nodes through the csv row mapping
-  const _csv = csv.mapNodesToCsv(nodes)
+  const _csv = csv.mapNodesToCsv(nodes, customFieldDefs)
 
   const filepath = path.join(__dirname, 'fixtures', 'nested-whakapapa.csv')
   fs.readFile(filepath, 'utf8').then((file) => {

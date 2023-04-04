@@ -42,7 +42,9 @@
               </v-menu>
 
               <!-- Set record Permissions: TODO when enabling this you will need to hide the 'submit' option until the Review and Submissions Epic is completed -->
-              <v-menu offset-y light hide-details dense rounded outlined>
+              <v-menu
+                v-if="currentAccess.type !== 'kaitiaki'"
+                offset-y light hide-details dense rounded outlined>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     v-bind="attrs"
@@ -151,12 +153,6 @@ export default {
       // TODO: when kaitiaki-only is allowed in other places, remove this filter
       return this.accessOptions
         .filter(option => option.type !== ACCESS_KAITIAKI)
-    },
-    tooltipText () {
-      // NOTE: this is a temporary fix to display different tooltip text when looking at whakapapa
-      // this is because access is coming soon on all other types of records
-      if (this.type === 'whakapapa') return this.t('whoHasAccess', { recordType: 'whakapapa' })
-      return this.$t('support.comingSoon')
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm

@@ -10,7 +10,15 @@ import {
   loadPersonList
 } from './apollo-helpers'
 
+import isEmpty from 'lodash.isempty'
+import clone from 'lodash.clonedeep'
+
+import { dateIntervalToString } from '@/lib/date-helpers.js'
+import calculateAge from '@/lib/calculate-age'
+import { determineFilter } from '@/lib/filters.js'
+
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
+import i18n from '@/plugins/i18n'
 
 const pull = require('pull-stream')
 const pullParaMap = require('pull-paramap')
@@ -31,18 +39,23 @@ pull(
 export default function (apollo) {
   const state = {
     selectedProfileId: null,
+    // Object used for whakapapa tree
     profiles: {
       // ...minimalProfile || ...fullProfile,
       // isMinimal: true   || false
     },
+    // Array used for personIndex page
     profilesArr: [],
     tombstoned: new Set(),
-    loadingCount: 0
+    activeLoadingCount: 0,
+    loadingProfiles: false
   }
 
   const getters = {
     person: state => (profileId) => state.profiles[profileId],
-    profilesArr: state => state.profilesArr,
+    profilesArr: (state, getters, rootState, rootGetters) => {
+      return state.profilesArr.filter(d => determineFilter({ data: d }, rootGetters['table/tableFilter'])) // Array needed for personIndex page
+    },
     personPlusFamily: (state, getters, rootState, rootGetters) => (id) => {
       // this method provides a person profile and extends it with getters for parents/ children/ partners
       // NOTE this recursive, so you go e.g. profile.parents[0].partners
@@ -70,13 +83,15 @@ export default function (apollo) {
       return getters.personPlusFamily(state.selectedProfileId)
     },
     isTombstoned: state => (profileId) => state.tombstoned.has(profileId),
-    isLoadingProfiles: state => state.loadingCount > 0
+    isLoadingProfiles: state => state.loadingProfiles // changed to boolean to avoid unnecessary re-renders
   }
 
   const mutations = {
     setSelectedProfileId (state, id) {
       state.selectedProfileId = id
     },
+
+    // Set used for building the whakapapa tree =============
     setPerson (state, profile) {
       Vue.set(state.profiles, profile.id, profile)
     },
@@ -84,15 +99,32 @@ export default function (apollo) {
       state.tombstoned.add(profileId)
     },
     incrementLoading (state) {
-      state.loadingCount = state.loadingCount + 1
+      state.activeLoadingCount = state.activeLoadingCount + 1
     },
     decrementLoading (state) {
-      state.loadingCount = state.loadingCount - 1
+      state.activeLoadingCount = state.activeLoadingCount - 1
+      state.loadingProfiles = state.activeLoadingCount > 1
     },
-    setProfiles (state, profiles) {
+    // =======================================================
+
+    // Array used for personIndex ============================
+    setProfilesArr (state, profiles) {
       state.profilesArr = profiles
     },
-    resetProfiles (state) {
+    setProfileInArr (state, profile) {
+      state.profilesArr.unshift(mapProfileData(profile))
+    },
+    updateProfileInArr (state, profile) {
+      const index = state.profilesArr.findIndex((el) => el.id === profile.id)
+      state.profilesArr.splice(index, 1, mapProfileData(profile))
+    },
+    deleteProfileInArr (state, id) {
+      const index = state.profilesArr.findIndex((el) => el.id === id)
+      state.profilesArr.splice(index, 1)
+    },
+    // =======================================================
+
+    emptyAllProfiles (state) {
       state.profilesArr = []
       state.profiles = {}
     }
@@ -106,6 +138,19 @@ export default function (apollo) {
   }
 
   const actions = {
+    emptyAllProfiles ({ commit }) {
+      commit('emptyAllProfiles')
+    },
+    async personListAdd ({ commit, dispatch, getters }, id) {
+      const profile = await dispatch('loadPersonFull', id)
+      commit('setProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListUpdate ({ commit }, profile) {
+      commit('updateProfileInArr', mergeAdminProfile(profile))
+    },
+    async personListDelete ({ commit }, id) {
+      commit('deleteProfileInArr', id)
+    },
     async createPerson (_, input) {
       try {
         if (!input.type) throw new Error('a profile type is required to create a person')
@@ -192,9 +237,7 @@ export default function (apollo) {
         const res = await apollo.mutate(deletePerson(id, details, allowPublic))
 
         if (res.errors) throw res.errors
-
-        commit('tombstoneId', id)
-        dispatch('whakapapa/removeLinksToProfile', id, { root: true })
+        dispatch('tombstoneProfile', id)
         dispatch('alerts/showMessage', 'Person successfully deleted!', { root: true })
         return res.data.tombstoneProfileAndLinks
       } catch (err) {
@@ -215,11 +258,7 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPersonMinimal', profileId)
-        if (profile.tombstone) {
-          commit('tombstoneId', profileId)
-          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-          commit('decrementLoading')
-        } // eslint-disable-line
+        if (profile.tombstone) dispatch('tombstoneProfile', profileId)
         else commit('setPerson', profile)
 
         commit('decrementLoading')
@@ -236,10 +275,24 @@ export default function (apollo) {
 
       try {
         const profile = await dispatch('getPersonFull', profileId)
-        if (profile.tombstone) {
-          commit('tombstoneId', profileId)
-          dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
-        } // eslint-disable-line
+        if (profile.tombstone) dispatch('tombstoneProfile', profileId)
+        else commit('setPerson', profile)
+
+        commit('decrementLoading')
+        return profile
+      } catch (err) {
+        console.error('loadPersonFull error', err) // TODO error alert message
+        commit('decrementLoading')
+        return {}
+      }
+    },
+    async loadPersonAndWhanau ({ state, dispatch, commit }, profileId) {
+      if (state.tombstoned.has(profileId)) return
+      commit('incrementLoading')
+
+      try {
+        const profile = await dispatch('getPerson', profileId)
+        if (profile && profile.tombstone) dispatch('tombstoneProfile', profileId)
         else commit('setPerson', profile)
 
         commit('decrementLoading')
@@ -314,20 +367,44 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadPersonList ({ commit }, { type, tribeId }) {
-      try {
-        const res = await apollo.query(loadPersonList(type, tribeId))
+    async getPersonsList (context, { type, groupId }) {
+      if (!groupId) return []
 
+      try {
+        const res = await apollo.query(loadPersonList(type, groupId))
         if (res.errors) throw res.errors
-        const profiles = res.data.listPerson.map(mergeAdminProfile)
-        commit('setProfiles', profiles) // QUESTION 2020-07-11 why have this as well?
-        profiles.forEach(profile => {
-          commit('setPerson', profile)
-        })
+
+        return res.data.listPerson
       } catch (err) {
-        console.error('Something went wrong while trying to load person list for group: ' + tribeId)
+        console.error('Something went wrong while trying to load person list')
         console.error(err)
       }
+    },
+    async loadPersonList ({ commit, dispatch, rootGetters }) {
+      // get member profiles (NOTE this also has .adminProfile)
+      const groupId = rootGetters['tribe/tribeId']
+      const groupProfiles = await dispatch('getPersonsList', { type: 'group', groupId })
+
+      const adminGroupId = rootGetters['tribe/adminTribeId']
+      const adminProfiles = (await dispatch('getPersonsList', { type: 'admin', groupId: adminGroupId }))
+        .filter(adminProfile => {
+          // filter out profiles that are already linked to a profile in the groupProfiles array
+          return !groupProfiles.some(groupProfile => groupProfile?.adminProfile?.id === adminProfile.id)
+        })
+
+      const profiles = clone(groupProfiles)
+        .map(mergeAdminProfile)
+        .concat(adminProfiles)
+        .map(mapProfileData)
+
+      commit('setProfilesArr', profiles)
+      for (const profile of profiles) {
+        commit('setPerson', profile)
+      }
+    },
+    tombstoneProfile ({ commit, dispatch }, profileId) {
+      commit('tombstoneId', profileId)
+      dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
     }
   }
 
@@ -356,4 +433,58 @@ function pruneInput (input) {
   }
 
   return input
+}
+
+function mapProfileData (profile) {
+  if (profile.aliveInterval) {
+    profile.dob = computeDate('dob', profile.aliveInterval)
+    profile.dod = computeDate('dod', profile.aliveInterval)
+    profile.age = age(profile.aliveInterval)
+    profile.altNames = altNames(profile.altNames)
+  }
+
+  if (profile.customFields && Array.isArray(profile.customFields)) {
+    profile.customFields = profile.customFields
+      .reduce((acc, field) => {
+        return { ...acc, [field.key]: field.value }
+      }, {})
+  }
+
+  return profile
+}
+
+function altNames (altArray) {
+  if (isEmpty(altArray)) return ''
+  return altArray.join(', ')
+}
+
+function computeDate (requiredDate, age) {
+  if (!age) {
+    return ''
+  }
+  let ageString = ''
+  const dateSplit = dateIntervalToString(age, monthTranslations).split('-')
+  if (requiredDate === 'dob') {
+    if (dateSplit[0]) {
+      ageString = dateSplit[0]
+    }
+  }
+  if (requiredDate === 'dod') {
+    if (dateSplit[1]) {
+      ageString = dateSplit[1]
+    }
+  }
+  return ageString
+}
+
+function age (born) {
+  const age = calculateAge(born)
+  if (age || age === 0) {
+    return age.toString()
+  }
+  return age
+}
+
+function monthTranslations (key, vars) {
+  return i18n.t('months.' + key, vars)
 }

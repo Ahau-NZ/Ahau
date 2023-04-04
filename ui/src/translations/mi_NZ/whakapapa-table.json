@@ -10,7 +10,7 @@
   "cancel": "Whakakore",
   "clear": "Clear",
   "refine": "Refine",
-  "filter": "Filter",
+  "filter": "Filter data",
   "sort": "Sort",
   "data": "Data",
   "age": "Tau",
@@ -30,9 +30,9 @@
   "phone": "Waea",
   "showAncestors": "Show ancestors",
   "showWhakapapa": "Show whakapapa links",
-  "view": "View controls",
+  "view": "View columns",
   "avatars": "Show profile photos",
   "parents": "Show extended family",
-  "autoCollapse": "Auto-collapse nodes",
-  "default": "revert to default settings"
+  "autoCollapse": "Show all family lines",
+  "default": "revert changes"
 }

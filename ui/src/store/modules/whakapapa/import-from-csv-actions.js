@@ -82,6 +82,7 @@ export default {
         profile.authors = {
           add: ['*']
         }
+
         const profileId = await dispatch('person/createPerson', profile, { root: true })
 
         // importing from peoples list doesnt require a csvId we may not be building relaiotnships

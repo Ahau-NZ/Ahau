@@ -13,6 +13,7 @@ export const DEFAULT_NEW_FIELD = {
 }
 
 export const DEFAULT_PROFILE_MODEL = [
+  { label: 'profile image', type: 'image', required: false, visibleBy: 'members' },
   { label: 'first name', type: 'text', required: true, visibleBy: 'members' },
   { label: 'full name', type: 'text', required: false, visibleBy: 'members' },
   { label: 'other names', type: 'array', required: false, visibleBy: 'members' },
@@ -34,7 +35,8 @@ export const DEFAULT_PROFILE_MODEL = [
   { label: 'buried location', type: 'text', required: false, visibleBy: 'members' },
   { label: 'profession', type: 'text', required: false, visibleBy: 'members' },
   { label: 'skills/qualifications', type: 'array', required: false, visibleBy: 'members' },
-  { label: 'schools', type: 'array', required: false, visibleBy: 'members' }
+  { label: 'schools', type: 'array', required: false, visibleBy: 'members' },
+  { label: 'age', type: 'number', required: false, visibleBy: 'members' }
 ]
 
 // these are default fields which are disabled (you cant change or remove them)
@@ -87,12 +89,16 @@ export function mapLabelToProp (label) {
 }
 
 export function mapPropToLabel (prop) {
-  return Object.entries(mappings)
+  const found = Object.entries(mappings)
     .find(([key, label]) => label === prop)
-    .at(0)
+
+  if (found) return found.at(0)
+
+  return found ? found.at(0) : null
 }
 
 const mappings = {
+  'profile image': 'avatarImage',
   'first name': 'preferredName',
   'full name': 'legalName',
   'other names': 'altNames',
@@ -111,8 +117,8 @@ const mappings = {
   'place of death': 'placeOfDeath',
   'buried location': 'buriedLocation',
   profession: 'profession',
-  'skills/qualifications': 'qualifications',
-  schools: 'education',
+  'skills/qualifications': 'education',
+  schools: 'school',
   'date of birth': 'dateOfBirth',
   'date of death': 'dateOfDeath'
 }
@@ -145,13 +151,23 @@ export function getInitialCustomFieldChanges (rawCustomFields, customFieldDefs) 
  * Method to find the custom field changes against existing ones from the same profile.
  * This method is used when update a profile in a tribe that has custom fields (or doesnt)
  *
- * @param {Array} originalCustomFields the custom field values given by the profile
- * @param {Array} updatedCustomFields raw custom fields in this form { [key]: value }
+ * @param {Array|Object} originalCustomFields the custom field values given by the profile
+ * @param {Object} updatedCustomFields raw custom fields in this form { [key]: value }
  * @oaran {Array} customFieldDefs custom field definitions in this form [{ type, key, label, required, visibleBy, order, ... }]
  */
 export function getCustomFieldChanges (originalCustomFields, updatedCustomFields, customFieldDefs) {
+  if (!originalCustomFields || !updatedCustomFields || !customFieldDefs) return []
+
+  // sometimes the originalCustomFields given can be in a different format depending on where the profile came from
+  // here we check and convert it accordingly
+  if (!Array.isArray(originalCustomFields) && typeof originalCustomFields === 'object') {
+    // convert it to any array
+    originalCustomFields = Object.entries(originalCustomFields)
+      .map(convertCustomFieldObjectToArray)
+  }
+
   return Object.entries(updatedCustomFields)
-    .map(([key, value]) => ({ key, value }))
+    .map(convertCustomFieldObjectToArray)
     .filter(({ key, value }) => {
       // find the fields definition
       const fieldDef = customFieldDefs.find(field => field.key === key)
@@ -164,6 +180,8 @@ export function getCustomFieldChanges (originalCustomFields, updatedCustomFields
       return (!isEqual(get(fieldOriginalValue, 'value'), value) && !isEqual(value, getDefaultFieldValue(fieldDef)))
     })
 }
+
+const convertCustomFieldObjectToArray = ([key, value]) => ({ key, value })
 
 /**
  * This method returns the default value for a custom field, depending on its type

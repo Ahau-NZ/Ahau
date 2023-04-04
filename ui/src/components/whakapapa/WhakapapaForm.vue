@@ -66,45 +66,27 @@
                 <span>Instructions</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="6">
-              <v-btn color="blue-grey" class="pb-2" @click='downloadCsv()' text >
-                <v-icon class="pr-2" color="blue-grey">
-                  mdi-file-download
-                </v-icon>
-                Download CSV Template
-              </v-btn>
-            </v-col>
-            <v-col cols="12" class="py-0">
-              <v-file-input
-                ref="csvFileInput"
-                class="pt-0"
-                v-model="file"
-                show-size
-                accept=".csv"
-                :label="t('csvUpload')"
-                :success-messages="successMsg"
-                :rules="rules.csvFile"
-                @click:clear="resetFile()"
-              ></v-file-input>
+            <v-col>
+              <CsvImportInput :importedData.sync="importedData" :downloadTemplate="downloadTemplate" />
             </v-col>
           </v-row>
         </v-row>
       </v-col>
     </v-row>
     <CsvHelperDialog v-if="csvHelper" :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
-    <CsvErrorDialog v-if="csvErrorShow" :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
 <script>
 
 import { mapMutations } from 'vuex'
 
+import { RULES } from '@/lib/constants'
+import { downloadCsv } from '@/lib/csv'
+
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
-import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
-import { importCsv, downloadCsv } from '@/lib/csv'
+import CsvImportInput from '@/components/csvImport/CsvImportInput.vue'
 
 function setDefaultWhakapapa (whakapapa) {
   return {
@@ -123,7 +105,7 @@ export default {
     Avatar,
     ImagePicker,
     CsvHelperDialog,
-    CsvErrorDialog
+    CsvImportInput
   },
   props: {
     view: Object,
@@ -139,12 +121,8 @@ export default {
       formData: this.view,
       rules: RULES,
       valid: false,
-      file: null,
-      errorMsgs: [],
-      successMsg: [],
-      noErrorsInCSV: true,
-      csvHelper: false,
-      csvErrorShow: false
+      importedData: null,
+      csvHelper: false
     }
   },
   watch: {
@@ -157,37 +135,18 @@ export default {
         this.$emit('update:view', newVal)
       }
     },
-    file (newFile) {
-      if (newFile == null) return
-
-      this.errorMsgs = []
-      this.successMsg = []
-
-      importCsv(newFile)
-        .then(csv => {
-          this.successMsg = ['Expected result = Top ancestor: ' + csv[0].profile.preferredName + '. First child: ' + csv[1].profile.preferredName]
-          this.$emit('update:data', csv)
-        })
-        .catch(errs => {
-          this.errorMsgs = errs
-          this.csvErrorShow = true
-        })
+    importedData: {
+      deep: true,
+      handler (val) {
+        this.$emit('update:importedData', val)
+      }
     }
   },
   methods: {
     ...mapMutations(['setAllowSubmissions']),
-    downloadCsv,
+    downloadTemplate: downloadCsv,
     csvInfo () {
       this.csvHelper = !this.csvHelper
-    },
-    csvErrorClose () {
-      this.resetFile()
-      this.csvErrorShow = false
-    },
-    resetFile () {
-      this.file = null
-      this.errorMsgs = []
-      this.successMsg = []
     },
     t (key, vars) {
       return this.$t('addWhakapapaForm.' + key, vars)

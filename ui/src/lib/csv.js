@@ -3,6 +3,8 @@ import {
   csvFormat as d3CsvFormat
 } from 'd3'
 
+import pick from 'lodash.pick'
+
 import edtf from 'edtf'
 
 import { GENDERS, RELATIONSHIPS } from './constants'
@@ -90,7 +92,17 @@ function parse (fileContent, type) {
   return new Promise((resolve, reject) => {
     const seen = new Set()
 
-    const csv = d3CsvParse(fileContent, (d, i) => {
+    const csv = d3CsvParse(fileContent)
+
+    const columns = csv.columns
+
+    // validate the header column
+    errors = [...headerColumnErrors(columns, type)]
+
+    // validate any additional columns
+    const additionalColumns = additionalHeaderColumns(columns)
+
+    const rows = csv.map((d, i) => {
       const row = i + 1
 
       if (i === 0 && !isEmpty(d.parentNumber)) {
@@ -187,47 +199,50 @@ function parse (fileContent, type) {
 
           // images
           avatarImage: importImage(d.avatarImage),
-          headerImage: importImage(d.headerImage)
+          headerImage: importImage(d.headerImage),
+          customFields: pick(d, additionalColumns)
         }
 
         seen.add(d.number)
 
         return person
       }
+      return null
     })
+      .filter(Boolean)
 
     if (count !== csv.length && errors.length === 0) {
-      errors.push({ row: 'N/A', field: 'N/A', error: 'missing some entries, but no not have errors for them', value: csv })
+      errors.push({ row: 'N/A', field: 'N/A', error: 'missing some entries, but do not have errors for them', value: csv })
       // this code should never be reached
     }
 
-    // validate the header column
-    errors = [...headerColumnErrors(csv.columns, type), ...errors]
+    rows.columns = csv.columns
+    rows.additionalColumns = additionalColumns
 
     const maxCsvLength = 10000
 
-    if (csv.length > maxCsvLength) {
+    if (rows.length > maxCsvLength) {
       const lengthError = 'Max import file is currently set to 10,000 records. Please split your files into smaller records or to import larger files please contact info@ahau.io'
       errors = [{ row: 'N/A', field: 'row count', error: lengthError, value: '' }, ...errors] // make sure its the first error
     }
 
     if (errors.length) reject(errors)
-    else resolve(csv)
+    else resolve(rows)
   })
 }
 
-function mapNodesToCsv (nodes) {
+function mapNodesToCsv (nodes, customFieldDefs) {
   const rows = []
 
   nodes.forEach(node => {
     const nodeId = node.parent ? node.parent.data.id : ''
     const partnerId = node.data.id
 
-    const childRow = nodeToParent(node, nodeId)
+    const childRow = nodeToParent(node, nodeId, customFieldDefs)
     rows.push(childRow)
 
     // for each node, look at their partners and create a mapping!
-    const partnerRows = nodeToPartners(node, partnerId)
+    const partnerRows = nodeToPartners(node, partnerId, customFieldDefs)
     if (partnerRows && partnerRows.length) rows.push(...partnerRows)
   })
 
@@ -235,26 +250,26 @@ function mapNodesToCsv (nodes) {
   return d3CsvFormat(rows)
 }
 
-function nodeToParent (node, parentId) {
+function nodeToParent (node, parentId, customFieldDefs) {
   return {
     parentNumber: parentId,
-    ...mapNodeToCsvRow(node.data)
+    ...mapNodeToCsvRow(node.data, customFieldDefs)
   }
 }
 
-function nodeToPartners (node, partnerId) {
+function nodeToPartners (node, partnerId, customFieldDefs) {
   const rows = []
   node.data.partners.forEach(partner => {
-    const row = nodeToPartner(partner, partnerId)
+    const row = nodeToPartner(partner, partnerId, customFieldDefs)
     rows.push(row)
   })
   return rows
 }
 
-function nodeToPartner (node, partnerId) {
+function nodeToPartner (node, partnerId, customFieldDefs) {
   return {
     parentNumber: partnerId,
-    ...mapNodeToCsvRow({ ...node, relationshipType: 'partner' })
+    ...mapNodeToCsvRow({ ...node, relationshipType: 'partner' }, customFieldDefs)
   }
 }
 
@@ -263,7 +278,7 @@ function stringifyArray (arr) {
   return arr.join(', ')
 }
 
-function mapNodeToCsvRow (d) {
+function mapNodeToCsvRow (d, customFieldDefs) {
   const aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
 
   const row = {
@@ -290,9 +305,23 @@ function mapNodeToCsvRow (d) {
     headerImage: exportImage(d.headerImage)
   }
 
-  row.phone = d.adminProfile ? d.adminProfile.phone : ''
-  row.email = d.adminProfile ? d.adminProfile.email : ''
-  row.address = d.adminProfile ? d.adminProfile.address : ''
+  row.phone = d.adminProfile ? d.adminProfile.phone : (d.phone || '')
+  row.email = d.adminProfile ? d.adminProfile.email : (d.email || '')
+  row.address = d.adminProfile ? d.adminProfile.address : (d.address || '')
+
+  if (!d.customFields) return row
+
+  // add the custom field to the row
+  customFieldDefs.forEach(fieldDef => {
+    let val
+    if (Array.isArray(d.customFields)) {
+      val = (d.customFields.find(field => field.key === fieldDef.key) || {}).value
+    } else {
+      val = d.customFields[fieldDef.key]
+    }
+
+    row[fieldDef.label] = val || ''
+  })
 
   return row
 }
@@ -424,15 +453,11 @@ function headerColumnErrors (headers, type) {
     errors.push({ row: 'header', field: 'columns', error: 'missing column(s)', value: missingColumns })
   }
 
-  const additionalColumns = headers.filter(d => {
-    return !PERMITTED_CSV_COLUMNS.includes(d)
-  })
-
-  if (additionalColumns.length > 0) {
-    errors.push({ row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: additionalColumns })
-  }
-
   return errors
+}
+
+function additionalHeaderColumns (columns) {
+  return columns.filter(column => !PERMITTED_CSV_COLUMNS.includes(column))
 }
 
 /*
@@ -463,7 +488,10 @@ function convertToSet (str) {
 function convertToArray (arr) {
   if (arr.indexOf(', ') > -1) {
     arr = arr.split(', ')
+  } else if (arr.indexOf(',') > -1) {
+    arr = arr.split(',')
   }
+
   return arr
 }
 
@@ -527,6 +555,68 @@ function importImage (uri) {
   }
 }
 
+function parseCustomFieldValue (customFieldDef, value) {
+  switch (customFieldDef.type) {
+    // TODO: cover checkbox type
+    case 'array': return cfToArray(value)
+    case 'date': return cfToDate(value)
+    case 'number': return cfToNumber(value)
+    case 'checkbox': return cfToCheckbox(value)
+    case 'list':
+      if (customFieldDef.multiple) return cfToMultiList(customFieldDef.options, value)
+      else return cfToSingleList(customFieldDef.options, value)
+    default: return value
+  }
+}
+
+function cfToArray (value) {
+  value = convertToArray(value)
+  if (isEmpty(value)) return []
+  else if (typeof value === 'string') return [value]
+  else if (Array.isArray(value)) return value
+  return []
+}
+
+function cfToDate (value) {
+  if (isValidDate(value)) return convertDate(value)
+
+  // TODO: decide whether to drop values, or ask the user to fix them...
+  return null
+}
+
+function cfToNumber (value) {
+  if (isEmpty(value)) return null
+  if (isValidNumber(value)) return parseInt(value)
+
+  // TODO: decide whether to drop values, or ask the user to fix them...
+  return null
+}
+
+function cfToSingleList (options, value) {
+  if (options.includes(value)) return [value]
+
+  // TODO: decide whether to drop values, or ask the user to fix them...
+  return []
+}
+
+function cfToMultiList (options, value) {
+  // convert string to array
+  const arr = cfToArray(value)
+
+  // make sure every value in the array
+  // is in the list of options
+  return arr.filter(v => options.includes(v))
+}
+
+function cfToCheckbox (value) {
+  if (isEmpty(value)) return null
+
+  if (['yes', 'true', true].includes(value)) return true
+  if (['no', 'false', false].includes(value)) return false
+
+  return null
+}
+
 export {
   importCsv,
   mapNodesToCsv,
@@ -538,5 +628,6 @@ export {
   PERMITTED_CSV_COLUMNS,
   REQUIRED_CSV_COLUMNS,
   exportImage,
-  importImage
+  importImage,
+  parseCustomFieldValue
 }

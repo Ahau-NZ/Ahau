@@ -172,6 +172,7 @@ query($type: String!, $tribeId: String!) {
     }
 
     adminProfile {
+      id
       preferredName
       legalName
       altNames
@@ -191,6 +192,10 @@ query($type: String!, $tribeId: String!) {
       education
       school
 
+      customFields {
+        key value
+      }
+
       address
       email
       phone
@@ -198,10 +203,42 @@ query($type: String!, $tribeId: String!) {
   }
 }
 `
+const LIST_ADMIN_PERSON = gql`
+query($type: String!, $tribeId: String!) {
+  listPerson(type: $type, groupId: $tribeId)  {
+    id
+    preferredName
+    legalName
+    altNames
+    description
+    deceased
+    avatarImage { uri }
+    gender
+    aliveInterval
+    placeOfBirth
+    placeOfDeath
+    buriedLocation
+    birthOrder
+    city
+    country
+    postCode
+    profession
+    education
+    school
+
+    address
+    email
+    phone
+    customFields {
+      key value
+    }
+  }
+}
+`
 
 export function loadPersonList (type, tribeId) {
   return {
-    query: LIST_PERSON,
+    query: type === 'admin' ? LIST_ADMIN_PERSON : LIST_PERSON,
     variables: {
       type,
       tribeId

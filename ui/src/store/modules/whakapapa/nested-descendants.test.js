@@ -22,7 +22,7 @@ test('vuex/whakapapa getters.nestedDescendants (with extendedFamily)', t => {
     'returns nestedDescendants'
   )
 
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
 
   t.deepEqual(
     getters.nestedDescendants,
@@ -69,7 +69,7 @@ test('vuex/whakapapa getters.nestedDescendants (with ignoredProfiles)', t => {
 
   // when we have a parent ignored, extended family stop with them.
   state.view.ignoredProfiles = ['X']
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
 
   t.deepEqual(
     getters.nestedDescendants,
@@ -130,7 +130,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - ch
 
   /* extendedFamily = true */
   // tests for watching for consistent behaviour, infinite loops!
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(
     getters.nestedDescendants,
     expected,
@@ -244,7 +244,7 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
   )
 
   console.log('set showExtendedFamily = true')
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(
     getters.nestedDescendants,
     {
@@ -319,7 +319,7 @@ test('vuex/whakapapa getters.nestedDescendants (with importantRelationships - pa
 
   /* extendedFamily = true */
   // tests for watching for consistent behaviour
-  state.viewChanges.showExtendedFamily = true
+  state.view.changes.showExtendedFamily = true
   t.deepEqual(
     getters.nestedDescendants,
     expected,

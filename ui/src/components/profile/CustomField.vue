@@ -41,7 +41,7 @@
     />
     <!-- Array field -->
     <v-row v-else-if="fieldDef.type === 'array'">
-      <v-col v-for="(_, i) in value" :key="`${fieldDef.key}-${i}`" :class="{ 'pt-0 mt-0': i === 0, 'pt-2': i > 0 }" cols="6">
+      <v-col v-for="(_, i) in value" :key="`${fieldDef.key}-${i}`" :class="{ 'pt-0 mt-0': i === 0, 'pt-2': i > 0 }" :cols="smScreen ? 12 : 6">
         <v-text-field
           v-model="value[i]"
           :label="`${fieldDef.label} (${i + 1})`"

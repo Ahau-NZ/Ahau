@@ -18,6 +18,8 @@ export default function (apollo) {
   }
 
   const getters = {
+    tribeId: state => state?.currentTribe?.id,
+    adminTribeId: state => state?.currentTribe?.admin?.id,
     currentTribe: state => state.currentTribe,
     tribeSettings: (state, getters) => {
       const tribeProfile = getters.tribeProfile
@@ -63,14 +65,26 @@ export default function (apollo) {
     /*
      =========== CUSTOM FIELDS =================
     */
-    rawTribeCustomFields: (state, getters) => {
+    rawTribeCustomFields: (state, getters, _, rootGetters) => {
       if (getters.isPersonalTribe) return []
 
-      return get(state, 'currentTribe.public[0].customFields', [])
+      // for admin subgroups, we just use the parent groups custom field definitions
+      const tribe = getters.parentTribe || state.currentTribe
+      const customFields = get(tribe, 'public[0].customFields', [])
+
+      if (rootGetters.isKaitiaki) return customFields
+      return customFields
+        .filter(field => field.visibleBy === 'members')
     },
     tribeDefaultFields (state, getters) {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => !field.tombstone)
+        .filter(field => {
+          return (
+            // get rid of kaitiaki-only fields on your personal group
+            !(getters.isPersonalTribe && field.visibleBy === 'admin') &&
+            !field.tombstone
+          )
+        })
     },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
@@ -244,12 +258,10 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async loadTribe ({ getters, dispatch, state, commit }, id) {
+    async loadTribe ({ getters, dispatch, state }, id) {
       try {
-        if (state.currentTribe && state.currentTribe.id !== id) {
-          dispatch('resetCurrentTribe')
-          commit('person/resetProfiles', null, { root: true })
-        }
+        dispatch('resetCurrentTribe')
+        dispatch('person/emptyAllProfiles', null, { root: true })
 
         const tribe = await dispatch('getTribe', id)
 
