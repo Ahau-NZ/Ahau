@@ -85,6 +85,7 @@
     "eslint-plugin-vue": "^7.20.0",
     "esm": "^3.2.25",
     "fibers": "^5.0.1",
+    "node-libs-browser": "^2.2.1",
     "path-browserify": "^1.0.1",
     "sass": "^1.59.2",
     "sass-loader": "^12.6.0",
