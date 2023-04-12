@@ -31,6 +31,7 @@ ahoy(
       require('ssb-query'),
       require('ssb-backlinks'),
 
+      require('ssb-invite'),
       require('ssb-tribes'),
       require('ssb-tribes-registration'),
 
@@ -39,8 +40,8 @@ ahoy(
       require('ssb-story'),
       require('ssb-artefact'),
       require('ssb-whakapapa'),
+      require('ssb-submissions'),
 
-      require('ssb-invite'),
       require('ssb-ahau'),
       require('ssb-recps-guard')
     ]
