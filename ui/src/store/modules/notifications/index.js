@@ -72,7 +72,6 @@ function mapValues (whoami) {
 
     // TODO: not sure which admin, find out later: look at the history instead
     const from = isPersonal ? whoami.personal.profile : applicant
-
     return {
       from,
       group: _group,

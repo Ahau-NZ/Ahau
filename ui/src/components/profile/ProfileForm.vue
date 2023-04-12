@@ -505,11 +505,11 @@ export default {
     }
     if (!this.readonly && isEmpty(this.formData.education)) {
       this.formData.education = []
-      this.formData.education.push('')
+      // this.formData.education.push('')
     }
     if (!this.readonly && isEmpty(this.formData.school)) {
       this.formData.school = []
-      this.formData.school.push('')
+      // this.formData.school.push('')
     }
   },
   watch: {

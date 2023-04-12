@@ -1,6 +1,7 @@
 {
   "stories": "stories",
   "edit": "edit",
+  "submit": "submit",
   "fullName": "full name",
   "otherNames": "other names",
   "age": "age",

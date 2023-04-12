@@ -97,8 +97,22 @@
                 <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
+            <!-- Displays textbox for user comment when in a submit only whakapapa-->
+            <v-col v-if="canSubmit" cols="12" sm="12" class="pa-1" >
+              <!-- Comment textarea -->
+              <v-textarea
+                v-model="comment"
+                label="Add a comment"
+                outlined
+                hide-details
+                placeholder=" "
+                no-resize
+                :rows="3"
+                auto-grow
+                class="px-5 pt-4"
+              />
+            </v-col>
 
-            <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
               cols="12"
               :align="mobile ? '' : 'right'"
@@ -107,8 +121,9 @@
               <v-btn @click="cancel" text large class="secondary--text">
                 {{ t('cancel') }}
               </v-btn>
+
               <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('save') }}
+                {{ canSubmit ? t('submit') : t('save')}}
               </v-btn>
             </v-col>
           </v-row>
@@ -379,6 +394,7 @@ export default {
       showDescription: false,
       drawer: false,
       authors: [],
+      comment: '',
       allowRemoveChildren: false,
       isEditing: this.editing
     }
@@ -390,7 +406,7 @@ export default {
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
-      'getPartnerType'
+      'getPartnerType', 'whakapapaView'
     ]),
     isLoadingProfile () {
       return this.alertSettings.delay === -1
@@ -488,15 +504,8 @@ export default {
       }
       return null
     },
-    customProps () {
-      return {
-        readonly: !this.isEditing,
-        flat: !this.isEditing,
-        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
-        hideDetails: true,
-        placeholder: ' ',
-        class: !this.isEditing ? 'custom' : ''
-      }
+    canSubmit () {
+      return !this.isKaitiaki && this.whakapapaView.permission === 'submit'
     }
   },
   watch: {
@@ -535,6 +544,7 @@ export default {
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
     ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
+    ...mapActions('submissions', ['proposeEditGroupPerson']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -715,15 +725,19 @@ export default {
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) {
-        await this.processUpdate(output)
+        // Submiting request to edit the profile
+        if (this.canSubmit) {
+          await this.processSubmission(output)
+          this.showAlert({ message: 'Submission sent', color: 'green' })
+        } else {
+          await this.processUpdate(output)
+          // handle reload
+          this.showAlert({ message: 'Profile updated', color: 'green' })
+        }
       } else {
         this.showAlert({ message: 'No changes were submitted', color: 'green' })
-        this.handleReload()
-        return
       }
 
-      // handle reload
-      this.showAlert({ message: 'Profile updated', color: 'green' })
       this.handleReload()
     },
     async processUpdate (input) {
@@ -737,11 +751,7 @@ export default {
       }
 
       // exclude empty altNames from submission
-      if (input.altNames) {
-        if (!get(input, 'altNames.add.length')) delete input.altNames.add
-        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
-        if (isEmpty(input.altNames)) delete input.altNames
-      }
+      this.formatAltnames(input)
 
       // update their profile in the db
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
@@ -749,6 +759,23 @@ export default {
       // loads their full profile for changes in the tree as well as the side node dialog
       const profile = await this.loadPersonFull(this.profileId)
       this.personListUpdate(profile)
+    },
+    async processSubmission (input) {
+      this.showAlert({ message: 'Submitting changes for review', color: 'green', delay: -1 })
+      if (input.recps) delete input.recps
+
+      // exclude empty altNames from submission
+      this.formatAltnames(input)
+
+      // create the submission
+      if (!isEmpty(input)) await this.proposeEditGroupPerson({ profileId: this.profileId, input, comment: this.comment })
+    },
+    formatAltnames (input) {
+      if (input.altNames) {
+        if (!get(input, 'altNames.add.length')) delete input.altNames.add
+        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
+        if (isEmpty(input.altNames)) delete input.altNames
+      }
     },
     handleReload () {
       this.formData = this.defaultData()
@@ -792,6 +819,13 @@ export default {
   background-color: white;
   overflow: none;
   z-index:6
+}
+
+.custom.v-text-field > .v-input__control > .v-input__slot:before {
+  border-style: none;
+}
+.custom.v-text-field > .v-input__control > .v-input__slot:after {
+  border-style: none;
 }
 
 // ::-webkit-scrollbar{

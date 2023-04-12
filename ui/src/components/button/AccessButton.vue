@@ -128,7 +128,8 @@ export default {
       toggle: false,
       permissions: [
         { value: 'edit', text: this.t('edit') },
-        { value: 'view', text: this.t('read') }
+        { value: 'view', text: this.t('read') },
+        { value: 'submit', text: this.t('submit') }
         // this.t('submit')
       ]
     }
