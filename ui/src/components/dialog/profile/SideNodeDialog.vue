@@ -353,7 +353,6 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers.js'
-import { editProfileSubmission } from '@/lib/submission-helpers.js'
 
 function arrayEquals (a, b) {
   return (
@@ -556,7 +555,7 @@ export default {
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
     ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
-    ...mapActions(['submitProfileChanges']),
+    ...mapActions('submissions', ['proposeEditGroupPerson']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -737,54 +736,21 @@ export default {
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) {
-        // Submiting request
+        // Submiting request to edit the profile
         if (this.canSubmit) {
-          this.showAlert({ message: 'Submitted for review', color: 'green' })
-          console.log('output', output)
-          // here we need to add the profileId (profile to be changed), the submitter profileId, the comment (optional) and the recps
-          // HACK: add the submitter's profile id to the output
-          // output['id'] = this.whoami.personal.profile.id
-          // this.whoami.personal.groupId
-          // TODO: replace groupId with poBoxId (recps: [groupId])
-          console.log('recordId: ', this.profileId)
-          console.log('recordId: ', this.formData.id)
-          console.log('output: ', JSON.stringify(output))
-          console.log('recps', this.whoami.personal.groupId)
-          console.log('comment', this.comment)
-          // Creating submission
-          try {
-            const res = this.$apollo.mutate(
-              editProfileSubmission({
-                profileId: this.formData.id,
-                details: output,
-                comment: this.comment,
-                recps: [this.whoami.personal.groupId]
-              })
-            )
-            res.then(function (result) {
-              console.log('result2: ', result)
-            })
-            console.log('result', res)
-            if (res.errors) throw res.errors
-            return
-          } catch (err) {
-            console.error('error creating the profile edit submission: ', err)
-            return
-          }
+          await this.processSubmission(output)
+          this.showAlert({ message: 'Submission sent', color: 'green' })
+        } else {
+          await this.processUpdate(output)
+          // handle reload
+          this.showAlert({ message: 'Profile updated', color: 'green' })
         }
-        await this.processUpdate(output)
       } else {
         this.showAlert({ message: 'No changes were submitted', color: 'green' })
-        this.handleReload()
-        return
       }
-      // handle reload
-      this.showAlert({ message: 'Profile updated', color: 'green' })
+
       this.handleReload()
     },
-    // for the following method we need the profileID, comment (optional), recps and details involving the changes
-    // async submitProfileChanges ({ commit }, profileId, details, comment, recps) {
-    // },
     async processUpdate (input) {
       this.showAlert({ message: 'Submitting Changes...', color: 'green', delay: -1 })
       if (input.recps) delete input.recps
@@ -796,11 +762,7 @@ export default {
       }
 
       // exclude empty altNames from submission
-      if (input.altNames) {
-        if (!get(input, 'altNames.add.length')) delete input.altNames.add
-        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
-        if (isEmpty(input.altNames)) delete input.altNames
-      }
+      this.formatAltnames(input)
 
       // update their profile in the db
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
@@ -808,6 +770,23 @@ export default {
       // loads their full profile for changes in the tree as well as the side node dialog
       const profile = await this.loadPersonFull(this.profileId)
       this.personListUpdate(profile)
+    },
+    async processSubmission (input) {
+      this.showAlert({ message: 'Submitting changes for review', color: 'green', delay: -1 })
+      if (input.recps) delete input.recps
+
+      // exclude empty altNames from submission
+      this.formatAltnames(input)
+
+      // create the submission
+      if (!isEmpty(input)) await this.proposeEditGroupPerson({ profileId: this.profileId, input, comment: this.comment })
+    },
+    formatAltnames (input) {
+      if (input.altNames) {
+        if (!get(input, 'altNames.add.length')) delete input.altNames.add
+        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
+        if (isEmpty(input.altNames)) delete input.altNames
+      }
     },
     handleReload () {
       this.formData = this.defaultData()

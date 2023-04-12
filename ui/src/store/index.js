@@ -26,6 +26,7 @@ import collection from './modules/collection/'
 import settings from './modules/settings/'
 import story from './modules/story/'
 import table from './modules/table'
+import submissions from './modules/submissions'
 
 import { apolloProvider } from '../plugins/vue-apollo'
 import router from '@/router'
@@ -86,6 +87,7 @@ export default new Vuex.Store({
     person: person(apollo),
     collection: collection(apollo),
     story: story(apollo),
+    submissions: submissions(apollo),
 
     whakapapa: whakapapa(apollo),
 
