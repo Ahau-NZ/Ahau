@@ -57,18 +57,18 @@ export const proposeNewGroupPerson = ({ input, comment, recps }) => {
   }
 }
 
-export const proposeEditGroupPerson = ({ profileId, input, comment }) => {
+export const proposeEditGroupPerson = ({ profileId, input, comment, recps }) => {
   return {
     mutation: gql`
-      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String) {
-        proposeEditGroupPerson (profileId: $profileId, input: $input, comment: $comment)
+      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String, $recps: [String]) {
+        proposeEditGroupPerson (profileId: $profileId, input: $input, comment: $comment, recps: $recps)
       }
     `,
     variables: {
       profileId,
       input,
-      comment
-      // TODO recps for the submission
+      comment,
+      recps
     }
   }
 }

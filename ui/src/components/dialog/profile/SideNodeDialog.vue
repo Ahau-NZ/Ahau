@@ -98,16 +98,21 @@
               </v-btn>
             </v-col>
             <!-- Displays textbox for user comment when in a submit only whakapapa-->
-            <v-form v-if="canSubmit" class="ma-0 pa-0" ref="form">
-              <!-- :class="mobile ? '' : 'ml-2'"-->
-              <v-row align="center" class="ma-0 pa-0">
-                <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'">
-                  <v-text-field v-model="comment" clearable label="Add a comment" outlined />
-                </v-col>
-              </v-row>
-            </v-form>
+            <v-col v-if="canSubmit" cols="12" sm="12" class="pa-1" >
+              <!-- Comment textarea -->
+              <v-textarea
+                v-model="comment"
+                label="Add a comment"
+                outlined
+                hide-details
+                placeholder=" "
+                no-resize
+                :rows="3"
+                auto-grow
+                class="px-5 pt-4"
+              />
+            </v-col>
 
-            <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
               cols="12"
               :align="mobile ? '' : 'right'"
@@ -117,14 +122,9 @@
                 {{ t('cancel') }}
               </v-btn>
 
-              <v-btn v-if="canSubmit" @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('submit') }}
+              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
+                {{ canSubmit ? t('submit') : t('save')}}
               </v-btn>
-
-              <v-btn v-else @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('save') }}
-              </v-btn>
-
             </v-col>
           </v-row>
 
@@ -504,19 +504,8 @@ export default {
       }
       return null
     },
-    customProps () {
-      return {
-        readonly: !this.isEditing,
-        flat: !this.isEditing,
-        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
-        hideDetails: true,
-        placeholder: ' ',
-        class: !this.isEditing ? 'custom' : ''
-      }
-    },
     canSubmit () {
-      // TODO: change to !this.isKaitiaki
-      return this.isKaitiaki && this.whakapapaView.permission === 'submit'
+      return !this.isKaitiaki && this.whakapapaView.permission === 'submit'
     }
   },
   watch: {
@@ -830,6 +819,13 @@ export default {
   background-color: white;
   overflow: none;
   z-index:6
+}
+
+.custom.v-text-field > .v-input__control > .v-input__slot:before {
+  border-style: none;
+}
+.custom.v-text-field > .v-input__control > .v-input__slot:after {
+  border-style: none;
 }
 
 // ::-webkit-scrollbar{

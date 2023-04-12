@@ -51,21 +51,6 @@ const actions = {
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
-  },
-  submitProfileChanges ({ commit }, output) {
-    const testobj = {
-      from: 'bob',
-      group: '_group',
-      applicant: null,
-      id: 'id',
-      answers: [],
-      history: [],
-      isPersonal: false,
-      isAccepted: true,
-      isNew: true
-    }
-    commit('updateNotifications', [testobj, testobj, testobj])
-    console.log('changes submitted: ' + JSON.stringify(output))
   }
 }
 

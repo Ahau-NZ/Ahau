@@ -16,7 +16,7 @@ export default function (apollo) {
   }
 
   const actions = {
-    async proposeEditGroupPerson ({ dispatch }, { profileId, input, comment }) {
+    async proposeEditGroupPerson ({ dispatch, rootGetters }, { profileId, input, comment }) {
       try {
         if (!profileId) throw new Error('a profile id is required to create a submission to update the profile')
 
@@ -24,9 +24,8 @@ export default function (apollo) {
           proposeEditGroupPerson({
             profileId,
             input: omit(input, ['id', 'recps']),
-            comment
-            // TODO: recps for the submission!
-            // recps: [this.whoami.personal.groupId]
+            comment,
+            recps: [rootGetters.currentAccess.groupId]
           })
         )
 
