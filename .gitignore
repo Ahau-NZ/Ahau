@@ -22,7 +22,6 @@ yarn.lock
 /mobile/www
 /mobile/build.json
 /mobile/ahau-android-upload-key.keystore
-/mobile/src/nodejs-project/package-lock.json
 
 # local env files
 .env.local
