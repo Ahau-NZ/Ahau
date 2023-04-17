@@ -92,6 +92,7 @@ SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-settings'))
   .use(require('ssb-artefact'))
   .use(require('ssb-story'))
+  .use(require('ssb-submissions'))
   // Blobs
   .use(require('ssb-blobs'))
   .use(require('ssb-serve-blobs')) // needs: blobs
@@ -102,4 +103,5 @@ SecretStack({ appKey: env.caps.shs })
   // Custom
   .use(require('ssb-ahau'))
   .use(require('ssb-recps-guard'))
+
   .call(null, config)

@@ -13,7 +13,7 @@ trap 'onFailure $?' ERR
 BUILD_PLATFORM=$1
 
 echo "Moving from ./src to ./www ...";
-$(npm bin)/cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
+npm exec -- cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
 
 # Write the file to toggle build of native modules
 if [ -f ./www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt ]; then
@@ -40,15 +40,16 @@ npm ci --ignore-scripts --no-optional --silent
 
 # Patch some file changes
 echo "Applying patches...";
-$(npm bin)/patch-package
+npm exec -- patch-package
 rm -rf ./patches ./node_modules/patch-package
 
 if [ $BUILD_PLATFORM == "android" ]; then
   # XCode will build this by its own so iOS isn't necessary
-  cd ./node_modules
   echo "Installing and compiling sodium-native-nodejs-mobile...";
-  cd ./sodium-native-nodejs-mobile && npm install --no-optional --no-package-lock --silent && cd ..
-  cd ..
+  cd ./node_modules/sodium-native-nodejs-mobile
+  npm install --omit=optional --no-package-lock
+  # npm install --omit=optional --no-package-lock --silent
+  cd ../..
 fi
 
 echo "Removing unused files meant for macOS or Windows, etc...";
@@ -62,6 +63,7 @@ find ./node_modules \
     -o -name "prebuilds" \
   \) \
   -print0 | xargs -0 rm -rf; # delete everything in the list
+
 find ./node_modules \
   -type f \
   \( \
@@ -129,7 +131,7 @@ declare -a packagesToBabelify=(
 # There're some packages that are using JavaScript code not supported by Node 12.x
 for pkg in "${packagesToBabelify[@]}"
 do
-  $(npm bin)/babel ./node_modules/$pkg \
+  npx exec -- babel ./node_modules/$pkg \
     --out-dir ./node_modules/$pkg \
     --ignore "test/**/*","**/*.test.js" \
     --presets=@babel/preset-env \
@@ -152,7 +154,7 @@ echo "Bundling with noderify...";
 #   encoding: optional dependency within package node-fetch used by apollo-server
 #   systeminformation: it provides APIs for desktop, not mobile
 #   async_hooks: native library, it's not added to noderify yet
-$(npm bin)/noderify \
+npm exec -- noderify \
   --replace.bindings=bindings-noderify-nodejs-mobile \
   --replace.node-extend=xtend \
   --replace.non-private-ip=non-private-ip-android \

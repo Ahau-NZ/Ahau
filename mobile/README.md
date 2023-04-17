@@ -10,13 +10,80 @@
 
 
 **IMPORTANT**
-Use Node.js 12.19 AND npm 6, later version of npm aren't compiling the native modules.
+
+Use Node.js 18 AND npm 9
+
+// NEW NOTES
+
+1. Install Cordova 11 (latest)
+    - references: 
+      - https://cordova.apache.org/docs/en/latest/guide/cli/index.html
+      - https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#requirements-and-support
+    - `npm install -g cordova`
+2. Install Cordova deps for Android
+    - SDKMAN (tool used to manage sdk installs, versions)
+      - `curl -s "https://get.sdkman.io" | bash`
+    - JDK 11
+      - `sdk install java 11.0.18-tem`
+      - `java --version` should be 11
+    - Gradle
+      - `sdk install gradle 8.1`
+    - Android Studio: https://developer.android.com/studio/
+      - https://developer.android.com/studio/install#linux
+        ```
+        sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+        tar -xvz -f android-studio-2022.2.1.18-linux.tar.gz
+        sudo mv android-studio /opt/
+        cd /usr/bin && sudo ln -s /opt/android-studio/bin/studio.sh studio
+        ```
+      - start android studio from terminal `studio`, and follow the default path for setup
+        - went "More actions > SDK Manager" and added
+          - SDK Platforms tab
+             - [x] Android 12.0 (S)
+          - SDK Tools tab: 
+             - [x] Android SDK Build-Tools > 32.0.0
+             - [x] Android SDK Build-Tools > 31.0.0
+                - had to check "show package details"
+             - [x] Android NDK (side by side)
+             - [x] Android SDK Command-line Tools (latest)
+             - [x] CMake
+             - [x] Android SDK Tools (obselete)
+                - had to uncheck "hide obselete packages"
+      - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
+        ```
+        export ANDROID_HOME=$HOME/Android/Sdk
+        export ANDROID_NDK_HOME=$ANDROID_HOME/ndk
+
+        export PATH=$PATH:$ANDROID_HOME/platform-tools
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        export PATH=$PATH:$ANDROID_HOME/emulator
+        export PATH=$PATH:$ANDROID_HOME/build-tools
+
+        export ANDROID_SDK_ROOT=$ANDROID_HOME # legacy?
+        ```
+      - Project Configuration
+        - setting up an emulator: SKIP
+        - configuring gradle: SKIP
+
+
+      - TODO: To make Android Studio available in your list of applications, select Tools > Create Desktop Entry from the Android Studio menu bar.
+
+
+
+EXTRA NOTES:
+- node-gyp 3.8 has various dependencies:
+  ```
+  sudo apt-get install make gcc python2
+  ```
+- went back and added NDK stuff
+- 
 
 
 ```bash
 $ npm install
-$ npm run setup:mobile
+$ npm run setup
 // Installs dependencies and creates Cordova folders for the Android and iOS platforms
+// You should see happy green messages printed out
 ```
 
 ## Development

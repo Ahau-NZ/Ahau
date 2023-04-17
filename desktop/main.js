@@ -16,9 +16,6 @@ ahoy(
     config: Config(),
     plugins: [
       require('ssb-db'),
-      // require('ssb-master'),
-      // require('ssb-unix-socket'),
-      // require('ssb-no-auth'),
       require('ssb-conn'),
       require('ssb-lan'),
       require('ssb-replicate'),

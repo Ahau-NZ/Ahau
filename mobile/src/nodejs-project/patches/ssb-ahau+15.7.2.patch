@@ -1,35 +1,32 @@
 diff --git a/node_modules/ssb-ahau/src/graphql/index.js b/node_modules/ssb-ahau/src/graphql/index.js
-index bf8cc2b..1b77ba8 100644
+index 2371f08..6c56a53 100644
 --- a/node_modules/ssb-ahau/src/graphql/index.js
 +++ b/node_modules/ssb-ahau/src/graphql/index.js
-@@ -20,7 +20,7 @@ const Settings = require('@ssb-graphql/settings')
+@@ -21,7 +21,6 @@ const Settings = require('@ssb-graphql/settings')
  const Author = require('./author')
  const GroupInit = require('./group-init')
  const Backup = require('./backup')
 -const Stats = require('./stats')
-+// const Stats = require('./stats')
  
  module.exports = async function graphqlServer (ssb) {
    const PORT = (ssb.config.graphql && ssb.config.graphql.port) || env.graphql.port
-@@ -43,7 +43,7 @@ module.exports = async function graphqlServer (ssb) {
+@@ -45,7 +44,6 @@ module.exports = async function graphqlServer (ssb) {
  
    const invite = Invite(ssb)
    const backup = Backup(ssb)
 -  const stats = Stats(ssb)
-+  // const stats = Stats(ssb)
  
    let context = {}
    if (ssb.config.graphql && ssb.config.graphql.loadContext !== false) {
-@@ -64,7 +64,7 @@ module.exports = async function graphqlServer (ssb) {
+@@ -66,7 +64,6 @@ module.exports = async function graphqlServer (ssb) {
        author,
        groupInit,
        invite,
 -      stats,
-+      // stats,
        backup
      ],
-     port: PORT
-@@ -81,12 +81,12 @@ module.exports = async function graphqlServer (ssb) {
+     context,
+@@ -84,12 +81,12 @@ module.exports = async function graphqlServer (ssb) {
      cordova-bridge is used in Cordova, DO NOT REMOVE!
      The if statement is uncommented by patch-package in the mobile platform
    */

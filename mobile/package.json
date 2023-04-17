@@ -11,7 +11,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "postinstall": "./scripts/postinstall.sh",
+    "postinstall": "patch-package && ./scripts/postinstall.sh",
     "setup": "./scripts/setup.sh",
     "build:res": "./scripts/build-res.js",
     "dev:android": "cross-env NODE_ENV=development cross-env ./scripts/run.sh android",
@@ -27,29 +27,29 @@
     "teardown": "rm -rf platforms plugins www src/nodejs-project/node_modules"
   },
   "dependencies": {
-    "cordova": "10.x",
-    "cordova-android": "9.1.0",
-    "cordova-ios": "6.2.0",
+    "cordova": "11.x",
+    "cordova-android": "11.0.0",
+    "cordova-ios": "6.3.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
-    "cordova-plugin-splashscreen": "^6.0.0",
-    "cordova-plugin-statusbar": "^2.4.3",
+    "cordova-plugin-splashscreen": "^6.0.2",
+    "cordova-plugin-statusbar": "^3.0.0",
     "cordova-plugin-whitelist": "^1.3.4",
-    "cordova-plugin-wkwebview-file-xhr": "^3.0.0",
+    "cordova-plugin-wkwebview-file-xhr": "^3.1.0",
     "file-saver": "^2.0.5",
-    "nodejs-mobile-cordova": "0.4.2"
+    "nodejs-mobile-cordova": "0.4.3"
   },
   "devDependencies": {
-    "chalk": "^4.1.0",
-    "cordova-plugin-file": "^6.0.2",
-    "cordova-set-version": "^11.0.2",
-    "cpy-cli": "^3.0.0",
+    "chalk": "^4.1.2",
+    "cordova-plugin-file": "^7.0.0",
+    "cordova-set-version": "^14.0.2",
+    "cpy-cli": "^3.1.1",
     "cross-env": "^7.0.3",
-    "deepmerge": "^4.2.2",
-    "nodemon": "^2.0.2",
-    "ora": "^5.4.0",
-    "patch-package": "^6.4.7",
-    "rimraf": "^3.0.0",
-    "sharp": "^0.28.1"
+    "deepmerge": "^4.3.1",
+    "nodemon": "^2.0.22",
+    "ora": "^5.4.1",
+    "patch-package": "^6.5.1",
+    "rimraf": "^3.0.2",
+    "sharp": "^0.32.0"
   },
   "browserslist": [
     "Android >= 7",
@@ -73,5 +73,9 @@
       "ios",
       "android"
     ]
+  },
+  "engines": {
+    "node": ">=18 <19",
+    "npm": ">=9"
   }
 }
