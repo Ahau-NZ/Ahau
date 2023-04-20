@@ -1,7 +1,7 @@
 {
   "name": "io.ahau.whakapapa",
   "displayName": "Whakapapa",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A mobile app for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "author": "Āhau Ltd.",
   "license": "AGPL-3.0",

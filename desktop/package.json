@@ -22,7 +22,7 @@
     "electron-updater": "^4.6.5",
     "lodash.merge": "^4.6.2",
     "secret-stack": "^6.4.1",
-    "ssb-ahau": "^15.6.7",
+    "ssb-ahau": "^15.7.3",
     "ssb-ahoy": "^5.0.1",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
@@ -43,6 +43,7 @@
     "ssb-serve-blobs": "^3.1.1",
     "ssb-settings": "^1.1.4",
     "ssb-story": "^2.5.0",
+    "ssb-submissions": "^0.4.0",
     "ssb-tribes": "^3.0.3",
     "ssb-tribes-registration": "^0.1.0",
     "ssb-unix-socket": "^1.0.0",
@@ -50,15 +51,17 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "dmg-license": "^1.0.11",
-    "electron-notarize": "^1.0.0",
     "esm": "^3.2.25",
     "noderify": "^5.1.0",
     "typescript": "^3.7.2"
   },
+  "optionalDependencies": {
+    "dmg-license": "^1.0.11",
+    "electron-notarize": "^1.0.0"
+  },
   "engines": {
-    "node": ">=14.16.1 <15",
-    "npm": ">=7.11.2"
+    "node": ">=18 <19",
+    "npm": ">=9"
   },
   "author": "Āhau Ltd.",
   "repository": {

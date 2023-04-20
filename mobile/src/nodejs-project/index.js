@@ -64,6 +64,9 @@ const config = makeConfig(appName, {
   hyperBlobs: {
     port: env.hyperBlobs.port,
     autoPrune: false
+  },
+  graphql: {
+    port: env.graphql.port
   }
 })
 
@@ -95,6 +98,7 @@ SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-hyper-blobs'))
   // Private groups
   .use(require('ssb-tribes'))
+  .use(require('ssb-tribes-registration'))
   // Custom
   .use(require('ssb-ahau'))
   .use(require('ssb-recps-guard'))

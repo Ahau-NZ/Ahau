@@ -98,16 +98,21 @@
               </v-btn>
             </v-col>
             <!-- Displays textbox for user comment when in a submit only whakapapa-->
-            <v-form v-if="canSubmit" class="ma-0 pa-0" ref="form">
-              <!-- :class="mobile ? '' : 'ml-2'"-->
-              <v-row align="center" class="ma-0 pa-0">
-                <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'">
-                  <v-text-field clearable label="Add a comment" outlined />
-                </v-col>
-              </v-row>
-            </v-form>
+            <v-col v-if="canSubmit" cols="12" sm="12" class="pa-1" >
+              <!-- Comment textarea -->
+              <v-textarea
+                v-model="comment"
+                label="Add a comment"
+                outlined
+                hide-details
+                placeholder=" "
+                no-resize
+                :rows="3"
+                auto-grow
+                class="px-5 pt-4"
+              />
+            </v-col>
 
-            <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
               cols="12"
               :align="mobile ? '' : 'right'"
@@ -117,12 +122,8 @@
                 {{ t('cancel') }}
               </v-btn>
 
-              <v-btn v-if="canSubmit" @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('submit') }}
-              </v-btn>
-
-              <v-btn v-else @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
-                {{ t('save') }}
+              <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
+                {{ canSubmit ? t('submit') : t('save')}}
               </v-btn>
 
             </v-col>
@@ -394,6 +395,7 @@ export default {
       showDescription: false,
       drawer: false,
       authors: [],
+      comment: '',
       allowRemoveChildren: false,
       isEditing: this.editing
     }
@@ -503,19 +505,8 @@ export default {
       }
       return null
     },
-    customProps () {
-      return {
-        readonly: !this.isEditing,
-        flat: !this.isEditing,
-        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
-        hideDetails: true,
-        placeholder: ' ',
-        class: !this.isEditing ? 'custom' : ''
-      }
-    },
     canSubmit () {
-      // TODO: change to !this.isKaitiaki
-      return this.isKaitiaki && this.whakapapaView.permission === 'submit'
+      return !this.isKaitiaki && this.whakapapaView.permission === 'submit'
     }
   },
   watch: {
@@ -554,7 +545,7 @@ export default {
     ...mapActions('profile', ['getProfile']),
     ...mapActions('whakapapa', ['getLink', 'saveLink', 'addLinks', 'deleteChildLink', 'deletePartnerLink', 'loadFamilyLinks']),
     ...mapActions('person', ['setSelectedProfileById', 'updatePerson', 'loadPersonFull', 'loadPersonMinimal', 'loadPersonAndWhanau', 'personListUpdate']),
-    ...mapActions(['submitProfileChanges']),
+    ...mapActions('submissions', ['proposeEditGroupPerson']),
     getDisplayName,
     async loadProfile () {
       if (this.$route.name === 'personIndex') {
@@ -735,20 +726,19 @@ export default {
 
       const output = pick(profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(output)) {
+        // Submiting request to edit the profile
         if (this.canSubmit) {
-          this.showAlert({ message: 'Submitted for review', color: 'green' })
-
-          return this.submitProfileChanges(output)
+          await this.processSubmission(output)
+          this.showAlert({ message: 'Submission sent', color: 'green' })
+        } else {
+          await this.processUpdate(output)
+          // handle reload
+          this.showAlert({ message: 'Profile updated', color: 'green' })
         }
-        await this.processUpdate(output)
       } else {
         this.showAlert({ message: 'No changes were submitted', color: 'green' })
-        this.handleReload()
-        return
       }
 
-      // handle reload
-      this.showAlert({ message: 'Profile updated', color: 'green' })
       this.handleReload()
     },
     async processUpdate (input) {
@@ -763,11 +753,7 @@ export default {
       }
 
       // exclude empty altNames from submission
-      if (input.altNames) {
-        if (!get(input, 'altNames.add.length')) delete input.altNames.add
-        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
-        if (isEmpty(input.altNames)) delete input.altNames
-      }
+      this.formatAltnames(input)
 
       // update their profile in the db
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
@@ -775,6 +761,23 @@ export default {
       // loads their full profile for changes in the tree as well as the side node dialog
       const profile = await this.loadPersonFull(this.profileId)
       this.personListUpdate(profile)
+    },
+    async processSubmission (input) {
+      this.showAlert({ message: 'Submitting changes for review', color: 'green', delay: -1 })
+      if (input.recps) delete input.recps
+
+      // exclude empty altNames from submission
+      this.formatAltnames(input)
+
+      // create the submission
+      if (!isEmpty(input)) await this.proposeEditGroupPerson({ profileId: this.profileId, input, comment: this.comment })
+    },
+    formatAltnames (input) {
+      if (input.altNames) {
+        if (!get(input, 'altNames.add.length')) delete input.altNames.add
+        if (!get(input, 'altNames.remove.length')) delete input.altNames.remove
+        if (isEmpty(input.altNames)) delete input.altNames
+      }
     },
     handleReload () {
       this.formData = this.defaultData()
@@ -818,6 +821,13 @@ export default {
   background-color: white;
   overflow: none;
   z-index:6
+}
+
+.custom.v-text-field > .v-input__control > .v-input__slot:before {
+  border-style: none;
+}
+.custom.v-text-field > .v-input__control > .v-input__slot:after {
+  border-style: none;
 }
 
 // ::-webkit-scrollbar{
