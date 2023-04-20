@@ -145,6 +145,7 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'notifications']),
+    ...mapGetters('notifications', ['notifications']),
     filteredNotifications () {
       const [unseen, pending, complete, other] = pileSort(this.notifications, [
         (n) => !n.isPersonal && n.isNew,
