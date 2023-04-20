@@ -6,7 +6,6 @@ import debounce from 'lodash.debounce'
 import root from './root' // probably has modules to split out
 import archive from './modules/archive'
 import dialog from './modules/dialog'
-import notifications from './modules/notifications'
 
 // /* namespaced */
 import tree from './modules/tree'
@@ -27,6 +26,7 @@ import settings from './modules/settings/'
 import story from './modules/story/'
 import table from './modules/table'
 import submissions from './modules/submissions'
+import notifications from './modules/notifications'
 
 import { apolloProvider } from '../plugins/vue-apollo'
 import router from '@/router'
@@ -73,7 +73,6 @@ export default new Vuex.Store({
   modules: {
     archive,
     dialog,
-    notifications,
     alerts,
     analytics,
     error,
@@ -88,6 +87,7 @@ export default new Vuex.Store({
     collection: collection(apollo),
     story: story(apollo),
     submissions: submissions(apollo),
+    notifications: notifications(apollo),
 
     whakapapa: whakapapa(apollo),
 

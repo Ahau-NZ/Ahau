@@ -177,7 +177,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['storeDialog', 'notifications', 'whoami']),
+    ...mapGetters('notifications', ['notifications']),
+    ...mapGetters(['storeDialog', 'whoami']),
     ...mapGetters('archive', ['showStory']),
     ...mapGetters('tribe', ['tribeSettings', 'isPersonalTribe']),
     settings () {

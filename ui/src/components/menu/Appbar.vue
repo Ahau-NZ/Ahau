@@ -237,8 +237,9 @@ export default {
   },
   methods: {
     ...mapActions('tribe', ['updateTribes']),
-    ...mapActions(['setWhoami', 'setDialog', 'getAllNotifications']),
+    ...mapActions(['setWhoami', 'setDialog']),
     ...mapActions('archive', ['toggleShowStory']),
+    ...mapActions('notifications', ['getAllNotifications']),
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
