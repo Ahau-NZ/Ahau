@@ -125,6 +125,7 @@
               <v-btn @click="processUpdatePerson" text large class="blue--text" color="blue" :loading="isLoadingProfile">
                 {{ canSubmit ? t('submit') : t('save')}}
               </v-btn>
+
             </v-col>
           </v-row>
 
@@ -746,6 +747,7 @@ export default {
 
       if (this.isMyProfile(this.profileId) && input.customFields) {
         // update separately to prevent bulk update
+
         await this.updatePerson({ id: this.profileId, customFields: input.customFields })
         delete input.customFields
       }

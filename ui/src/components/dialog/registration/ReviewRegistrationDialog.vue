@@ -508,7 +508,6 @@ export default {
 .v-input--checkbox label {
   font-size: 14px;
 }
-
 .v-input--radio-group__input label {
   font-size: 14px;
 }

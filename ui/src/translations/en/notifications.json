@@ -1,13 +1,27 @@
 {
   "system": "Back up your key now",
-  "personalNew": "Your request to join {groupName} is pending",
-  "personalAccepted": "Has accepted your request to join {groupName}",
-  "personalDeclined": "Your request to join {groupName} has been declined",
-  "groupNew": "Has requested to join {groupName}",
-  "groupAccepted": "Has joined {groupName}",
-  "groupDeclined": "Has been declined to join {groupName}",
-  "noDetails": "No details",
-
+  "personal": {
+    "application": {
+      "new": "Your request to join {groupName} is pending",
+      "accepted": "Has accepted your request to join {groupName}",
+      "declined": "Your request to join {groupName} has been declined"
+    },
+    "submission": {
+      "new": "Your submission to {groupName} is pending",
+      "accepted": "Your submission to {groupName} has been accepted",
+      "declined": "Your submission to {groupName} has been declined"
+    }
+  },
+  "application": {
+    "new": "Has requested to join {groupName}",
+    "accepted": "Has joined {groupName}",
+    "declined": "Has been declined to join {groupName}"
+  },
+  "submission": {
+    "new": "Has submitted a change to {groupName}",
+    "accepted": "Their submission to {groupName} has been accepted",
+    "declined": "Their submission to {groupName} has been declined "
+  },
   "systemTitle": "System",
   "newTitle": "New",
   "pendingTitle": "Pending",

@@ -2,7 +2,8 @@ import omit from 'lodash.omit'
 
 import {
   // proposeNewGroupPerson,
-  proposeEditGroupPerson
+  proposeEditGroupPerson,
+  getSubmissions
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -39,6 +40,19 @@ export default function (apollo) {
 
         console.error(message)
         console.error(err)
+      }
+    },
+    async getSubmissions () {
+      try {
+        const res = await apollo.query(
+          getSubmissions
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.getSubmissions
+      } catch (err) {
+        console.error('Something went wrong while trying to get all submissions', err)
       }
     }
     // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {

@@ -7,6 +7,15 @@
       :notification="currentNotification"
       @close="close"
     />
+    <!-- new submission dialog -->
+    <ReviewSubmissionDialog
+      v-if="isActive('review-submission')"
+      :show="isActive('review-submission')"
+      :title="t('reviewSubmissionTitle', {groupPreferredName: currentNotification.group.preferredName})"
+      :notification="currentNotification"
+      @close="close"
+    />
+    <!-- new submission dialog -->
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -100,6 +109,8 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
+// Importing review submission component
+import ReviewSubmissionDialog from '@/components/dialog/submission/ReviewSubmissionDialog.vue'
 
 import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 import { getDisplayName } from '@/lib/person-helpers.js'
@@ -122,7 +133,8 @@ export default {
     WhakapapaTableHelper,
     ComingSoonDialog,
     NewCommunityDialog,
-    ReviewRegistrationDialog
+    ReviewRegistrationDialog,
+    ReviewSubmissionDialog
   },
   props: {
     story: {
@@ -161,7 +173,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentAccess']),
+    ...mapGetters('notifications', ['currentNotification']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),

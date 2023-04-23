@@ -36,22 +36,26 @@ export default {
       return this.showBadge ? 'font-weight-medium' : ''
     },
     text () {
-      const { isPersonal, isNew, isAccepted, isSystem } = this.notification
+      const { type, isPersonal, isNew, isAccepted } = this.notification
 
-      if (isSystem) return this.t('system')
+      if (type === 'system') return this.t('system')
 
-      const groupName = this.notification.group.preferredName
+      const groupName = this.notification.group?.preferredName || 'TODO'
 
-      if (isPersonal && isNew) return this.t('personalNew', { groupName: groupName })
-      if (isPersonal && isAccepted) return this.t('personalAccepted', { groupName: groupName })
-      if (isPersonal && !isAccepted) return this.t('personalDeclined', { groupName: groupName })
-      if (!isPersonal && isNew) return this.t('groupNew', { groupName: groupName })
-      if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
-      if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
-      return this.t('noDetails')
+      const notificationStatus = () => {
+        switch (true) {
+          case isNew: return 'new'
+          case isAccepted: return 'accepted'
+          default: return 'declined'
+        }
+      }
+
+      const prepended = isPersonal ? 'personal' + '.' : ''
+
+      return this.t(`${prepended}${type}.${notificationStatus()}`, { groupName })
     },
     author () {
-      if (this.notification.isPersonal) {
+      if (this.notification.isPersonal && this.notification.type !== 'submission') {
         const message = this.notification.history.find(history => history.type === 'decision')
         if (message && this.notification.isAccepted) return message.author
         return this.notification.group

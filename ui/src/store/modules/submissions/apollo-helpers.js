@@ -88,16 +88,90 @@ export const proposeTombstone = ({ recordId, comment }) => {
   }
 }
 
-// // TODO: get all submissions for specific whakapapa
-// export const listSubmissions = ({ whakapapaId }) => {
-//   return {
-//     mutation: gql`
-//       mutation ( $whakapapaId: String! ) {
-//         listSubmissions ( id: $whakapapaId )
-//       }
-//     `,
-//     variables: {
-//       whakapapaId: whakapapaId
-//     }
-//   }
-// }
+export const SubmissionFragment = gql`
+  fragment SubmissionFragment on Submission {
+    id
+    targetId
+    targetType
+    recps
+    comments {
+      feedId
+      comment
+    }
+
+    approvedBy
+    rejectedBy
+
+    # tombstone
+
+    applicantId
+    applicant {
+      id
+      preferredName
+      avatarImage {
+        uri
+      }
+      gender
+      aliveInterval
+    }
+  }
+`
+
+export const SubmissionGroupPersonFragment = gql`
+  fragment SubmissionGroupPersonFragment on Submission {
+    ...on SubmissionGroupPerson {
+      details {
+        preferredName
+        legalName
+        description
+        avatarImage {
+          uri
+        }
+        headerImage {
+          uri
+        }
+        gender
+        aliveInterval
+        birthOrder
+        deceased
+        placeOfBirth
+        placeOfDeath
+        buriedLocation
+        address
+        city
+        country
+        postCode
+        phone
+        email
+        profession
+        education
+        school
+        relationshipType
+        legallyAdopted
+        
+        # NOTE: the fields below are causing errors
+        # because they are not being returned in the format
+        # expected by the Person type definition
+        # I have disabled these until we add in support
+        # altNames
+        # customFields {
+        #   key
+        #   value
+        # }
+      }
+    }
+  }
+`
+
+export const getSubmissions = ({
+  query: gql`
+    ${SubmissionFragment}
+    ${SubmissionGroupPersonFragment}
+    query {
+      getSubmissions {
+        ...SubmissionFragment
+        ...SubmissionGroupPersonFragment
+      }
+    }
+  `
+})
