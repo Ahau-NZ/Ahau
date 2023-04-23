@@ -757,7 +757,7 @@ export default {
 
       // update their profile in the db
       if (!isEmpty(input)) await this.updatePerson({ id: this.profileId, ...input })
-      console.log('the input we need: ', { id: this.profileId, ...input })
+
       // loads their full profile for changes in the tree as well as the side node dialog
       const profile = await this.loadPersonFull(this.profileId)
       this.personListUpdate(profile)

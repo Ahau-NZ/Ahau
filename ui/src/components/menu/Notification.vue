@@ -36,28 +36,23 @@ export default {
       return this.showBadge ? 'font-weight-medium' : ''
     },
     text () {
-      const { isPersonal, isNew, isAccepted, isSubmission, isSystem } = this.notification
+      const { type, isPersonal, isNew, isAccepted } = this.notification
 
-      if (isSystem) return this.t('system')
+      if (type === 'system') return this.t('system')
 
-      const groupName = this.notification.group.preferredName
-      // if isSubmission is true then request is submission
-      if (!isSubmission) {
-        if (isPersonal && isNew) return this.t('personalNew', { groupName: groupName })
-        if (isPersonal && isAccepted) return this.t('personalAccepted', { groupName: groupName })
-        if (isPersonal && !isAccepted) return this.t('personalDeclined', { groupName: groupName })
-        if (!isPersonal && isNew) return this.t('groupNew', { groupName: groupName })
-        if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
-        if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
-      } else if (isSubmission) {
-        if (isPersonal && isNew) return this.t('personalSubmissionNew', { groupName: groupName })
-        if (isPersonal && isAccepted) return this.t('personalSubmissionAccepted', { groupName: groupName })
-        if (isPersonal && !isAccepted) return this.t('personalSubmissionDeclined', { groupName: groupName })
-        if (!isPersonal && isNew) return this.t('submissionNew', { groupName: groupName })
-        if (!isPersonal && isAccepted) return this.t('submissionAccepted', { groupName: groupName })
-        if (!isPersonal && !isAccepted) return this.t('submissionDeclined', { groupName: groupName })
+      const groupName = this.notification.group?.preferredName || 'TODO'
+
+      const notificationStatus = () => {
+        switch (true) {
+          case isNew: return 'new'
+          case isAccepted: return 'accepted'
+          default: return 'declined'
+        }
       }
-      return this.t('noDetails')
+
+      const prepended = isPersonal ? 'personal' + '.' : ''
+
+      return this.t(`${prepended}${type}.${notificationStatus()}`, { groupName })
     },
     author () {
       if (this.notification.isPersonal) {
@@ -65,7 +60,7 @@ export default {
         if (message && this.notification.isAccepted) return message.author
         return this.notification.group
       }
-      return this.notification.from
+      return this.notification.from || {}
     }
   },
   methods: {

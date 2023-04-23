@@ -126,6 +126,7 @@ export default {
       showKeyBackup: false,
       ahauNotification: [
         {
+          type: 'system',
           from: {
             avatarImage: {
               uri: require('@/assets/logo_red.svg')
@@ -137,7 +138,6 @@ export default {
           group: {
             preferredName: 'Ahau'
           },
-          isSystem: true,
           isNew: true
         }
       ]
