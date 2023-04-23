@@ -173,7 +173,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification', 'currentAccess']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentAccess']),
+    ...mapGetters('notifications', ['currentNotification']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['currentTribe']),
     ...mapGetters('whakapapa', ['focus', 'getImportantRelationship']),

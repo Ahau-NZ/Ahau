@@ -55,12 +55,12 @@ export default {
       return this.t(`${prepended}${type}.${notificationStatus()}`, { groupName })
     },
     author () {
-      if (this.notification.isPersonal) {
+      if (this.notification.isPersonal && this.notification.type !== 'submission') {
         const message = this.notification.history.find(history => history.type === 'decision')
         if (message && this.notification.isAccepted) return message.author
         return this.notification.group
       }
-      return this.notification.from || {}
+      return this.notification.from
     }
   },
   methods: {

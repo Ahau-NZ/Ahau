@@ -34,11 +34,12 @@ export default {
     Notification
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentNotification']),
+    ...mapActions(['setDialog']),
+    ...mapActions('notifications', ['setCurrentNotification']),
     openNotification (notification) {
       this.setCurrentNotification(notification)
       if (notification.type === 'system') this.$emit('click')
-      else if (notification.isSubmission) this.setDialog({ active: 'review-submission' })
+      else if (notification.type === 'submission') this.setDialog({ active: 'review-submission' })
       else this.setDialog({ active: 'review-registration' })
     }
   }

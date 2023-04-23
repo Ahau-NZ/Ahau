@@ -111,6 +111,8 @@ export const SubmissionFragment = gql`
       avatarImage {
         uri
       }
+      gender
+      aliveInterval
     }
   }
 `

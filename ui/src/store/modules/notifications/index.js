@@ -8,6 +8,7 @@ export default function (apollo) {
   }
 
   const getters = {
+    currentNotification: state => state.currentNotification,
     applications: state => state.applications,
     submissions: state => state.submissions,
     notifications: (state, getters) => {
@@ -95,12 +96,15 @@ function mapValues (whoami) {
     return {
       type: 'application',
       from,
-      group: _group,
       applicant: applicant || null,
+
+      group: _group,
       id: application.id,
       answers,
       history,
       isPersonal,
+
+      // status
       isAccepted,
       isNew
     }
@@ -115,15 +119,16 @@ function mapSubmissionValues (whoami) {
       // targetId,
       // targetType,
       // recps,
+      // target,
       comments,
       approvedBy,
       rejectedBy,
       applicant,
-      applicantId
+      applicantId,
+      details
     } = submission
 
     // TODO: group!
-
     const isPersonal = applicantId === whoami.public.feedId
 
     const isNew = approvedBy?.length === 0 && rejectedBy?.length === 0
@@ -136,18 +141,37 @@ function mapSubmissionValues (whoami) {
     const from = isPersonal ? whoami.personal.profile : applicant
 
     return {
-      from,
-      id,
       type: 'submission',
+      from,
+      applicant,
+      id,
+
+      // TODO: resolve the group
+      group: {
+        avatarImage: {}
+      },
+
+      // status
       isNew,
       isAccepted,
-      applicant,
+
+      // information
+      isPersonal,
+      changes: details,
+
+      target: {
+
+      },
+
       history: comments.map(({ feedId, comment }) => {
         return {
           type: 'comment',
           authorId: feedId,
+
           // TODO: resolve the authors profile
-          author: {},
+          author: {
+            avatarImage: {}
+          },
           comment
         }
       })

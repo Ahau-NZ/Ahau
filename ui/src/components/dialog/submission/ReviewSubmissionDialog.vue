@@ -185,7 +185,6 @@
         <!-- removed <v-card :class="mobile ? '' : 'ml-2'">, ask ben if this is important-->
 
         <v-form class="ma-0 pa-0" ref="form">
-          <!-- :class="mobile ? '' : 'ml-2'"-->
           <v-row align="center" class="ma-0 pa-0">
             <v-col cols="12" sm="12" :class="mobile ? 'px-0 pl-5' : 'px-5'" >
               <v-text-field clearable label="Send a message with your response"
@@ -290,10 +289,10 @@ export default {
       return false
     },
     submitter () {
-      return this.notification.submitter
+      return this.notification.applicant
     },
     userToBeChanged () {
-      return this.notification.userToBeChanged
+      return { avatarImage: {} }
     },
     submitterCustomFields () {
       return this.submitter.customFields
@@ -351,10 +350,14 @@ export default {
       return age.toString()
     },
     text () {
-      return 'A submission has been received from ' + this.notification.submitter.preferredName + ' to edit ' + this.notification.userToBeChanged.preferredName
+      return 'A submission has been received from ' + this.notification?.applicant?.preferredName + ' to edit ' + this.notification.target.preferredName
     },
     changes () {
-      return this.notification.changes
+      const changes = this.notification.changes
+      delete changes.__typename
+
+      return Object.entries(changes)
+        .filter(([key, value]) => value)
     },
     formatChanges () {
       const obj = {}
