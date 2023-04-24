@@ -350,7 +350,7 @@ export default {
       return age.toString()
     },
     text () {
-      return 'A submission has been received from ' + this.notification?.applicant?.preferredName + ' to edit ' + this.notification.target.preferredName
+      return 'A submission has been received from ' + this.notification?.applicant?.preferredName + ' to edit ' + this.notification?.target?.preferredName
     },
     changes () {
       const changes = this.notification.changes
