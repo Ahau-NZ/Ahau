@@ -26,6 +26,8 @@
     "placeOfDeath": "place of death",
     "education": "education",
     "school": "school",
-    "buriedLocation": "location buried"
-
+    "buriedLocation": "location buried",
+    "comments": "Comments",
+    "close": "Close",
+    "message": "Send a message"
   }
