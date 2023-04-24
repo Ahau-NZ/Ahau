@@ -11,7 +11,7 @@
     <ReviewSubmissionDialog
       v-if="isActive('review-submission')"
       :show="isActive('review-submission')"
-      :title="t('reviewSubmissionTitle', {groupPreferredName: currentNotification.group.preferredName})"
+      :title="t('reviewSubmissionTitle', {preferredName: currentNotification.target.preferredName})"
       :notification="currentNotification"
       @close="close"
     />

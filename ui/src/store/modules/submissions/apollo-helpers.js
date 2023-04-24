@@ -1,4 +1,6 @@
 import gql from 'graphql-tag'
+import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
+import { PERSON_FRAGMENT } from '@/lib/person-helpers'
 
 export const approveSubmission = ({ submissionId, comment }) => {
   return {
@@ -89,14 +91,34 @@ export const proposeTombstone = ({ recordId, comment }) => {
 }
 
 export const SubmissionFragment = gql`
+  ${COMMUNITY_FRAGMENT}
   fragment SubmissionFragment on Submission {
     id
     targetId
     targetType
     recps
     comments {
-      feedId
+      authorId
+      author {
+        id
+        preferredName
+        avatarImage {
+          uri
+        }
+        aliveInterval
+        gender
+      }
       comment
+    }
+
+    group {
+      id
+      public {
+        ...CommunityFragment
+      }
+      private {
+        ...CommunityFragment
+      }
     }
 
     approvedBy
@@ -118,6 +140,7 @@ export const SubmissionFragment = gql`
 `
 
 export const SubmissionGroupPersonFragment = gql`
+  ${PERSON_FRAGMENT}
   fragment SubmissionGroupPersonFragment on Submission {
     ...on SubmissionGroupPerson {
       details {
@@ -158,6 +181,10 @@ export const SubmissionGroupPersonFragment = gql`
         #   key
         #   value
         # }
+      }
+
+      target {
+        ...ProfileFragment
       }
     }
   }

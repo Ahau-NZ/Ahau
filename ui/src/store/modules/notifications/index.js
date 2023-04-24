@@ -118,17 +118,17 @@ function mapSubmissionValues (whoami) {
       id,
       // targetId,
       // targetType,
-      // recps,
-      // target,
+
+      target,
       comments,
       approvedBy,
       rejectedBy,
       applicant,
       applicantId,
-      details
+      details,
+      group
     } = submission
 
-    // TODO: group!
     const isPersonal = applicantId === whoami.public.feedId
 
     const isNew = approvedBy?.length === 0 && rejectedBy?.length === 0
@@ -138,6 +138,8 @@ function mapSubmissionValues (whoami) {
         ? false
         : null
 
+    const _group = (group && group.public[0]) || null
+
     const from = isPersonal ? whoami.personal.profile : applicant
 
     return {
@@ -146,10 +148,7 @@ function mapSubmissionValues (whoami) {
       applicant,
       id,
 
-      // TODO: resolve the group
-      group: {
-        avatarImage: {}
-      },
+      group: _group,
 
       // status
       isNew,
@@ -159,19 +158,13 @@ function mapSubmissionValues (whoami) {
       isPersonal,
       changes: details,
 
-      target: {
+      target,
 
-      },
-
-      history: comments.map(({ feedId, comment }) => {
+      history: comments.map(({ authorId, author, comment }) => {
         return {
           type: 'comment',
-          authorId: feedId,
-
-          // TODO: resolve the authors profile
-          author: {
-            avatarImage: {}
-          },
+          authorId,
+          author,
           comment
         }
       })
