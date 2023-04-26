@@ -13,7 +13,8 @@ trap 'onFailure $?' ERR
 BUILD_PLATFORM=$1
 
 echo "Moving from ./src to ./www ...";
-npm exec -- cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
+# npm exec -- cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
+$(npm bin)/cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
 
 # Write the file to toggle build of native modules
 if [ -f ./www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt ]; then
@@ -36,11 +37,14 @@ echo "Building the env.json file...";
 # Install modules ignoring their install scripts
 # This reduces the install time
 echo "Installing node_modules dependencies...";
-npm ci --ignore-scripts --no-optional --silent
+echo $(pwd)
+# npm ci --ignore-scripts --omit=optional --silent
+npm ci --ignore-scripts --omit=optional
 
 # Patch some file changes
 echo "Applying patches...";
-npm exec -- patch-package
+# npm exec -- patch-package
+$(npm bin)/patch-package
 rm -rf ./patches ./node_modules/patch-package
 
 if [ $BUILD_PLATFORM == "android" ]; then
@@ -131,7 +135,8 @@ declare -a packagesToBabelify=(
 # There're some packages that are using JavaScript code not supported by Node 12.x
 for pkg in "${packagesToBabelify[@]}"
 do
-  npx exec -- babel ./node_modules/$pkg \
+  # npm exec -- babel ./node_modules/$pkg \
+  $(npm bin)/babel ./node_modules/$pkg \
     --out-dir ./node_modules/$pkg \
     --ignore "test/**/*","**/*.test.js" \
     --presets=@babel/preset-env \
@@ -154,7 +159,8 @@ echo "Bundling with noderify...";
 #   encoding: optional dependency within package node-fetch used by apollo-server
 #   systeminformation: it provides APIs for desktop, not mobile
 #   async_hooks: native library, it's not added to noderify yet
-npm exec -- noderify \
+# npm exec -- noderify \
+$(npm bin)/noderify \
   --replace.bindings=bindings-noderify-nodejs-mobile \
   --replace.node-extend=xtend \
   --replace.non-private-ip=non-private-ip-android \

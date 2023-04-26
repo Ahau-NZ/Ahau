@@ -42,7 +42,8 @@ if [ $NODE_ENV == "production" ]; then
     exit 1;
   fi
 
-  npm exec -- cordova-set-version;
+  # npm exec -- cordova-set-version;
+  $(npm bin)/cordova-set-version;
 
   NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --release --device \
     --buildConfig=./build.json;

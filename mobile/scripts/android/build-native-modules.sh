@@ -30,7 +30,7 @@ do
   IFS=";" read -r -a arr <<< "${entry}" # entry.split(';')
   arch="${arr[0]}"
 
-  echo "Building Android native modules for $arch...";
+  echo "Building Android native modules for $arch ...";
   NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 $GRADLE_EXEC app:GenerateNodeNativeAssetsLists$arch
 done
 cd ../..;
