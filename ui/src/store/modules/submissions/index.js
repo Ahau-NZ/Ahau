@@ -3,7 +3,9 @@ import omit from 'lodash.omit'
 import {
   // proposeNewGroupPerson,
   proposeEditGroupPerson,
-  getSubmissions
+  getSubmissions,
+  approveSubmission,
+  rejectSubmission
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -53,6 +55,33 @@ export default function (apollo) {
         return res.data.getSubmissions
       } catch (err) {
         console.error('Something went wrong while trying to get all submissions', err)
+      }
+    },
+    async approveSubmission (_, input) {
+      try {
+        const res = await apollo.mutate(
+          approveSubmission(input)
+        )
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to approve the submission', input.id)
+        console.error(err)
+      }
+    },
+    async rejectSubmission (_, input) {
+      console.log(input)
+      try {
+        const res = await apollo.mutate(
+          rejectSubmission(input)
+        )
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to reject the submission', input.id)
+        console.error(err)
       }
     }
     // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {

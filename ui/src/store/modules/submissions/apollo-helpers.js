@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
 import { PERSON_FRAGMENT } from '@/lib/person-helpers'
 
-export const approveSubmission = ({ submissionId, comment }) => {
+export const approveSubmission = ({ id, comment }) => {
   return {
     mutation: gql`
       mutation ($id: String!, $comment: String) {
@@ -10,13 +10,13 @@ export const approveSubmission = ({ submissionId, comment }) => {
       }
       `,
     variables: {
-      id: submissionId,
+      id,
       comment: comment
     }
   }
 }
 
-export const rejectSubmission = ({ submissionId, comment }) => {
+export const rejectSubmission = ({ id, comment }) => {
   return {
     mutation: gql`
       mutation ($id: String!, $comment: String) {
@@ -24,40 +24,41 @@ export const rejectSubmission = ({ submissionId, comment }) => {
       }
       `,
     variables: {
-      id: submissionId,
+      id,
       comment: comment
     }
   }
 }
 
-export const tombstoneSubmission = ({ submissionId, tombstoneInput }) => {
-  return {
-    mutation: gql`
-      mutation ($id: String!, $tombstoneInput: TombstoneInput!) {
-        tombstoneSubmission(id: $id, tombstoneInput: $tombstoneInput)
-      }
-    `,
-    variables: {
-      id: submissionId,
-      tombstoneInput
-    }
-  }
-}
+// TODO: cherese - add ability to tombstone/delete a submission to the UI
+// export const tombstoneSubmission = ({ submissionId, tombstoneInput }) => {
+//   return {
+//     mutation: gql`
+//       mutation ($id: String!, $tombstoneInput: TombstoneInput!) {
+//         tombstoneSubmission(id: $id, tombstoneInput: $tombstoneInput)
+//       }
+//     `,
+//     variables: {
+//       id: submissionId,
+//       tombstoneInput
+//     }
+//   }
+// }
 
-export const proposeNewGroupPerson = ({ input, comment, recps }) => {
-  return {
-    mutation: gql`
-      mutation ($input: PersonProfileInput!, $comment: String, recps: [String]) {
-        proposeNewGroupPerson (input: $input, comment: $comment, recps: $recps)
-      }
-    `,
-    variables: {
-      input,
-      comment,
-      recps
-    }
-  }
-}
+// export const proposeNewGroupPerson = ({ input, comment, recps }) => {
+//   return {
+//     mutation: gql`
+//       mutation ($input: PersonProfileInput!, $comment: String, recps: [String]) {
+//         proposeNewGroupPerson (input: $input, comment: $comment, recps: $recps)
+//       }
+//     `,
+//     variables: {
+//       input,
+//       comment,
+//       recps
+//     }
+//   }
+// }
 
 export const proposeEditGroupPerson = ({ profileId, input, comment, recps }) => {
   return {
@@ -75,20 +76,20 @@ export const proposeEditGroupPerson = ({ profileId, input, comment, recps }) => 
   }
 }
 
-export const proposeTombstone = ({ recordId, comment }) => {
-  return {
-    mutation: gql`
-      mutation ($recordId: String!, $comment: String) {
-        proposeTombstone (recordId: $recordId, comment: $comment)
-      }
-    `,
-    variables: {
-      recordId,
-      comment
-      // TODO recps for the submission
-    }
-  }
-}
+// export const proposeTombstone = ({ recordId, comment }) => {
+//   return {
+//     mutation: gql`
+//       mutation ($recordId: String!, $comment: String) {
+//         proposeTombstone (recordId: $recordId, comment: $comment)
+//       }
+//     `,
+//     variables: {
+//       recordId,
+//       comment
+//       // TODO recps for the submission
+//     }
+//   }
+// }
 
 export const SubmissionFragment = gql`
   ${COMMUNITY_FRAGMENT}
