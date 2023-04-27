@@ -113,7 +113,8 @@ Use Node.js 12 AND npm 6
           - SDK Tools tab:
              - [x] Android SDK Build-Tools > 29.0.3
                 - had to check "show package details"
-             - [x] Android NDK (side by side)
+             - [x] Android NDK (side by side) > 22.1.7...
+                - note this is the last version which has the `make-standalone-toolchain.sh` we need
              - [x] Android SDK Command-line Tools (latest)
              - [x] CMake
              - [x] Android SDK Tools (obselete)
@@ -134,6 +135,7 @@ Use Node.js 12 AND npm 6
         - setting up an emulator: SKIP
         - configuring gradle: SKIP
           - SHOULD COME BACK TO THIS!!!
+          - https://cordova.apache.org/docs/en/10.x/guide/platforms/android/index.html#configuring-gradle
 
 
 3. run `npm i && npm run setup`
@@ -148,11 +150,20 @@ Use Node.js 12 AND npm 6
       Execution failed for task ':app:MakeToolchainarmeabi-v7a'.
       > A problem occurred starting process 'command '/home/username/Android/Sdk/ndk/25.2.9519653/build/tools/make-standalone-toolchain.sh''
       ```
-    - note `make-standalone-toolchain.sh` does not exist, is instead `make-standalone-toolchain.py`
+    - note `make-standalone-toolchain.sh` does not exist, is instead `make_standalone_toolchain.py`
       - see generated file `platforms/mobile/android/nodejs-mobile-cordova/whakapapa-build.gradle:221`
       - note investigated AndroidStudio / Gradle / NDK versions... this suggests ndk 25 should be fine?
-        - 
+        - rolling back to 23 and we find the shell script!
+        - then to 22 to get `prebuilt-common.sh`
+        - make sure `which python` answers with something
+          - `cd /usr/bin && sudo ln -s python2 python`
+          - `sudo apt-get install libtool`
 
+
+    - WIP notes:
+      - updates ssb-crut
+      - in src/nodejs-project patched ssb-crut to not require ssb-db2
+      - progressing npm run dev:android (feeling close!)
 
 
 TODO:
@@ -161,6 +172,7 @@ TODO:
 NOTES:
 - moved iOS deps/config into package.json `"paused"`
     - preserving the object structure to make it clear how to merge those back in later
+- Gradle intro : https://developer.android.com/build
 
 
 ```bash

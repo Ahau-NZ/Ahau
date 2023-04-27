@@ -1,0 +1,27 @@
+diff --git a/node_modules/ssb-crut/lib/create-stream.js b/node_modules/ssb-crut/lib/create-stream.js
+index a925e10..7a74ab0 100644
+--- a/node_modules/ssb-crut/lib/create-stream.js
++++ b/node_modules/ssb-crut/lib/create-stream.js
+@@ -2,21 +2,7 @@ const CREATE_TIME = 'createTime'
+ 
+ module.exports = function CreateStream (ssb, spec) {
+   if (ssb.db) {
+-    const { where, and, slowEqual, type, descending, sortByArrival, toPullStream } = require('ssb-db2/operators')
+-
+-    return function createStreamDB2 (opts) {
+-      return ssb.db.query(
+-        where(
+-          and(
+-            type(spec.type),
+-            slowEqual(`value.content.tangles.${spec.tangle}.root`, null)
+-          )
+-        ),
+-        opts.descending === false ? null : descending(),
+-        (opts.orderBy || opts.sortBy) === CREATE_TIME ? null : sortByArrival(),
+-        toPullStream()
+-      )
+-    }
++    throw new Error('patched to exclude db2!')
+   } // eslint-disable-line
+   else {
+     return function createStreamDB1 (opts) {
