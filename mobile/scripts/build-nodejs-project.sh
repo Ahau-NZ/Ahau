@@ -159,6 +159,8 @@ echo "Bundling with noderify...";
 #   encoding: optional dependency within package node-fetch used by apollo-server
 #   systeminformation: it provides APIs for desktop, not mobile
 #   async_hooks: native library, it's not added to noderify yet
+#   stream/web: native libraby, it's not added to noderify yet
+
 # npm exec -- noderify \
 $(npm bin)/noderify \
   --replace.bindings=bindings-noderify-nodejs-mobile \
@@ -177,8 +179,11 @@ $(npm bin)/noderify \
   --filter=casual \
   --filter=systeminformation \
   --filter=async_hooks \
+  --filter=stream/web \
   index.js > _index.js;
-rm index.js; mv _index.js index.js;
+
+rm index.js;
+mv _index.js index.js;
 cd ../..;
 
 if [ $BUILD_PLATFORM == "android" ]; then

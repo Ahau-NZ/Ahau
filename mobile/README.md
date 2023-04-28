@@ -161,9 +161,18 @@ Use Node.js 12 AND npm 6
 
 
     - WIP notes:
-      - updates ssb-crut
-      - in src/nodejs-project patched ssb-crut to not require ssb-db2
-      - progressing npm run dev:android (feeling close!)
+      - [x] update ssb-crut
+        - [x] update all modules to be using same version of ssb-crut (all possible except 1 case)
+        - [x] in src/nodejs-project patched ssb-crut to not require ssb-db2
+      - [ ] sodium-native-nodejs-mobile may specify targetSdkVersion=\"21\" (currently at 21)
+      - [ ] Build tools errors... 
+          ```
+          Could not determine the dependencies of task ':app:compileDebugJavaWithJavac'.
+          > Installed Build Tools revision 33.0.1 is corrupted. Remove and install again using the SDK Manager.
+          ```
+          - :fire: 33.0.2
+          - :fire: 33.0.1
+          - [x] 30.0.3 (seems to be working?)
 
 
 TODO:

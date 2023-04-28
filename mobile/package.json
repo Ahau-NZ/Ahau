@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "chalk": "^4.1.2",
-    "cordova-set-version": "^14.0.2",
+    "cordova-set-version": "^11.0.3",
     "cpy-cli": "^3.1.1",
     "cross-env": "^7.0.3",
     "deepmerge": "^4.3.1",
