@@ -48,7 +48,7 @@ export const rejectSubmission = ({ id, comment }) => {
 // export const proposeNewGroupPerson = ({ input, comment, recps }) => {
 //   return {
 //     mutation: gql`
-//       mutation ($input: PersonProfileInput!, $comment: String, recps: [String]) {
+//       mutation ($input: PersonProfileInput!, $comment: String, recps: [String]!) {
 //         proposeNewGroupPerson (input: $input, comment: $comment, recps: $recps)
 //       }
 //     `,
@@ -63,7 +63,7 @@ export const rejectSubmission = ({ id, comment }) => {
 export const proposeEditGroupPerson = ({ profileId, input, comment, recps }) => {
   return {
     mutation: gql`
-      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String, $recps: [String]) {
+      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String, $recps: [String]!) {
         proposeEditGroupPerson (profileId: $profileId, input: $input, comment: $comment, recps: $recps)
       }
     `,
