@@ -50,10 +50,10 @@
         </span>
 
         <!-- Content for changes -->
-        <v-col v-for="(value, key) in changes" :key="key">
+        <v-col v-for="([key, value], i) in changes" :key="i">
           <div v-if="key == 'avatarImage'">
             <div v-if="targetProfile[key] == null">
-              <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
+              <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
                   <span class="checkbox_label">
@@ -64,7 +64,7 @@
               <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"/>
             </div>
             <div v-else>
-              <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
+              <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
                   <span class="checkbox_label">
@@ -107,7 +107,7 @@
           </div>
           <!-- Improving readability of deceased changes -->
           <div v-else-if="key == 'deceased'">
-            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
+            <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
               class="shrink pl-6 mt-0 black-label">
               <template v-slot:label>
                 <span class="checkbox_label">
@@ -117,11 +117,12 @@
             </v-checkbox>
           </div>
           <!-- Alt names has different structure {add:[],remove:[]} -->
-          <div v-else-if="key == 'altNames'">
-            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green" class="shrink pl-6 mt-0 black-label">
-              <template v-slot:label>
+          <!-- TODO: cherese, not supported -->
+          <!-- <div v-else-if="key == 'altNames'">
+            <v-checkbox hide-details v-model="selectedChanges[key]" :value="key" color="green" class="shrink pl-6 mt-0 black-label">
+              <template v-slot:label> -->
                 <!-- newbie dev note, is using "&nbsp;" an acceptable way to add a space in an html span or will this cause issues somehow? -->
-                <span class="checkbox_label">
+                <!-- <span class="checkbox_label">
                   Updated alternative names:&nbsp;
                 </span>
                 <span v-if="value.add && value.add != null && value.add != ''" class="checkbox_label">
@@ -135,39 +136,21 @@
                 </span>
               </template>
             </v-checkbox>
-          </div>
+          </div> -->
 
-          <div v-else-if="targetProfile[key] == null || targetProfile[key] == ''">
-            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
-              class="shrink pl-6 mt-0 black-label">
-              <template v-slot:label>
-                <span v-if="Array.isArray(value)" class="checkbox_label">
-                  Added new {{ updatedKeys[key] }}: {{ formatArray(value) }}
-                </span>
-                <span v-else class="checkbox_label">
-                  Added new {{ updatedKeys[key] }}: {{ value }}
-                </span>
-              </template>
-            </v-checkbox>
-          </div>
           <div v-else>
-            <v-checkbox hide-details v-model="selectedChanges" :value="key" color="green"
-              class="shrink pl-6 mt-0 black-label">
-              <template v-slot:label>
+            <v-checkbox
+              v-if="showActions"
+             :label="getLabel(key, value)"
+             @change="addSelectedItem(key, value, $event)"
 
-                <span v-if="Array.isArray(value)" class="checkbox_label">
-                  Changed {{ updatedKeys[key] }}
-                  from {{ targetProfile[key] }}
-                  to {{ formatArray(value) }}
-                </span>
-                <span v-else class="checkbox_label">
-                  Changed {{ updatedKeys[key] }}
-                  from {{ targetProfile[key] }}
-                  to {{ value }}
-                </span>
-              </template>
-            </v-checkbox>
-            <span></span>
+              hide-details
+              color="green"
+              class="shrink pl-6 mt-0 black-label"
+            />
+            <li v-else class="pl-6">
+              {{ getLabel(key, value) }}
+            </li>
           </div>
         </v-col>
 
@@ -258,7 +241,7 @@ export default {
       i: 0,
       formData: '',
       comment: '',
-      selectedChanges: [],
+      selectedChanges: {},
       updatedKeys: {
         preferredName: this.t('preferredName'),
         profession: this.t('profession'),
@@ -367,7 +350,9 @@ export default {
       return age.toString()
     },
     text () {
-      return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
+      return this.showAction
+        ? 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
+        : `This submission has been reviewed and was ${this.notification.isAccepted ? 'accepted' : 'rejected'}`
     },
     changes () {
       const changes = this.notification.changes
@@ -375,19 +360,11 @@ export default {
 
       return Object.entries(changes)
         .filter(([key, value]) => value)
-    },
-    formatChanges () {
-      const obj = {}
-      for (let i = 0; i < this.selectedChanges.length; i++) {
-        obj[this.selectedChanges[i]] = this.notification.changes[this.selectedChanges[i]]
-        // console.log(this.notification.changes[this.selectedChanges[i]])
-      }
-
-      return obj
     }
   },
   methods: {
     ...mapActions('person', ['updatePerson']),
+    ...mapActions('submissions', ['approveSubmission', 'rejectSubmission']),
     getFieldValue (fieldDef) {
       // find the value from the applicantProfiles profile (if there is one)
       let field = this.applicantProfileCustomFields.find(field => field.key === fieldDef.key)
@@ -425,14 +402,60 @@ export default {
       return string
     },
     async submit (approved) {
-      const obj = { id: this.notification.targetProfile.id, ...this.formatChanges }
-      if (!isEmpty(this.formatChanges)) await this.updatePerson(obj)
+      const output = {
+        id: this.notification.id, // submissionId
+        comment: this.comment
+      }
+
+      if (approved) {
+        if (isEmpty(this.selectedChanges)) return // TODO: show a message
+
+        await this.approveSubmission(output)
+
+        // TODO: move this execute function to ssb-submissions?
+        const profileOutput = {
+          id: this.targetProfile.id,
+          ...this.selectedChanges
+        }
+
+        await this.updatePerson(profileOutput)
+      } else {
+        await this.rejectSubmission(output)
+      }
+
+      this.close()
     },
     close () {
       this.$emit('close')
     },
     t (key, vars) {
       return this.$t('reviewSubmissionDialog.' + key, vars)
+    },
+    isEmptyValue (value) {
+      return (
+        value === null ||
+        value === '' ||
+        (
+          Array.isArray(value) &&
+          value?.length === 0
+        )
+      )
+    },
+    addSelectedItem (key, value, isChecked) {
+      if (isChecked) this.selectedChanges[key] = value
+      else delete this.selectedChanges[key]
+    },
+    getLabel (key, value) {
+      return this.isEmptyValue(this.targetProfile[key])
+        ? `Added new ${this.updatedKeys[key]}: ${Array.isArray(value) ? this.formatArray(value) : value}`
+        : this.getChangesLabel(key, value)
+    },
+    getChangesLabel (key, value) {
+      return `
+        Changes ${this.updatedKeys[key]}
+        from ${Array.isArray(value) ? this.formatArray(this.targetProfile[key]) : this.targetProfile[key]}
+        to ${Array.isArray(value) ? this.formatArray(value) : value}
+      `
     }
   }
 }

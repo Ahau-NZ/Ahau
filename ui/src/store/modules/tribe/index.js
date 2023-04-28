@@ -19,6 +19,9 @@ export default function (apollo) {
 
   const getters = {
     tribeId: state => state?.currentTribe?.id,
+    tribePoboxId: state => {
+      return get(state, 'currentTribe.public[0].poBoxId')
+    },
     adminTribeId: state => state?.currentTribe?.admin?.id,
     currentTribe: state => state.currentTribe,
     tribeSettings: (state, getters) => {

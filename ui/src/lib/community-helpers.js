@@ -153,6 +153,7 @@ ${PublicProfileFieldsFragment}
     type
     preferredName
     description
+    poBoxId
     avatarImage { uri }
     headerImage { uri }
     email

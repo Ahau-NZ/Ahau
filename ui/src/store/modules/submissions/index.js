@@ -3,7 +3,9 @@ import omit from 'lodash.omit'
 import {
   // proposeNewGroupPerson,
   proposeEditGroupPerson,
-  getSubmissions
+  getSubmissions,
+  approveSubmission,
+  rejectSubmission
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -17,7 +19,7 @@ export default function (apollo) {
   }
 
   const actions = {
-    async proposeEditGroupPerson ({ dispatch, rootGetters }, { profileId, input, comment }) {
+    async proposeEditGroupPerson ({ dispatch, rootState, rootGetters }, { profileId, input, comment }) {
       try {
         if (!profileId) throw new Error('a profile id is required to create a submission to update the profile')
 
@@ -26,7 +28,10 @@ export default function (apollo) {
             profileId,
             input: omit(input, ['id', 'recps']),
             comment,
-            recps: [rootGetters.currentAccess.groupId]
+
+            // send the submission to the groups poBoxId
+            // TODO: we could do this in the graphql layer, this is a quick fix
+            recps: [rootGetters['tribe/tribePoboxId'], rootState.whoami.public.feedId]
           })
         )
 
@@ -53,6 +58,33 @@ export default function (apollo) {
         return res.data.getSubmissions
       } catch (err) {
         console.error('Something went wrong while trying to get all submissions', err)
+      }
+    },
+    async approveSubmission (_, input) {
+      try {
+        const res = await apollo.mutate(
+          approveSubmission(input)
+        )
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to approve the submission', input.id)
+        console.error(err)
+      }
+    },
+    async rejectSubmission (_, input) {
+      console.log(input)
+      try {
+        const res = await apollo.mutate(
+          rejectSubmission(input)
+        )
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to reject the submission', input.id)
+        console.error(err)
       }
     }
     // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {
