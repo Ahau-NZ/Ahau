@@ -172,12 +172,16 @@ export const SubmissionGroupPersonFragment = gql`
         school
         relationshipType
         legallyAdopted
-        
+
+        altNames: altNamesSubmission {
+          add
+          remove
+        }
+
         # NOTE: the fields below are causing errors
         # because they are not being returned in the format
         # expected by the Person type definition
         # I have disabled these until we add in support
-        # altNames
         # customFields {
         #   key
         #   value
