@@ -105,6 +105,7 @@
               </v-col>
             </div>
           </div>
+
           <!-- Improving readability of deceased changes -->
           <div v-else-if="key == 'deceased'">
             <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
@@ -116,27 +117,33 @@
               </template>
             </v-checkbox>
           </div>
+
           <!-- Alt names has different structure {add:[],remove:[]} -->
-          <!-- TODO: cherese, not supported -->
-          <!-- <div v-else-if="key == 'altNames'">
-            <v-checkbox hide-details v-model="selectedChanges[key]" :value="key" color="green" class="shrink pl-6 mt-0 black-label">
-              <template v-slot:label> -->
-                <!-- newbie dev note, is using "&nbsp;" an acceptable way to add a space in an html span or will this cause issues somehow? -->
-                <!-- <span class="checkbox_label">
-                  Updated alternative names:&nbsp;
-                </span>
-                <span v-if="value.add && value.add != null && value.add != ''" class="checkbox_label">
-                  added {{ formatArray(value.add) }}
-                </span>
-                <span v-if="value.remove && value.remove != null && value.add && value.add != null" class="checkbox_label">
-                  &nbsp;and&nbsp;
-                </span>
-                <span v-if="value.remove && value.remove != null" class="checkbox_label">
-                  removed {{ formatArray(value.remove) }}
-                </span>
-              </template>
-            </v-checkbox>
-          </div> -->
+          <div v-else-if="key == 'altNames' && showActions">
+            <v-checkbox
+              v-if="value && value.add && value.add.length"
+              :label="getAltNamesAddLabel(value)"
+              hide-details
+              color="green"
+              class="shrink pl-6 mt-0 black-label"
+            />
+            <v-checkbox
+              v-if="value && value.remove && value.remove.length"
+              :label="getAltNamesRemoveLabel(value)"
+              hide-details
+              color="green"
+              class="shrink pl-6 mt-0 black-label"
+            />
+          </div>
+
+          <div v-else-if="key === 'altNames' && !showActions">
+            <li v-if="value && value.add && value.add.length" class="pl-6">
+              {{ getAltNamesAddLabel(value) }}
+            </li>
+            <li v-if="value && value.remove && value.remove.length" class="pl-6">
+              {{ getAltNamesRemoveLabel(value) }}
+            </li>
+          </div>
 
           <div v-else>
             <v-checkbox
@@ -350,9 +357,18 @@ export default {
       return age.toString()
     },
     text () {
-      return this.showAction
-        ? 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
-        : `This submission has been reviewed and was ${this.notification.isAccepted ? 'accepted' : 'rejected'}`
+      if (this.showAction) {
+        return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
+      }
+
+      switch (this.notification.isAccepted) {
+        case true:
+          return 'This submission has been reviewed and was accepted'
+        case false:
+          return 'This submission has been reviewed and was rejected'
+        default:
+          return 'This submission is waiting to be reviewed'
+      }
     },
     changes () {
       const changes = this.notification.changes
@@ -450,12 +466,20 @@ export default {
         ? `Added new ${this.updatedKeys[key]}: ${Array.isArray(value) ? this.formatArray(value) : value}`
         : this.getChangesLabel(key, value)
     },
+    // NOTE: cherese 1/05/23
+    // I removed the "from" text from here, change from ... to, because when the targetProfile is updated, it shows
+    // the updated values, so there isnt an "easy" way to show the old values
     getChangesLabel (key, value) {
       return `
-        Changes ${this.updatedKeys[key]}
-        from ${Array.isArray(value) ? this.formatArray(this.targetProfile[key]) : this.targetProfile[key]}
-        to ${Array.isArray(value) ? this.formatArray(value) : value}
+        Changed ${this.updatedKeys[key]}
+        to: ${Array.isArray(value) ? this.formatArray(value) : value}
       `
+    },
+    getAltNamesAddLabel (value) {
+      return `Added new alternative name(s): ${value.add.join(', ')}`
+    },
+    getAltNamesRemoveLabel (value) {
+      return `Removed alternative name(s): ${value.remove.join(', ')}`
     }
   }
 }
