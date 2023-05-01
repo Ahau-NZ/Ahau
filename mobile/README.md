@@ -164,6 +164,9 @@ Use Node.js 12 AND npm 6
       - [x] update ssb-crut
         - [x] update all modules to be using same version of ssb-crut (all possible except 1 case)
         - [x] in src/nodejs-project patched ssb-crut to not require ssb-db2
+      - [ ] commented out a script that copied libsodium.so
+        - file didn't exist
+        - may need to check it's there...
       - [ ] sodium-native-nodejs-mobile may specify targetSdkVersion=\"21\" (currently at 21)
       - [ ] Build tools errors... 
           ```
@@ -173,6 +176,8 @@ Use Node.js 12 AND npm 6
           - :fire: 33.0.2
           - :fire: 33.0.1
           - [x] 30.0.3 (seems to be working?)
+      - [ ] Cmake error
+          - [ ] 3.10.2.4988404
 
 
 TODO:

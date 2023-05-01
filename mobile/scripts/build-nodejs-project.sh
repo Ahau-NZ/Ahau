@@ -124,42 +124,58 @@ echo "Bundling some dependencies with babel to support Node version...";
 cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
+  "@envelop/core"
+  "@envelop/validation-cache"
+  "@graphql-yoga/logger"
+  "@graphql-yoga/subscription"
   "@ssb-graphql/profile"
+  "@ssb-graphql/submissions"
   "@ssb-graphql/whakapapa"
+  "graphql-yoga"
   "ssb-profile"
   "ssb-whakapapa"
   "ssb-ahau"
+  "urlpattern-polyfill"
 )
+# TIP: to find module that need transpiling, run `npm run relsease:android`
+# but comment out the "Build node.js native modules to Android" step, then
+# try running `node mobile/www/nodejs-project/index.js` in node 12 and see errors
+# NOTE: urlpattern-polyfill requires --keep-file-extension (as has .cjs file)
 
 # We're bundling with Babel to convert JavaScript code to older version
 # There're some packages that are using JavaScript code not supported by Node 12.x
 for pkg in "${packagesToBabelify[@]}"
 do
+  echo $pkg;
   # npm exec -- babel ./node_modules/$pkg \
   $(npm bin)/babel ./node_modules/$pkg \
-    --out-dir ./node_modules/$pkg \
     --ignore "test/**/*","**/*.test.js" \
+    --keep-file-extension \
+    --out-dir ./node_modules/$pkg \
     --presets=@babel/preset-env \
-    --config-file=./babel.config.js \
-    --quiet;
+    --config-file=./babel.config.js;
 done
 
 rm ./babel.config.js;
 
 echo "Bundling with noderify...";
 # Why some packages are filter'd or replaced:
-#   chloride: needs special compilation configs for android, and we'd like to
-#      remove unused packages such as sodium-browserify etc
-#   sodium-native: needs special compilation configs for android
-#   cordova-bridge: this is not an npm package, it's from nodejs-mobile
-#   bl: we didn't use it, and bl@0.8.x has security vulnerabilities
-#   bufferutil: because we want nodejs-mobile to load its native bindings
-#   supports-color: optional dependency within package `debug`
-#   utf-8-validate: because we want nodejs-mobile to load its native bindings
-#   encoding: optional dependency within package node-fetch used by apollo-server
-#   systeminformation: it provides APIs for desktop, not mobile
-#   async_hooks: native library, it's not added to noderify yet
-#   stream/web: native libraby, it's not added to noderify yet
+#   Replaced:
+#     - chloride: needs special compilation configs for android, and we'd like to
+#        remove unused packages such as sodium-browserify etc
+#     - sodium-native: needs special compilation configs for android
+#
+#   Filtered:
+#     - cordova-bridge: this is not an npm package, it's from nodejs-mobile
+#     - bl: we didn't use it, and bl@0.8.x has security vulnerabilities
+#     - bufferutil: because we want nodejs-mobile to load its native bindings
+#     - supports-color: optional dependency within package `debug`
+#     - utf-8-validate: because we want nodejs-mobile to load its native bindings
+#     - encoding: optional dependency within package node-fetch used by apollo-server // TODO rm?
+#     - systeminformation: it provides APIs for desktop, not mobile
+
+#     - async_hooks: native library, it's not added to noderify yet TODO
+#     - stream/web: native libraby, it's not added to noderify yet TODO
 
 # npm exec -- noderify \
 $(npm bin)/noderify \
