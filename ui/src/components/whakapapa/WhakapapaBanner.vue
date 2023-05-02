@@ -1,5 +1,7 @@
 <template>
-  <v-banner class="whakapapa-banner" light single-line color="white" style="z-index:1">
+  <v-banner light single-line color="white"
+    :style="{ marginTop: mobile ? 0 : '17px', zIndex: 1 }"
+  >
     <router-link :to="back()">
       <v-avatar size="35" tile >
         <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name"/>
@@ -52,6 +54,6 @@ export default {
 </script>
 <style scoped>
 .whakapapa-banner {
-  margin-top:10px
+  margin-top: 17px
 }
 </style>

@@ -4,7 +4,7 @@
     <Header v-if="isProfile"
       :profile="profile"
     />
-    <v-row v-if="isProfile">
+    <v-row v-if="isProfile" >
       <div :class="mobile ? 'mobile-title order-3 d-flex' : 'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
@@ -19,7 +19,7 @@
       </div>
     </v-row>
 
-    <v-row>
+    <v-row style="height: 100%;">
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow"
         cols="12" xs="12" sm="12" md="2" lg="20p"
@@ -34,7 +34,7 @@
         :md="isWhakapapaShow ? '12' : '10'"
         :lg="isWhakapapaShow ? '100p' : '80p'"
         :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
-        style="z-index:1"
+        style="z-index: 1; height: 100%;"
       >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
