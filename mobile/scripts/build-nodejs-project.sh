@@ -169,7 +169,6 @@ echo "Bundling with noderify...";
 #     - cordova-bridge: this is not an npm package, it's from nodejs-mobile
 #     - bl: we didn't use it, and bl@0.8.x has security vulnerabilities
 #     - bufferutil: because we want nodejs-mobile to load its native bindings
-#     - supports-color: optional dependency within package `debug`
 #     - utf-8-validate: because we want nodejs-mobile to load its native bindings
 #     - encoding: optional dependency within package node-fetch used by apollo-server // TODO rm?
 #     - systeminformation: it provides APIs for desktop, not mobile
@@ -189,7 +188,6 @@ $(npm bin)/noderify \
   --filter=cordova-bridge \
   --filter=bl \
   --filter=bufferutil \
-  --filter=supports-color \
   --filter=utf-8-validate \
   --filter=encoding \
   --filter=casual \

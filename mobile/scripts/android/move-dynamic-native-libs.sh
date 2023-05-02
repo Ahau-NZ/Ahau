@@ -30,8 +30,9 @@ do
   # Copy libsodium.so because nodejs-mobile scripts only move .node files
   # NOTE version of sodium-native and sodium-native-nodejs-mobile must be the same (ignoring the -\n suffix)
   # cp ./www/nodejs-project/node_modules/sodium-native-nodejs-mobile/lib/android-$nodearch/libsodium.so \
-  #   platforms/android/app/src/main/jniLibs/$arch/libsodium.so;
-  # Commented this out as cannot find these files
+  # NOTE couldn't find at this location any more so just grabbed a possible match via what found with
   #   find . -name "libsodium.so"
-  #   find . -name "libsodium.so" | rg lib/android-
+  cp ./platforms/android/build/nodejs-native-assets-temp-build/nodejs-native-assets-$arch/nodejs-project/node_modules/sodium-native-nodejs-mobile/build/Release/libsodium.so \
+    platforms/android/app/src/main/jniLibs/$arch/libsodium.so;
+
 done
