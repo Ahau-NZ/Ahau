@@ -138,8 +138,6 @@ function mapSubmissionValues (whoami) {
         ? false
         : null
 
-    const _group = (group && group.public[0]) || null
-
     const from = isPersonal ? whoami.personal.profile : applicant
 
     return {
@@ -148,7 +146,7 @@ function mapSubmissionValues (whoami) {
       applicant,
       id,
 
-      group: _group,
+      group,
 
       // status
       isNew,
