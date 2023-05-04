@@ -19,7 +19,7 @@ export default function (apollo) {
   }
 
   const actions = {
-    async proposeEditGroupPerson ({ dispatch, rootState, rootGetters }, { profileId, input, comment }) {
+    async proposeEditGroupPerson ({ dispatch, rootGetters }, { profileId, input, comment }) {
       try {
         if (!profileId) throw new Error('a profile id is required to create a submission to update the profile')
 
@@ -29,9 +29,7 @@ export default function (apollo) {
             input: omit(input, ['id', 'recps']),
             comment,
 
-            // send the submission to the groups poBoxId
-            // TODO: we could do this in the graphql layer, this is a quick fix
-            recps: [rootGetters['tribe/tribePoboxId'], rootState.whoami.public.feedId]
+            groupId: rootGetters['tribe/tribeId']
           })
         )
 
@@ -74,7 +72,6 @@ export default function (apollo) {
       }
     },
     async rejectSubmission (_, input) {
-      console.log(input)
       try {
         const res = await apollo.mutate(
           rejectSubmission(input)
