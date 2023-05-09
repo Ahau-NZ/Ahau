@@ -15,6 +15,7 @@ Permanently fixed, established and understood!
 Forward together!`
 
 module.exports = function karakia () {
+  // eslint-disable-next-line no-console
   console.log(boxen(text, {
     padding: 1,
     margin: { top: 0, left: 1, right: 1, bottom: 1 },

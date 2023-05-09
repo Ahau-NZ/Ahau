@@ -51,7 +51,6 @@ ahoy(
     karakia()
 
     printConfig(ssb.config)
-    console.log(ssb.config.host)
 
     if (env.isProduction) {
       autoUpdater.checkForUpdatesAndNotify()
@@ -72,6 +71,7 @@ function printConfig (config) {
   └── api   http://localhost:${config.graphql.port}/graphql
 `
 
+  // eslint-disable-next-line no-console
   console.log(boxen(configTxt, {
     padding: 1,
     margin: 1,
