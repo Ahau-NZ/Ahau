@@ -66,8 +66,8 @@ export function getDefaultFields (customFields) {
   })
 }
 
-export function getCustomFields (customFields) {
-  const uniqueCustomFields = getUniqueFields(customFields)
+export function getCustomFields (rawCustomFields) {
+  const uniqueCustomFields = getUniqueFields(rawCustomFields)
 
   return uniqueCustomFields.filter(customField => {
     return !clone(DEFAULT_PROFILE_MODEL).some(defaultField => defaultField.label === customField.label)
@@ -179,6 +179,32 @@ export function getCustomFieldChanges (originalCustomFields, updatedCustomFields
       // only keep those where the value has changed from the original value and the default value
       return (!isEqual(get(fieldOriginalValue, 'value'), value) && !isEqual(value, getDefaultFieldValue(fieldDef)))
     })
+}
+
+/**
+ *
+ * Method to get the raw custom fields depending on whether the current user is a kaitiaki
+ * or not.
+ *
+ * @param {Object} rawTribe the raw tribe in the form { id: public: [Community], private: [Community] }
+ * @param {Boolean} isKaitiaki boolean stating whether the current user is a kaitiaki of this tribe or not
+ * @returns {Array} customFieldDefinitions
+ */
+export function getRawCustomFields (rawTribe, isKaitiaki) {
+  const customFields = get(rawTribe, 'public[0].customFields', [])
+  if (isKaitiaki) return customFields
+
+  // if the use is not a kaitiaki, only the fields that are visibleBy members
+  // are returned
+  return customFields
+    .filter(field => field.visibleBy === 'members')
+}
+
+export function getTribeCustomFields (rawTribe, isKaitiaki) {
+  const rawCustomFields = getRawCustomFields(rawTribe, isKaitiaki)
+
+  return getCustomFields(rawCustomFields)
+    .filter(field => !field.tombstone)
 }
 
 const convertCustomFieldObjectToArray = ([key, value]) => ({ key, value })

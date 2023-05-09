@@ -119,30 +119,58 @@
           </div>
 
           <!-- Alt names has different structure {add:[],remove:[]} -->
-          <div v-else-if="key == 'altNames' && showActions">
-            <v-checkbox
-              v-if="value && value.add && value.add.length"
-              :label="getAltNamesAddLabel(value)"
-              hide-details
-              color="green"
-              class="shrink pl-6 mt-0 black-label"
-            />
-            <v-checkbox
-              v-if="value && value.remove && value.remove.length"
-              :label="getAltNamesRemoveLabel(value)"
-              hide-details
-              color="green"
-              class="shrink pl-6 mt-0 black-label"
-            />
+          <div v-else-if="key == 'altNames'">
+            <div class="pl-6" v-if="value && value.add && value.add.length">
+              Added alternative name(s):
+
+              <div v-for="name in value.add" :key="name">
+                <v-checkbox
+                  v-if="showActions"
+                  :label="name"
+                  hide-details
+                  color="green"
+                  class="shrink pl-6 mt-0 black-label"
+                  @change="addAltName('add', name)"
+                />
+                <li v-else class="pl-6">
+                  {{ name }}
+                </li>
+              </div>
+            </div>
+
+            <div class="pl-6" v-if="value && value.remove && value.remove.length">
+              Remove alternative name(s):
+
+              <div v-for="name in value.remove" :key="name">
+                <v-checkbox
+                  v-if="showActions"
+                  :label="name"
+                  hide-details
+                  color="green"
+                  class="shrink pl-6 mt-0 black-label"
+                  @change="addAltName('remove', name)"
+                />
+                <li v-else class="pl-6">
+                  {{ name }}
+                </li>
+              </div>
+            </div>
           </div>
 
-          <div v-else-if="key === 'altNames' && !showActions">
-            <li v-if="value && value.add && value.add.length" class="pl-6">
-              {{ getAltNamesAddLabel(value) }}
-            </li>
-            <li v-if="value && value.remove && value.remove.length" class="pl-6">
-              {{ getAltNamesRemoveLabel(value) }}
-            </li>
+          <div v-else-if="key === 'customFields'">
+            <div v-for="field in value" :key="field.key">
+              <v-checkbox
+                v-if="showActions"
+                :label="getCustomFieldLabel(field.key, field.value)"
+                hide-details
+                color="green"
+                class="shrink pl-6 mt-0 black-label"
+                @change="addCustomField(field)"
+              />
+              <li v-else>
+                {{ getCustomFieldLabel(field.key, field.value) }}
+              </li>
+            </div>
           </div>
 
           <div v-else>
@@ -221,15 +249,13 @@
 
 <script>
 import { mapActions } from 'vuex'
+// import get from 'lodash.get'
 
 import isEmpty from 'lodash.isempty'
-import get from 'lodash.get'
-
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 
-import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
+import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
 export default {
@@ -241,7 +267,7 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
-    notification: Object
+    notification: { type: Object, required: true }
   },
   data () {
     return {
@@ -291,7 +317,7 @@ export default {
       if (isEmpty(this.notification)) {
         return true
       }
-      if (!this.notification.isPersonal && this.notification.isNew) return true
+      if (!this.notification?.isPersonal && this.notification.isNew) return true
 
       return false
     },
@@ -305,20 +331,13 @@ export default {
       return this.applicantProfile.customFields
     },
     group () {
-      return this.notification.group
+      return this.notification?.group
     },
     tribeCustomFields () {
-      return getCustomFields(this.group.customFields)
-        .filter(field => !field.tombstone)
-    },
-    answers () {
-      return this.notification.answers
-    },
-    hasAnswers () {
-      return this.answers && this.answers.length
+      return getTribeCustomFields(this.group, !this.notification?.isPersonal)
     },
     comments () {
-      return this.notification.history
+      return this.notification?.history
         .filter(d => {
           return (
             d.type === 'comment',
@@ -327,17 +346,10 @@ export default {
         })
     },
     allowNewComments () {
-      return !this.notification.isPersonal && this.notification.isNew
+      return !this.notification?.isPersonal && this.notification?.isNew
     },
     showComments () {
       return (this.comments && this.comments.length) || this.allowNewComments
-    },
-    dob () {
-      if (this.applicantProfile.aliveInterval) {
-        const formattedDate = dateIntervalToString(this.applicantProfile.aliveInterval, this.monthTranslations)
-        return formattedDate
-      }
-      return ' '
     },
     altNames () {
       if (this.applicantProfile.altNames) return this.applicantProfile.altNames.join(', ')
@@ -361,7 +373,7 @@ export default {
         return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
       }
 
-      switch (this.notification.isAccepted) {
+      switch (this.notification?.isAccepted) {
         case true:
           return 'This submission has been reviewed and was accepted'
         case false:
@@ -371,7 +383,7 @@ export default {
       }
     },
     changes () {
-      const changes = this.notification.changes
+      const changes = this.notification?.changes
       delete changes.__typename
 
       return Object.entries(changes)
@@ -381,28 +393,7 @@ export default {
   methods: {
     ...mapActions('person', ['updatePerson']),
     ...mapActions('submissions', ['approveSubmission', 'rejectSubmission']),
-    getFieldValue (fieldDef) {
-      // find the value from the applicantProfiles profile (if there is one)
-      let field = this.applicantProfileCustomFields.find(field => field.key === fieldDef.key)
-
-      // if the field wasnt found
-      // it could mean that they havent defined a value for it yet
-      if (field === undefined) field = { value: getDefaultFieldValue(fieldDef) }
-
-      switch (fieldDef.type) {
-        case 'array':
-          if (get(field, 'value.length')) return field.value.join(', ')
-          return ''
-        case 'list':
-          if (fieldDef.multiple) return field.value.join(', ')
-          else return field.value
-        case 'checkbox':
-          if (field.value) return 'yes'
-          else return 'no'
-        default:
-          return field.value || ''
-      }
-    },
+    ...mapActions('alerts', ['showAlert']),
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
@@ -419,12 +410,15 @@ export default {
     },
     async submit (approved) {
       const output = {
-        id: this.notification.id, // submissionId
+        id: this.notification?.id, // submissionId
         comment: this.comment
       }
 
       if (approved) {
-        if (isEmpty(this.selectedChanges)) return // TODO: show a message
+        if (isEmpty(this.selectedChanges)) {
+          this.showAlert({ message: 'No changes were submitted', color: 'green', delay: 3000 })
+          return
+        }
 
         await this.approveSubmission(output)
 
@@ -463,7 +457,7 @@ export default {
     },
     getLabel (key, value) {
       return this.isEmptyValue(this.targetProfile[key])
-        ? `Added new ${this.updatedKeys[key]}: ${Array.isArray(value) ? this.formatArray(value) : value}`
+        ? `Added new ${this.updatedKeys[key]}: ${this.formatValue(value)}`
         : this.getChangesLabel(key, value)
     },
     // NOTE: cherese 1/05/23
@@ -472,7 +466,7 @@ export default {
     getChangesLabel (key, value) {
       return `
         Changed ${this.updatedKeys[key]}
-        to: ${Array.isArray(value) ? this.formatArray(value) : value}
+        to: ${this.formatValue(value)}
       `
     },
     getAltNamesAddLabel (value) {
@@ -480,6 +474,40 @@ export default {
     },
     getAltNamesRemoveLabel (value) {
       return `Removed alternative name(s): ${value.remove.join(', ')}`
+    },
+    getCustomFieldLabel (key, value) {
+      const fieldDef = this.tribeCustomFields.find(field => field.key === key)
+      return `Added new ${fieldDef?.label}: ${this.formatValue(value)}`
+    },
+    formatValue (value) {
+      return Array.isArray(value) ? this.formatArray(value) : value
+    },
+    addAltName (key, name) {
+      if (!this.selectedChanges.altNames) this.selectedChanges.altNames = { add: [], remove: [] }
+      const items = this.selectedChanges.altNames[key]
+      if (items.includes(name)) items.splice(items.indexOf(name), 1) // remove it
+      else items.push(name) // add it
+
+      this.selectedChanges.altNames[key] = items
+      this.cleanupAltNames()
+    },
+    cleanupAltNames () {
+      if (this.selectedChanges.altNames.add.length === 0 && this.selectedChanges.altNames.remove.length === 0) delete this.selectedChanges.altNames
+    },
+    cleanupCustomFields () {
+      if (this.selectedChanges?.customFields?.length === 0) delete this.selectedChanges.customFields
+    },
+    addCustomField (customField) {
+      if (!this.selectedChanges.customFields) this.selectedChanges.customFields = []
+
+      const items = this.selectedChanges.customFields
+      const field = items.find(field => field.key === customField.key)
+      if (field) items.splice(items.indexOf(field), 1)
+      else {
+        delete customField.__typename
+        items.push(customField)
+      }
+      this.cleanupCustomFields()
     }
   }
 }

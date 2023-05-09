@@ -1,6 +1,6 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
-import { getCustomFields, getDefaultFields } from '@/lib/custom-field-helpers'
+import { getCustomFields, getDefaultFields, getRawCustomFields } from '@/lib/custom-field-helpers'
 
 import pick from 'lodash.pick'
 import get from 'lodash.get'
@@ -73,11 +73,7 @@ export default function (apollo) {
 
       // for admin subgroups, we just use the parent groups custom field definitions
       const tribe = getters.parentTribe || state.currentTribe
-      const customFields = get(tribe, 'public[0].customFields', [])
-
-      if (rootGetters.isKaitiaki) return customFields
-      return customFields
-        .filter(field => field.visibleBy === 'members')
+      return getRawCustomFields(tribe, rootGetters.isKaitiaki)
     },
     tribeDefaultFields (state, getters) {
       return getDefaultFields(getters.rawTribeCustomFields)

@@ -45,48 +45,48 @@ export const rejectSubmission = ({ id, comment }) => {
 //   }
 // }
 
-// export const proposeNewGroupPerson = ({ input, comment, recps }) => {
+// export const proposeNewGroupPerson = ({ input, comment, groupId }) => {
 //   return {
 //     mutation: gql`
-//       mutation ($input: PersonProfileInput!, $comment: String, recps: [String]!) {
-//         proposeNewGroupPerson (input: $input, comment: $comment, recps: $recps)
+//       mutation ($input: PersonProfileInput!, $comment: String, $groupId: String!) {
+//         proposeNewGroupPerson (input: $input, comment: $comment, groupId: $groupId)
 //       }
 //     `,
 //     variables: {
 //       input,
 //       comment,
-//       recps
+//       groupId
 //     }
 //   }
 // }
 
-export const proposeEditGroupPerson = ({ profileId, input, comment, recps }) => {
+export const proposeEditGroupPerson = ({ profileId, input, comment, groupId }) => {
   return {
     mutation: gql`
-      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String, $recps: [String]!) {
-        proposeEditGroupPerson (profileId: $profileId, input: $input, comment: $comment, recps: $recps)
+      mutation ($profileId: String!, $input: PersonProfileInput!, $comment: String, $groupId: String!) {
+        proposeEditGroupPerson (profileId: $profileId, input: $input, comment: $comment, groupId: $groupId)
       }
     `,
     variables: {
       profileId,
       input,
       comment,
-      recps
+      groupId
     }
   }
 }
 
-// export const proposeTombstone = ({ recordId, comment }) => {
+// export const proposeTombstone = ({ recordId, comment, groupId }) => {
 //   return {
 //     mutation: gql`
-//       mutation ($recordId: String!, $comment: String) {
-//         proposeTombstone (recordId: $recordId, comment: $comment)
+//       mutation ($recordId: String!, $comment: String, $groupId: String!) {
+//         proposeTombstone (recordId: $recordId, comment: $comment, groupId: $groupId)
 //       }
 //     `,
 //     variables: {
 //       recordId,
 //       comment
-//       // TODO recps for the submission
+//       groupId
 //     }
 //   }
 // }
@@ -98,6 +98,7 @@ export const SubmissionFragment = gql`
     targetId
     targetType
     recps
+    groupId
     comments {
       authorId
       author {
@@ -178,14 +179,13 @@ export const SubmissionGroupPersonFragment = gql`
           remove
         }
 
-        # NOTE: the fields below are causing errors
-        # because they are not being returned in the format
-        # expected by the Person type definition
-        # I have disabled these until we add in support
-        # customFields {
-        #   key
-        #   value
-        # }
+        customFields {
+          key
+          value
+          ...on PersonCustomFieldDate {
+            type
+          }
+        }
       }
 
       target {
