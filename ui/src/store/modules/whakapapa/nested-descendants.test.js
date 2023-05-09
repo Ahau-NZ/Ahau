@@ -243,7 +243,7 @@ test('vuex/whakapapa getters.nestedDescendants (whangai grandparent complex)', t
     'importantRelationship means no duplicate children (grandad primary link)'
   )
 
-  console.log('set showExtendedFamily = true')
+  t.pass('set showExtendedFamily = true')
   state.view.changes.showExtendedFamily = true
   t.deepEqual(
     getters.nestedDescendants,
@@ -386,7 +386,7 @@ test('vuex/whakapapa getters.nestedDescendants (marriage within tree)', t => {
     }
   )
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
 
   t.deepEqual(

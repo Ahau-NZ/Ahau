@@ -78,13 +78,13 @@ test('vuex/whakapapa getters.getPartnerIds (with importantRelationships - childr
   t.deepEqual(getPartnerIds('Son'), [], 'Son has no partners')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('set showExtendedFamily = true')
+  t.pass('set showExtendedFamily = true')
   state.view.changes.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandad'), [], 'Grandad has no partners')
   t.deepEqual(getPartnerIds('Son'), [], 'Son has no partners')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('set importantRelationship')
+  t.pass('set importantRelationship')
   state.view.importantRelationships = {
     Grandaughter: {
       profileId: 'Grandaughter',
@@ -118,17 +118,17 @@ test('vuex/whakapapa getters.getPartnerIds (whangai grandparent complex)', t => 
   t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('set showExtendedFamily = true')
+  t.pass('set showExtendedFamily = true')
   state.view.changes.showExtendedFamily = true
   t.deepEqual(getPartnerIds('Grandma'), ['Grandad'], 'Grandma partners = Grandad')
   t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   // t.deepEqual(getPartnerIds('Grandma'), ['Grandad'], 'Grandma partners = Grandad')
   // t.deepEqual(getPartnerIds('Daughter'), ['Husband'], 'Daughter patners = Husband')
-  console.log('NOTE - failing tests commented out')
+  t.pass('NOTE - failing tests commented out')
   t.deepEqual(getPartnerIds('Grandaughter'), [], 'Grandaughter has no partners')
 
   t.end()
@@ -244,7 +244,7 @@ test('vuex/whakapapa getters.getPartnerIds (marriage within tree)', t => {
 
   t.deepEqual(getPartnerIds('Daughter'), ['Son'])
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getPartnerIds('Daughter'), ['Son'])
 

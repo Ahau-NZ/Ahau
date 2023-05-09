@@ -470,9 +470,13 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
+  height: 100%;
+  overflow-y: hidden;
+
   &>.container {
     position: relative;
-    max-height:98vh;
+    height: 100%;
+
     &>.header {
       position: absolute;
       top: 70px;
@@ -544,7 +548,7 @@ h1 {
 .mobile-tree {
   position:absolute;
   height: calc(100vh - 43px);
-  margin-top: -85px;
+  margin-top: -55px;
 }
 
 #speeddial {

@@ -11,6 +11,7 @@ exports.default = async function notarizing (context) {
 
   const appName = context.packager.appInfo.productFilename
 
+  // eslint-disable-next-line no-console
   console.log('Starting notarization...')
 
   return await notarize({ // eslint-disable-line

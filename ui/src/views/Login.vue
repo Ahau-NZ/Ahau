@@ -138,11 +138,13 @@ export default {
     },
 
     karakiaTūwhera () {
+      // eslint-disable-next-line no-console
       console.log(karakia)
     },
 
     proceed () {
       if (this.$apollo.loading || !this.whoami.personal.profile.id) {
+        // eslint-disable-next-line no-console
         console.log('waiting for apollo')
         setTimeout(this.proceed, 300)
         return

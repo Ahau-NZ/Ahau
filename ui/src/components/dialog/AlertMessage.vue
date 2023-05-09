@@ -1,9 +1,10 @@
 <template>
-  <div class="text-center ma-2">
+  <div class="text-center">
     <v-snackbar
       v-model="showMessage"
       :timeout="alertSettings.delay"
       content-class="text-center"
+      class="ma-2"
     >
       {{ alertSettings.message }}
 

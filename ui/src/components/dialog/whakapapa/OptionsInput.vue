@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     updateSwitch (event) {
-      console.log(event)
+      // console.log(event)
     },
     t (key, vars) {
       return this.$t('whakapapaTable.' + key, vars)

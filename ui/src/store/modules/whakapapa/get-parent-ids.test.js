@@ -23,7 +23,7 @@ test('vuex/whakapapa getters.getParentIds (with importantRelationships - childre
   t.deepEqual(getParentIds('Son'), ['Grandad'], 'Son')
   t.deepEqual(getParentIds('Grandaughter'), ['Grandad', 'Son'], 'Grandaughter')
 
-  console.log('set importantRelationship')
+  t.pass('set importantRelationship')
   state.view.importantRelationships = {
     Grandaughter: {
       profileId: 'Grandaughter',
@@ -59,12 +59,12 @@ test('vuex/whakapapa getters.getParentIds (whangai grandparent complex)', t => {
   t.deepEqual(getParentIds('Daughter'), ['Grandma', 'Grandad'], 'Daughter')
   t.deepEqual(getParentIds('Grandaughter'), ['Grandma', 'Grandad'], 'Grandaughter')
 
-  console.log('change importantRelationship to be we partner')
+  t.pass('change importantRelationship to be we partner')
   state.view.importantRelationships.Grandaughter.primary.profileId = 'Grandad'
   t.deepEqual(getParentIds('Grandaughter'), ['Grandma', 'Grandad'], 'Grandaughter')
   // This is the hard case where primary parent link is Grandad
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getParentIds('Grandma'), [], 'Grandma')
   t.deepEqual(getParentIds('Daughter'), ['Grandma', 'Grandad'], 'Daughter')
@@ -178,7 +178,7 @@ test('vuex/whakapapa getters.getParentIds (mixed childLinks)', t => {
 
   t.deepEqual(getParentIds('ay'), ['Y'])
 
-  console.log('extendedFamily')
+  t.pass('extendedFamily')
   state.view.changes.showExtendedFamily = true
   t.deepEqual(getParentIds('ay'), ['Y', 'X'])
 
@@ -204,7 +204,7 @@ test('vuex/whakapapa getters.getParentIds (marriage within tree)', t => {
   // t.deepEqual(getParentIds('Son'), ['Grandad', 'Grandma'])
   t.deepEqual(getParentIds('Son'), [])
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getParentIds('Grandaughter'), ['Daughter', 'Son'])
   t.deepEqual(getParentIds('Son'), ['Grandma', 'Grandad'])

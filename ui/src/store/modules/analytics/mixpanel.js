@@ -37,6 +37,7 @@ function initialize () {
   if (process.env.NODE_ENV === 'test') return dummyAPI
 
   if (!window.ahoy) {
+    // eslint-disable-next-line no-console
     console.log('(analytics) window.ahoy not found - this is only accessible in electron')
     return dummyAPI
   }

@@ -4,8 +4,8 @@
     <Header v-if="isProfile"
       :profile="profile"
     />
-    <v-row v-if="isProfile">
-      <div :class="mobile ? 'mobile-title order-3 d-flex':'desktop-title order-1 mr-auto'">
+    <v-row v-if="isProfile" >
+      <div :class="mobile ? 'mobile-title order-3 d-flex' : 'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
       <div :class="mobile ? '' : 'align-self-end mr-10 order-3'">
@@ -15,13 +15,17 @@
           icon="mdi-account-cog"
           :label="editButtonLabel"
         />
-        <v-divider v-else class="py-5"></v-divider>
+        <v-divider v-else class="py-5" />
       </div>
     </v-row>
 
-    <v-row>
+    <v-row style="height: 100%;">
       <!-- SideNav -->
-      <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+      <v-col  v-if="!hideNav && !isWhakapapaShow"
+        cols="12" xs="12" sm="12" md="2" lg="20p"
+        :class="!mobile ? 'pr-0' : 'px-5 py-0'"
+        :style="{ zIndex: 5 }"
+      >
         <SideNavMenu v-if="currentTribe" :profile="profile" @new-registration="dialog = 'new-registration'"/>
       </v-col>
 
@@ -30,11 +34,11 @@
         :md="isWhakapapaShow ? '12' : '10'"
         :lg="isWhakapapaShow ? '100p' : '80p'"
         :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
-        style="z-index:1"
+        style="z-index: 1; height: 100%;"
       >
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
-          <router-view :key="JSON.stringify(profile)" :profile="profile" />
+          <router-view :profile="profile" :key="JSON.stringify(profile)" />
         </transition>
       </v-col>
     </v-row>
@@ -397,7 +401,7 @@ export default {
     max-width:100%;
     justify-content: center;
     position: relative;
-    top: 10px
+    top: 30px
   }
 
   .mob-btn {

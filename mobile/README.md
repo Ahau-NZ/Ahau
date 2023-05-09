@@ -10,13 +10,101 @@
 
 
 **IMPORTANT**
-Use Node.js 12.19 AND npm 6, later version of npm aren't compiling the native modules.
+
+Must use Node 12.19.0 and NPM 6
+Use [NVM](https://github.com/nvm-sh/nvm) and run
+
+```bash
+nvm install 12.19.0
+nvm use 12.19.0
+```
+
+---
+
+Here's the compiled guide including important compatible versions of different libs.
+
+1. Install Cordova 10 (OLD)
+    - references:
+      - https://cordova.apache.org/docs/en/10.x/
+      - https://cordova.apache.org/docs/en/10.x/guide/platforms/android/index.html
+    - `npm install -g cordova@10`
+2. Install Cordova deps for Android
+    - SDKMAN (tool used to manage sdk installs, versions)
+      - `curl -s "https://get.sdkman.io" | bash`
+    - JDK 11
+      - `sdk install java 8.0.372-tem`
+      - `java -version` should be 8
+    - Gradle
+      - `sdk install gradle 8.1`
+    - Android Studio: https://developer.android.com/studio/
+      - https://developer.android.com/studio/install#linux
+        ```bash
+        sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+        tar -xvz -f android-studio-2022.2.1.18-linux.tar.gz
+        sudo mv android-studio /opt/
+        cd /usr/bin && sudo ln -s /opt/android-studio/bin/studio.sh studio
+        ```
+      - start android studio from terminal `studio`, and follow the default path for setup
+        - went "More actions > SDK Manager" and added
+          - SDK Platforms tab
+             - [x] Android 10.0 (Q)
+          - SDK Tools tab:
+             - [x] Android SDK Build-Tools > 30.0.3
+                - check "show package details"
+             - [x] Android NDK (side by side) > 22.1.7161670
+                - note this is the last version which has the `make-standalone-toolchain.sh` we need
+             - [x] Android SDK Command-line Tools (latest)
+             - [x] CMake > 3.10.2.4988404
+                - check "show package details"
+             - [x] Android SDK Tools (obselete)
+                - uncheck "hide obselete packages"
+      - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
+        ```
+        export ANDROID_HOME=$HOME/Android/Sdk
+        export ANDROID_NDK_HOME=$ANDROID_HOME/ndk
+
+        export PATH=$PATH:$ANDROID_HOME/platform-tools
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        export PATH=$PATH:$ANDROID_HOME/emulator
+        export PATH=$PATH:$ANDROID_HOME/build-tools
+
+        export ANDROID_SDK_ROOT=$ANDROID_HOME # legacy?
+        ```
+      - Project Configuration
+        - setting up an emulator: SKIP
+        - configuring gradle: SKIP
+          - https://cordova.apache.org/docs/en/10.x/guide/platforms/android/index.html#configuring-gradle
+
+3. Install [node-gyp](https://github.com/nodejs/node-gyp) dependencies
+    ```bash
+    sudo apt-get install make gcc python2 libtool
+    ```
+    - may need to set up "python" to point at correct version of python
+        ```bash
+        cd /usr/bin
+        sudo ln -s python2 python
+        ```
+
+4. set the mobile part of the repo up
+    ```bash
+    cd mobile
+    npm install && npm run setup
+    ```
+
+5. from root of project run `npm run dev:android`
+
+NOTES:
+- moved iOS deps/config into package.json `"paused"`
+    - preserving the object structure to make it clear how to merge those back in later
+- Gradle intro : https://developer.android.com/build
 
 
 ```bash
 $ npm install
-$ npm run setup:mobile
+$ npm run setup
 // Installs dependencies and creates Cordova folders for the Android and iOS platforms
+// You should see happy green messages printed out
+// NOTE sometimes it exits with an error. If you run ./script/setup.sh you shouldn't see an error
 ```
 
 ## Development
@@ -88,9 +176,27 @@ $ npm run release:android-dev   # from root folder
 
 After it is done, you can find the APK file at
 
-```
+```bash
 ./releases/android/app-release.apk
 ```
 
 Take that file and upload it in the Google Play developer console website.
+Or try it locally with an attached phone
+
+```bash
+adb devices
+adb install ./releases/android/app-release.apk
+```
+
+You can log out activity from an attached phone like this:
+
+```bash
+adb logcat -e nodejs
+```
+
+This logs a lot but you may need to log everything from the pid that Ahau is running, e.g. if it is running on pid 12334:
+
+```bash
+adb logcat | grep 12334
+```
 

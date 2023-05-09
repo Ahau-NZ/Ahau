@@ -105,7 +105,7 @@ test('parentNumber', t => {
   t.plan(2)
   csv.parse(INVALID_FIRST_PARENT_NUMBER)
     .then(res => {
-      console.log(res)
+      // console.log(res)
     })
     .catch(err => {
       t.deepEqual(err, [
@@ -116,7 +116,7 @@ test('parentNumber', t => {
 
   csv.parse(INVALID_PARENT_NUMBER)
     .then(res => {
-      console.log(res)
+      // console.log(res)
     })
     .catch(err => {
       t.deepEqual(err, [
@@ -166,7 +166,7 @@ test('csv.parse', t => {
         }
       }, 'returns correct profile')
     })
-    .catch(err => console.log(err))
+    .catch(t.error)
 
   csv.parse(INCORRECT_PERSONS)
     .catch(err => { // should be 3 errors
@@ -187,8 +187,8 @@ test('real data', (t) => {
 
     csv.parse(file)
       .catch((err) => {
-        t.fail('csv parse failed because of an error')
-        console.log('ERROR: ', JSON.stringify(err, null, 2))
+        t.error(err, 'csv parse failed because of an error')
+        // console.error('ERROR: ', JSON.stringify(err, null, 2))
       })
       .then((rows) => {
         t.ok(rows, 'csv parse returns result')

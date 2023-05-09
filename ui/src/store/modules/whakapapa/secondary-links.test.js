@@ -26,11 +26,11 @@ test('vuex/whakapapa getters.secondaryLinks', t => {
     'finds birth parent links'
   )
 
-  console.log('wipe importantRelationships')
+  t.pass('wipe importantRelationships')
   state.view.importantRelationships = {}
   t.deepEqual(getters.secondaryLinks, [], 'no secondaryLinks')
 
-  console.log('set importantRelationship to be with Daughter')
+  t.pass('set importantRelationship to be with Daughter')
   state.view.importantRelationships = {
     Grandaughter: {
       profileId: 'Grandaughter',
@@ -73,7 +73,7 @@ test('vuex/whakapapa getters.secondaryLinks (marriage within tree)', t => {
     'finds whangai parent links'
   )
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getters.secondaryLinks, [])
 

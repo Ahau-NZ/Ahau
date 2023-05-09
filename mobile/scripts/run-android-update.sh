@@ -1,8 +1,12 @@
 #!/bin/bash
 
+INFO='\e[1;30m\e[46m';
+WARN='\e[1;30m\e[41m';
+RESET='\e[0m';
+
 # Quit the entire script if there is any error
-function onFailure() {
-  echo "Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]}" >&2
+onFailure() {
+  echo "${WARN} Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]} ${RESET}" >&2
   exit 1
 }
 set -eEu -o pipefail

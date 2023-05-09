@@ -16,9 +16,6 @@ ahoy(
     config: Config(),
     plugins: [
       require('ssb-db'),
-      // require('ssb-master'),
-      // require('ssb-unix-socket'),
-      // require('ssb-no-auth'),
       require('ssb-conn'),
       require('ssb-lan'),
       require('ssb-replicate'),
@@ -54,7 +51,6 @@ ahoy(
     karakia()
 
     printConfig(ssb.config)
-    console.log(ssb.config.host)
 
     if (env.isProduction) {
       autoUpdater.checkForUpdatesAndNotify()
@@ -75,6 +71,7 @@ function printConfig (config) {
   └── api   http://localhost:${config.graphql.port}/graphql
 `
 
+  // eslint-disable-next-line no-console
   console.log(boxen(configTxt, {
     padding: 1,
     margin: 1,

@@ -36,8 +36,10 @@ fetch(`http://localhost:${env.ahau.graphql.port}/graphql`, {
 
     fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes, null, 2), err => {
       if (err) {
+        // eslint-disable-next-line no-console
         console.error('Error writing possibleTypes.json', err)
       } else {
+        // eslint-disable-next-line no-console
         console.log('Fragment types successfully extracted!')
       }
     })

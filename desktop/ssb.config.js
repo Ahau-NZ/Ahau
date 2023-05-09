@@ -68,7 +68,8 @@ function loadPersisted (configPath) {
   } catch (err) {
     if (err.message.match(/no such file/)) return
 
-    console.log('Invalid JSON in', configPath)
+    // eslint-disable-next-line no-console
+    console.error('Invalid JSON in', configPath)
     throw err
   }
 }

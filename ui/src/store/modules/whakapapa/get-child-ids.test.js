@@ -22,7 +22,7 @@ test('vuex/whakapapa getters.getChildIds (with importantRelationships - children
   t.deepEqual(getChildIds('Son'), ['Grandaughter'], 'Son')
   t.deepEqual(getChildIds('Grandaughter'), ['Baby'], 'Grandaughter')
 
-  console.log('set importantRelationship')
+  t.pass('set importantRelationship')
   state.view.importantRelationships = {
     Grandaughter: {
       profileId: 'Grandaughter',
@@ -63,7 +63,7 @@ test('vuex/whakapapa getters.getChildIds (whangai grandparent complex)', t => {
   t.deepEqual(getChildIds('Daughter'), [], 'Daughter')
   t.deepEqual(getChildIds('Husband'), [], 'Husband')
 
-  console.log('move importantRelationship to Grandad')
+  t.pass('move importantRelationship to Grandad')
   state.view.importantRelationships = {
     Grandaughter: {
       profileId: 'Grandaughter',
@@ -75,7 +75,7 @@ test('vuex/whakapapa getters.getChildIds (whangai grandparent complex)', t => {
   t.deepEqual(getChildIds('Daughter'), [], 'Daughter')
   t.deepEqual(getChildIds('Husband'), [], 'Husband')
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getChildIds('Grandma'), ['Daughter', 'Grandaughter'], 'Grandma')
   t.deepEqual(getChildIds('Grandad'), ['Daughter', 'Grandaughter'], 'Grandad')
@@ -135,7 +135,7 @@ test('vuex/whakapapa getters.getChildIds (mixed childLinks)', t => {
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
 
-  console.log('extendedFamily')
+  t.pass('extendedFamily')
   state.view.changes.showExtendedFamily = true
   t.deepEqual(getChildIds('Y'), ['ay'])
   t.deepEqual(getChildIds('X'), ['ay'])
@@ -163,7 +163,7 @@ test('vuex/whakapapa getters.getChildIds (marriage within tree)', t => {
   t.deepEqual(getChildIds('Daughter'), ['Grandaughter'])
   t.deepEqual(getChildIds('Son'), ['Grandaughter'])
 
-  console.log('remove importantRelationship')
+  t.pass('remove importantRelationship')
   state.view.importantRelationships = {}
   t.deepEqual(getChildIds('Grandma'), ['Daughter', 'Son'])
   t.deepEqual(getChildIds('Grandad'), ['Daughter', 'Son'])

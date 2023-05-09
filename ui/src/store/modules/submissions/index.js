@@ -41,8 +41,8 @@ export default function (apollo) {
         const message = 'Something went wrong while trying to create a submission to update the profile'
         dispatch('alerts/showError', message, { root: true })
 
-        console.error(message)
-        console.error(err)
+        // eslint-disable-next-line no-console
+        console.error(message, err)
       }
     },
     async getSubmissions () {
@@ -55,6 +55,7 @@ export default function (apollo) {
 
         return res.data.getSubmissions
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Something went wrong while trying to get all submissions', err)
       }
     },
@@ -67,8 +68,8 @@ export default function (apollo) {
 
         return input.id
       } catch (err) {
-        console.error('Something went wrong while trying to approve the submission', input.id)
-        console.error(err)
+        // eslint-disable-next-line no-console
+        console.error('Something went wrong while trying to approve submission', input.id, err)
       }
     },
     async rejectSubmission (_, input) {
@@ -80,8 +81,8 @@ export default function (apollo) {
 
         return input.id
       } catch (err) {
-        console.error('Something went wrong while trying to reject the submission', input.id)
-        console.error(err)
+        // eslint-disable-next-line no-console
+        console.error('Something went wrong while trying to reject submission', input.id, err)
       }
     }
     // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {

@@ -21,7 +21,8 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
       }
 
       if (!childNode) {
-        console.log('cannot find childNode', childId)
+        // eslint-disable-next-line no-console
+        console.error('cannot find childNode', childId)
         return acc
       }
 
@@ -30,7 +31,8 @@ export default function layoutSecondaryLinks (getters, rootGetters) {
       childLinks.forEach(childLink => {
         const parentNode = getters.getNode(childLink.parent) || getters.getPartnerNode(childLink.parent)
         if (!parentNode) {
-          console.log('cannot find parentNode', childLink.parent)
+          // eslint-disable-next-line no-console
+          console.error('cannot find parentNode', childLink.parent)
           return
         }
 
