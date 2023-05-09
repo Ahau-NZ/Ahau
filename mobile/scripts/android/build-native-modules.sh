@@ -1,8 +1,14 @@
 #!/bin/bash
 
+INFO='\e[1;30m\e[46m';
+WARN='\e[1;30m\e[41m';
+RESET='\e[0m';
+
+log () { echo -e "${INFO} $1 ${RESET}"; }
+
 # Quit the entire script if there is any error
-function onFailure() {
-  echo "Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]}" >&2
+onFailure() {
+  echo -e "${WARN} Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]} ${RESET}" >&2
   exit 1
 }
 set -eEu -o pipefail
@@ -30,7 +36,7 @@ do
   IFS=";" read -r -a arr <<< "${entry}" # entry.split(';')
   arch="${arr[0]}"
 
-  echo "Building Android native modules for $arch ...";
+  log "Building Android native modules for $arch ...";
   NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 $GRADLE_EXEC app:GenerateNodeNativeAssetsLists$arch
 done
 cd ../..;

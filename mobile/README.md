@@ -11,79 +11,17 @@
 
 **IMPORTANT**
 
-Use Node.js 18 AND npm 9
+Must use Node 12.19.0 and NPM 6
+Use [NVM](https://github.com/nvm-sh/nvm) and run
 
-// NEW NOTES
-
-1. Install Cordova 11 (latest)
-    - references:
-      - https://cordova.apache.org/docs/en/latest/guide/cli/index.html
-      - https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#requirements-and-support
-    - `npm install -g cordova`
-2. Install Cordova deps for Android
-    - SDKMAN (tool used to manage sdk installs, versions)
-      - `curl -s "https://get.sdkman.io" | bash`
-    - JDK 11
-      - `sdk install java 11.0.18-tem`
-      - `java --version` should be 11
-    - Gradle
-      - `sdk install gradle 8.1`
-    - Android Studio: https://developer.android.com/studio/
-      - https://developer.android.com/studio/install#linux
-        ```
-        sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
-        tar -xvz -f android-studio-2022.2.1.18-linux.tar.gz
-        sudo mv android-studio /opt/
-        cd /usr/bin && sudo ln -s /opt/android-studio/bin/studio.sh studio
-        ```
-      - start android studio from terminal `studio`, and follow the default path for setup
-        - went "More actions > SDK Manager" and added
-          - SDK Platforms tab
-             - [x] Android 12.0 (S)
-             - [x] Android 10.0 (Q)
-          - SDK Tools tab:
-             - [x] Android SDK Build-Tools > 32.0.0
-             - [x] Android SDK Build-Tools > 31.0.0
-                - had to check "show package details"
-             - [x] Android NDK (side by side)
-             - [x] Android SDK Command-line Tools (latest)
-             - [x] CMake
-             - [x] Android SDK Tools (obselete)
-                - had to uncheck "hide obselete packages"
-      - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
-        ```
-        export ANDROID_HOME=$HOME/Android/Sdk
-        export ANDROID_NDK_HOME=$ANDROID_HOME/ndk
-
-        export PATH=$PATH:$ANDROID_HOME/platform-tools
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        export PATH=$PATH:$ANDROID_HOME/emulator
-        export PATH=$PATH:$ANDROID_HOME/build-tools
-
-        export ANDROID_SDK_ROOT=$ANDROID_HOME # legacy?
-        ```
-      - Project Configuration
-        - setting up an emulator: SKIP
-        - configuring gradle: SKIP
-
-
-      - TODO: To make Android Studio available in your list of applications, select Tools > Create Desktop Entry from the Android Studio menu bar.
-
-
-
-EXTRA NOTES:
-- node-gyp 3.8 has various dependencies:
-  ```
-  sudo apt-get install make gcc python2
-  ```
-- went back and added NDK stuff
--
+```bash
+nvm install 12.19.0
+nvm use 12.19.0
+```
 
 ---
 
-Use Node.js 12 AND npm 6
-
-// NEW NOTES
+Here's the compiled guide including important compatible versions of different libs.
 
 1. Install Cordova 10 (OLD)
     - references:
@@ -100,7 +38,7 @@ Use Node.js 12 AND npm 6
       - `sdk install gradle 8.1`
     - Android Studio: https://developer.android.com/studio/
       - https://developer.android.com/studio/install#linux
-        ```
+        ```bash
         sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
         tar -xvz -f android-studio-2022.2.1.18-linux.tar.gz
         sudo mv android-studio /opt/
@@ -111,14 +49,15 @@ Use Node.js 12 AND npm 6
           - SDK Platforms tab
              - [x] Android 10.0 (Q)
           - SDK Tools tab:
-             - [x] Android SDK Build-Tools > 29.0.3
-                - had to check "show package details"
-             - [x] Android NDK (side by side) > 22.1.7...
+             - [x] Android SDK Build-Tools > 30.0.3
+                - check "show package details"
+             - [x] Android NDK (side by side) > 22.1.7161670
                 - note this is the last version which has the `make-standalone-toolchain.sh` we need
              - [x] Android SDK Command-line Tools (latest)
-             - [x] CMake
+             - [x] CMake > 3.10.2.4988404
+                - check "show package details"
              - [x] Android SDK Tools (obselete)
-                - had to uncheck "hide obselete packages"
+                - uncheck "hide obselete packages"
       - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
         ```
         export ANDROID_HOME=$HOME/Android/Sdk
@@ -134,54 +73,25 @@ Use Node.js 12 AND npm 6
       - Project Configuration
         - setting up an emulator: SKIP
         - configuring gradle: SKIP
-          - SHOULD COME BACK TO THIS!!!
           - https://cordova.apache.org/docs/en/10.x/guide/platforms/android/index.html#configuring-gradle
 
+3. Install [node-gyp](https://github.com/nodejs/node-gyp) dependencies
+    ```bash
+    sudo apt-get install make gcc python2 libtool
+    ```
+    - may need to set up "python" to point at correct version of python
+        ```bash
+        cd /usr/bin
+        sudo ln -s python2 python
+        ```
 
-3. run `npm i && npm run setup`
-4. run `npm run dev:android`
-    - see some error:
-      ```
-      > Task :app:MakeToolchainarmeabi-v7a FAILED
+4. set the mobile part of the repo up
+    ```bash
+    cd mobile
+    npm install && npm run setup
+    ```
 
-      FAILURE: Build failed with an exception.
-
-      * What went wrong:
-      Execution failed for task ':app:MakeToolchainarmeabi-v7a'.
-      > A problem occurred starting process 'command '/home/username/Android/Sdk/ndk/25.2.9519653/build/tools/make-standalone-toolchain.sh''
-      ```
-    - note `make-standalone-toolchain.sh` does not exist, is instead `make_standalone_toolchain.py`
-      - see generated file `platforms/mobile/android/nodejs-mobile-cordova/whakapapa-build.gradle:221`
-      - note investigated AndroidStudio / Gradle / NDK versions... this suggests ndk 25 should be fine?
-        - rolling back to 23 and we find the shell script!
-        - then to 22 to get `prebuilt-common.sh`
-        - make sure `which python` answers with something
-          - `cd /usr/bin && sudo ln -s python2 python`
-          - `sudo apt-get install libtool`
-
-
-    - WIP notes:
-      - [x] update ssb-crut
-        - [x] update all modules to be using same version of ssb-crut (all possible except 1 case)
-        - [x] in src/nodejs-project patched ssb-crut to not require ssb-db2
-      - [ ] commented out a script that copied libsodium.so
-        - file didn't exist
-        - may need to check it's there...
-      - [ ] sodium-native-nodejs-mobile may specify targetSdkVersion=\"21\" (currently at 21)
-      - [ ] Build tools errors... 
-          ```
-          Could not determine the dependencies of task ':app:compileDebugJavaWithJavac'.
-          > Installed Build Tools revision 33.0.1 is corrupted. Remove and install again using the SDK Manager.
-          ```
-          - :fire: 33.0.2
-          - :fire: 33.0.1
-          - [x] 30.0.3 (seems to be working?)
-      - [ ] Cmake error
-          - [ ] 3.10.2.4988404
-
-
-TODO:
-- To make Android Studio available in your list of applications, select Tools > Create Desktop Entry from the Android Studio menu bar.
+5. from root of project run `npm run dev:android`
 
 NOTES:
 - moved iOS deps/config into package.json `"paused"`
@@ -266,9 +176,27 @@ $ npm run release:android-dev   # from root folder
 
 After it is done, you can find the APK file at
 
-```
+```bash
 ./releases/android/app-release.apk
 ```
 
 Take that file and upload it in the Google Play developer console website.
+Or try it locally with an attached phone
+
+```bash
+adb devices
+adb install ./releases/android/app-release.apk
+```
+
+You can log out activity from an attached phone like this:
+
+```bash
+adb logcat -e nodejs
+```
+
+This logs a lot but you may need to log everything from the pid that Ahau is running, e.g. if it is running on pid 12334:
+
+```bash
+adb logcat | grep 12334
+```
 

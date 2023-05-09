@@ -1,8 +1,14 @@
 #!/bin/bash
 
+INFO='\e[1;30m\e[46m';
+WARN='\e[1;30m\e[41m';
+RESET='\e[0m';
+
+log () { echo -e "${INFO} $1 ${RESET}"; }
+
 # Quit the entire script if there is any error
-function onFailure() {
-  echo "Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]}" >&2
+onFailure() {
+  echo -e "${WARN} Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]}${RESET}" >&2
   exit 1
 }
 set -eEu -o pipefail
@@ -12,51 +18,46 @@ trap 'onFailure $?' ERR
 
 BUILD_PLATFORM=$1
 
-echo "Moving from ./src to ./www ...";
-# npm exec -- cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
+log "Moving from ./src to ./www ...";
 $(npm bin)/cpy '**/*' '!node_modules' '../../www/nodejs-project/' --cwd='./src/nodejs-project/' --parents
 
 # Write the file to toggle build of native modules
 if [ -f ./www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt ]; then
-  echo "Build Native Modules already on";
+  log "Build Native Modules already on";
 else
   echo '1' >./www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt;
-  echo "Build Native Modules turned on";
+  log "Build Native Modules turned on";
 fi
 
 # Install node-gyp in order to Cordova to run `prepare`
-echo "Installing node-gyp in order to Cordova to run 'prepare'"
+log "Installing node-gyp in order to Cordova to run 'prepare'"
 npm install node-gyp --no-save
 
 cd ./www/nodejs-project
 
 # Write a env.json file to load process.env in the backend
-echo "Building the env.json file...";
+log "Building the env.json file...";
 ../../scripts/build-env-json.js
 
 # Install modules ignoring their install scripts
 # This reduces the install time
-echo "Installing node_modules dependencies...";
-echo $(pwd)
-# npm ci --ignore-scripts --omit=optional --silent
+log "Installing node_modules dependencies..." $(pwd);
 npm ci --ignore-scripts --omit=optional
 
 # Patch some file changes
-echo "Applying patches...";
-# npm exec -- patch-package
+log "Applying patches...";
 $(npm bin)/patch-package
 rm -rf ./patches ./node_modules/patch-package
 
 if [ $BUILD_PLATFORM == "android" ]; then
   # XCode will build this by its own so iOS isn't necessary
-  echo "Installing and compiling sodium-native-nodejs-mobile...";
+  log "Installing and compiling sodium-native-nodejs-mobile...";
   cd ./node_modules/sodium-native-nodejs-mobile
-  npm install --omit=optional --no-package-lock
-  # npm install --omit=optional --no-package-lock --silent
+  npm install --omit=optional --no-package-lock --silent
   cd ../..
 fi
 
-echo "Removing unused files meant for macOS or Windows, etc...";
+log "Removing unused files meant for macOS or Windows, etc...";
 find ./node_modules \
   -type d \
   \( \
@@ -75,11 +76,11 @@ find ./node_modules \
   \) \
   -print0 | xargs -0 rm -rf; # delete everything in the list
 
-echo "Deleting some definitely-not-necessary files from node_modules...";
+log "Deleting some definitely-not-necessary files from node_modules...";
 find ./node_modules -empty -type d -delete;
 
 # Remove sodium-native and other unnecessary modules of node_modules to prevent their build
-echo "Deleting sodium-native from node_modules of some dependencies...";
+log "Deleting sodium-native from node_modules of some dependencies...";
 declare -a modules=(
   "envelope-js"
   "ssb-tribes"
@@ -103,13 +104,13 @@ done
 cd ../..;
 
 # Clean builded code in the Cordova platform
-echo "Cleaning Cordova files in the project...";
+log "Cleaning Cordova files in the project...";
 cordova clean $BUILD_PLATFORM > /dev/null 2>&1 || true;
 
 # Build node.js native modules to Android.
 # XCode does this to iOS by itself after
 if [ $BUILD_PLATFORM == "android" ]; then
-  echo "Moving www into the Android path in order to build native modules...";
+  log "Moving www into the Android path in order to build native modules...";
 
   # Copies www folder to the platform/android
   cordova prepare android;
@@ -120,7 +121,7 @@ if [ $BUILD_PLATFORM == "android" ]; then
   ./scripts/android/build-native-modules.sh
 fi
 
-echo "Bundling some dependencies with babel to support Node version...";
+log "Bundling some dependencies with babel to support Node version...";
 cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
@@ -147,7 +148,6 @@ declare -a packagesToBabelify=(
 for pkg in "${packagesToBabelify[@]}"
 do
   echo $pkg;
-  # npm exec -- babel ./node_modules/$pkg \
   $(npm bin)/babel ./node_modules/$pkg \
     --ignore "test/**/*","**/*.test.js" \
     --keep-file-extension \
@@ -158,7 +158,7 @@ done
 
 rm ./babel.config.js;
 
-echo "Bundling with noderify...";
+log "Bundling with noderify...";
 # Why some packages are filter'd or replaced:
 #   Replaced:
 #     - chloride: needs special compilation configs for android, and we'd like to
@@ -176,7 +176,6 @@ echo "Bundling with noderify...";
 #     - async_hooks: native library, it's not added to noderify yet TODO
 #     - stream/web: native libraby, it's not added to noderify yet TODO
 
-# npm exec -- noderify \
 $(npm bin)/noderify \
   --replace.bindings=bindings-noderify-nodejs-mobile \
   --replace.node-extend=xtend \
@@ -194,18 +193,18 @@ $(npm bin)/noderify \
   --filter=systeminformation \
   --filter=async_hooks \
   --filter=stream/web \
-  index.js > _index.js;
+  index.js > index.bundle.js;
 
 rm index.js;
-mv _index.js index.js;
+mv index.bundle.js index.js;
 cd ../..;
 
 if [ $BUILD_PLATFORM == "android" ]; then
   # Just to Android cause iOS will use the node_modules to build its native modules
-  echo "Moving Android dynamic native libs..."
+  log "Moving Android dynamic native libs..."
   ./scripts/android/move-dynamic-native-libs.sh
 
-  echo "Removing node_modules folder and package-lock.json, just keeping ssb-ahau migrations...";
+  log "Removing node_modules folder and package-lock.json, just keeping ssb-ahau migrations...";
   cd ./www/nodejs-project/node_modules;
   ls | grep -xv "ssb-ahau" | xargs rm -rf;
   rm -rf .bin ssb-ahau/node_modules ssb-ahau/test;

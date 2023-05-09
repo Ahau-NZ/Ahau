@@ -28,11 +28,15 @@ do
   mkdir -p platforms/android/app/src/main/jniLibs/$arch;
 
   # Copy libsodium.so because nodejs-mobile scripts only move .node files
-  # NOTE version of sodium-native and sodium-native-nodejs-mobile must be the same (ignoring the -\n suffix)
-  # cp ./www/nodejs-project/node_modules/sodium-native-nodejs-mobile/lib/android-$nodearch/libsodium.so \
-  # NOTE couldn't find at this location any more so just grabbed a possible match via what found with
-  #   find . -name "libsodium.so"
   cp ./platforms/android/build/nodejs-native-assets-temp-build/nodejs-native-assets-$arch/nodejs-project/node_modules/sodium-native-nodejs-mobile/build/Release/libsodium.so \
     platforms/android/app/src/main/jniLibs/$arch/libsodium.so;
 
+
+  # NOTES
+  #
+  # - former location: ./www/nodejs-project/node_modules/sodium-native-nodejs-mobile/lib/android-$nodearch/libsodium.so
+  #   couldn't find at this location any more so just grabbed a possible match via what found with
+  #   $ find . -name "libsodium.so"
+  #
+  # - version of sodium-native and sodium-native-nodejs-mobile must be the same (ignoring the -\n suffix)
 done

@@ -3,7 +3,8 @@
   "version": "2.0.0",
   "main": "main.js",
   "engines": {
-    "node": ">=12 <13"
+    "node": "12.22.12",
+    "npm": ">=6.14.18 < 9"
   },
   "dependencies": {
     "@babel/cli": "^7.21.0",
