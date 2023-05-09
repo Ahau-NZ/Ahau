@@ -7,7 +7,8 @@ const env = dotenv.config({ path: join(__dirname, '.env') })
 if (env.error) {
   if (env.error.message.match(/no such file or directory/)) {
     if (process.env.NODE_ENV === 'production') throw env.error
-    else console.log('No ui/.env file found, please set one up')
+    // eslint-disable-next-line no-console
+    else console.error('No ui/.env file found, please set one up')
   } else {
     throw env.error
   }

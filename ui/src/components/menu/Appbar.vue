@@ -276,6 +276,7 @@ export default {
       this.toggleDrawer()
     },
     karakiaWhakamutunga () {
+      // eslint-disable-next-line no-console
       console.log(karakia)
     },
     toggleDrawer () {

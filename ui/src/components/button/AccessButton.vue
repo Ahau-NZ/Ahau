@@ -109,8 +109,12 @@ export default {
           if (!option.profileId) errors.push('missing profilId')
         }
         if (errors.length) {
-          console.log('invalid accessOptions', JSON.stringify(options, null, 2))
-          console.log(errors.join('\n'))
+          // eslint-disable-next-line no-console
+          console.error(
+            'invalid accessOptions:',
+            JSON.stringify(options, null, 2),
+            errors.join('\n')
+          )
           return false
         }
         return true

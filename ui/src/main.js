@@ -48,7 +48,7 @@ async function main () {
   if (isCordova()) {
     nodejsClient.start({
       onReady: () => {
-        console.log('nodejs-mobile and GraphQL server are fully ready')
+        // console.log('nodejs-mobile and GraphQL server are fully ready')
         startVue()
         navigator.splashscreen.hide()
       }
@@ -70,6 +70,7 @@ async function main () {
         }`
       })
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Waiting for Graphql')
       return setTimeout(() => checkReady(next), 500)
     }

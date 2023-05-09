@@ -4,6 +4,7 @@ const noop = () => {}
 
 const nodejsClient = {
   start ({ onStartup, onReady, onAnyMessage } = {}) {
+    // eslint-disable-next-line no-console
     console.log('Starting nodejs-mobile server')
     if (onReady) nodejs.channel.on('initialized', onReady)
     if (onAnyMessage) nodejs.channel.setListener(onAnyMessage)
