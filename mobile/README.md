@@ -2,26 +2,30 @@
 
 ## Setup
 
-- **IMPORTANT** Make sure you have all the necessary tools such as Git, Node.js, npm, Android SDK, Android NDK etc.
-- [Follow the Cordova guide](https://cordova.apache.org/docs/en/9.x/guide/cli/index.html#installing-the-cordova-cli)
-- [Follow the Cordova Android platform guide](https://cordova.apache.org/docs/en/9.x/guide/platforms/android/index.html#requirements-and-support)
-- [Follow the nodejs-mobile-cordova guide](https://github.com/JaneaSystems/nodejs-mobile-cordova)
-- [Apply this Android NDK hack for "mipsel-linux-android"](https://github.com/JaneaSystems/nodejs-mobile-cordova#android)
-
-
 **IMPORTANT**
 
-Must use Node 12.19.0 and NPM 6
-Use [NVM](https://github.com/nvm-sh/nvm) and run
-
+Must use Node 12.19.0 and NPM 6 (because this is what `nodejs-mobile-cordova` embeds)
+Use [NVM](https://github.com/nvm-sh/nvm) and run:
 ```bash
 nvm install 12.19.0
 nvm use 12.19.0
 ```
 
----
+### Source docs
 
-Here's the compiled guide including important compatible versions of different libs.
+To build the mobile app you need to follow the following
+- [Cordova guide](https://cordova.apache.org/docs/en/10.x/guide/overview/index.html)
+- [Cordova Android platform guide](https://cordova.apache.org/docs/en/10.x/guide/platforms/android/index.html#installing-the-requirements)
+- [nodejs-mobile-cordova guide](https://github.com/JaneaSystems/nodejs-mobile-cordova)
+
+No longer needed (?)
+- [Android NDK hack for "mipsel-linux-android"](https://github.com/JaneaSystems/nodejs-mobile-cordova#android)
+
+
+### Mix's Linux Setup
+
+This guide was written by folliwing the "Source docs", with a lot of trial-and-error
+to pin down the exact versions of tools needed to all work together.
 
 1. Install Cordova 10 (OLD)
     - references:
