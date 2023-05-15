@@ -37,12 +37,10 @@ export default {
     }
   },
   methods: {
+    // ensure the value is returned as an Array, so that the v-for makes
+    // lines and DOES NOT split the string one leter per line!
     formatValue (value) {
-      if (Array.isArray(value)) {
-        return value.join(', ')
-      }
-
-      // NOTE: not sure why we need this
+      if (Array.isArray(value)) return value
       return value.split('\n')
     }
   }
