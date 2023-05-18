@@ -66,7 +66,9 @@ const REQUIRED_CSV_COLUMNS = [
   'education'
 ]
 
-function importCsv (file, type) {
+const DIVIDER = ','
+
+function importCsv (file, isFromPersonIndex) {
   return new Promise((resolve, reject) => {
     if (!file.name.endsWith('.csv')) { // check if file extension is csv
       reject(new Error('please upload a CSV file'))
@@ -78,7 +80,7 @@ function importCsv (file, type) {
     reader.onload = () => {
       const fileContent = reader.result
 
-      parse(fileContent, type)
+      parse(fileContent, isFromPersonIndex)
         .then(csv => resolve(csv))
         .catch(errs => reject(errs))
     }
@@ -231,7 +233,7 @@ function parse (fileContent, type) {
   })
 }
 
-function mapNodesToCsv (nodes, customFieldDefs) {
+function mapNodesToCsv (nodes, customFieldDefs = []) {
   const rows = []
 
   nodes.forEach(node => {
@@ -275,10 +277,10 @@ function nodeToPartner (node, partnerId, customFieldDefs) {
 
 function stringifyArray (arr) {
   if (!arr || !arr.length) return null
-  return arr.join(', ')
+  return arr.join(DIVIDER)
 }
 
-function mapNodeToCsvRow (d, customFieldDefs) {
+function mapNodeToCsvRow (d, customFieldDefs = []) {
   const aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
 
   const row = {
@@ -440,10 +442,12 @@ function isValidNumber (d) {
   }
   as given by d3.csvParse()
 */
-function headerColumnErrors (headers, type) {
+function headerColumnErrors (headers, isFromPersonIndex) {
   const errors = []
-  // if type, than we are importing from peoples list and we not need number, parentNumber, avatarImage, profileImage headers
-  const columns = type ? REQUIRED_CSV_COLUMNS : ['parentNumber', 'number', ...REQUIRED_CSV_COLUMNS]
+  // if isFromPersonIndex, than we are importing from peoples list and we not need number, parentNumber, avatarImage, profileImage headers
+  const columns = isFromPersonIndex
+    ? REQUIRED_CSV_COLUMNS
+    : ['parentNumber', 'number', ...REQUIRED_CSV_COLUMNS]
 
   const missingColumns = columns.filter(d => {
     return !headers.includes(d)
@@ -475,24 +479,17 @@ function convertDate (date) {
 }
 
 function convertToSet (str) {
-  const set = { add: [] }
-  if (str.indexOf(', ') > -1) {
-    str = str.split(',')
-    str.forEach(i => set.add.push(i))
-  } else {
-    set.add.push(str)
+  return {
+    add: convertToArray(str)
   }
-  return set
 }
 
 function convertToArray (arr) {
-  if (arr.indexOf(', ') > -1) {
-    arr = arr.split(', ')
-  } else if (arr.indexOf(',') > -1) {
-    arr = arr.split(',')
-  }
+  if (arr.length === 0) return []
 
   return arr
+    .split(DIVIDER)
+    .map(str => str.trim())
 }
 
 function isValidInterval (interval) {
@@ -620,10 +617,10 @@ function cfToCheckbox (value) {
 export {
   importCsv,
   mapNodesToCsv,
+  mapNodeToCsvRow,
   convertDate,
   parse,
   downloadCsv,
-  mapNodeToCsvRow,
   schema,
   PERMITTED_CSV_COLUMNS,
   REQUIRED_CSV_COLUMNS,

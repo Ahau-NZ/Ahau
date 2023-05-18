@@ -1,6 +1,7 @@
 import {
   hierarchy as d3Hierarchy,
-  stratify as d3Stratify
+  stratify as d3Stratify,
+  csvFormat as d3CsvFormat
 } from 'd3'
 import * as csv from './csv'
 
@@ -123,6 +124,61 @@ test('parentNumber', t => {
         { row: 3, field: 'parentNumber', error: 'this parentNumber was used before it was assigned or doesnt exist', value: '4' }
       ], 'returns error for parentNumber that has number which hasnt been seen yet')
     })
+})
+
+test('csv export + import (PersonIndex)', t => {
+  const profileData = {
+    preferredName: 'Cherese',
+    legalName: 'Cherese Eriepa',
+    gender: 'female',
+    birthOrder: 2,
+    deceased: true,
+    aliveInterval: '0304-02-24/0305-02-24',
+    placeOfBirth: 'Auckland',
+    placeOfDeath: 'Hamilton',
+    buriedLocation: 'New Zealand',
+    city: 'HappyVille',
+    postCode: '1234',
+    country: 'New Zealand',
+    profession: 'Software Engineer',
+    school: null,
+    education: null,
+    altNames: ['reese', 'cher'],
+
+    // adminProfile fields
+    phone: '021167892345',
+    email: 'cherese@me.com',
+    address: '123 Happy Lane',
+
+    headerImage: null,
+    avatarImage: null,
+    customFields: {}
+  }
+  const input = [{
+    id: '%MSG_ID',
+    ...profileData
+  }]
+
+  const rows = input.map(profile => csv.mapNodeToCsvRow(profile))
+  const output = d3CsvFormat(rows)
+
+  csv.parse(output, true) // true => isFromPersonIndex
+    .then(csv => {
+      t.deepEqual(
+        csv.map(row => row.profile),
+        [{
+          ...profileData,
+          altNames: {
+            add: profileData.altNames
+          }
+        }]
+      )
+    })
+    .catch(err => {
+      t.error(err)
+      console.log(err)
+    })
+    .finally(t.end)
 })
 
 test('csv.parse', t => {
@@ -376,9 +432,7 @@ test('csv.convertDate', (t) => {
   convert('1/7/1997', '1997-07-01')
 })
 
-test('csv.mapNodesToCsv', t => {
-  t.plan(2)
-
+test('csv export + import (Table)', t => {
   // use the nestedDescendants to generate nodes
   const nodes = d3Hierarchy(simpleNestedDescendants)
     .descendants()
@@ -423,16 +477,28 @@ test('csv.mapNodesToCsv', t => {
   ]
 
   // run the nodes through the csv row mapping
-  const _csv = csv.mapNodesToCsv(nodes, customFieldDefs)
+  const output = csv.mapNodesToCsv(nodes, customFieldDefs)
 
   const filepath = path.join(__dirname, 'fixtures', 'nested-whakapapa.csv')
-  fs.readFile(filepath, 'utf8').then((file) => {
-    t.ok(file, 'file read returns result')
+  fs.readFile(filepath, 'utf8')
+    .then((file) => {
+      t.ok(file, 'file read returns result')
 
-    t.deepEqual(
-      _csv,
-      file,
-      'returns expected csv'
-    )
-  })
+      t.equal(
+        output.trim(),
+        file.trim(),
+        'returns expected csv'
+      )
+
+      csv.parse(output, false) // false => !isFromPersonIndex
+        .then(result => {
+          // console.log(JSON.stringify(result, null, 2))
+          t.equal(result.length, 3, 'parses fine')
+        })
+        .catch(err => {
+          t.error(err)
+          console.log(err)
+        })
+        .finally(t.end)
+    })
 })

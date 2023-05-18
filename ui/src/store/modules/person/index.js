@@ -5,7 +5,8 @@ import {
   getPersonMinimal,
   getPersonCustomFields,
   savePerson as savePersonMutation,
-  deletePerson, getPersonFull,
+  getPersonFull,
+  deletePerson,
   findPersonByName,
   loadPersonList
 } from './apollo-helpers'

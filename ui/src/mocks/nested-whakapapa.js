@@ -4,7 +4,7 @@ module.exports = {
   type: 'person',
   preferredName: 'Mum',
   legalName: null,
-  altNames: [],
+  altNames: ['Mama', 'Momo'],
   description: null,
   gender: 'female',
   postCode: null,
