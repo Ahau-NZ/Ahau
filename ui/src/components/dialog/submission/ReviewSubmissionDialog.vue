@@ -31,11 +31,11 @@
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
-                    <Avatar class="small-avatar" size="80px" :image="targetProfile.avatarImage"
-                      :alt="targetProfile.preferredName" isView />
+                    <Avatar class="small-avatar" size="80px" :image="sourceProfile.avatarImage"
+                      :alt="sourceProfile.preferredName" isView />
                   </v-col>
                   <v-col cols="12">
-                    <h4> {{ targetProfile.preferredName }} </h4>
+                    <h4> {{ sourceProfile.preferredName }} </h4>
                   </v-col>
                 </v-row>
               </v-col>
@@ -52,7 +52,7 @@
         <!-- Content for changes -->
         <v-col v-for="([key, value], i) in changes" :key="i">
           <div v-if="key == 'avatarImage'">
-            <div v-if="targetProfile[key] == null">
+            <div v-if="sourceProfile[key] == null">
               <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
@@ -79,9 +79,9 @@
                     <v-col cols="4" align="center">
                       <v-row>
                         <v-col cols="12">
-                          <Avatar class="small-avatar" size="80px" :image="targetProfile.avatarImage"
-                            :alt="targetProfile.preferredName" :gender="targetProfile.gender"
-                            :aliveInterval="targetProfile.aliveInterval" />
+                          <Avatar class="small-avatar" size="80px" :image="sourceProfile.avatarImage"
+                            :alt="sourceProfile.preferredName" :gender="sourceProfile.gender"
+                            :aliveInterval="sourceProfile.aliveInterval" />
                         </v-col>
                       </v-row>
                     </v-col>
@@ -324,17 +324,14 @@ export default {
     applicantProfile () {
       return this.notification?.applicant || {}
     },
-    targetProfile () {
-      return this.notification?.target || {}
+    sourceProfile () {
+      return this.notification?.source || {}
     },
     applicantProfileCustomFields () {
       return this.applicantProfile.customFields
     },
-    group () {
-      return this.notification?.group
-    },
     tribeCustomFields () {
-      return getTribeCustomFields(this.group, !this.notification?.isPersonal)
+      return getTribeCustomFields(this.notification?.rawGroup, !this.notification?.isPersonal)
     },
     comments () {
       return this.notification?.history
@@ -370,7 +367,7 @@ export default {
     },
     text () {
       if (this.showAction) {
-        return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.targetProfile?.preferredName
+        return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.sourceProfile?.preferredName
       }
 
       switch (this.notification?.isAccepted) {
@@ -420,7 +417,7 @@ export default {
           return
         }
 
-        output.allowedFields = Object.keys(this.selectedChanges)
+        output.allowedFields = this.selectedChanges
 
         await this.approveEditGroupPersonSubmission(output)
       } else {
@@ -450,12 +447,12 @@ export default {
       else delete this.selectedChanges[key]
     },
     getLabel (key, value) {
-      return this.isEmptyValue(this.targetProfile[key])
+      return this.isEmptyValue(this.sourceProfile[key])
         ? `Added new ${this.updatedKeys[key]}: ${this.formatValue(value)}`
         : this.getChangesLabel(key, value)
     },
     // NOTE: cherese 1/05/23
-    // I removed the "from" text from here, change from ... to, because when the targetProfile is updated, it shows
+    // I removed the "from" text from here, change from ... to, because when the sourceProfile is updated, it shows
     // the updated values, so there isnt an "easy" way to show the old values
     getChangesLabel (key, value) {
       return `

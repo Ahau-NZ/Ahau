@@ -16,10 +16,10 @@ import { PERSON_FRAGMENT } from '@/lib/person-helpers'
 //   }
 // }
 
-export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields = [] }) => {
+export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields }) => {
   return {
     mutation: gql`
-      mutation ($id: String!, $comment: String, $allowedFields: [String]) {
+      mutation ($id: String!, $comment: String, $allowedFields: PersonProfileInput!) {
         approveEditGroupPerson(id: $id, comment: $comment, allowedFields: $allowedFields)
       }
       `,
@@ -31,10 +31,10 @@ export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields = 
   }
 }
 
-export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields = [] }) => {
+export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields }) => {
   return {
     mutation: gql`
-      mutation ($id: String!, $comment: String, $allowedFields: [String]) {
+      mutation ($id: String!, $comment: String, $allowedFields: PersonProfileInput!) {
         approveNewGroupPerson(id: $id, comment: $comment, allowedFields: $allowedFields)
       }
       `,
@@ -125,6 +125,7 @@ export const SubmissionFragment = gql`
   ${COMMUNITY_FRAGMENT}
   fragment SubmissionFragment on Submission {
     id
+    sourceId
     targetId
     targetType
     recps
@@ -218,7 +219,7 @@ export const SubmissionGroupPersonFragment = gql`
         }
       }
 
-      target {
+      source {
         ...ProfileFragment
       }
     }
