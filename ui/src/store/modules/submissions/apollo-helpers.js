@@ -2,16 +2,46 @@ import gql from 'graphql-tag'
 import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
 import { PERSON_FRAGMENT } from '@/lib/person-helpers'
 
-export const approveSubmission = ({ id, comment }) => {
+// export const approveSubmission = ({ id, comment }) => {
+//   return {
+//     mutation: gql`
+//       mutation ($id: String!, $comment: String) {
+//         approveSubmission(id: $id, comment: $comment)
+//       }
+//       `,
+//     variables: {
+//       id,
+//       comment: comment
+//     }
+//   }
+// }
+
+export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields = [] }) => {
   return {
     mutation: gql`
-      mutation ($id: String!, $comment: String) {
-        approveSubmission(id: $id, comment: $comment)
+      mutation ($id: String!, $comment: String, $allowedFields: [String]) {
+        approveEditGroupPerson(id: $id, comment: $comment, allowedFields: $allowedFields)
       }
       `,
     variables: {
       id,
-      comment: comment
+      comment,
+      allowedFields
+    }
+  }
+}
+
+export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields = [] }) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $comment: String, $allowedFields: [String]) {
+        approveNewGroupPerson(id: $id, comment: $comment, allowedFields: $allowedFields)
+      }
+      `,
+    variables: {
+      id,
+      comment,
+      allowedFields
     }
   }
 }
@@ -25,7 +55,7 @@ export const rejectSubmission = ({ id, comment }) => {
       `,
     variables: {
       id,
-      comment: comment
+      comment
     }
   }
 }

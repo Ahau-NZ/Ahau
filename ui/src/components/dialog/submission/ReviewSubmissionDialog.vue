@@ -392,7 +392,7 @@ export default {
   },
   methods: {
     ...mapActions('person', ['updatePerson']),
-    ...mapActions('submissions', ['approveSubmission', 'rejectSubmission']),
+    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'rejectSubmission']),
     ...mapActions('alerts', ['showAlert']),
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
@@ -420,15 +420,9 @@ export default {
           return
         }
 
-        await this.approveSubmission(output)
+        output.allowedFields = Object.keys(this.selectedChanges)
 
-        // TODO: move this execute function to ssb-submissions?
-        const profileOutput = {
-          id: this.targetProfile.id,
-          ...this.selectedChanges
-        }
-
-        await this.updatePerson(profileOutput)
+        await this.approveEditGroupPersonSubmission(output)
       } else {
         await this.rejectSubmission(output)
       }
