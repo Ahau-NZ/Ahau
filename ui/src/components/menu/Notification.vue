@@ -40,7 +40,7 @@ export default {
 
       if (type === 'system') return this.t('system')
 
-      const groupName = this.notification.group?.preferredName || 'TODO'
+      const groupName = this.notification.group?.preferredName
 
       const notificationStatus = () => {
         switch (true) {

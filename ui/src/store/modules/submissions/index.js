@@ -4,7 +4,7 @@ import {
   // proposeNewGroupPerson,
   proposeEditGroupPerson,
   getSubmissions,
-  approveSubmission,
+  approveEditGroupPersonSubmission,
   rejectSubmission
 } from './apollo-helpers'
 
@@ -59,10 +59,10 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get all submissions', err)
       }
     },
-    async approveSubmission (_, input) {
+    async approveEditGroupPersonSubmission (_, input) {
       try {
         const res = await apollo.mutate(
-          approveSubmission(input)
+          approveEditGroupPersonSubmission(input)
         )
         if (res.errors) throw res.errors
 

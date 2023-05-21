@@ -120,6 +120,7 @@ function mapSubmissionValues (whoami) {
       // targetType,
 
       target,
+      source,
       comments,
       approvedBy,
       rejectedBy,
@@ -139,6 +140,7 @@ function mapSubmissionValues (whoami) {
         : null
 
     const from = isPersonal ? whoami.personal.profile : applicant
+    const _group = (group && group.public[0]) || null
 
     return {
       type: 'submission',
@@ -146,7 +148,8 @@ function mapSubmissionValues (whoami) {
       applicant,
       id,
 
-      group,
+      group: _group,
+      rawGroup: group,
 
       // status
       isNew,
@@ -157,6 +160,7 @@ function mapSubmissionValues (whoami) {
       changes: details,
 
       target,
+      source,
 
       history: comments.map(({ authorId, author, comment }) => {
         return {
