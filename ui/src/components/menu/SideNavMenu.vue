@@ -360,6 +360,7 @@ export default {
 }
 
 .sideNav {
+  max-width: 300px;
   transition: top 0.2s ease;
 }
 
