@@ -21,6 +21,7 @@ import subtribe from './modules/subtribe'
 import profile from './modules/profile'
 import community from './modules/community'
 import person from './modules/person'
+import pataka from './modules/pataka'
 import collection from './modules/collection/'
 import settings from './modules/settings/'
 import story from './modules/story/'
@@ -84,6 +85,7 @@ export default new Vuex.Store({
     profile: profile(apollo),
     community: community(apollo),
     person: person(apollo),
+    pataka: pataka(apollo),
     collection: collection(apollo),
     story: story(apollo),
     submissions: submissions(apollo),
