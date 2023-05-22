@@ -2,6 +2,11 @@
 
 # Unreleased
 
+### Improvements
+
+- put padding below alert snackbar
+- put a max-width on the side navigation menu
+
 ### Features
 
 - Submissions
