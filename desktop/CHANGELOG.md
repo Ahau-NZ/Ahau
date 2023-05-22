@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Improvements
+
+- put padding below alert snackbar
+- put a max-width on the side navigation menu
+
 ### Features
 * custom fields are saved to the correct profile (admin or group) upon registration and your registration being accepted, as well as whenever you make changes to your profiles
   * only community defined database fields (custom fields) will be saved to profiles, any other fields not defined there will be discarded

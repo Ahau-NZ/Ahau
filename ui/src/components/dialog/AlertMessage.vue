@@ -4,7 +4,7 @@
       v-model="showMessage"
       :timeout="alertSettings.delay"
       content-class="text-center"
-      class="ma-2"
+      class="ma-2 pb-2"
     >
       {{ alertSettings.message }}
 
