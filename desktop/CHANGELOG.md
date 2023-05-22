@@ -1,11 +1,52 @@
 # Changelog | Ahau desktop
 
-## Unreleased
+# Unreleased
 
 ### Features
-* custom fields are saved to the correct profile (admin or group) upon registration and your registration being accepted, as well as whenever you make changes to your profiles
-  * only community defined database fields (custom fields) will be saved to profiles, any other fields not defined there will be discarded
-* added ability to submit changes in submit-only whakapapa
+
+- Submissions
+  - Allow submissions to save a profileId as a reference for future submissions features. This profileId will allow you to see what exactly was changed when a submission was approved to edit a profile.
+
+## v2.18.1
+
+### Bug Fixes
+
+- New version built to debug a windows installer
+
+## v2.18.0
+### Features
+
+- Submissions
+  - Kaitiaki can create submit-only whakapapa
+  - Members can make submissions to a submit-only whakapapa to update records. NOTE: This feature is still a work in progress and some pieces are missing.
+- Custom Fields
+  - Kaitiaki can now add custom fields to a tribe
+  - Members can provide custom field values when registering for a tribe
+  - Custom fields are viewable across the app and get be edited like any other field
+  - Kaitiaki can set the visibility of a custom field
+  - Hide admin-only fields from members
+  - CSV Import/Export now supports custom fields. When a new field is imported in a csv, it is added as a custom field
+
+### Improvements
+
+- Better "cleaning up" of tombstoned profiles
+- Better testing around csv import/export
+
+### Bug Fixes
+
+- fix bug where the dialog for creating a new person would open at the bottom of the form instead of the top
+- fix bug clearing the person index when switching tribes
+- fix error in display of altnames
+- Table:
+  - fix bug where whakapap table is not loading
+  - fix Table not showing adminProfile fields on initial load
+- Person Index:
+  - fix bug where admin profiles were not not showing correctly
+  - fix bug where it wasnt reloading correctly
+  - fix person list profile loading and merging
+  - fix dates not showing
+- Custom Fields:
+  - fix bug where members couldn't create a new group profile with custom fields
 
 ## v2.17.0
 
