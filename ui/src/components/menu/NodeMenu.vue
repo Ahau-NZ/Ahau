@@ -31,10 +31,13 @@ export default {
     VueContext
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('person', ['person', 'selectedProfile']),
     ...mapGetters('whakapapa', ['whakapapaView', 'focus']),
     ...mapGetters('tree', ['mouseEvent', 'searchedProfileId']),
+    isSubmitOnly () {
+      return !this.isKaitiaki && this.whakapapaView?.permission === 'submit'
+    },
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
     },
@@ -68,35 +71,35 @@ export default {
           title: this.t('addParent'),
           dialog: 'new-person',
           type: 'parent',
-          isPermitted: Boolean(this.selectedProfile),
+          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
           icon: require('@/assets/node-parent.svg')
         },
         {
           title: this.t('addPartner'),
           dialog: 'new-person',
           type: 'partner',
-          isPermitted: Boolean(this.selectedProfile),
+          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
           icon: require('@/assets/node-partner.svg')
         },
         {
           title: this.t('addChild'),
           dialog: 'new-person',
           type: 'child',
-          isPermitted: Boolean(this.selectedProfile),
+          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
           icon: require('@/assets/node-child.svg')
         },
         {
           title: this.t('addSibling'),
           dialog: 'new-person',
           type: 'sibling',
-          isPermitted: this.canAddSibling,
+          isPermitted: this.canAddSibling && !this.isSubmitOnly,
           icon: require('@/assets/node-sibling.svg')
         },
         {
           title: this.t('deletePerson'),
           dialog: 'delete-person',
           type: null,
-          isPermitted: this.canDelete,
+          isPermitted: this.canDelete && !this.isSubmitOnly,
           icon: 'mdi-delete'
         }
       ]

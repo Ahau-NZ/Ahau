@@ -50,7 +50,7 @@
             </v-col>
           </v-row>
 
-          <v-row v-if="isEditing">
+          <v-row v-if="isEditing && !canSubmit">
             <v-col cols="12" :class="mobile ? 'px-0' : 'py-0'">
               <v-divider/>
             </v-col>
@@ -86,7 +86,7 @@
 
           <v-row v-if="isEditing">
             <!-- Displays delete profile button (if editing and allowed to delete) -->
-            <v-col cols="12" sm="auto" v-if="isDeletable">
+            <v-col cols="12" sm="auto" v-if="isDeletable && !canSubmit">
               <v-btn
                 @click="$emit('delete')"
                 align="center"
@@ -254,7 +254,7 @@
                     :show-labels="true"
                     @profile-click="openProfile"
                   >
-                    <template v-slot:action>
+                    <template v-slot:action v-if="!canSubmit">
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('parent')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
@@ -271,7 +271,7 @@
                     :show-labels="true"
                     @profile-click="openProfile"
                   >
-                    <template v-slot:action >
+                    <template v-slot:action v-if="!canSubmit">
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('partner')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
@@ -288,7 +288,7 @@
                     :show-labels="true"
                     @profile-click="openProfile"
                   >
-                  <template v-slot:action v-if="!preview && view && view.focus !== profile.id">
+                  <template v-slot:action v-if="!preview && view && view.focus !== profile.id && !canSubmit">
                     <AddButton @click="toggleNew('sibling')" class="pb-4" justify="start"/>
                   </template>
                   </AvatarGroup>
@@ -305,7 +305,7 @@
                     :show-labels="true"
                     @profile-click="openProfile"
                   >
-                    <template v-slot:action>
+                    <template v-slot:action v-if="!canSubmit">
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
