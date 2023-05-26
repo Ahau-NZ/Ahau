@@ -11,6 +11,8 @@
 
 - Submissions
   - Allow submissions to save a profileId as a reference for future submissions features. This profileId will allow you to see what exactly was changed when a submission was approved to edit a profile.
+  - Disable ability to any new people to a whakapapa if you are not the kaitiaki
+    - This is because we havent implemented submissions to do that yet. Members can only create submissions to edit a profile at the moment.
 
 ## v2.18.1
 
