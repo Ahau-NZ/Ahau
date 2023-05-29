@@ -6,5 +6,7 @@
   "preferredName": "Preferred name",
   "fullName": "Ingoa katoa",
   "unknown": "Tautangata",
-  "age": "Tau"
+  "age": "Tau",
+  "addPerson": "Add person to database",
+  "existingPerson": "Person already exists in Database"
 }
