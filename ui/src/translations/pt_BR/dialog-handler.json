@@ -1,7 +1,9 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
+  "reviewSubmissionTitle": "Review profile changes to {preferredName}",
   "createCommunityTitle": "Criar nova comunidade",
   "newPersonTitle": "Add {dialogType} to {displayName}",
+  "addPerson": "Add person",
   "editPersonTitle": "Edit {displayName}",
   "whakapapaShowHelperTitle": "Family tree",
   "whakapapaRegistryTitle": "Whakapapa registry",
