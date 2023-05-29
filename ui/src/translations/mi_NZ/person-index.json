@@ -10,6 +10,7 @@
     "legalName": "Ingoa katoa",
     "gender": "Ira",
     "aliveInterval": "Birth/Death",
+    "avatarImage": "Image",
     "phone": "Waea",
     "email": "Īmēra",
     "address": "Wāhi Noho",
@@ -24,7 +25,12 @@
     "buriedLocation": "Buried Location",
     "profession": "Umanga",
     "education": "Education",
-    "school": "School"
+    "school": "School",
+    "dob": "Whānanautanga mai",
+    "dod": "Date of passing",
+    "age": "Tau",
+    "dateOfBirth": "Whānanautanga mai",
+    "dateOfDeath": "Date of passing"
   },
   "loading": "Loading profiles..."
 }
