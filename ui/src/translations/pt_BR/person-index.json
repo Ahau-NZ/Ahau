@@ -10,6 +10,7 @@
     "legalName": "Nome completo",
     "gender": "Gênero",
     "aliveInterval": "Birth/Death",
+    "avatarImage": "Image",
     "phone": "Phone",
     "email": "E-mail",
     "address": "Endereço",
@@ -24,7 +25,12 @@
     "buriedLocation": "Buried Location",
     "profession": "Profissão",
     "education": "Education",
-    "school": "School"
+    "school": "School",
+    "dob": "Data Nascimento",
+    "dod": "Date of passing",
+    "age": "Idade",
+    "dateOfBirth": "Data Nascimento",
+    "dateOfDeath": "Date of passing"
   },
   "loading": "Loading profiles..."
 }
