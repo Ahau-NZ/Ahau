@@ -14,8 +14,8 @@ The `ui/` folder is common to both, while `desktop/` and `mobile/` folders conta
 
 ### Requirements
 
-- node: `v14.16.1` to `v15.0.0`
-- npm: `v7.11.2` to `v8.0.0`
+- node: `>=18 <19`
+- npm: `>=9`
 
 ```bash
 $ npm install --engine-strict
@@ -38,10 +38,6 @@ Then follow the documentation for target platform:
 - [Graphiql](https://github.com/graphql/graphiql)
     - a sweet GraphQL tool for exploring generated doc and practicing queries/ mutations with the server
     - start the above dev environment then go to http://localhost:4000/graphql
-- [Storybook](https://storybook.js.org/)
-    - a tool to help you build components in isolation
-    - start it with `npm run storybook`
-    - serves up `*.stories.js` files
 
 - helper scipts
     ```
