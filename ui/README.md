@@ -37,5 +37,3 @@ $ npm run dev
 - upgrade to `d3@7`
     - full esm means out libs which use it for testing will need to go full esm
     - change test files to `*.test.mjs`
-- upgrade to `storybook@6`
-    - [migration docs >>](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#from-version-53x-to-60x)
