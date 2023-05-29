@@ -1,4 +1,4 @@
-const { notarize } = require('electron-notarize')
+const { notarize } = require('@electron/notarize')
 const { appId } = require('../electron-builder.config.js')
 
 const appleId = process.env.APPLE_ID
