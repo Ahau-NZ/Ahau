@@ -39,6 +39,10 @@ export default {
           case 'en_NZ': return { text: 'English (NZ)', value: locale }
           case 'mi_NZ': return { text: 'Māori', value: locale }
           case 'pt_BR': return { text: 'Portuguese (BR)', value: locale }
+
+          // handle display of old "en" value
+          case 'en': return { text: 'English (NZ)', value: 'en_NZ' }
+
           default: return { text: locale, value: locale }
         }
       })
@@ -59,7 +63,7 @@ export default {
 .LocalePicker {
   margin: 0;
   padding: 0;
-  max-width: 140px;
+  max-width: 160px;
   font-size: 14px;
   letter-spacing: 1px;
 }
