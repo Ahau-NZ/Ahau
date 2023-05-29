@@ -1,7 +1,9 @@
 {
   "reviewRegistrationTitle": "Request to join {groupPreferredName}",
+  "reviewSubmissionTitle": "Review profile changes to {preferredName}",
   "createCommunityTitle": "Hangaia he Hapori Hou",
   "newPersonTitle": "Add {dialogType} to {displayName}",
+  "addPerson": "Add person",
   "editPersonTitle": "Whakaniko {displayName}",
   "whakapapaShowHelperTitle": "Whakapapa",
   "whakapapaRegistryTitle": "Whakapapa registry",

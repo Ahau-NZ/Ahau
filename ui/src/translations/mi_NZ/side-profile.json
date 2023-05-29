@@ -1,6 +1,7 @@
 {
   "stories": "Ngā pūrākau",
   "edit": "Panoni",
+  "submit": "submit",
   "fullName": "Ingoa katoa",
   "otherNames": "Ētahi atu ingoa",
   "age": "Tau/Pakeke",
@@ -26,5 +27,6 @@
   "phone": "Waea",
   "address": "Wāhi Noho",
   "postcode": "Waehere",
-  "contactInfoText": "(Kaitiaki only)"
+  "contactInfoText": "(Kaitiaki only)",
+  "customFieldText": "Community Fields"
 }

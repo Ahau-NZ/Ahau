@@ -36,6 +36,10 @@
   "data": "Data",
   "type": "Type",
   "included": "Included",
+  "access": "Access",
   "required": "Required",
-  "settings": "Settings"
+  "settings": "Settings",
+  "deleteField": "Delete",
+  "newFieldDialogTitle": "Add new field to profiles",
+  "next": "next"
 }

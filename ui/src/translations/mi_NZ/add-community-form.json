@@ -36,6 +36,10 @@
   "data": "Data",
   "type": "Type",
   "included": "Included",
+  "access": "Te Whakatapoko",
   "required": "Required",
-  "settings": "Tautuhinga"
+  "settings": "Tautuhinga",
+  "deleteField": "Delete",
+  "newFieldDialogTitle": "Add new field to profiles",
+  "next": "next"
 }

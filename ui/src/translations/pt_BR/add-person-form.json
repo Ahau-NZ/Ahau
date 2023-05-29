@@ -53,5 +53,7 @@
     "cancel": "cancelar",
     "save": "Guardar"
   },
-  "dataDescription": "Descrição"
+  "dataDescription": "Descrição",
+  "kaitiakiOnly": "Kaitiaki only",
+  "communityFieldsTitle": "Community fields"
 }

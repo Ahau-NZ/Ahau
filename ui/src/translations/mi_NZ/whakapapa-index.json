@@ -3,9 +3,12 @@
   "addWhakapapaButton": "Whakapapa hou",
   "noWhakapapaFound": "He whakapapa tē kitea",
   "whakapapaRecords": "Ngā mauhanga",
+  "adminWhakapapaRecords": "Admin only records",
   "privateRecords": "Aku mauhanga muna",
   "backToWhakapapa": "Hoki atu ki ngā whakapapa",
-  "onlyYouHaveAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei whakapapa",
   "showDetails": "Whakaatuhia ngā kōrero mō te whakapapa",
-  "editDescription": "Whakatika ngā whakaahuatanga whakapapa"
+  "editDescription": "Whakatika ngā whakaahuatanga whakapapa",
+  "onlyYouHaveAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei whakapapa",
+  "youCanMakeChanges": "You can make changes to this whakapapa",
+  "onlyKaitiakiCanMakeChanges": "Only kaitiaki can make changes to this whakapapa"
 }
