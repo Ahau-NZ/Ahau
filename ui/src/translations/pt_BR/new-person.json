@@ -6,5 +6,7 @@
   "preferredName": "Preferred name",
   "fullName": "Nome completo",
   "unknown": "Desconhecido",
-  "age": "Idade"
+  "age": "Idade",
+  "addPerson": "Add person to database",
+  "existingPerson": "Person already exists in Database"
 }
