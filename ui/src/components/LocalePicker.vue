@@ -36,7 +36,7 @@ export default {
     locales () {
       return this.$i18n.availableLocales.map(locale => {
         switch (locale) {
-          case 'en': return { text: 'English', value: locale }
+          case 'en_NZ': return { text: 'English (NZ)', value: locale }
           case 'mi_NZ': return { text: 'Māori', value: locale }
           case 'pt_BR': return { text: 'Portuguese (BR)', value: locale }
           default: return { text: locale, value: locale }
