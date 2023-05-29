@@ -53,5 +53,7 @@
     "cancel": "Whakakora",
     "save": "Penapena"
   },
-  "dataDescription": "Kōrero whakaaturanga"
+  "dataDescription": "Kōrero whakaaturanga",
+  "kaitiakiOnly": "Kaitiaki only",
+  "communityFieldsTitle": "Community fields"
 }
