@@ -37,8 +37,10 @@ export default {
       return this.$i18n.availableLocales.map(locale => {
         switch (locale) {
           case 'en_NZ': return { text: 'English (NZ)', value: locale }
-          case 'mi_NZ': return { text: 'Māori', value: locale }
-          case 'pt_BR': return { text: 'Portuguese (BR)', value: locale }
+          case 'en_US': return { text: 'English (US)', value: locale }
+          case 'es_ES': return { text: 'Español', value: locale }
+          case 'pt_BR': return { text: 'Português (BR)', value: locale }
+          case 'mi_NZ': return { text: 'Te Reo Māori', value: locale }
 
           // handle display of old "en" value
           case 'en': return { text: 'English (NZ)', value: 'en_NZ' }
@@ -63,7 +65,7 @@ export default {
 .LocalePicker {
   margin: 0;
   padding: 0;
-  max-width: 160px;
+  max-width: 180px;
   font-size: 14px;
   letter-spacing: 1px;
 }
