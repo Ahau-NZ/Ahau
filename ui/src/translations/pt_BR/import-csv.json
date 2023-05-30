@@ -1,6 +1,6 @@
 {
-  "title": "Import people to tribal database",
-  "csvUpload": "Upload CSV file",
-  "people": "Could not import profiles",
-  "whakapapa": "Could not build whakapapa record"
+  "title": "Importar pessoas para a base de dados tribal",
+  "csvUpload": "Carregar arquivo CSV",
+  "people": "Não foi possível importar os perfis",
+  "whakapapa": "Não foi possível construir registro de whakapa"
 }

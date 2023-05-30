@@ -1,0 +1,10 @@
+{
+  "title": "Eliminar tu perfil de Ahau",
+  "warning": "ADVERTENCIA: ",
+  "undone": "Esto eliminará su base de datos Ahau de su computadora.",
+  "notBackedUp": "Si no ha respaldado sus claves esto no se puede deshacer y todos sus registros personales se perderán.",
+  "deleteButton": "Sí, eliminar mi perfil y base de datos",
+  "cancelButton": "Cancelar",
+  "confirmDeletePrompt": "Si desea continuar, por favor escriba la siguiente frase",
+  "deletePhrase": "BORRAR"
+}

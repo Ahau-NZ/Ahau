@@ -1,0 +1,17 @@
+{
+  "archiveTitle": "Tu Archivo Personal",
+  "archiveTitleName": "Archivo {name}",
+  "addStory": "Añadir una historia",
+  "newCollectionButton": "nueva colección",
+  "newStoryButton": "nueva historia",
+  "collections": "Colecciones",
+  "updated": "Actualizado",
+  "stories": "Historias",
+  "storiesAbout": "Historias sobre {name}",
+  "archiveRecords": "Archivar registros",
+  "access": "Acceder",
+  "mentions": "Menciones",
+  "location": "Ubicación",
+  "collectionNotFound": "No se encontraron colecciones",
+  "storyNotFound": " No hay historias"
+}

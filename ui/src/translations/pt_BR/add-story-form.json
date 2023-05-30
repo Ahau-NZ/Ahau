@@ -45,6 +45,6 @@
     "transcription": "Tradução/Transcrição",
     "private": "Privado",
     "access": "Somente você terá acesso a este registro",
-    "maxLength": "Exceeding record character limit: 4000",
-    "titleLength": "Max title character limit: 200"
+    "maxLength": "Excedeu o limite de registro de caracteres: 4000",
+    "titleLength": "Limite máximo de caracteres: 200"
 }

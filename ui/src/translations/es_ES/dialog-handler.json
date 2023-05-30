@@ -1,0 +1,11 @@
+{
+  "reviewRegistrationTitle": "Solicitud para unirse a {groupPreferredName}",
+  "reviewSubmissionTitle": "Revisar cambios de perfil en {preferredName}",
+  "createCommunityTitle": "Crear nueva tribu",
+  "newPersonTitle": "Añadir {dialogType} a {displayName}",
+  "addPerson": "Añadir persona",
+  "editPersonTitle": "Editar {displayName}",
+  "whakapapaShowHelperTitle": "Árbol familiar",
+  "whakapapaRegistryTitle": "Registro de Whakapapa",
+  "filterMenuTitle": "Menú de filtro de tabla"
+}

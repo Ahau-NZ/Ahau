@@ -1,29 +1,29 @@
 {
-  "system": "Back up your key now",
+  "system": "Faça o backup de sua chave agora",
   "personal": {
     "application": {
-      "new": "Your request to join {groupName} is pending",
-      "accepted": "Has accepted your request to join {groupName}",
-      "declined": "Your request to join {groupName} has been declined"
+      "new": "O seu pedido para se juntar a {groupName} está pendente",
+      "accepted": "Aceitou o seu pedido de ingresso a {groupName}",
+      "declined": "Seu pedido para se juntar a {groupName} foi recusado"
     },
     "submission": {
-      "new": "Your submission to {groupName} is pending",
-      "accepted": "Your submission to {groupName} has been accepted",
-      "declined": "Your submission to {groupName} has been declined"
+      "new": "A sua submissão para {groupName} está pendente",
+      "accepted": "Sua submissão para {groupName} foi aceita",
+      "declined": "Sua submissão para {groupName} foi recusada"
     }
   },
   "application": {
-    "new": "Has requested to join {groupName}",
-    "accepted": "Has joined {groupName}",
-    "declined": "Has been declined to join {groupName}"
+    "new": "Solicitou a inscrição de {groupName}",
+    "accepted": "Entrou em {groupName}",
+    "declined": "Foi recusado a ingressar em {groupName}"
   },
   "submission": {
-    "new": "Has submitted a change to {groupName}",
-    "accepted": "Their submission to {groupName} has been accepted",
-    "declined": "Their submission to {groupName} has been declined "
+    "new": "Enviou uma alteração para {groupName}",
+    "accepted": "O seu envio para {groupName} foi aceito",
+    "declined": "A sua submissão para {groupName} foi recusada "
   },
-  "systemTitle": "System",
-  "newTitle": "New",
-  "pendingTitle": "Pending",
+  "systemTitle": "SISTEMA",
+  "newTitle": "Novidades",
+  "pendingTitle": "PENDENTE",
   "completeTitle": "Complete"
 }

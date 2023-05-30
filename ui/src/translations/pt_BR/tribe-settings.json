@@ -1,11 +1,11 @@
 {
-  "kaitiakiFeatures": "Kaitiaki Features",
-  "kaitiakiFeaturesDescription": "Turn on/off the features available to kaitiaki of this community",
-  "memberFeatures": "Member Features",
-  "memberFeaturesDescription": "Turn on/off the features available to members and kaitiaki of this community",
-  "allowPersonsList": "Turn {toggle} peoples list",
-  "allowWhakapapaViews": "Turn {toggle} whakapapa records",
-  "allowStories": "Turn {toggle} the archive and stories",
-  "on": "on",
-  "off": "off"
+  "kaitiakiFeatures": "Características Kaitiaki",
+  "kaitiakiFeaturesDescription": "Liga/desliga os recursos disponíveis para kaitiaki desta comunidade",
+  "memberFeatures": "Características do Membro",
+  "memberFeaturesDescription": "Liga/desliga os recursos disponíveis para membros e kaitiaki desta comunidade",
+  "allowPersonsList": "Vire {toggle} povos na lista",
+  "allowWhakapapaViews": "Girar {toggle} registros de whakapa",
+  "allowStories": "Mude o {toggle} para arquivo e histórias",
+  "on": "ligado",
+  "off": "desligado"
 }

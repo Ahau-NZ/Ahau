@@ -1,0 +1,6 @@
+{
+  "title": "Importar gente a base de datos tribal",
+  "csvUpload": "Subir archivo CSV",
+  "people": "No se pudo importar perfiles",
+  "whakapapa": "No se pudo construir el registro whakapapa"
+}

@@ -1,16 +1,16 @@
 {
-  "delete": "Delete {preferredName}",
-  "deleteLabel": "delete",
-  "cancel": "cancel",
+  "delete": "Excluir {preferredName}",
+  "deleteLabel": "Excluir",
+  "cancel": "cancelar",
   "whakapapaShow": {
-    "hideProfile": "Hide this profile from this whakapapa record",
-    "deleteProile": "Delete this profile from all whakapapa records",
-    "deleteConfirmation": " Are you sure you want to delete this profile from this whakapapa record?",
-    "hideConfirmation": "Are you sure you want to hide this profile from this whakapapa record?",
-    "warnAboutChildren": "This will also remove all connected children from the whakapapa record."
+    "hideProfile": "Ocultar este perfil deste registro de whakapa",
+    "deleteProile": "Excluir este perfil de todos os registros de whakapa",
+    "deleteConfirmation": " Tem certeza de que deseja excluir este perfil deste registro de whakapa?",
+    "hideConfirmation": "Tem certeza de que deseja ocultar este perfil deste registro de whakapa?",
+    "warnAboutChildren": "Isso também removerá todas as crianças ligadas do registro de whakapa."
   },
   "personIndex": {
-    "deleteConfirmation": "Are you sure you want to delete this profile?",
-    "warnAboutChildren": "This will also remove all connected children from all whakapapa records that this profile is linked to."
+    "deleteConfirmation": "Tem certeza que deseja excluir este perfil?",
+    "warnAboutChildren": "Isso também irá remover todos os filhos conectados de todos os registros de whakapa que este perfil está ligado."
   }
 }

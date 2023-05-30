@@ -1,0 +1,59 @@
+{
+  "addPersonFormTitle": "Editar {displayName}",
+  "legalName": "Nombre completo",
+  "aka": "También conocido como",
+  "preferredName": "Nombre / Conocido como",
+  "dob": {
+    "title": "Fecha de nacimiento",
+    "day": "Día",
+    "month": "Mes",
+    "year": "Año"
+  },
+  "dod": "Fecha de muerte",
+  "uploadPhoto": "Subir foto de perfil",
+  "relatedBy": "Relacionado con {displayName} por",
+  "birthPlace": "Lugar de nacimiento",
+  "deathPlace": "Lugar de muerte",
+  "burialLocation": "Ubicación birial",
+  "notLiving": "Dejar de vivir",
+  "profileExists": "Este perfil ya existe en este registro de whakapapapa. ¿Cómo te gustaría ver esta relación",
+  "movePerson": "Mover {person} a la posición de {displayName}",
+  "createLink": "Crear un enlace entre {person} y {displayName}",
+  "birthOrder": "Orden de nacimiento",
+  "genderIdentity": "Identifica como",
+  "gender": {
+    "title": "Sexo",
+    "female": "Mujer",
+    "male": "Hombre",
+    "other": "Otro",
+    "unknown": "Desconocido"
+  },
+  "moreInfo": "Proporcionar más información",
+  "addName": "Añadir otro nombre",
+  "altNames": "Otros nombres",
+  "description": "Acerca de {displayName} ",
+  "skills": {
+    "title": "Habilidades y calificaciones",
+    "profession": "Profesión",
+    "skillsQuals": "Habilidad/calificación",
+    "addSkill": "Añadir habilidad/calificación",
+    "placeOfEducation": "Lugar de la educación",
+    "addEducation": "Añadir un lugar de educación"
+  },
+  "personalInfo": {
+    "title": "Información personal",
+    "email": "E-mail",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postCode": "Código Postal",
+    "country": "País"
+  },
+  "formHandlers": {
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
+  "dataDescription": "Descripción",
+  "kaitiakiOnly": "Kaitiaki only",
+  "communityFieldsTitle": "Campos de la comunidad"
+}

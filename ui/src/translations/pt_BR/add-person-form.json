@@ -1,5 +1,5 @@
 {
-  "addPersonFormTitle": "Edit {displayName}",
+  "addPersonFormTitle": "Editar {displayName}",
   "legalName": "Nome completo",
   "aka": "Também conhecido como",
   "preferredName": "Primeiro nome / Conhecido como",
@@ -11,14 +11,14 @@
   },
   "dod": "Data de falecimento",
   "uploadPhoto": "Carregar foto do perfil",
-  "relatedBy": "Related to {displayName} by",
+  "relatedBy": "Relacionado a {displayName} por",
   "birthPlace": "Local de nascimento",
-  "deathPlace": "Place of death",
-  "burialLocation": "Burial location",
+  "deathPlace": "Local de morte",
+  "burialLocation": "Localização do funeral",
   "notLiving": "Não está mais vivendo",
-  "profileExists": "This profile already exists in this whakapapa record. How would you like to see this relationship",
-  "movePerson": "Move {person} to {displayName}'s position",
-  "createLink": "Create a link between {person} and {displayName}",
+  "profileExists": "Este perfil já existe neste registro de whakapa. Como gostaria de ver esta relação",
+  "movePerson": "Mover {person} para a posição de {displayName}",
+  "createLink": "Crie uma ligação entre {person} e {displayName}",
   "birthOrder": "Ordem de nascimento",
   "genderIdentity": "Identifica como",
   "gender": {
@@ -30,8 +30,8 @@
   },
   "moreInfo": "Forneça mais informações",
   "addName": "Adicione outro nome",
-  "altNames": "Other names",
-  "description": "About {displayName} ",
+  "altNames": "Outros nomes",
+  "description": "Sobre {displayName} ",
   "skills": {
     "title": "Habilidades e qualificações",
     "profession": "Profissão",
@@ -43,7 +43,7 @@
   "personalInfo": {
     "title": "Informação Pessoal",
     "email": "E-mail",
-    "phone": "Phone",
+    "phone": "Smartphone",
     "address": "Endereço",
     "city": "Cidade",
     "postCode": "CEP",
@@ -55,5 +55,5 @@
   },
   "dataDescription": "Descrição",
   "kaitiakiOnly": "Kaitiaki only",
-  "communityFieldsTitle": "Community fields"
+  "communityFieldsTitle": "Campos de comunidade"
 }

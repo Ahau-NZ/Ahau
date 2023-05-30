@@ -1,15 +1,15 @@
 {
-  "titleArchive": "Archive",
-  "archiveDescription": "An Archive is where you create, store and access your stories",
-  "storyDescription": "A Story is a digital retelling or recording of a piece of information that is of some personal or commuinty significance. In particular information related to your heritage or culture. These may include things like memories, histories, stories, events, and legends.",
-  "archiveTypes": "In Āhau there are two types of Archives",
-  "personalArchive": "Your personal archive, completely private and securely encrypted to your own personal device. Your personal Archive is created when you first create an account for Āhau",
-  "whanauArchive": "A whānau archive, which is a shared archive that has a privately shared encryption key and is only accessible by approved whānau members personal devices. A community Archive is created whenever you create a new tribe in Āhau",
-  "createRecord": "When creating a Record you can decide which Archive you would like to store the Record in by changing the \"Access\" to either yourself, or a whānau group that you are apart of.",
-  "exampleImages": "Example images",
-  "itemsStories": "add stories and records to archive",
-  "itemsArtefacts": "add artefacts and media to stories ",
-  "itemsViewAll": "view all your stories in one place",
-  "itemsIndividual": "view individual stories for more information",
-  "close": "close"
+  "titleArchive": "Arquivo",
+  "archiveDescription": "Um Arquivo é onde você cria, armazena e acessa suas histórias",
+  "storyDescription": "Uma história é um relato ou gravação digital de uma informação que é de algum significado pessoal ou comovente. Em particular, informações relacionadas ao seu patrimônio ou cultura. Elas podem incluir coisas como memórias, histórias, eventos e lendas.",
+  "archiveTypes": "Há dois tipos de arquivos em A➲ hau",
+  "personalArchive": "Seu arquivo pessoal, completamente privado e criptografado com segurança para seu próprio dispositivo pessoal. O seu arquivo pessoal é criado quando você criar uma conta para A➲ hau",
+  "whanauArchive": "Um arquivo whaseuropenau que é um arquivo compartilhado com uma chave de criptografia privada e que só é acessível através de dispositivos pessoais aprovados de seus membros. Um arquivo da comunidade é criado sempre que você cria uma nova tribo no AΑhau",
+  "createRecord": "Ao criar um Registo, você pode decidir qual Arquivo você gostaria de armazenar o Registo, alterando o \"Acesso\" para qualquer um de você, ou um grupo assobio do qual você está separado.",
+  "exampleImages": "Exemplos de imagens",
+  "itemsStories": "adicionar histórias e registros para arquivar",
+  "itemsArtefacts": "adicionar artefatos e mídia às histórias ",
+  "itemsViewAll": "veja todas as suas histórias em um só lugar",
+  "itemsIndividual": "veja histórias individuais para mais informações",
+  "close": "fECHAR"
 }

@@ -1,0 +1,21 @@
+{
+  "settingsTitle": "Ajustes de la cuenta",
+  "keyBackupTitle": "Copia de seguridad",
+  "loseAccess": "Asegúrate de no perder el acceso a tu cuenta",
+  "backUpKey": "Copia tu clave ahora",
+  "downloadKey": "Descargar copia de seguridad",
+  "deleteProfile": "Eliminar tu perfil y base de datos",
+  "languageTitle": "Idioma",
+  "chooseLanguage": "Elija entre Inglés y Maíz, Maíz o ese.",
+  "languagesNote": "Tenga en cuenta que los idiomas son un trabajo en curso, agradecemos sus sugerencias y comentarios.",
+  "submitFeedback": "Envía tus comentarios aquí",
+  "storageTitle": "Almacenamiento",
+  "ahauStorageTitle": "Ahau Usage",
+  "diskStorageTitle": "Espacio libre",
+  "storageManagementTitle": "Gestión de Almacenamiento",
+  "limitOption": "Limitar uso del disco",
+  "ahauStorageLimit": "Límite de almacenamiento Ahau",
+  "limitOptionDescription": "Las fotos y vídeos antiguos se eliminarán automáticamente para dar espacio a otros nuevos cuando se alcance este límite",
+  "defaultOption": "Mantener todos los artefactos",
+  "defaultOptionDescription": "Ahau descargará y guardará una copia de toda la información y los archivos a los que ha accedido. Hace esto para que el contenido esté disponible fuera de línea, y crea una copia de la información para mantener la seguridad"
+}

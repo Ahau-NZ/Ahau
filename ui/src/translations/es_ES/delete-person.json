@@ -1,0 +1,16 @@
+{
+  "delete": "Eliminar {preferredName}",
+  "deleteLabel": "borrar",
+  "cancel": "cancelar",
+  "whakapapaShow": {
+    "hideProfile": "Ocultar este perfil de este registro de whakapapa",
+    "deleteProile": "Eliminar este perfil de todos los registros whakapapa",
+    "deleteConfirmation": " ¿Está seguro que desea eliminar este perfil de este registro whakapapapa?",
+    "hideConfirmation": "¿Está seguro que desea ocultar este perfil de este registro whakapapapa?",
+    "warnAboutChildren": "Esto también eliminará todos los hijos conectados del registro whakapapapa."
+  },
+  "personIndex": {
+    "deleteConfirmation": "¿Está seguro que desea eliminar este perfil?",
+    "warnAboutChildren": "Esto también eliminará todos los hijos conectados de todos los registros whakapapa a los que este perfil está vinculado."
+  }
+}

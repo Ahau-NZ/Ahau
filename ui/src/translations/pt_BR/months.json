@@ -1,14 +1,14 @@
 {
-    "jan": "Jan",
-    "feb": "Feb",
-    "mar": "Mar",
-    "apr": "Apr",
-    "may": "May",
-    "jun": "Jun",
-    "jul": "Jul",
-    "aug": "Aug",
-    "sep": "Sep",
-    "oct": "Oct",
-    "nov": "Nov",
-    "dec": "Dec"
+    "jan": "jan",
+    "feb": "fev",
+    "mar": "Mar.",
+    "apr": "Abr.",
+    "may": "maio",
+    "jun": "Jun.",
+    "jul": "Jul.",
+    "aug": "ago",
+    "sep": "set",
+    "oct": "out",
+    "nov": "nov",
+    "dec": "dez"
 }

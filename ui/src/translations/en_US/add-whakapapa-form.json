@@ -1,0 +1,11 @@
+{
+    "createWhakapapa": "Create a new genealogy",
+    "name": "Name",
+    "description": "Description",
+    "start": "Would you like to start with",
+    "anotherPerson": "Another person",
+    "yourself": "Yourself",
+    "csvImport": "Import from CSV file",
+    "csvUpload": "Upload CSV File",
+    "editImage": "Edit genealogy image"
+}

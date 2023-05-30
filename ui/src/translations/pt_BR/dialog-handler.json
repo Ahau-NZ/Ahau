@@ -1,11 +1,11 @@
 {
-  "reviewRegistrationTitle": "Request to join {groupPreferredName}",
-  "reviewSubmissionTitle": "Review profile changes to {preferredName}",
+  "reviewRegistrationTitle": "Pedido para se juntar a {groupPreferredName}",
+  "reviewSubmissionTitle": "Revisar alterações de perfil para {preferredName}",
   "createCommunityTitle": "Criar nova comunidade",
-  "newPersonTitle": "Add {dialogType} to {displayName}",
-  "addPerson": "Add person",
-  "editPersonTitle": "Edit {displayName}",
-  "whakapapaShowHelperTitle": "Family tree",
-  "whakapapaRegistryTitle": "Whakapapa registry",
-  "filterMenuTitle": "Table Filter Menu"
+  "newPersonTitle": "Adicionar {dialogType} a {displayName}",
+  "addPerson": "Adicionar pessoa",
+  "editPersonTitle": "Editar {displayName}",
+  "whakapapaShowHelperTitle": "Árvore de família",
+  "whakapapaRegistryTitle": "Registro de apa",
+  "filterMenuTitle": "Menu Filtro de Tabela"
 }

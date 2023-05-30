@@ -1,0 +1,12 @@
+{
+  "firstName": "Nombre / conocido como",
+  "addParent": "Añadir otro padre",
+  "addChildren": "Añadir hijos",
+  "addPartners": "Añadir socios",
+  "preferredName": "Nombre preferido",
+  "fullName": "Nombre completo",
+  "unknown": "Desconocido",
+  "age": "Edad",
+  "addPerson": "Añadir persona a la base de datos",
+  "existingPerson": "La persona ya existe en la base de datos"
+}

@@ -1,0 +1,11 @@
+{
+    "createWhakapapa": "Create a new whakapapa",
+    "name": "Nombre",
+    "description": "Descripción",
+    "start": "¿Quieres empezar con",
+    "anotherPerson": "Otra persona",
+    "yourself": "Usted mismo",
+    "csvImport": "Importar desde archivo CSV",
+    "csvUpload": "Subir archivo CSV",
+    "editImage": "Editar imagen de whakapapa"
+}

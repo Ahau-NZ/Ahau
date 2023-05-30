@@ -1,0 +1,12 @@
+{
+  "title": "Respaldar tu clave Ahau",
+  "whyBackUp": "¿Por qué es importante respaldar mi clave Ahau?",
+  "allInformation": "Toda la información en Ahau es cifrada a su clave personal o a su clave tribal",
+  "noAccess": "Si ya no tiene acceso a su dispositivo (si está dañado o está fuera de lugar)",
+  "yourAhauKey": "Su clave de cifrado Ahau debe almacenarse en un lugar seguro donde sea fácilmente accesible para usted.",
+  "recommendations": "Recomendaciones sobre dónde almacenar su clave de forma segura:",
+  "personal": "Disco duro personal o memoria USB",
+  "trustedPerson": "Disco duro o USB de una persona de confianza (por ejemplo, miembro de la familia o amigo)",
+  "printFile": "Imprimir y archivar en una ubicación segura",
+  "downloadButton": "Descargar copia de seguridad"
+}

@@ -1,0 +1,29 @@
+{
+  "system": "Copia tu clave ahora",
+  "personal": {
+    "application": {
+      "new": "Su solicitud para unirse a {groupName} está pendiente",
+      "accepted": "Ha aceptado su solicitud para unirse a {groupName}",
+      "declined": "Su solicitud para unirse a {groupName} ha sido rechazada"
+    },
+    "submission": {
+      "new": "Su envío a {groupName} está pendiente",
+      "accepted": "Su envío a {groupName} ha sido aceptado",
+      "declined": "Tu envío a {groupName} ha sido rechazado"
+    }
+  },
+  "application": {
+    "new": "Ha solicitado unirse a {groupName}",
+    "accepted": "Se ha unido a {groupName}",
+    "declined": "Ha sido rechazado para unirse a {groupName}"
+  },
+  "submission": {
+    "new": "Ha enviado un cambio a {groupName}",
+    "accepted": "Su envío a {groupName} ha sido aceptado",
+    "declined": "Su presentación a {groupName} ha sido rechazada "
+  },
+  "systemTitle": "Sistema",
+  "newTitle": "Nuevo",
+  "pendingTitle": "Pendiente",
+  "completeTitle": "Complete"
+}

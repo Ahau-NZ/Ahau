@@ -1,0 +1,15 @@
+{
+  "titleArchive": "Archivar",
+  "archiveDescription": "Un archivo es donde crea, almacena y accede a tus historias",
+  "storyDescription": "Una Historia es una narración digital o grabación de una pieza de información que tiene alguna importancia personal o familiar. En particular, la información relacionada con su patrimonio o cultura, que puede incluir recuerdos, historias, historias, acontecimientos, leyendas.",
+  "archiveTypes": "Hay dos tipos de Archivos en Atidihau",
+  "personalArchive": "Su archivo personal, completamente privado y cifrado de forma segura a su propio dispositivo personal. Tu archivo personal se crea cuando creas una cuenta de A�u-hau",
+  "whanauArchive": "Un archivo de nau, que es un archivo compartido que tiene una clave de cifrado compartida privada y sólo es accesible por dispositivos personales aprobados de los miembros del grupo. Un archivo de la comunidad se crea cada vez que creas una nueva tribu",
+  "createRecord": "Al crear un registro, puede decidir en qué archivo desea almacenar el registro cambiando el \"Access\" a usted mismo o un grupo de nau que usted está separado.",
+  "exampleImages": "Imágenes de ejemplo",
+  "itemsStories": "agregar historias y registros al archivo",
+  "itemsArtefacts": "añadir artefactos y medios a historias ",
+  "itemsViewAll": "ver todas tus historias en un solo lugar",
+  "itemsIndividual": "ver historias individuales para más información",
+  "close": "cerrar"
+}

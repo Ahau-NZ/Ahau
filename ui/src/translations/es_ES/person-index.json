@@ -1,0 +1,36 @@
+{
+  "title": "Personas",
+  "action": {
+    "search": "Buscar",
+    "expand": "más...",
+    "edit": "Editar"
+  },
+  "prop": {
+    "preferredName": "Nombre",
+    "legalName": "Nombre completo",
+    "gender": "Sexo",
+    "aliveInterval": "Nacimiento/Muerte",
+    "avatarImage": "Imagen",
+    "phone": "Teléfono",
+    "email": "E-mail",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postCode": "Código postal",
+    "country": "País",
+    "altNames": "También conocido como",
+    "description": "Descripción",
+    "placeOfBirth": "Lugar de nacimiento",
+    "birthOrder": "Orden de nacimiento",
+    "placeOfDeath": "Lugar de la muerte",
+    "buriedLocation": "Ubicación enterrada",
+    "profession": "Profesión",
+    "education": "Habilidades",
+    "school": "Escuelas",
+    "dob": "Fecha de nacimiento",
+    "dod": "Fecha de aprobación",
+    "age": "Edad",
+    "dateOfBirth": "Fecha de nacimiento",
+    "dateOfDeath": "Fecha de aprobación"
+  },
+  "loading": "Cargando perfiles..."
+}
