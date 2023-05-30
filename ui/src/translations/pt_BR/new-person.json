@@ -1,12 +1,12 @@
 {
-  "firstName": "First name / known as",
-  "addParent": "Add other parent",
-  "addChildren": "Add children",
-  "addPartners": "Add partners",
-  "preferredName": "Preferred name",
+  "firstName": "Primeiro nome / conhecido como",
+  "addParent": "Adicionar outro pai",
+  "addChildren": "Adicionar filhos",
+  "addPartners": "Adicionar parceiros",
+  "preferredName": "Nome preferencial",
   "fullName": "Nome completo",
   "unknown": "Desconhecido",
   "age": "Idade",
-  "addPerson": "Add person to database",
-  "existingPerson": "Person already exists in Database"
+  "addPerson": "Adicionar pessoa ao banco de dados",
+  "existingPerson": "Pessoa já existe no Banco de Dados"
 }

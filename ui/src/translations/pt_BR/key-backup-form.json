@@ -1,12 +1,12 @@
 {
-  "title": "Back Up Your Ahau Key",
-  "whyBackUp": "Why is backing up my Ahau key important?",
-  "allInformation": "All information in Ahau is encrypted to either your personal key or your tribal key",
-  "noAccess": "If you no longer have access to your device (if it is either damaged or misplaced)",
-  "yourAhauKey": "Your Ahau encryption key should be stored in a safe place where it is easily accessible to you.",
-  "recommendations": "Recommendations on where to securely store your key:",
-  "personal": "Personal hard drive or USB stick",
-  "trustedPerson": "A trusted person's hard drive or USB stick (e.g. family member or friend)",
-  "printFile": "Print and file in a secure location",
-  "downloadButton": "Download Key Backup"
+  "title": "Faça o backup de sua chave Ahau",
+  "whyBackUp": "Por que o backup da minha chave Ahau é importante?",
+  "allInformation": "Todas as informações em Ahau são criptografadas para sua chave pessoal ou para sua chave tribal",
+  "noAccess": "Se você não tem mais acesso ao seu dispositivo (se estiver danificado ou deslocado)",
+  "yourAhauKey": "Sua chave de criptografia Ahau deve ser armazenada em um local seguro onde é facilmente acessível para você.",
+  "recommendations": "Recomendações sobre onde armazenar com segurança sua chave:",
+  "personal": "Disco rígido pessoal ou cartão USB",
+  "trustedPerson": "Um disco rígido ou cartão USB de confiança (por exemplo, membro da família ou amigo)",
+  "printFile": "Imprimir e arquivar em um local seguro",
+  "downloadButton": "Baixar Chave de Backup"
 }

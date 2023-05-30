@@ -1,10 +1,10 @@
 {
-  "title": "Delete Your Ahau Profile",
-  "warning": "WARNING: ",
-  "undone": "This will delete your Ahau database from your computer.",
-  "notBackedUp": "If you have not backed up your keys this cannot be undone and all of your personal records will be lost.",
-  "deleteButton": "Yes, Delete My Profile and Database",
+  "title": "Excluir seu perfil Ahau",
+  "warning": "ATENÇÃO: ",
+  "undone": "Isto irá excluir a base de dados Ahau do seu computador.",
+  "notBackedUp": "Se você não fez o backup de suas chaves, isso não pode ser desfeito e todos os seus registros pessoais serão perdidos.",
+  "deleteButton": "Sim, excluir meu perfil e banco de dados",
   "cancelButton": "cancelar",
-  "confirmDeletePrompt": "If you would like to continue, please type the following phrase",
-  "deletePhrase": "DELETE"
+  "confirmDeletePrompt": "Se você gostaria de continuar, por favor, digite a seguinte frase",
+  "deletePhrase": "EXCLUIR"
 }

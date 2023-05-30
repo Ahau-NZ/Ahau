@@ -1,0 +1,18 @@
+{
+    "fullName": "Nombre completo",
+    "preferredName": "Nombre preferido",
+    "partners": "Socios",
+    "aka": "También conocido como",
+    "age": "Edad",
+    "dob": "D.O. B.",
+    "dod": "D. D.",
+    "profession": "Profesión",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postCode": "Código postal",
+    "country": "País",
+    "pob": "Lugar de nacimiento",
+    "pod": "Lugar de la muerte",
+    "email": "E-mail",
+    "phone": "Teléfono"
+}

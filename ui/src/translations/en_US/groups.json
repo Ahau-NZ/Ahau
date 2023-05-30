@@ -1,0 +1,20 @@
+{
+  "groups": "groups",
+  "tribalKaitiaki": "Tribal admin",
+  "groupYourMembers": "Group your members to provide an extra layer of access to records",
+  "kaitiakiDescription": "Tribe admins are responsible for the members and content in your tribe. Please note you cannot remove admin yet.",
+  "addKaitiaki": "Add admin",
+  "addGroup": "Add group",
+  "groupDialogTitle": {
+    "edit": "Edit this subtribe",
+    "create": "Create a new subtribe"
+  },
+  "groupDialogButton": {
+    "create": "Create",
+    "edit": "Update"
+  },
+  "kaitiaki": "Admin",
+  "member": "Member",
+  "addMembers": "Add members",
+  "delete": "delete group"
+}

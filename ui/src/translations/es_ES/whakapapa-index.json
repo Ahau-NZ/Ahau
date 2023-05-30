@@ -1,0 +1,14 @@
+{
+  "whakapapaTitle": "Registros de Whakapapa",
+  "addWhakapapaButton": "nuevo registro de whakapapa",
+  "noWhakapapaFound": "registro whakapapa no encontrado",
+  "whakapapaRecords": "Registros",
+  "adminWhakapapaRecords": "Solo registros de admin",
+  "privateRecords": "Mi privado",
+  "backToWhakapapa": "Volver a registros de whakapapa",
+  "showDetails": "Mostrar detalles de Whakapapa",
+  "editDescription": "Editar descripción de whakapapa",
+  "onlyYouHaveAccess": "Sólo tienes acceso a este whakapapa",
+  "youCanMakeChanges": "Puedes hacer cambios en este whakapapa",
+  "onlyKaitiakiCanMakeChanges": "Sólo kaitiaki puede hacer cambios a este whakapapa"
+}

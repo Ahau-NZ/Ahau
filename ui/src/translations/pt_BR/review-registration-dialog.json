@@ -1,8 +1,8 @@
 {
-  "comments": "Comments",
-  "answers": "Question Answers",
-  "dob": "Date of Birth",
-  "phone": "Phone",
+  "comments": "comentários",
+  "answers": "Respostas à pergunta",
+  "dob": "Data de nascimento",
+  "phone": "Smartphone",
   "email": "E-mail",
   "postcode": "CEP",
   "address": "Endereço",
@@ -12,13 +12,13 @@
   "preferredName": "Nome preferencial",
   "fullName": "Nome Completo",
   "otherNames": "Outros Nomes",
-  "placeOfBirth": "Place Of Birth",
+  "placeOfBirth": "Local de nascimento",
   "age": "Idade",
   "profession": "Profissão",
-  "education": "Education",
-  "school": "School",
-  "message": "Send a message",
-  "approve": "Approve",
-  "decline": "Decline",
-  "close": "Close"
+  "education": "Educação",
+  "school": "Instituição",
+  "message": "Enviar uma mensagem",
+  "approve": "Aprovar",
+  "decline": "Recusar",
+  "close": "FECHAR"
 }

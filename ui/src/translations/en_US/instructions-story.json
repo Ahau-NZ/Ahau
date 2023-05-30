@@ -1,0 +1,15 @@
+{
+  "titleArchive": "Archive",
+  "archiveDescription": "An Archive is where you create, store and access your stories",
+  "storyDescription": "A Story is a digital retelling or recording of a piece of information that is of some personal or community significance. In particular information related to your heritage or culture. These may include things like memories, histories, stories, events, and legends.",
+  "archiveTypes": "In Āhau there are two types of Archives",
+  "personalArchive": "Your personal archive, completely private and securely encrypted to your own personal device. Your personal Archive is created when you first create an account for Āhau",
+  "whanauArchive": "A genealogy archive, which is a shared archive that has a privately shared encryption key and is only accessible by approved family members personal devices. A community Archive is created whenever you create a new tribe in Āhau",
+  "createRecord": "When creating a Record you can decide which Archive you would like to store the Record in by changing the \"Access\" to either yourself, or a family group that you are a part of.",
+  "exampleImages": "Example images",
+  "itemsStories": "add stories and records to archive",
+  "itemsArtefacts": "add artefacts and media to stories ",
+  "itemsViewAll": "view all your stories in one place",
+  "itemsIndividual": "view individual stories for more information",
+  "close": "close"
+}

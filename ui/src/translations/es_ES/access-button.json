@@ -1,0 +1,19 @@
+{
+  "private": "Privado",
+  "whoHasAccess": "Elige quién tendrá acceso a este { recordType }",
+  "privateAccess": "Sólo usted tiene acceso a este {recordType}",
+  "kaitiaki": "Kaitiaki only",
+  "kaitiakiAccess": "Sólo kaitiaki de esta tribu puede ver este {recordType}",
+  "allMembers": "Todos los miembros",
+  "membersCanAccess": "Los miembros de esta tribu pueden leer este {recordType}. Sólo Kaitiaki puede editar.",
+  "membersCanEdit": "Miembros de esta tribu pueden editar este {recordType}",
+  "membersCanSubmit": "Los miembros de esta tribu pueden enviar cambios a este {recordType}. Los cambios son revisados por Kaitiaki",
+  "setAccess": "establecer acceso",
+  "addToArchive": "Añadir {recordType} al archivo",
+  "tribeName": "{tribeName} (tribu)",
+  "personal": "Personal",
+  "edit": "Editar",
+  "read": "Ver",
+  "view": "Ver",
+  "submit": "Enviar"
+}

@@ -1,0 +1,14 @@
+{
+  "whakapapaTitle": "Genealogy Records",
+  "addWhakapapaButton": "new genealogy record",
+  "noWhakapapaFound": "no genealogy record found",
+  "whakapapaRecords": "Records",
+  "adminWhakapapaRecords": "Admin only records",
+  "privateRecords": "My private",
+  "backToWhakapapa": "Back to genealogy records",
+  "showDetails": "Show Genealogy details",
+  "editDescription": "Edit genealogy description",
+  "onlyYouHaveAccess": "Only you have access to this genealogy",
+  "youCanMakeChanges": "You can make changes to this genealogy",
+  "onlyKaitiakiCanMakeChanges": "Only admins can make changes to this genealogy"
+}

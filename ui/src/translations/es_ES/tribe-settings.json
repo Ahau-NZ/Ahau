@@ -1,0 +1,11 @@
+{
+  "kaitiakiFeatures": "Características de Kaitiaki",
+  "kaitiakiFeaturesDescription": "Activar/desactivar las características disponibles para kaitiaki de esta comunidad",
+  "memberFeatures": "Características del miembro",
+  "memberFeaturesDescription": "Activar/desactivar las características disponibles para los miembros y kaitiaki de esta comunidad",
+  "allowPersonsList": "Cambiar la lista de {toggle} personas",
+  "allowWhakapapaViews": "Gira {toggle} registros de whakapapa",
+  "allowStories": "Convierte {toggle} el archivo e historias",
+  "on": "en",
+  "off": "apagado"
+}

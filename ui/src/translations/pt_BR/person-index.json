@@ -1,17 +1,17 @@
 {
-  "title": "People",
+  "title": "Pessoas",
   "action": {
-    "search": "Search",
-    "expand": "more...",
+    "search": "Pesquisa",
+    "expand": "maischar@@0",
     "edit": "Editar"
   },
   "prop": {
     "preferredName": "First name / known as",
     "legalName": "Nome completo",
     "gender": "Gênero",
-    "aliveInterval": "Birth/Death",
-    "avatarImage": "Image",
-    "phone": "Phone",
+    "aliveInterval": "Nascimento/Morte",
+    "avatarImage": "Imagem:",
+    "phone": "Smartphone",
     "email": "E-mail",
     "address": "Endereço",
     "city": "Cidade",
@@ -20,17 +20,17 @@
     "altNames": "Também conhecido como",
     "description": "Descrição",
     "placeOfBirth": "Local de nascimento",
-    "birthOrder": "Birth Order",
-    "placeOfDeath": "Place of Death",
-    "buriedLocation": "Buried Location",
+    "birthOrder": "Pedido de Nascimento",
+    "placeOfDeath": "Local da Morte",
+    "buriedLocation": "Localização enterrada",
     "profession": "Profissão",
     "education": "Education",
     "school": "School",
     "dob": "Data Nascimento",
-    "dod": "Date of passing",
+    "dod": "Data de passagem",
     "age": "Idade",
     "dateOfBirth": "Data Nascimento",
-    "dateOfDeath": "Date of passing"
+    "dateOfDeath": "Data de passagem"
   },
-  "loading": "Loading profiles..."
+  "loading": "Carregando perfis..."
 }

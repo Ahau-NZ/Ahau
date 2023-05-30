@@ -1,7 +1,7 @@
 {
     "fullName": "Nome Completo",
     "preferredName": "Nome preferencial",
-    "partners": "Partners",
+    "partners": "Parceiros",
     "aka": "Também conhecido como",
     "age": "Idade",
     "dob": "B.D.O.",
@@ -14,5 +14,5 @@
     "pob": "Local de nascimento",
     "pod": "Local da Morte",
     "email": "E-mail",
-    "phone": "Phone"
+    "phone": "Smartphone"
 }

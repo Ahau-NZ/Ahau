@@ -1,5 +1,5 @@
 {
-    "profile": "Profile",
-    "settings": "Settings",
-    "deletedProfileMessage": "Your profile and database were deleted!"
+    "profile": "Perfil",
+    "settings": "Confirgurações",
+    "deletedProfileMessage": "Seu perfil e banco de dados foram excluídos!"
 }

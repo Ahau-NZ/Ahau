@@ -1,0 +1,19 @@
+{
+  "private": "Private",
+  "whoHasAccess": "Choose who will have access to this { recordType }",
+  "privateAccess": "Only you have access to this {recordType}",
+  "kaitiaki": "Admin only",
+  "kaitiakiAccess": "Only admin of this tribe can view this {recordType}",
+  "allMembers": "All members",
+  "membersCanAccess": "Members of this tribe can read this {recordType}. Only Admin can edit.",
+  "membersCanEdit": "Members of this tribe can edit this {recordType}",
+  "membersCanSubmit": "Members of this tribe can submit changes to this {recordType}. Changes are reviewed by Admin",
+  "setAccess": "set access",
+  "addToArchive": "Add {recordType} to archive",
+  "tribeName": "{tribeName} (tribe)",
+  "personal": "Personal",
+  "edit": "Edit",
+  "read": "View",
+  "view": "View",
+  "submit": "Submit"
+}
