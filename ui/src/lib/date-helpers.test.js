@@ -5,7 +5,7 @@ import {
   formatSubmissionDate
 } from './date-helpers.js'
 
-import months from '../translations/en/months.json'
+import months from '../translations/en_NZ/months.json'
 
 const test = require('tape')
 

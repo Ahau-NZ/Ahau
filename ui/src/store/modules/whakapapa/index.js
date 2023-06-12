@@ -316,7 +316,6 @@ export default function (apollo) {
             // it's own lineage of people, allowing duplicate profiles across branches
             // (this behaves like a "path" except we use a set because we don't care about order)
           })
-          .reverse()
       }
       return result
     },
@@ -389,14 +388,25 @@ export default function (apollo) {
 
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
-      childLinks.forEach(({ parent, child, relationshipType }) => {
-        const newChildren = {
-          ...(state.childLinks[parent] || {}),
-          [child]: relationshipType || FALLBACK_CHILD_REL
-        }
-
-        Vue.set(state.childLinks, parent, newChildren)
-      })
+      // NOTE we use an if statement to check if we are adding a new link so lets add it to the end of the family instead of at the start
+      if (childLinks.length > 1) {
+        childLinks.forEach(({ parent, child, relationshipType }) => {
+          const newChildren = {
+            [child]: relationshipType || FALLBACK_CHILD_REL,
+            ...(state.childLinks[parent] || {})
+          }
+          Vue.set(state.childLinks, parent, newChildren)
+        })
+      }
+      else {
+        childLinks.forEach(({ parent, child, relationshipType }) => {
+          const newChildren = {
+            ...(state.childLinks[parent] || {}),
+            [child]: relationshipType || FALLBACK_CHILD_REL
+          }
+          Vue.set(state.childLinks, parent, newChildren)
+        })
+      }
 
       partnerLinks.forEach(({ parent, child, relationshipType }) => {
         const [partnerA, partnerB] = [parent, child].sort()

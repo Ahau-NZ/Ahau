@@ -14,6 +14,9 @@
   - Disable ability to any new people to a whakapapa if you are not the kaitiaki
     - This is because we havent implemented submissions to do that yet. Members can only create submissions to edit a profile at the moment.
 
+### Bug Fixes
+- Adding a new person adds them as the youngest sibling by default
+
 ## v2.18.1
 
 ### Bug Fixes

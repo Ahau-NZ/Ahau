@@ -1,7 +1,7 @@
 import { ACCESS_TYPES } from './constants.js'
 
 const test = require('tape')
-const translations = require('../translations/en').accessButton
+const translations = require('../translations/en_NZ').accessButton
 
 test('ACCESS_TYPES (for AccessButton)', t => {
   t.plan(3)
