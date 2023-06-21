@@ -30,7 +30,7 @@
     "ssb-config": "^3.4.6",
     "ssb-conn": "^1.0.0",
     "ssb-db": "^20.4.1",
-    "ssb-friends": "~4.4.8",
+    "ssb-friends": "~4.4.9",
     "ssb-hyper-blobs": "^3.0.0",
     "ssb-invite": "^2.1.7",
     "ssb-lan": "^1.2.3",
