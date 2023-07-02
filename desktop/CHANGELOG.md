@@ -1,6 +1,6 @@
 # Changelog | Ahau desktop
 
-# Unreleased
+## v2.20.0
 
 ### Improvements
 
@@ -16,6 +16,7 @@
 
 ### Bug Fixes
 - Adding a new person adds them as the youngest sibling by default
+- fixed an `ssb-friends` replication error
 
 ## v2.18.1
 
