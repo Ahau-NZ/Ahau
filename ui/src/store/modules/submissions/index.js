@@ -5,7 +5,8 @@ import {
   proposeEditGroupPerson,
   getSubmissions,
   approveEditGroupPersonSubmission,
-  rejectSubmission
+  rejectSubmission,
+  tombstoneSubmission
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -83,6 +84,20 @@ export default function (apollo) {
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Something went wrong while trying to reject submission', input.id, err)
+      }
+    },
+    async tombstoneSubmission ({ dispatch }, id) {
+      try {
+        const res = await apollo.mutate(
+          tombstoneSubmission(id)
+        )
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'The submission was deleted', { root: true })
+      } catch (err) {
+        const message = 'Something went wrong while trying to delete the submission'
+        console.error(message, err)
+        dispatch('alerts/showError', message, { root: true })
       }
     }
     // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {

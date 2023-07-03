@@ -1,5 +1,13 @@
 # Changelog | Ahau desktop
 
+
+## Unreleased
+
+### Features
+
+- Submissions
+  - Allow users to delete submissions by clicking into the submission from the notification panel, and pressing the delete this submission button. This will also remove it from the notifications panel.
+
 ## v2.20.0
 
 ### Improvements

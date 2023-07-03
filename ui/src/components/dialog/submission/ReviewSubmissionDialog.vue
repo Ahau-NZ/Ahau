@@ -226,6 +226,12 @@
             </v-row>
           </v-card>
         </v-col>
+        <v-col class="pt-8" align="center">
+        <v-btn text @click="deleteSubmission">
+          Delete this Submission
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+      </v-col>
       </template>
 
       <template v-slot:actions>
@@ -389,7 +395,7 @@ export default {
   },
   methods: {
     ...mapActions('person', ['updatePerson']),
-    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'rejectSubmission']),
+    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'rejectSubmission', 'tombstoneSubmission']),
     ...mapActions('alerts', ['showAlert']),
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
@@ -428,6 +434,10 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    async deleteSubmission () {
+      await this.tombstoneSubmission(this.notification.id) // the submissionId
+      this.close()
     },
     t (key, vars) {
       return this.$t('reviewSubmissionDialog.' + key, vars)
