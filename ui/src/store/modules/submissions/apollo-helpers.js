@@ -60,20 +60,21 @@ export const rejectSubmission = ({ id, comment }) => {
   }
 }
 
-// TODO: cherese - add ability to tombstone/delete a submission to the UI
-// export const tombstoneSubmission = ({ submissionId, tombstoneInput }) => {
-//   return {
-//     mutation: gql`
-//       mutation ($id: String!, $tombstoneInput: TombstoneInput!) {
-//         tombstoneSubmission(id: $id, tombstoneInput: $tombstoneInput)
-//       }
-//     `,
-//     variables: {
-//       id: submissionId,
-//       tombstoneInput
-//     }
-//   }
-// }
+export const tombstoneSubmission = (submissionId) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $tombstoneInput: TombstoneInput!) {
+        tombstoneSubmission(id: $id, tombstoneInput: $tombstoneInput)
+      }
+    `,
+    variables: {
+      id: submissionId,
+      tombstoneInput: {
+        reason: 'user deleted submission'
+      }
+    }
+  }
+}
 
 // export const proposeNewGroupPerson = ({ input, comment, groupId }) => {
 //   return {
@@ -154,8 +155,8 @@ export const SubmissionFragment = gql`
       }
     }
 
-    approvedBy
-    rejectedBy
+    approvedB: approvedByIds
+    rejectedBy: rejectedByIds
 
     # tombstone
 
