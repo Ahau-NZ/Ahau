@@ -29,5 +29,26 @@
     "buriedLocation": "location buried",
     "comments": "Comments",
     "close": "Close",
-    "message": "Send a message"
+    "message": "Send a message",
+    "profileFieldsRequested": "Profile fields requested:",
+    "changesRequested": "Changes requested:",
+    "createProfileRequest": "Review request to create a new profile",
+    "editProfileRequest": "Review request to edit a profile",
+    "submission": {
+      "new": "A submission has been received from {applicantName} to edit {sourceName}",
+      "accepted": "This submission has been reviewed and was accepted",
+      "rejected": "This submission has been reviewed and was rejected",
+      "review": "This submission is waiting to be reviewed"
+    },
+    "noChanges": "No changes were submitted",
+    "newField": "Added new {fieldName}: {fieldValue}",
+    "changedField": "Changed {fieldName} to {fieldValue}",
+    "altNameChanges": {
+      "add": "Added new alternative name(s): {altNames}",
+      "remove": "Removed alternative name(s): {altNames}"
+    },
+    "deleteSubmission": "Delete this Submission",
+    "addedPicture": "Added new profile picture:",
+    "changedPicture": "Changed profile picture:",
+    "userDeceased": "User is no longer living set to: {value}"
   }

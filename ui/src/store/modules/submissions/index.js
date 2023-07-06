@@ -1,12 +1,15 @@
 import omit from 'lodash.omit'
 
 import {
-  // proposeNewGroupPerson,
+  proposeNewGroupPerson,
   proposeEditGroupPerson,
   getSubmissions,
   approveEditGroupPersonSubmission,
   rejectSubmission,
-  tombstoneSubmission
+  proposeNewWhakapapaLink,
+  createSubmissionsLink,
+  tombstoneSubmission,
+  approveSubmission
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -46,6 +49,71 @@ export default function (apollo) {
         console.error(message, err)
       }
     },
+    async proposeNewGroupPerson ({ dispatch, rootGetters }, { input, comment }) {
+      try {
+        const res = await apollo.mutate(
+          proposeNewGroupPerson({
+            input,
+            comment,
+            groupId: rootGetters['tribe/tribeId']
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'Submitted for review', { root: true })
+
+        // submissionId
+        return res.data.proposeNewGroupPerson
+      } catch (err) {
+        const message = 'Something went wrong while trying to create a submission to create a profile'
+        dispatch('alerts/showError', message, { root: true })
+
+        console.error(message)
+        console.error(err)
+      }
+    },
+    async proposeNewWhakapapaLink ({ dispatch, rootGetters }, { input, comment }) {
+      try {
+        const res = await apollo.mutate(
+          proposeNewWhakapapaLink({
+            input,
+            comment,
+            groupId: rootGetters['tribe/tribeId']
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        // submissionId
+        return res.data.proposeNewWhakapapaLink
+      } catch (err) {
+        const message = 'Something went wrong while trying to create a submission to create a link'
+        dispatch('alerts/showError', message, { root: true })
+
+        console.error(message)
+        console.error(err)
+      }
+    },
+    async createSubmissionsLink ({ dispatch }, { parent, child, mappedDependencies }) {
+      try {
+        const res = await apollo.mutate(
+          createSubmissionsLink({
+            parent,
+            child,
+            mappedDependencies
+          })
+        )
+
+        if (res.errors) throw res.errors
+      } catch (err) {
+        const message = 'Something went wrong while trying to create the submission'
+        dispatch('alerts/showError', message, { root: true })
+
+        console.error(message)
+        console.error(err)
+      }
+    },
     async getSubmissions () {
       try {
         const res = await apollo.query(
@@ -58,6 +126,44 @@ export default function (apollo) {
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Something went wrong while trying to get all submissions', err)
+      }
+    },
+
+    /*
+    NOTE: because this method will be used with web registrations, we are using createPerson instead of executeAndApprove
+    as it provides more support for admin-only fields
+    */
+    async approveNewGroupPersonSubmission ({ dispatch }, submission) {
+      const submissionId = submission.id
+
+      try {
+        const profileInput = {
+          type: 'person',
+          ...(submission.allowedFields || {}),
+          authors: {
+            add: ['*']
+          },
+          recps: submission.recps
+        }
+
+        const profileId = await dispatch('person/createPerson', profileInput, { root: true })
+        const res = await apollo.mutate(
+          approveSubmission({
+            id: submissionId,
+            comment: submission.comment,
+            targetId: profileId
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        return submissionId
+      } catch (err) {
+        const message = 'Something went wrong while trying to approve the submission'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, submissionId, err)
       }
     },
     async approveEditGroupPersonSubmission (_, input) {
@@ -100,30 +206,6 @@ export default function (apollo) {
         dispatch('alerts/showError', message, { root: true })
       }
     }
-    // async proposeNewGroupPerson ({ dispatch }, { input, comment, recps }) {
-    //   try {
-    //     const res = await apollo.mutate(
-    //       proposeNewGroupPerson({
-    //         input,
-    //         comment,
-    //         recps
-    //       })
-    //     )
-
-    //     if (res.errors) throw res.errors
-
-    //     dispatch('alerts/showMessage', 'Submitted for review', { root: true })
-
-    //     // submissionId
-    //     return res.data.proposeNewGroupPerson
-    //   } catch (err) {
-    //     const message = 'Something went wrong while trying to create a submission to create a profile'
-    //     dispatch('alerts/showError', message, { root: true })
-
-    //     console.error(message)
-    //     console.error(err)
-    //   }
-    // }
   }
 
   return {

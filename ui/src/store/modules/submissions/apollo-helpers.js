@@ -1,20 +1,31 @@
 import gql from 'graphql-tag'
-import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
-import { PERSON_FRAGMENT } from '@/lib/person-helpers'
+import pick from 'lodash.pick'
 
-// export const approveSubmission = ({ id, comment }) => {
-//   return {
-//     mutation: gql`
-//       mutation ($id: String!, $comment: String) {
-//         approveSubmission(id: $id, comment: $comment)
-//       }
-//       `,
-//     variables: {
-//       id,
-//       comment: comment
-//     }
-//   }
-// }
+import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
+
+import {
+  PERMITTED_PERSON_ATTRS,
+  PERSON_FRAGMENT
+} from '@/lib/person-helpers'
+
+import {
+  pruneEmptyValues
+} from '@/lib/profile-helpers'
+
+export const approveSubmission = ({ id, comment, targetId }) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $comment: String, $targetId: String) {
+        approveSubmission(id: $id, comment: $comment, targetId: $targetId)
+      }
+      `,
+    variables: {
+      id,
+      comment,
+      targetId
+    }
+  }
+}
 
 export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields }) => {
   return {
@@ -76,20 +87,23 @@ export const tombstoneSubmission = (submissionId) => {
   }
 }
 
-// export const proposeNewGroupPerson = ({ input, comment, groupId }) => {
-//   return {
-//     mutation: gql`
-//       mutation ($input: PersonProfileInput!, $comment: String, $groupId: String!) {
-//         proposeNewGroupPerson (input: $input, comment: $comment, groupId: $groupId)
-//       }
-//     `,
-//     variables: {
-//       input,
-//       comment,
-//       groupId
-//     }
-//   }
-// }
+export const proposeNewGroupPerson = ({ input, comment, groupId }) => {
+  input = pick(input, PERMITTED_PERSON_ATTRS)
+  input = pruneEmptyValues(input)
+
+  return {
+    mutation: gql`
+      mutation ($input: PersonProfileInput!, $comment: String, $groupId: String!) {
+        proposeNewGroupPerson (input: $input, comment: $comment, groupId: $groupId)
+      }
+    `,
+    variables: {
+      input,
+      comment,
+      groupId
+    }
+  }
+}
 
 export const proposeEditGroupPerson = ({ profileId, input, comment, groupId }) => {
   return {
@@ -103,6 +117,36 @@ export const proposeEditGroupPerson = ({ profileId, input, comment, groupId }) =
       input,
       comment,
       groupId
+    }
+  }
+}
+
+export const proposeNewWhakapapaLink = ({ input, comment, groupId }) => {
+  return {
+    mutation: gql`
+      mutation ($input: LinkInput!, $comment: String, $groupId: String!) {
+        proposeNewWhakapapaLink (input: $input, comment: $comment, groupId: $groupId)
+      }
+    `,
+    variables: {
+      input,
+      comment,
+      groupId
+    }
+  }
+}
+
+export const createSubmissionsLink = ({ parent, child, mappedDependencies }) => {
+  return {
+    mutation: gql`
+      mutation ($parent: String, $child: String, $mappedDependencies: [MappedDependencyInput]) {
+        createSubmissionsLink (parent: $parent, child: $child, mappedDependencies: $mappedDependencies)
+      }
+    `,
+    variables: {
+      parent,
+      child,
+      mappedDependencies
     }
   }
 }
@@ -155,7 +199,7 @@ export const SubmissionFragment = gql`
       }
     }
 
-    approvedB: approvedByIds
+    approvedBy: approvedByIds
     rejectedBy: rejectedByIds
 
     # tombstone
