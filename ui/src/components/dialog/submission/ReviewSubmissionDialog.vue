@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu @close="close">
+    <Dialog :show="show" :title="submissionTitle" width="720px" :goBack="close" enableMenu @close="close">
 
       <!-- Content Slot -->
       <template v-slot:content>
@@ -46,7 +46,7 @@
 
         <!-- Header for changes -->
         <span :class="headerClass">
-          Changes requested:
+          {{ isNewRecord ? t('profileFieldsRequested') : t('changesRequested') }}
         </span>
 
         <!-- Content for changes -->
@@ -57,7 +57,7 @@
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
                   <span class="checkbox_label">
-                    Added new profile picture:
+                    {{ t('addedPicture') }}
                   </span>
                 </template>
               </v-checkbox>
@@ -68,7 +68,7 @@
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
                   <span class="checkbox_label">
-                    Changed profile picture
+                    {{ t('changedPicture') }}
                   </span>
                 </template>
               </v-checkbox>
@@ -112,7 +112,7 @@
               class="shrink pl-6 mt-0 black-label">
               <template v-slot:label>
                 <span class="checkbox_label">
-                  User is no longer living set to: {{ value }}
+                  {{ t('userDeceased', { value }) }}
                 </span>
               </template>
             </v-checkbox>
@@ -121,7 +121,7 @@
           <!-- Alt names has different structure {add:[],remove:[]} -->
           <div v-else-if="key == 'altNames'">
             <div class="pl-6" v-if="value && value.add && value.add.length">
-              Added alternative name(s):
+              {{ t('altNameChanges.add', { altNames: '' }) }}
 
               <div v-for="name in value.add" :key="name">
                 <v-checkbox
@@ -139,7 +139,7 @@
             </div>
 
             <div class="pl-6" v-if="value && value.remove && value.remove.length">
-              Remove alternative name(s):
+              {{ t('altNameChanges.remove', { altNames: '' }) }}
 
               <div v-for="name in value.remove" :key="name">
                 <v-checkbox
@@ -228,7 +228,7 @@
         </v-col>
         <v-col class="pt-8" align="center">
         <v-btn text @click="deleteSubmission">
-          Delete this Submission
+          {{ t('deleteSubmission') }}
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
       </v-col>
@@ -272,7 +272,6 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: 'Review request' },
     notification: { type: Object, required: true }
   },
   data () {
@@ -304,6 +303,11 @@ export default {
     }
   },
   computed: {
+    submissionTitle () {
+      return this.isNewRecord
+        ? this.t('createProfileRequest')
+        : this.t('editProfileRequest')
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -339,6 +343,11 @@ export default {
     tribeCustomFields () {
       return getTribeCustomFields(this.notification?.rawGroup, !this.notification?.isPersonal)
     },
+    isNewRecord () {
+      // if there is not source or target, it means we are looking at
+      // creating a new record
+      return !this.notification.source && !this.notification.target
+    },
     comments () {
       return this.notification?.history
         .filter(d => {
@@ -373,20 +382,25 @@ export default {
     },
     text () {
       if (this.showAction) {
-        return 'A submission has been received from ' + this.applicantProfile?.preferredName + ' to edit ' + this.sourceProfile?.preferredName
+        return this.t('submission.new', {
+          applicantName: this.applicantProfile?.preferredName,
+          sourceName: this.sourceProfile?.preferredName
+        })
       }
 
       switch (this.notification?.isAccepted) {
         case true:
-          return 'This submission has been reviewed and was accepted'
+          return this.t('submission.accepted')
         case false:
-          return 'This submission has been reviewed and was rejected'
+          return this.t('submission.rejected')
         default:
-          return 'This submission is waiting to be reviewed'
+          return this.t('submission.review')
       }
     },
     changes () {
       const changes = this.notification?.changes
+
+      if (!changes) return []
       delete changes.__typename
 
       return Object.entries(changes)
@@ -395,7 +409,7 @@ export default {
   },
   methods: {
     ...mapActions('person', ['updatePerson']),
-    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'rejectSubmission', 'tombstoneSubmission']),
+    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'approveNewGroupPersonSubmission', 'rejectSubmission', 'tombstoneSubmission']),
     ...mapActions('alerts', ['showAlert']),
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
@@ -417,17 +431,24 @@ export default {
         comment: this.comment
       }
 
-      if (approved) {
-        if (isEmpty(this.selectedChanges)) {
-          this.showAlert({ message: 'No changes were submitted', color: 'green', delay: 3000 })
-          return
-        }
-
-        output.allowedFields = this.selectedChanges
-
-        await this.approveEditGroupPersonSubmission(output)
-      } else {
+      if (!approved) {
         await this.rejectSubmission(output)
+        this.close()
+        return
+      }
+
+      if (isEmpty(this.selectedChanges)) {
+        this.showAlert({ message: this.t('noChanges'), color: 'green', delay: 3000 })
+        return
+      }
+
+      output.allowedFields = this.selectedChanges
+
+      if (this.isNewRecord) {
+        output.recps = [this.notification?.rawGroup?.id]
+        await this.approveNewGroupPersonSubmission(output)
+      } else {
+        await this.approveEditGroupPersonSubmission(output)
       }
 
       this.close()
@@ -458,27 +479,28 @@ export default {
     },
     getLabel (key, value) {
       return this.isEmptyValue(this.sourceProfile[key])
-        ? `Added new ${this.updatedKeys[key]}: ${this.formatValue(value)}`
+        ? this.t('newField', { fieldName: this.updatedKeys[key], fieldValue: this.formatValue(value) })
         : this.getChangesLabel(key, value)
     },
     // NOTE: cherese 1/05/23
     // I removed the "from" text from here, change from ... to, because when the sourceProfile is updated, it shows
     // the updated values, so there isnt an "easy" way to show the old values
     getChangesLabel (key, value) {
-      return `
-        Changed ${this.updatedKeys[key]}
-        to: ${this.formatValue(value)}
-      `
+      const fieldName = this.updatedKeys[key]
+      const fieldValue = this.formatValue(value)
+      return this.isNewRecord
+        ? this.t('newField', { fieldName, fieldValue })
+        : this.t('changedField', { fieldName, fieldValue })
     },
     getAltNamesAddLabel (value) {
-      return `Added new alternative name(s): ${value.add.join(', ')}`
+      return this.t('altNameChanges.add', { altNames: value.add.join(', ') })
     },
     getAltNamesRemoveLabel (value) {
-      return `Removed alternative name(s): ${value.remove.join(', ')}`
+      return this.t('altNameChanges.remove', { altNames: value.remove.join(', ') })
     },
     getCustomFieldLabel (key, value) {
       const fieldDef = this.tribeCustomFields.find(field => field.key === key)
-      return `Added new ${fieldDef?.label}: ${this.formatValue(value)}`
+      return this.t('newField', { fieldName: fieldDef.label, fieldValue: this.formatValue(value) })
     },
     formatValue (value) {
       return Array.isArray(value) ? this.formatArray(value) : value

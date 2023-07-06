@@ -11,7 +11,6 @@
     <ReviewSubmissionDialog
       v-if="isActive('review-submission')"
       :show="isActive('review-submission')"
-      :title="t('reviewSubmissionTitle', {preferredName: submissionDisplayName })"
       :notification="currentNotification"
       @close="close"
     />
@@ -185,11 +184,6 @@ export default {
       return this.dialogType === 'person'
         ? this.t('addPerson')
         : this.t('newPersonTitle', { dialogType: this.dialogType, displayName: getDisplayName(this.selectedProfile) })
-    },
-    submissionDisplayName () {
-      return (
-        this.currentNotification.source?.preferredName
-      )
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
