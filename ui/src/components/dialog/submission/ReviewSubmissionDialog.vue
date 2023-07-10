@@ -12,9 +12,14 @@
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
-                    <Avatar class="small-avatar" size="80px" :image="applicantProfile.avatarImage"
-                      :alt="applicantProfile.preferredName" :gender="applicantProfile.gender"
-                      :aliveInterval="applicantProfile.aliveInterval" />
+                    <Avatar class="small-avatar"
+                      size="80px"
+                      :image="applicantProfile.avatarImage"
+                      :alt="applicantProfile.preferredName"
+                      :gender="applicantProfile.gender"
+                      :aliveInterval="applicantProfile.aliveInterval"
+                      :isView="applicantProfile.isView"
+                    />
                   </v-col>
                   <v-col cols="12">
                     <h4> {{ applicantProfile.legalName || applicantProfile.preferredName }} </h4>
@@ -31,8 +36,12 @@
               <v-col cols="4" align="center">
                 <v-row>
                   <v-col cols="12">
-                    <Avatar class="small-avatar" size="80px" :image="sourceProfile.avatarImage"
-                      :alt="sourceProfile.preferredName" isView />
+                    <Avatar class="small-avatar"
+                      size="80px"
+                      :image="sourceProfile.avatarImage"
+                      :alt="sourceProfile.preferredName"
+                      isView=""
+                    />
                   </v-col>
                   <v-col cols="12">
                     <h4> {{ sourceProfile.preferredName }} </h4>
@@ -50,7 +59,7 @@
         </span>
 
         <!-- Content for changes -->
-        <v-col v-for="([key, value], i) in changes" :key="i">
+        <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
           <div v-if="key == 'avatarImage'">
             <div v-if="sourceProfile[key] == null">
               <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
@@ -189,6 +198,28 @@
           </div>
         </v-col>
 
+        <!-- Header for question answers -->
+        <v-col v-if="hasAnswers" :class="headerClass">
+          <span>
+            {{ t('answers') }}
+          </span>
+        </v-col>
+
+        <!-- Content for question answers -->
+        <v-col v-if="hasAnswers" :class="mobile ? 'px-0' : ''">
+          <v-card outlined :class="mobile ? '' : 'ml-2'">
+            <v-row align="center">
+              <v-col cols="12" sm="12" v-for="({ question, answer }, i) in answers" :key="`q-a-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
+                <v-text-field
+                  v-bind="customProps"
+                  :label="question"
+                  :value="answer"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+
        <!-- Header for comments -->
        <v-col v-if="showComments" :class="headerClass">
           <span>
@@ -231,6 +262,16 @@
           {{ t('deleteSubmission') }}
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
+      </v-col>
+
+      <!-- NOTE: for development purposes, this just shows the data in the notification -->
+      <v-col v-if="isDevelopment">
+        <details>
+          <summary>
+            DEBUG: Notification
+          </summary>
+          <code><pre>{{ JSON.stringify(notification, null, 2) }}</pre></code>
+        </details>
       </v-col>
       </template>
 
@@ -308,6 +349,9 @@ export default {
         ? this.t('createProfileRequest')
         : this.t('editProfileRequest')
     },
+    isDevelopment () {
+      return process.env.NODE_ENV === 'development'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -332,10 +376,18 @@ export default {
       return false
     },
     applicantProfile () {
+      if (this.notification?.source === 'webForm') {
+        return {
+          ...this.notification?.group,
+          isView: true
+        }
+      }
       return this.notification?.applicant || {}
     },
     sourceProfile () {
-      return this.notification?.source || {}
+      return this.notification?.sourceRecord || {
+        ...(this.notification?.changes || {})
+      }
     },
     applicantProfileCustomFields () {
       return this.applicantProfile.customFields
@@ -343,10 +395,13 @@ export default {
     tribeCustomFields () {
       return getTribeCustomFields(this.notification?.rawGroup, !this.notification?.isPersonal)
     },
+    tribeJoiningQuestions () {
+      return this.notification?.group?.joiningQuestions
+    },
     isNewRecord () {
       // if there is not source or target, it means we are looking at
       // creating a new record
-      return !this.notification.source && !this.notification.target
+      return !this.notification.sourceRecord && !this.notification.targetRecord
     },
     comments () {
       return this.notification?.history
@@ -381,10 +436,16 @@ export default {
       return age.toString()
     },
     text () {
-      if (this.showAction) {
-        return this.t('submission.new', {
+      if (this.showActions) {
+        const groupName = this.notification?.group?.preferredName
+        if (this.notification?.source === 'webForm') {
+          return this.t('submission.profile.new.web', { groupName })
+        }
+
+        return this.t('submission.profile.edit', {
           applicantName: this.applicantProfile?.preferredName,
-          sourceName: this.sourceProfile?.preferredName
+          profileName: this.sourceProfile?.preferredName,
+          groupName
         })
       }
 
@@ -404,7 +465,26 @@ export default {
       delete changes.__typename
 
       return Object.entries(changes)
-        .filter(([key, value]) => value)
+        .filter(([key, value]) => {
+          if (key === 'altNames' && !this.hasAltnameChanges) return false
+          return value
+        })
+    },
+    hasAltnameChanges () {
+      const altNames = this.notification?.changes?.altNames
+      if (!altNames) return false
+
+      const { add, remove } = altNames
+      return (
+        add && add.length &&
+        remove && remove.length
+      )
+    },
+    answers () {
+      return this.notification?.answers
+    },
+    hasAnswers () {
+      return this.answers?.length
     }
   },
   methods: {

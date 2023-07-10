@@ -18,6 +18,13 @@
     "declined": "Has been declined to join {groupName}"
   },
   "submission": {
+    "profile": {
+      "new": {
+        "web": "Received a request to create a new profile in {groupName} via the web registration form",
+        "ahau": "Received a request to create a profile in {groupName}"
+      },
+      "edit": "Received a request to edit {profileName} in {groupName}"
+    },
     "new": "Has submitted a change to {groupName}",
     "accepted": "Their submission to {groupName} has been accepted",
     "declined": "Their submission to {groupName} has been declined "

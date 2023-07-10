@@ -7,6 +7,7 @@
         :alt="author.preferredName"
         :gender="author.gender"
         :bornAt="author.bornAt"
+        :isView="author.isView"
       />
       <v-list-item-content class="pl-5">
         <v-list-item-title :class="bold">{{ author.preferredName }}</v-list-item-title>
@@ -35,24 +36,43 @@ export default {
     bold () {
       return this.showBadge ? 'font-weight-medium' : ''
     },
+    notificationType () {
+      return this.notification?.type
+    },
+    isSystem () {
+      return this.notificationType === 'system'
+    },
+    isSubmission () {
+      return this.notificationType === 'submission'
+    },
+    isNew () {
+      return this.notification?.isNew
+    },
+    isAccepted () {
+      return this.notification?.isAccepted
+    },
+    isPersonal () {
+      return this.notification?.isPersonal
+    },
+    isFromWeb () {
+      return this.notification?.source === 'webForm'
+    },
+    notificationStatus () {
+      switch (true) {
+        case this.isNew: return 'new'
+        case this.isAccepted: return 'accepted'
+        default: return 'declined'
+      }
+    },
     text () {
-      const { type, isPersonal, isNew, isAccepted } = this.notification
-
-      if (type === 'system') return this.t('system')
+      if (this.isSystem) return this.t('system')
 
       const groupName = this.notification.group?.preferredName
 
-      const notificationStatus = () => {
-        switch (true) {
-          case isNew: return 'new'
-          case isAccepted: return 'accepted'
-          default: return 'declined'
-        }
-      }
+      const prepended = this.isPersonal ? 'personal' + '.' : ''
+      if (this.isFromWeb) return this.t('submission.profile.new.web', { groupName })
 
-      const prepended = isPersonal ? 'personal' + '.' : ''
-
-      return this.t(`${prepended}${type}.${notificationStatus()}`, { groupName })
+      return this.t(`${prepended}${this.notificationType}.${this.notificationStatus}`, { groupName })
     },
     author () {
       if (this.notification.isPersonal && this.notification.type !== 'submission') {
@@ -60,6 +80,14 @@ export default {
         if (message && this.notification.isAccepted) return message.author
         return this.notification.group
       }
+
+      if (this.isFromWeb) {
+        return {
+          ...this.notification.group,
+          isView: true
+        }
+      }
+
       return this.notification.from
     }
   },
