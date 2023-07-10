@@ -264,8 +264,16 @@ export const SubmissionGroupPersonFragment = gql`
         }
       }
 
-      source {
+      sourceRecord {
         ...ProfileFragment
+      }
+      targetRecord {
+        ...ProfileFragment
+      }
+      source
+      answers: joiningQuestions {
+        question: label
+        answer: value
       }
     }
   }

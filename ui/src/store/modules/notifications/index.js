@@ -119,7 +119,8 @@ function mapSubmissionValues (whoami) {
       // targetId,
       // targetType,
 
-      target,
+      targetRecord,
+      sourceRecord,
       source,
       comments,
       approvedBy,
@@ -127,7 +128,8 @@ function mapSubmissionValues (whoami) {
       applicant,
       applicantId,
       details,
-      group
+      group,
+      answers
     } = submission
 
     const isPersonal = applicantId === whoami.public.feedId
@@ -159,8 +161,10 @@ function mapSubmissionValues (whoami) {
       isPersonal,
       changes: details,
 
-      target,
+      targetRecord,
+      sourceRecord,
       source,
+      answers,
 
       history: comments.map(({ authorId, author, comment }) => {
         return {
