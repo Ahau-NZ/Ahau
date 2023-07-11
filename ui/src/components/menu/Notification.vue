@@ -10,7 +10,7 @@
         :isView="author.isView"
       />
       <v-list-item-content class="pl-5">
-        <v-list-item-title :class="bold">{{ author.preferredName }}</v-list-item-title>
+        <v-list-item-title :class="bold">{{ title }}</v-list-item-title>
         <v-list-item-subtitle
           :class="`text-caption ${bold}`"
         >{{ text }}</v-list-item-subtitle>
@@ -63,6 +63,12 @@ export default {
         case this.isAccepted: return 'accepted'
         default: return 'declined'
       }
+    },
+    title () {
+      if (this.isFromWeb) {
+        const from = this.notification?.changes?.preferredName
+        return this.t('submission.profile.new.title', { from })
+      } else return this.author.preferredName
     },
     text () {
       if (this.isSystem) return this.t('system')

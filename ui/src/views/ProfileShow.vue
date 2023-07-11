@@ -24,7 +24,7 @@
       <v-col  v-if="!hideNav && !isWhakapapaShow"
         cols="12" xs="12" sm="12" md="2" lg="20p"
         :class="!mobile ? 'pr-0' : 'px-5 py-0'"
-        :style="{ zIndex: 5 }"
+        :style="{ zIndex: 1 }"
       >
         <SideNavMenu v-if="currentTribe" :profile="profile" @new-registration="dialog = 'new-registration'"/>
       </v-col>
