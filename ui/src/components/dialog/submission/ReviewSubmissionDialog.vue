@@ -26,7 +26,17 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="4" align="center">
+              <v-col v-if="isWebForm" cols="4" align="center">
+                <v-row>
+                  <v-col cols="12" class="pa-0">
+                    <v-icon large>mdi-transfer-right</v-icon>
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <v-icon large>mdi-transfer-left</v-icon>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col v-else cols="4" align="center">
                 <v-row>
                   <v-col cols="12" class="pa-0">
                     <v-icon large>mdi-account-edit</v-icon>
@@ -40,7 +50,8 @@
                       size="80px"
                       :image="sourceProfile.avatarImage"
                       :alt="sourceProfile.preferredName"
-                      isView=""
+                      :gender="sourceProfile.gender"
+                      :isView="false"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -54,149 +65,160 @@
         </v-col>
 
         <!-- Header for changes -->
-        <span :class="headerClass">
+        <v-col :class="headerClass">
           {{ isNewRecord ? t('profileFieldsRequested') : t('changesRequested') }}
-        </span>
+        </v-col>
 
         <!-- Content for changes -->
-        <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
-          <div v-if="key == 'avatarImage'">
-            <div v-if="sourceProfile[key] == null">
+        <v-card outlined class="py-1 mx-3">
+          <!-- WIP: select all -->
+          <!-- <v-checkbox hide-details v-model="selectAll" :value="value" color="green"
+            class="shrink pl-9 my-2 black-label">
+            <template v-slot:label>
+              <span class="checkbox_label">
+                {{ t('selectAll') }}
+              </span>
+            </template>
+          </v-checkbox>
+          <v-divider light width="50%" class="ml-8"/> -->
+          <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
+            <!-- avatarImage has a unique structure -->
+            <div v-if="key == 'avatarImage'">
+              <div v-if="sourceProfile[key] == null">
+                <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
+                  class="shrink pl-6 mt-0 black-label">
+                  <template v-slot:label>
+                    <span class="checkbox_label">
+                      {{ t('addedPicture') }}
+                    </span>
+                  </template>
+                </v-checkbox>
+                <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"/>
+              </div>
+              <div v-else>
+                <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
+                  class="shrink pl-6 mt-0 black-label">
+                  <template v-slot:label>
+                    <span class="checkbox_label">
+                      {{ t('changedPicture') }}
+                    </span>
+                  </template>
+                </v-checkbox>
+
+                <v-col>
+                  <v-card outlined class="py-1">
+                    <v-row align="center" class="pt-0">
+                      <v-col cols="4" align="center">
+                        <v-row>
+                          <v-col cols="12">
+                            <Avatar class="small-avatar" size="80px" :image="sourceProfile.avatarImage"
+                              :alt="sourceProfile.preferredName" :gender="sourceProfile.gender"
+                              :aliveInterval="sourceProfile.aliveInterval" />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="4" align="center">
+                        <v-row>
+                          <v-col cols="12" class="pa-0">
+                            <v-icon large>mdi-arrow-right-bold</v-icon>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="4" align="center">
+                        <v-row>
+                          <v-col cols="12">
+                            <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"
+                              :alt="changes.preferredName" isView />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </v-col>
+              </div>
+            </div>
+            <!-- Improving readability of deceased changes -->
+            <div v-else-if="key == 'deceased'">
               <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
                 class="shrink pl-6 mt-0 black-label">
                 <template v-slot:label>
                   <span class="checkbox_label">
-                    {{ t('addedPicture') }}
+                    {{ t('userDeceased', { value }) }}
                   </span>
                 </template>
               </v-checkbox>
-              <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"/>
             </div>
+
+            <!-- Alt names has different structure {add:[],remove:[]} -->
+            <div v-else-if="key == 'altNames'">
+              <div class="pl-6" v-if="value && value.add && value.add.length">
+                {{ t('altNameChanges.add', { altNames: '' }) }}
+
+                <div v-for="name in value.add" :key="name">
+                  <v-checkbox
+                    v-if="showActions"
+                    :label="name"
+                    hide-details
+                    color="green"
+                    class="shrink pl-6 mt-0 black-label"
+                    @change="addAltName('add', name)"
+                  />
+                  <li v-else class="pl-6">
+                    {{ name }}
+                  </li>
+                </div>
+              </div>
+
+              <div class="pl-6" v-if="value && value.remove && value.remove.length">
+                {{ t('altNameChanges.remove', { altNames: '' }) }}
+
+                <div v-for="name in value.remove" :key="name">
+                  <v-checkbox
+                    v-if="showActions"
+                    :label="name"
+                    hide-details
+                    color="green"
+                    class="shrink pl-6 mt-0 black-label"
+                    @change="addAltName('remove', name)"
+                  />
+                  <li v-else class="pl-6">
+                    {{ name }}
+                  </li>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="key === 'customFields'">
+              <div v-for="field in value" :key="field.key">
+                <v-checkbox
+                  v-if="showActions"
+                  :label="getCustomFieldLabel(field.key, field.value)"
+                  hide-details
+                  color="green"
+                  class="shrink pl-6 mt-0 black-label"
+                  @change="addCustomField(field)"
+                />
+                <li v-else>
+                  {{ getCustomFieldLabel(field.key, field.value) }}
+                </li>
+              </div>
+            </div>
+
             <div v-else>
-              <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
-                class="shrink pl-6 mt-0 black-label">
-                <template v-slot:label>
-                  <span class="checkbox_label">
-                    {{ t('changedPicture') }}
-                  </span>
-                </template>
-              </v-checkbox>
-
-              <v-col>
-                <v-card outlined class="py-1">
-                  <v-row align="center" class="pt-0">
-                    <v-col cols="4" align="center">
-                      <v-row>
-                        <v-col cols="12">
-                          <Avatar class="small-avatar" size="80px" :image="sourceProfile.avatarImage"
-                            :alt="sourceProfile.preferredName" :gender="sourceProfile.gender"
-                            :aliveInterval="sourceProfile.aliveInterval" />
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="4" align="center">
-                      <v-row>
-                        <v-col cols="12" class="pa-0">
-                          <v-icon large>mdi-arrow-right-bold</v-icon>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col cols="4" align="center">
-                      <v-row>
-                        <v-col cols="12">
-                          <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"
-                            :alt="changes.preferredName" isView />
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-card>
-              </v-col>
-            </div>
-          </div>
-
-          <!-- Improving readability of deceased changes -->
-          <div v-else-if="key == 'deceased'">
-            <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
-              class="shrink pl-6 mt-0 black-label">
-              <template v-slot:label>
-                <span class="checkbox_label">
-                  {{ t('userDeceased', { value }) }}
-                </span>
-              </template>
-            </v-checkbox>
-          </div>
-
-          <!-- Alt names has different structure {add:[],remove:[]} -->
-          <div v-else-if="key == 'altNames'">
-            <div class="pl-6" v-if="value && value.add && value.add.length">
-              {{ t('altNameChanges.add', { altNames: '' }) }}
-
-              <div v-for="name in value.add" :key="name">
-                <v-checkbox
-                  v-if="showActions"
-                  :label="name"
-                  hide-details
-                  color="green"
-                  class="shrink pl-6 mt-0 black-label"
-                  @change="addAltName('add', name)"
-                />
-                <li v-else class="pl-6">
-                  {{ name }}
-                </li>
-              </div>
-            </div>
-
-            <div class="pl-6" v-if="value && value.remove && value.remove.length">
-              {{ t('altNameChanges.remove', { altNames: '' }) }}
-
-              <div v-for="name in value.remove" :key="name">
-                <v-checkbox
-                  v-if="showActions"
-                  :label="name"
-                  hide-details
-                  color="green"
-                  class="shrink pl-6 mt-0 black-label"
-                  @change="addAltName('remove', name)"
-                />
-                <li v-else class="pl-6">
-                  {{ name }}
-                </li>
-              </div>
-            </div>
-          </div>
-
-          <div v-else-if="key === 'customFields'">
-            <div v-for="field in value" :key="field.key">
               <v-checkbox
                 v-if="showActions"
-                :label="getCustomFieldLabel(field.key, field.value)"
+                :label="getLabel(key, value)"
+                @change="addSelectedItem(key, value, $event)"
                 hide-details
                 color="green"
                 class="shrink pl-6 mt-0 black-label"
-                @change="addCustomField(field)"
               />
-              <li v-else>
-                {{ getCustomFieldLabel(field.key, field.value) }}
+              <li v-else class="pl-6">
+                {{ getLabel(key, value) }}
               </li>
             </div>
-          </div>
-
-          <div v-else>
-            <v-checkbox
-              v-if="showActions"
-             :label="getLabel(key, value)"
-             @change="addSelectedItem(key, value, $event)"
-
-              hide-details
-              color="green"
-              class="shrink pl-6 mt-0 black-label"
-            />
-            <li v-else class="pl-6">
-              {{ getLabel(key, value) }}
-            </li>
-          </div>
-        </v-col>
+          </v-col>
+        </v-card>
 
         <!-- Header for question answers -->
         <v-col v-if="hasAnswers" :class="headerClass">
@@ -207,13 +229,14 @@
 
         <!-- Content for question answers -->
         <v-col v-if="hasAnswers" :class="mobile ? 'px-0' : ''">
-          <v-card outlined :class="mobile ? '' : 'ml-2'">
+          <v-card outlined>
             <v-row align="center">
               <v-col cols="12" sm="12" v-for="({ question, answer }, i) in answers" :key="`q-a-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
                 <v-text-field
                   v-bind="customProps"
                   :label="question"
                   :value="answer"
+                  class="pl-4"
                 />
               </v-col>
             </v-row>
@@ -244,7 +267,7 @@
               <v-col v-if="allowNewComments">
                 <v-textarea
                   v-model="comment"
-                  :label="t('message')"
+                  :label="isWebForm ? t('saveComment') : t('message')"
                   no-resize
                   rows="3"
                   auto-grow
@@ -317,6 +340,7 @@ export default {
   },
   data () {
     return {
+      selectAll: false,
       i: 0,
       formData: '',
       comment: '',
@@ -339,11 +363,16 @@ export default {
         placeOfDeath: this.t('placeOfDeath'),
         buriedLocation: this.t('buriedLocation'),
         education: this.t('education'),
-        school: this.t('school')
+        school: this.t('school'),
+        email: this.t('email'),
+        phone: this.t('phone')
       }
     }
   },
   computed: {
+    isWebForm () {
+      return this.notification?.source === 'webForm'
+    },
     submissionTitle () {
       return this.isNewRecord
         ? this.t('createProfileRequest')
@@ -365,7 +394,7 @@ export default {
       }
     },
     headerClass () {
-      return `subtitle-2 black--text ${this.mobile ? 'pl-0 pr-0' : 'pl-3'}`
+      return `overline black--text ${this.mobile ? 'pl-0 pr-0' : 'pl-3 pb-0'}`
     },
     showActions () {
       if (isEmpty(this.notification)) {
@@ -376,7 +405,7 @@ export default {
       return false
     },
     applicantProfile () {
-      if (this.notification?.source === 'webForm') {
+      if (this.isWebForm) {
         return {
           ...this.notification?.group,
           isView: true
@@ -438,11 +467,11 @@ export default {
     text () {
       if (this.showActions) {
         const groupName = this.notification?.group?.preferredName
-        if (this.notification?.source === 'webForm') {
-          return this.t('submission.profile.new.web', { groupName })
+        if (this.isWebForm) {
+          return this.$t('notifications.submission.profile.new.web', { groupName })
         }
 
-        return this.t('submission.profile.edit', {
+        return this.$t('notifications.submission.profile.edit', {
           applicantName: this.applicantProfile?.preferredName,
           profileName: this.sourceProfile?.preferredName,
           groupName
@@ -451,11 +480,11 @@ export default {
 
       switch (this.notification?.isAccepted) {
         case true:
-          return this.t('submission.accepted')
+          return this.$t('notifications.submission.accepted')
         case false:
-          return this.t('submission.rejected')
+          return this.$t('notifications.submission.declined')
         default:
-          return this.t('submission.review')
+          return this.$t('notifications.submission.review')
       }
     },
     changes () {
@@ -639,6 +668,7 @@ export default {
 
 .v-checkbox__label {
   color: black;
+  font-weight: bold;
 }
 
 .black-label label {
