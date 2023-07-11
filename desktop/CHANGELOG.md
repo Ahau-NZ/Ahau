@@ -1,12 +1,13 @@
 # Changelog | Ahau desktop
 
-
-## Unreleased
+## v2.21.0
 
 ### Features
 
 - Submissions
   - Allow users to delete submissions by clicking into the submission from the notification panel, and pressing the delete this submission button. This will also remove it from the notifications panel.
+- Web Forms
+  - Ahau can now receive submissions from a web registration form to create profiles for people within a tribe. The web registration form needs to be set up with the Pātaka.
 
 ## v2.20.0
 
