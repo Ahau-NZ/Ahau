@@ -151,16 +151,16 @@
 
             <!-- Alt names has different structure {add:[],remove:[]} -->
             <div v-else-if="key == 'altNames'">
-              <div class="pl-6" v-if="value && value.add && value.add.length">
+              <div class="pl-6 pt-3" v-if="value && value.add && value.add.length">
                 {{ t('altNameChanges.add', { altNames: '' }) }}
 
-                <div v-for="name in value.add" :key="name">
+                <div v-for="name in value.add" :key="name" class="pl-6">
                   <v-checkbox
                     v-if="showActions"
                     :label="name"
                     hide-details
                     color="green"
-                    class="shrink pl-6 mt-0 black-label"
+                    class="mt-0"
                     @change="addAltName('add', name)"
                   />
                   <li v-else class="pl-6">
@@ -169,16 +169,16 @@
                 </div>
               </div>
 
-              <div class="pl-6" v-if="value && value.remove && value.remove.length">
+              <div class="pl-6 pt-3" v-if="value && value.remove && value.remove.length">
                 {{ t('altNameChanges.remove', { altNames: '' }) }}
 
-                <div v-for="name in value.remove" :key="name">
+                <div v-for="name in value.remove" :key="name" class="pl-6">
                   <v-checkbox
                     v-if="showActions"
                     :label="name"
                     hide-details
                     color="green"
-                    class="shrink pl-6 mt-0 black-label"
+                    class="mt-0"
                     @change="addAltName('remove', name)"
                   />
                   <li v-else class="pl-6">
@@ -495,7 +495,11 @@ export default {
 
       return Object.entries(changes)
         .filter(([key, value]) => {
-          if (key === 'altNames' && !this.hasAltnameChanges) return false
+          // filter out altNames here so we arent showing empty labels for nothing
+          if (key === 'atlNames') {
+            return this.hasAltnameChanges
+          }
+
           return value
         })
     },
@@ -600,12 +604,6 @@ export default {
       return this.isNewRecord
         ? this.t('newField', { fieldName, fieldValue })
         : this.t('changedField', { fieldName, fieldValue })
-    },
-    getAltNamesAddLabel (value) {
-      return this.t('altNameChanges.add', { altNames: value.add.join(', ') })
-    },
-    getAltNamesRemoveLabel (value) {
-      return this.t('altNameChanges.remove', { altNames: value.remove.join(', ') })
     },
     getCustomFieldLabel (key, value) {
       const fieldDef = this.tribeCustomFields.find(field => field.key === key)
