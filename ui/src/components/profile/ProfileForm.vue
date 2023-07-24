@@ -153,18 +153,21 @@
       </slot>
     </v-row>
 
-    <!-- If us duplicate -->
+    <!-- If is duplicate -->
     <v-row v-if="isDuplicate" class="pl-4">
       <v-col cols="12" class="">
+        <!-- profile exists: title -->
         <v-row>
           <p>{{ t('profileExists') }}</p>
         </v-row>
-        <!-- <v-radio-group v-model="moveDup" row class="mt-0 ml-n2"> -->
+        <!-- Select handle duplicate option -->
         <v-radio-group :value="moveDup" @change="$emit('update:moveDup', $event)" row class="mt-0 ml-n2" mandatory>
+          <!-- move the selected person -->
           <v-radio
             :label="t('movePerson', { person: getDisplayName(formData), displayName })"
             :value="true"
           />
+          <!-- create link to the selected -->
           <v-radio
             :value="false"
             :label="t('createLink', { person: getDisplayName(formData), displayName })"

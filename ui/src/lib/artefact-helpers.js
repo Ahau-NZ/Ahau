@@ -6,8 +6,14 @@ export const ARTEFACT_FILE_TYPES = `
   video/*,
   image/*,
   application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+  application/vnd.openxmlformats-officedocument.presentationml.presentation,
+  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document,
   application/pdf,
-  text/*
+  text/*,
+  application/vnd.openxmlformats-officedocument.presentationml.presentation,
+  application/epub+zip,
+  application/zip
 `
 
 export const EMPTY_ARTEFACT = {

@@ -305,7 +305,6 @@ export default function (apollo) {
         lineage = new Set()
       } = opts
       lineage.add(parentId)
-
       const result = {
         id: parentId,
         children: getters.getChildIds(parentId)
@@ -327,13 +326,16 @@ export default function (apollo) {
       return Object.entries(state.view.importantRelationships).reduce(
         (acc, [ruleTarget, rule]) => {
           const links = getters.getRawParentIds(ruleTarget)
-            .filter(parentId => !getters.isImportantLink(ruleTarget, parentId))
-            .map(parentId => ({
-              parent: parentId,
-              child: ruleTarget,
-              relationshipType: getters.getChildType(parentId, ruleTarget)
-            }))
-
+            .filter(parentId => {
+              return !getters.isImportantLink(ruleTarget, parentId)
+            })
+            .map(parentId => {
+              return ({
+                parent: parentId,
+                child: ruleTarget,
+                relationshipType: getters.getChildType(parentId, ruleTarget)
+              })
+            })
           return acc.concat(links)
         },
         []
@@ -385,7 +387,6 @@ export default function (apollo) {
     // methods for manipulating whakapapa links
     addLinks (state, { childLinks = [], partnerLinks = [], isLoadingFocus = false }) {
       state.loadingWhakapapa = true
-
       // NOTE we do a bulk mutation because this reduces the number of updates
       // in the state = less thrashing
       // NOTE we use an if statement to check if we are adding a new link so lets add it to the end of the family instead of at the start
@@ -408,15 +409,28 @@ export default function (apollo) {
         })
       }
 
-      partnerLinks.forEach(({ parent, child, relationshipType }) => {
-        const [partnerA, partnerB] = [parent, child].sort()
-        const newPartners = {
-          ...(state.partnerLinks[partnerA] || {}),
-          [partnerB]: relationshipType || FALLBACK_PARTNER_REL
-        }
+      // NOTE: this code prevents inferred partners (birth parents) on the same whakapapa to prevent creating duplicates
+      const importantBirthRel = Object.values(state.view.importantRelationships)
+        .filter(rel => rel.primary.relationshipType === 'birth')
 
-        Vue.set(state.partnerLinks, partnerA, newPartners)
-      })
+      partnerLinks
+        // filter the inferred partners (birth parents)
+        .filter(partner => {
+          return !importantBirthRel.some(rule => {
+            // if the partner.parent (a) is the rel.primary and partner.child (b) is the rel.other
+            return (partner.parent === rule.primary.profileId && rule.other.some(other => other.profileId === partner.child)) ||
+            // or if the partner.parent (b) is the rel.primary and partner.child (a) is the rel.other
+            (partner.child === rule.primary.profileId && rule.other.some(other => other.profileId === partner.parent))
+          })
+        })
+        .forEach(({ parent, child, relationshipType }) => {
+          const [partnerA, partnerB] = [parent, child].sort()
+          const newPartners = {
+            ...(state.partnerLinks[partnerA] || {}),
+            [partnerB]: relationshipType || FALLBACK_PARTNER_REL
+          }
+          Vue.set(state.partnerLinks, partnerA, newPartners)
+        })
 
       if (isLoadingFocus) {
         if (!state.view.focus) {
