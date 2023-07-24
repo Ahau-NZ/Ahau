@@ -1,11 +1,10 @@
 import { RADIUS, PARTNER_RADIUS, PARTNER_SPACE } from '../constants'
 
 export default function layoutPartnerNodes (rootNode, rootGetters) {
+  const childNodes = rootNode.children || []
   const partnerIds = rootGetters['whakapapa/getPartnerIds'](rootNode.data.id)
 
   if (!partnerIds.length) return []
-
-  const childNodes = rootNode.children || []
 
   function meanChildX (partnerId, partnerX) {
     // get the children of partner

@@ -217,9 +217,9 @@ function buildRoot (rootGetters) {
 function CompareAge (rootGetters) {
   return function compareAge (a, b) {
     const A = getOrderData(rootGetters, a)
-    if (!A) return 0
+    if (!A) return -1
     const B = getOrderData(rootGetters, b)
-    if (!B) return 0
+    if (!B) return -1
 
     return _compareAge(A, B, rootGetters)
   }

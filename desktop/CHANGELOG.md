@@ -1,5 +1,14 @@
 # Changelog | Ahau desktop
 
+## Unreleased
+
+### Bug Fixes
+- Whakapapa
+  - Fixed showing birth parents from the same whakapapa (with secondary links)
+- Submissions
+  - Fix bug where approveBy and rejectedBy were renamed and causing an error
+  - Fix issue with Altnames causing error on the submission approval process
+
 ## v2.21.0
 
 ### Features

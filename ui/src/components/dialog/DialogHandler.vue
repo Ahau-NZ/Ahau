@@ -295,7 +295,7 @@ export default {
       let { id, children, parents, partners, moveDup, customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
-      if (moveDup) {
+      if (moveDup !== undefined) {
         await this.addImportantRelationship(input)
         delete input.moveDup
       }
@@ -535,7 +535,6 @@ export default {
       } else {
         importantRelationship.important = [input.id, lessRelationship]
       }
-
       await this.saveWhakapapaView({
         id: this.$route.params.whakapapaId,
         importantRelationships: importantRelationship
