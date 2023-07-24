@@ -123,8 +123,8 @@ function mapSubmissionValues (whoami) {
       sourceRecord,
       source,
       comments,
-      approvedBy,
-      rejectedBy,
+      approvedByIds,
+      rejectedByIds,
       applicant,
       applicantId,
       details,
@@ -134,10 +134,10 @@ function mapSubmissionValues (whoami) {
 
     const isPersonal = applicantId === whoami.public.feedId
 
-    const isNew = approvedBy?.length === 0 && rejectedBy?.length === 0
-    const isAccepted = approvedBy?.length > 0
+    const isNew = approvedByIds?.length === 0 && rejectedByIds?.length === 0
+    const isAccepted = approvedByIds?.length > 0
       ? true
-      : rejectedBy.length > 0
+      : rejectedByIds.length > 0
         ? false
         : null
 
