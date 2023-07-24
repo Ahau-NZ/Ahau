@@ -199,8 +199,8 @@ export const SubmissionFragment = gql`
       }
     }
 
-    approvedBy: approvedByIds
-    rejectedBy: rejectedByIds
+    approvedByIds
+    rejectedByIds
 
     # tombstone
 
