@@ -71,16 +71,16 @@
 
         <!-- Content for changes -->
         <v-card outlined class="py-1 mx-3">
-          <!-- WIP: select all -->
-          <!-- <v-checkbox hide-details v-model="selectAll" :value="value" color="green"
-            class="shrink pl-9 my-2 black-label">
-            <template v-slot:label>
-              <span class="checkbox_label">
-                {{ t('selectAll') }}
-              </span>
-            </template>
+          <!-- select all -->
+          <v-checkbox
+            v-if="showActions"
+            hide-details
+            v-model="selectAll"
+            class="shrink pl-9 my-2"
+            :label="selectAll ? t('unselectAll') : t('selectAll')"
+          >
           </v-checkbox>
-          <v-divider light width="50%" class="ml-8"/> -->
+          <v-divider v-if="showActions" light width="50%" class="ml-8"/>
           <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
             <!-- avatarImage has a unique structure -->
             <div v-if="key == 'avatarImage'">
@@ -162,6 +162,7 @@
                     color="green"
                     class="mt-0"
                     @change="addAltName('add', name)"
+                    :value="getAltNameValue('add', name)"
                   />
                   <li v-else class="pl-6">
                     {{ name }}
@@ -180,6 +181,7 @@
                     color="green"
                     class="mt-0"
                     @change="addAltName('remove', name)"
+                    :value="getAltNameValue('remove', name)"
                   />
                   <li v-else class="pl-6">
                     {{ name }}
@@ -197,6 +199,7 @@
                   color="green"
                   class="shrink pl-6 mt-0 black-label"
                   @change="addCustomField(field)"
+                  :value="getCustomFieldValue(field)"
                 />
                 <li v-else>
                   {{ getCustomFieldLabel(field.key, field.value) }}
@@ -209,6 +212,7 @@
                 v-if="showActions"
                 :label="getLabel(key, value)"
                 @change="addSelectedItem(key, value, $event)"
+                :value="Boolean(selectedChanges[key])"
                 hide-details
                 color="green"
                 class="shrink pl-6 mt-0 black-label"
@@ -369,6 +373,17 @@ export default {
       }
     }
   },
+  watch: {
+    selectAll (selected) {
+      if (selected) {
+        // select all fields
+        this.selectAllChanges()
+      } else {
+        // unselect all fields
+        this.selectedChanges = {}
+      }
+    }
+  },
   computed: {
     isWebForm () {
       return this.notification?.source === 'webForm'
@@ -493,6 +508,11 @@ export default {
       if (!changes) return []
       delete changes.__typename
 
+      // filter all custom fields that dont have a definition
+      changes.customFields = changes?.customFields.filter(field => {
+        return this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
+      })
+
       return Object.entries(changes)
         .filter(([key, value]) => {
           // filter out altNames here so we arent showing empty labels for nothing
@@ -524,6 +544,22 @@ export default {
     ...mapActions('person', ['updatePerson']),
     ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'approveNewGroupPersonSubmission', 'rejectSubmission', 'tombstoneSubmission']),
     ...mapActions('alerts', ['showAlert']),
+    selectAllChanges () {
+      this.selectedChanges = {}
+      this.changes.forEach(([key, value]) => {
+        if (key === 'altNames') {
+          const { add = [], remove = [] } = (value || {})
+          add.forEach(name => this.addAltName('add', name))
+          remove.forEach(name => this.addAltName('remove', name))
+        } else if (key === 'customFields') {
+          (value || []).forEach(field => {
+            this.addCustomField(field)
+          })
+        } else {
+          this.addSelectedItem(key, value, true)
+        }
+      })
+    },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
@@ -620,6 +656,19 @@ export default {
 
       this.selectedChanges.altNames[key] = items
       this.cleanupAltNames()
+    },
+    getAltNameValue (key, name) {
+      const altNameChanges = this.selectedChanges?.altNames
+      if (!altNameChanges || !altNameChanges[key]) return false
+
+      return altNameChanges[key]
+        .find(altName => altName === name)
+    },
+    getCustomFieldValue (field) {
+      const customFieldChanges = this.selectedChanges?.customFields
+      if (!customFieldChanges) return false
+
+      return customFieldChanges.find(customField => customField.key === field.key)
     },
     cleanupAltNames () {
       if (this.selectedChanges.altNames.add.length === 0 && this.selectedChanges.altNames.remove.length === 0) delete this.selectedChanges.altNames
