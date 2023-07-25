@@ -60,6 +60,7 @@
     "userDeceased": "User is no longer living set to: {value}",
     "answers": "Question Answers",
     "selectAll": "Select all",
+    "unselectAll": "Unselect all",
     "saveComment": "Save a comment",
     "reviewInfo": "Select the profile information you would like to save "
   }

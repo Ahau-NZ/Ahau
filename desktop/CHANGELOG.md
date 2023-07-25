@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+### Features
+
+- Submissions
+  - added select all and unselect all when approving fields
+
 ### Bug Fixes
+
 - Whakapapa
   - Fixed showing birth parents from the same whakapapa (with secondary links)
 - Submissions
