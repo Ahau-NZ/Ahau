@@ -29,5 +29,38 @@
     "buriedLocation": "localização enterrada",
     "comments": "comentários",
     "close": "FECHAR",
-    "message": "Enviar uma mensagem"
+    "message": "Enviar uma mensagem",
+    "profileFieldsRequested": "Profile fields:",
+    "changesRequested": "Profile field changes:",
+    "createProfileRequest": "Review request to create a new profile",
+    "editProfileRequest": "Review request to edit a profile",
+    "submission": {
+        "profile": {
+            "new": {
+                "web": "Received a request to create a new profile in {groupName} via the web registration form",
+                "ahau": "Received a request to create a profile in {groupName}"
+            },
+            "edit": "{applicantName} has requested to edit {profileName} in the {groupName} (tribe)"
+        },
+        "new": "A submission has been received from {applicantName} to edit {sourceName}",
+        "accepted": "This submission has been reviewed and was accepted",
+        "rejected": "This submission has been reviewed and was rejected",
+        "review": "This submission is waiting to be reviewed"
+    },
+    "noChanges": "No changes were submitted",
+    "newField": "{fieldName}: {fieldValue}",
+    "changedField": "Changed {fieldName} to {fieldValue}",
+    "altNameChanges": {
+        "add": "Added new alternative name(s): {altNames}",
+        "remove": "Removed alternative name(s): {altNames}"
+    },
+    "deleteSubmission": "Delete this Submission",
+    "addedPicture": "Added new profile picture:",
+    "changedPicture": "Changed profile picture:",
+    "userDeceased": "User is no longer living set to: {value}",
+    "answers": "Respostas à pergunta",
+    "selectAll": "Select all",
+    "unselectAll": "Unselect all",
+    "saveComment": "Save a comment",
+    "reviewInfo": "Select the profile information you would like to save "
 }
