@@ -173,7 +173,7 @@ export default {
       },
       existingProfile: null, // the currently profile in database (if it exists)
       isDuplicate: false,
-      moveDup: true
+      moveDup: null
     }
   },
   async mounted () {
@@ -504,7 +504,6 @@ export default {
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }
-
       this.$emit('create', submission)
       this.close()
     },

@@ -428,9 +428,11 @@ export default {
       return this.person(this.profileId)
     },
     customFieldValues () {
+      if (!this.profile?.customFields) return []
+
       return (Array.isArray(this.profile.customFields))
         ? this.profile?.customFields
-        : Object.entries(this.profile.customFields).map(([key, value]) => ({ key, value }))
+        : Object.entries(this.profile?.customFields).map(([key, value]) => ({ key, value }))
     },
     adminCustomFieldValues () {
       if (!this.profile?.adminProfile?.customFields) return []
@@ -641,8 +643,8 @@ export default {
       // find the value from the applicants profile (if there is one)
 
       // first we look if the field is on the adminProfile
-      let field = this.adminCustomFieldValues.find(findThisField)
-      const fallbackField = this.customFieldValues.find(findThisField)
+      let field = this.adminCustomFieldValues?.find(findThisField)
+      const fallbackField = this.customFieldValues?.find(findThisField)
 
       if (!field) field = fallbackField
 
