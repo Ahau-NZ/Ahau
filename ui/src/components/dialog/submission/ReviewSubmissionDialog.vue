@@ -643,7 +643,11 @@ export default {
     },
     getCustomFieldLabel (key, value) {
       const fieldDef = this.tribeCustomFields.find(field => field.key === key)
-      return this.t('newField', { fieldName: fieldDef.label, fieldValue: this.formatValue(value) })
+      if (!fieldDef) {
+        console.error('getCustomFieldLabel failed', { key, value, tribeCustomFields: this.tribeCustomFields })
+      }
+      const fieldName = fieldDef?.label || 'custom field?'
+      return this.t('newField', { fieldName, fieldValue: this.formatValue(value) })
     },
     formatValue (value) {
       return Array.isArray(value) ? this.formatArray(value) : value
