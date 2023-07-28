@@ -151,43 +151,39 @@
 
             <!-- Alt names has different structure {add:[],remove:[]} -->
             <div v-else-if="key == 'altNames'">
-              <div class="pl-6 pt-3" v-if="value && value.add && value.add.length">
-                {{ t('altNameChanges.add', { altNames: '' }) }}
-
-                <div v-for="name in value.add" :key="name" class="pl-6">
+              <div v-if="value && value.add && value.add.length" class="pl-6">
+                <div v-for="name in value.add" :key="name">
                   <v-checkbox
                     v-if="showActions"
-                    :label="name"
+                    :label="t('altNameChanges.add', { name })"
                     hide-details
                     color="green"
                     class="mt-0"
                     @change="addAltName('add', name)"
                     :value="getAltNameValue('add', name)"
                   />
-                  <li v-else class="pl-6">
-                    {{ name }}
+                  <li v-else>
+                    {{ t('altNameChanges.add', { name }) }}
                   </li>
                 </div>
               </div>
 
-              <div class="pl-6 pt-3" v-if="value && value.remove && value.remove.length">
-                {{ t('altNameChanges.remove', { altNames: '' }) }}
-
-                <div v-for="name in value.remove" :key="name" class="pl-6">
+              <component v-if="value && value.remove && value.remove.length" class="pl-6" :is="showActions ? 'div' : 'li'">
+                <div v-for="name in value.remove" :key="name">
                   <v-checkbox
                     v-if="showActions"
-                    :label="name"
+                    :label="t('altNameChanges.remove', { name })"
                     hide-details
                     color="green"
                     class="mt-0"
                     @change="addAltName('remove', name)"
                     :value="getAltNameValue('remove', name)"
                   />
-                  <li v-else class="pl-6">
-                    {{ name }}
+                  <li v-else>
+                    {{ t('altNameChanges.remove', { name }) }}
                   </li>
                 </div>
-              </div>
+              </component>
             </div>
 
             <div v-else-if="key === 'customFields'">
@@ -201,7 +197,7 @@
                   @change="addCustomField(field)"
                   :value="getCustomFieldValue(field)"
                 />
-                <li v-else>
+                <li v-else class="pl-6">
                   {{ getCustomFieldLabel(field.key, field.value) }}
                 </li>
               </div>

@@ -28,7 +28,8 @@
     },
     "new": "Has submitted a change to {groupName}",
     "accepted": "Their submission to {groupName} has been accepted",
-    "declined": "Their submission to {groupName} has been declined "
+    "declined": "Their submission to {groupName} has been declined ",
+    "review": "Your submission is pending"
   },
   "systemTitle": "System",
   "newTitle": "New",
