@@ -168,7 +168,7 @@
                 </div>
               </div>
 
-              <component v-if="value && value.remove && value.remove.length" class="pl-6" :is="showActions ? 'div' : 'li'">
+              <div v-if="value && value.remove && value.remove.length" class="pl-6">
                 <div v-for="name in value.remove" :key="name">
                   <v-checkbox
                     v-if="showActions"
@@ -183,7 +183,7 @@
                     {{ t('altNameChanges.remove', { name }) }}
                   </li>
                 </div>
-              </component>
+              </div>
             </div>
 
             <div v-else-if="key === 'customFields'">
