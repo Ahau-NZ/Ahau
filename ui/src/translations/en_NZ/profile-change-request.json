@@ -51,8 +51,8 @@
     "newField": "{fieldName}: {fieldValue}",
     "changedField": "Changed {fieldName} to {fieldValue}",
     "altNameChanges": {
-      "add": "Added new alternative name(s): {altNames}",
-      "remove": "Removed alternative name(s): {altNames}"
+      "add": "alternative name (added): {name}",
+      "remove": "alternative name (removed): {name}"
     },
     "deleteSubmission": "Delete this Submission",
     "addedPicture": "Added new profile picture:",
