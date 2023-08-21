@@ -257,6 +257,17 @@ export default function (apollo) {
       return parentIds
         .filter(parentId => getters.isImportantLink(childId, parentId))
     },
+    getSiblingIds: (state, getters) => (profileId) => {
+      const { getRawParentIds, getRawChildIds } = getters
+
+      const childIds = getRawParentIds(profileId)
+        .flatMap(parentId => getRawChildIds(parentId))
+
+      const childIdSet = new Set(childIds)
+      childIdSet.delete(profileId)
+
+      return Array.from(childIdSet)
+    },
     isDescendant: (state, getters) => (parentId, childId) => {
       // NOTE this checks if there is a descendant line within the rendered graph
       // as this uses gettters.getChildIds
