@@ -73,14 +73,14 @@
         <v-card outlined class="py-1 mx-3">
           <!-- select all -->
           <v-checkbox
-            v-if="showActions"
+            v-if="showActions && changes.length > 1"
             hide-details
             v-model="selectAll"
             class="shrink pl-9 my-2"
             :label="selectAll ? t('unselectAll') : t('selectAll')"
           >
           </v-checkbox>
-          <v-divider v-if="showActions" light width="50%" class="ml-8"/>
+          <v-divider v-if="showActions && changes.length > 1" light width="50%" class="ml-8"/>
           <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
             <!-- avatarImage has a unique structure -->
             <div v-if="key == 'avatarImage'">
@@ -512,9 +512,8 @@ export default {
       return Object.entries(changes)
         .filter(([key, value]) => {
           // filter out altNames here so we arent showing empty labels for nothing
-          if (key === 'atlNames') {
-            return this.hasAltnameChanges
-          }
+          if (key === 'altNames' && !this.hasAltnameChanges) return false
+          if (key === 'customFields' && !value?.length) return false
 
           return value
         })
