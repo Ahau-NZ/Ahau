@@ -19,7 +19,7 @@
     />
     <!-- Checkbox field -->
     <v-checkbox
-      v-else-if="fieldDef.type === 'checkbox'"
+      v-else-if="fieldDef.type === 'checkbox' && !readonly"
       v-model="value"
       :label="fieldDef.label"
       hide-details
@@ -28,7 +28,7 @@
     />
     <!-- List of MultipleChoice feild -->
     <v-select
-      v-else-if="fieldDef.type === 'list'"
+      v-else-if="fieldDef.type === 'list' && !readonly"
       v-model="value"
       :label="fieldDef.label"
       :items="fieldDef.options"
@@ -39,6 +39,7 @@
       :multiple="fieldDef.multiple"
       :rules="fieldRules"
     />
+
     <!-- Array field -->
     <v-row v-else-if="fieldDef.type === 'array'">
       <v-col v-for="(_, i) in value" :key="`${fieldDef.key}-${i}`" :class="{ 'pt-0 mt-0': i === 0, 'pt-2': i > 0 }" :cols="smScreen ? 12 : 6">
@@ -54,6 +55,14 @@
       </v-col>
       <AddButton v-if="!readonly" :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="fieldDef.label" @click="addEmptyItem" row/>
     </v-row>
+    <v-text-field
+      v-else-if="readonly"
+      :value="value"
+      type="text"
+      :label="fieldDef.label"
+      v-bind="customProps"
+      :rules="fieldRules"
+    />
   </div>
 </template>
 
