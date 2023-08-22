@@ -28,7 +28,8 @@
     },
     "new": "Ha enviado un cambio a {groupName}",
     "accepted": "Su envío a {groupName} ha sido aceptado",
-    "declined": "Su presentación a {groupName} ha sido rechazada "
+    "declined": "Su presentación a {groupName} ha sido rechazada ",
+    "review": "Your submission is pending"
   },
   "systemTitle": "Sistema",
   "newTitle": "Nuevo",
