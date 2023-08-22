@@ -53,6 +53,12 @@ export default {
       handler (val) {
         this.$emit('update:fieldValues', val)
       }
+    },
+    profile: {
+      deep: true,
+      handler () {
+        this.populateCustomFieldValues()
+      }
     }
   },
   mounted () {
@@ -113,7 +119,7 @@ export default {
       // the customFields then become an object. So here i am monkey patching to turn it
       // back into an array
       const findThisField = field => field.key === fieldDef.key
-      // find the value from the applicants profile (if there is one)
+      // find the value from the applicants profile (if there is one
 
       // first we look if the field is on the adminProfile
       let field = this.adminCustomFieldValues.find(findThisField)

@@ -53,6 +53,10 @@ fragment PersonProfileFields on Person {
   buriedLocation
   education
   school
+  customFields {
+    key
+    value
+  }
 }
 `
 
