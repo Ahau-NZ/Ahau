@@ -122,6 +122,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 
@@ -137,6 +138,22 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0
+
+function findNewPeople (newProfiles, existingProfiles) {
+  if (!newProfiles?.length) return
+  if (!existingProfiles?.length) return clone(newProfiles)
+
+  const newPeople = clone(newProfiles)
+    .filter(newPerson => {
+      return !existingProfiles.some(existingPerson => {
+        return existingPerson.id === newPerson.id
+      })
+    })
+
+  if (!newPeople?.length) return
+
+  return newPeople
+}
 
 export default {
   name: 'NewPersonDialog',
@@ -234,11 +251,11 @@ export default {
         this.existingProfile = await this.getProfile(this.profile.id)
 
         // if hasSelection and quickAdd Section, show exsisting links
-        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
-        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = clone(this.existingProfile.parents)
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = clone(this.existingProfile.children)
         if (this.generatePartners && this.existingProfile.partners) {
-          this.quickAdd.partners = [...this.existingProfile.partners]
-          this.quickAdd.newPartners = [...this.existingProfile.partners]
+          this.quickAdd.partners = clone(this.existingProfile.partners)
+          this.quickAdd.newPartners = clone(this.existingProfile.partners)
         }
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
@@ -371,7 +388,9 @@ export default {
       }
     },
     hasProfiles (field) {
-      return this.quickAdd[field] && this.quickAdd[field].length > 0
+      return this.quickAdd[field]
+        ?.filter(Boolean)
+        ?.length
     },
     getSuggestionsByField (field) {
       if (!this.hasProfiles(field)) return []
@@ -470,40 +489,14 @@ export default {
         recps
       }
 
-      if (this.hasProfiles('newChildren')) {
-        if (this.existingProfile && this.existingProfile.children) {
-          // if quick adding children, remove exisiting children from the list
-          const _children = this.quickAdd.newChildren.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_children.length) submission.children = _children
-        }
-        else submission.children = this.quickAdd.newChildren
-      }
-
-      if (this.hasProfiles('newParents')) {
-        if (this.existingProfile && this.existingProfile.parents) {
-          const _parents = this.quickAdd.newParents.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_parents.length) submission.parents = _parents
-        }
-        else submission.parents = this.quickAdd.newParents
-      }
-
-      if (this.hasProfiles('newPartners')) {
-        if (this.existingProfile && this.existingProfile.partners) {
-          const _partners = this.quickAdd.newPartners.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_partners.length) submission.partners = _partners
-        }
-        else submission.partners = this.quickAdd.newPartners
-      }
+      submission.children = findNewPeople(this.quickAdd?.newChildren, this.existingProfile?.children)
+      submission.parents = findNewPeople(this.quickAdd?.newParents, this.existingProfile?.parents)
+      submission.partners = findNewPeople(this.quickAdd?.newPartners, this.existingProfile?.partners)
 
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }
+
       this.$emit('create', submission)
       this.close()
     },
