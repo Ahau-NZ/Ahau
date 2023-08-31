@@ -1,5 +1,5 @@
 {
-  "delete": "Excluir {preferredName}",
+  "title": "Excluir {preferredName}",
   "deleteLabel": "Excluir",
   "cancel": "cancelar",
   "whakapapaShow": {
@@ -12,5 +12,13 @@
   "personIndex": {
     "deleteConfirmation": "Tem certeza que deseja excluir este perfil?",
     "warnAboutChildren": "Isso também irá remover todos os filhos conectados de todos os registros de whakapa que este perfil está ligado."
+  },
+  "submission": {
+    "title": "Submit proposal to delete {preferredName}",
+    "deleteLabel": "enviar",
+    "deleteConfirmation": "Are you sure you want to send a submission to the kaitiaki of this tribe to delete this profile from this whakapapa record?",
+    "warnAboutChildren": "Once accepted by the kaitiaki, this will also remove all connect children from the whakapapa record.",
+    "comment": "Comment (optional)",
+    "commentText": "Send a comment with your submission"
   }
 }
