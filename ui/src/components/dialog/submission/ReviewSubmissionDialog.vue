@@ -66,22 +66,22 @@
 
         <!-- Header for changes -->
         <v-col :class="headerClass">
-          {{ isNewRecord ? t('profileFieldsRequested') : t('changesRequested') }}
+          {{ (isNewRecord || isTombstone) ? t('profileFieldsRequested') : t('changesRequested') }}
         </v-col>
 
         <!-- Content for changes -->
         <v-card outlined class="py-1 mx-3">
           <!-- select all -->
           <v-checkbox
-            v-if="showActions && changes.length > 1"
+            v-if="showActions && !isTombstone"
             hide-details
             v-model="selectAll"
             class="shrink pl-9 my-2"
             :label="selectAll ? t('unselectAll') : t('selectAll')"
           >
           </v-checkbox>
-          <v-divider v-if="showActions && changes.length > 1" light width="50%" class="ml-8"/>
-          <v-col v-for="([key, value], i) in changes" :key="i" class="py-0">
+          <v-divider v-if="showActions && !isTombstone" light width="50%" class="ml-8"/>
+          <v-col v-for="([key, value], i) in profileFields" :key="i" class="py-0">
             <!-- avatarImage has a unique structure -->
             <div v-if="key == 'avatarImage'">
               <div v-if="sourceProfile[key] == null">
@@ -140,7 +140,7 @@
             <!-- Improving readability of deceased changes -->
             <div v-else-if="key == 'deceased'" class="pl-6">
               <v-checkbox
-                v-if="showActions"
+                v-if="showActions && !isTombstone"
                 v-model="selectedChanges[key]"
                 :value="value"
                 :label="t('userDeceased', { value })"
@@ -158,7 +158,7 @@
               <div v-if="value && value.add && value.add.length" class="pl-6">
                 <div v-for="name in value.add" :key="name">
                   <v-checkbox
-                    v-if="showActions"
+                    v-if="showActions && !isTombstone"
                     :label="t('altNameChanges.add', { name })"
                     hide-details
                     color="green"
@@ -175,7 +175,7 @@
               <div v-if="value && value.remove && value.remove.length" class="pl-6">
                 <div v-for="name in value.remove" :key="name">
                   <v-checkbox
-                    v-if="showActions"
+                    v-if="showActions && !isTombstone"
                     :label="t('altNameChanges.remove', { name })"
                     hide-details
                     color="green"
@@ -193,7 +193,7 @@
             <div v-else-if="key === 'customFields'">
               <div v-for="field in value" :key="field.key">
                 <v-checkbox
-                  v-if="showActions"
+                  v-if="showActions && !isTombstone"
                   :label="getCustomFieldLabel(field.key, field.value)"
                   hide-details
                   color="green"
@@ -209,7 +209,7 @@
 
             <div v-else>
               <v-checkbox
-                v-if="showActions"
+                v-if="showActions && !isTombstone"
                 :label="getLabel(key, value)"
                 @change="addSelectedItem(key, value, $event)"
                 :value="Boolean(selectedChanges[key])"
@@ -403,6 +403,9 @@ export default {
     isWebForm () {
       return this.notification?.source === 'webForm'
     },
+    isTombstone () {
+      return this.notification?.changes?.tombstone
+    },
     dependencies () {
       return this.notification?.dependencies || []
     },
@@ -433,6 +436,8 @@ export default {
         })
     },
     submissionTitle () {
+      if (this.isTombstone) return this.t('deleteProfileRequest')
+
       return this.isNewRecord
         ? this.t('createProfileRequest')
         : this.t('editProfileRequest')
@@ -532,7 +537,7 @@ export default {
           return this.$t('notifications.submission.profile.new.web', { groupName: this.groupName })
         }
 
-        return this.$t('notifications.submission.profile.edit', {
+        return this.$t(`notifications.submission.profile.${this.isTombstone ? 'delete' : 'edit'}`, {
           applicantName: this.applicantProfile?.preferredName,
           profileName: this.sourceProfile?.preferredName,
           groupName: this.groupName
@@ -545,7 +550,9 @@ export default {
         case false:
           return this.$t('notifications.submission.declined', { groupName: this.groupName })
         default:
-          return this.$t('notifications.submission.review')
+          return this.isTombstone
+            ? this.$t('notifications.submission.delete.review')
+            : this.$t('notifications.submission.review')
       }
     },
     changes () {
@@ -565,7 +572,29 @@ export default {
           if (key === 'altNames' && !this.hasAltnameChanges) return false
           if (key === 'customFields' && !value?.length) return false
 
+          if (key === 'tombstone') return false
+
           return value
+        })
+    },
+    profileFields () {
+      if (!this.isTombstone) return this.changes
+
+      const profile = this.sourceProfile
+      if (!profile) return []
+
+      delete profile.__typename
+
+      profile.customFields = profile?.customFields.filter(field => {
+        return this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
+      })
+
+      return Object.entries(this.sourceProfile)
+        .filter(([key, value]) => {
+          if (['recps', 'id', 'originalAuthor', 'canEdit', 'type'].includes(key)) return false
+          if (value === null || isEmpty(value)) return false
+
+          return true
         })
     },
     hasAltnameChanges () {
@@ -588,8 +617,9 @@ export default {
   methods: {
     ...mapActions('person', ['updatePerson']),
     ...mapActions('submissions', [
-      'approveEditGroupPersonSubmission',
       'approveNewGroupPersonSubmission',
+      'approveEditGroupPersonSubmission',
+      'approveDeleteGroupPersonSubmission',
       'approveWhakapapaLinkSubmissions',
       'rejectSubmission',
       'tombstoneSubmission'
@@ -637,6 +667,12 @@ export default {
       const output = {
         id: this.notification?.id, // submissionId
         comment: this.comment
+      }
+
+      if (this.isTombstone) {
+        await this.approveDeleteGroupPersonSubmission({ ...output, profileId: this.sourceProfile.id })
+        this.close()
+        return
       }
 
       if (isEmpty(this.selectedChanges)) {

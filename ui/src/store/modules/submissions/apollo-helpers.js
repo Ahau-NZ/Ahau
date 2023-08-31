@@ -166,20 +166,20 @@ export const createSubmissionsLink = ({ parent, child, mappedDependencies }) => 
   }
 }
 
-// export const proposeTombstone = ({ recordId, comment, groupId }) => {
-//   return {
-//     mutation: gql`
-//       mutation ($recordId: String!, $comment: String, $groupId: String!) {
-//         proposeTombstone (recordId: $recordId, comment: $comment, groupId: $groupId)
-//       }
-//     `,
-//     variables: {
-//       recordId,
-//       comment
-//       groupId
-//     }
-//   }
-// }
+export const proposeTombstone = ({ recordId, comment, groupId }) => {
+  return {
+    mutation: gql`
+      mutation ($recordId: String!, $comment: String, $groupId: String!) {
+        proposeTombstone (recordId: $recordId, comment: $comment, groupId: $groupId)
+      }
+    `,
+    variables: {
+      recordId,
+      comment,
+      groupId
+    }
+  }
+}
 
 export const SubmissionFragment = gql`
   ${COMMUNITY_FRAGMENT}
@@ -276,6 +276,10 @@ export const SubmissionGroupPersonFragment = gql`
           ...on PersonCustomFieldDate {
             type
           }
+        }
+        tombstone {
+          date
+          reason
         }
       }
 
