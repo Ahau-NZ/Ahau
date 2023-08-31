@@ -47,7 +47,7 @@
       "rejected": "This submission has been reviewed and was rejected",
       "review": "This submission is waiting to be reviewed"
     },
-    "noChanges": "No changes were submitted",
+    "noChanges": "You must select atleast one profile field to approve this submission",
     "newField": "{fieldName}: {fieldValue}",
     "changedField": "Changed {fieldName} to {fieldValue}",
     "altNameChanges": {
@@ -57,10 +57,14 @@
     "deleteSubmission": "Delete this Submission",
     "addedPicture": "Added new profile picture:",
     "changedPicture": "Changed profile picture:",
-    "userDeceased": "User is no longer living set to: {value}",
+    "userDeceased": "no longer living: {value}",
     "answers": "Question Answers",
     "selectAll": "Select all",
     "unselectAll": "Unselect all",
     "saveComment": "Save a comment",
-    "reviewInfo": "Select the profile information you would like to save "
+    "reviewInfo": "Select the profile information you would like to save ",
+    "parents": "Parents",
+    "children": "Children",
+    "partners": "Partners",
+    "family": "Family"
   }

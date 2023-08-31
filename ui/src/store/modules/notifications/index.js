@@ -33,7 +33,7 @@ export default function (apollo) {
 
   const actions = {
     async listSubmissions ({ commit, dispatch, rootState: { whoami } }) {
-      const submissions = (await dispatch('submissions/getSubmissions', null, { root: true }))
+      const submissions = ((await dispatch('submissions/getSubmissions', null, { root: true }) || []))
         .map(mapSubmissionValues(whoami))
 
       commit('updateSubmissions', submissions)
@@ -129,7 +129,8 @@ function mapSubmissionValues (whoami) {
       applicantId,
       details,
       group,
-      answers
+      answers,
+      dependencies
     } = submission
 
     const isPersonal = applicantId === whoami.public.feedId
@@ -165,6 +166,7 @@ function mapSubmissionValues (whoami) {
       sourceRecord,
       source,
       answers,
+      dependencies,
 
       history: comments.map(({ authorId, author, comment }) => {
         return {

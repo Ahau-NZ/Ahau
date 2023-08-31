@@ -1,4 +1,5 @@
 import omit from 'lodash.omit'
+import pick from 'lodash.pick'
 
 import {
   proposeNewGroupPerson,
@@ -9,7 +10,8 @@ import {
   proposeNewWhakapapaLink,
   createSubmissionsLink,
   tombstoneSubmission,
-  approveSubmission
+  approveSubmission,
+  approveNewWhakapapaLink
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -178,6 +180,33 @@ export default function (apollo) {
         // eslint-disable-next-line no-console
         console.error('Something went wrong while trying to approve submission', input.id, err)
       }
+    },
+    async approveWhakapapaLinkSubmission (_, input) {
+      try {
+        if (input.allowedFields.legallyAdopted === null) delete input.allowedFields.legallyAdopted
+
+        const res = await apollo.mutate(
+          approveNewWhakapapaLink(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to approve whakapapa link submission', input.id, err)
+      }
+    },
+    async approveWhakapapaLinkSubmissions ({ dispatch }, submissions) {
+      // NOTE: approveWhakapapaLink submission will automatically handle
+      // plugging in the ID for the missing parent or child field
+      return Promise.all(
+        submissions.map(async submission => {
+          return dispatch('approveWhakapapaLinkSubmission', {
+            id: submission.id,
+            allowedFields: pick(submission.details, ['parent', 'child', 'legallyAdopted', 'relationshipType', 'recps'])
+          })
+        })
+      )
     },
     async rejectSubmission (_, input) {
       try {

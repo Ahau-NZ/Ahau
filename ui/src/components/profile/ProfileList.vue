@@ -9,6 +9,8 @@
         :isNewProfile="isNewProfile(profile)"
         :hideDetails="hideDetails"
 
+        :readonly-relationship="readonlyRelationship"
+
         @click="$emit('click', $event)"
         @update="$emit('update', $event)"
       />
@@ -29,7 +31,8 @@ export default {
     readonly: Boolean,
     newProfiles: Array,
     existingProfiles: Array,
-    hideDetails: Boolean
+    hideDetails: Boolean,
+    readonlyRelationship: Boolean
   },
   computed: {
     mobile () {
