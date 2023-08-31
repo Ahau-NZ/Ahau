@@ -229,7 +229,7 @@
         </v-col>
         <v-card v-if="dependencies.length" outlined class="py-1 mx-3">
           <SubmissionDependencies v-if="parentLinks.length" :label="t('parents')" :dependencies="parentLinks" @selection="updateSelectedDependencies('parents', $event)" :readonly="!showActions"/>
-          <!-- <SubmissionDependencies v-if="childLinks.length" :label="t('children')" :dependencies="childLinks" @selection="updateSelectedDependencies('children', $event)"/> -->
+          <SubmissionDependencies v-if="childLinks.length" :label="t('children')" :dependencies="childLinks" @selection="updateSelectedDependencies('children', $event)" :readonly="!showActions"/>
           <!-- <SubmissionDependencies v-if="partnerLinks.length" :label="t('partners')" :dependencies="partnerLinks" @selection="updateSelectedDependencies('partners', $event)"/> -->
         </v-card>
 
@@ -406,15 +406,15 @@ export default {
     dependencies () {
       return this.notification?.dependencies || []
     },
-    // childLinks () {
-    //   return this.dependencies
-    //     .filter(dep => {
-    //       return (
-    //         dep.targetType === CHILD_LINK &&
-    //         dep?.details?.parent === null
-    //       )
-    //     })
-    // },
+    childLinks () {
+      return this.dependencies
+        .filter(dep => {
+          return (
+            dep.targetType === CHILD_LINK &&
+            dep?.details?.parent === null
+          )
+        })
+    },
     parentLinks () {
       return this.dependencies
         .filter(dep => {

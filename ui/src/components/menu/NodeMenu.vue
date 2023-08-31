@@ -71,7 +71,7 @@ export default {
           title: this.t('addParent'),
           dialog: 'new-person',
           type: 'parent',
-          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-parent.svg')
         },
         {
