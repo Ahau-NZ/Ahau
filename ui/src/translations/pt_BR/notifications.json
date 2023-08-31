@@ -24,12 +24,20 @@
         "web": "Received a request to register with {groupName} via the web registration form",
         "ahau": "Received a request to create a profile in {groupName}"
       },
-      "edit": "Received a request to edit {profileName} in {groupName}"
+      "edit": "Received a request to edit {profileName} in {groupName}",
+      "delete": "Received a request to delete a profile in {groupName}"
     },
     "new": "Enviou uma alteração para {groupName}",
     "accepted": "O seu envio para {groupName} foi aceito",
     "declined": "A sua submissão para {groupName} foi recusada ",
+<<<<<<< HEAD
+    "review": "Your submission is pending",
+    "delete": {
+      "review": "Your submission to delete this profile is pending"
+    }
+=======
     "review": "Your submission is pending"
+>>>>>>> origin/master
   },
   "systemTitle": "SISTEMA",
   "newTitle": "Novidades",
