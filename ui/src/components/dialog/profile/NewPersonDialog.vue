@@ -467,35 +467,47 @@ export default {
 
     // suggests other parents of children
     async findPartners () {
-      const currentPartners = this.selectedProfile.partners || []
-
-      const suggestedPartners = []
-
-      this.selectedProfile.children.map(child => {
-        if (!child.parents) return child
-
-        this.getParentIds(child.id).forEach(parentId => {
-          if (this.selectedProfile.id === parentId) return
-          if (currentPartners.some(partner => partner.id === parentId)) return
-          if (suggestedPartners.some(partner => partner.id === parentId)) return
-
-          suggestedPartners.push(parent)
-        })
-
-        return child
-      })
-
-      // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
-      profile.partners.forEach(partner => {
-        if (this.selectedProfile.id === partner.id) return
-        if (currentPartners.some(_partner => _partner.id === partner.id)) return
-        if (suggestedPartners.some(_partner => _partner.id === partner.id)) return
 
-        suggestedPartners.push(partner)
-      })
+      const otherParents = []
 
-      return suggestedPartners
+      // get the current partners that arent ignored
+      const currentPartners = (profile.partners || [])
+        .filter(partner => this.isNotIgnored(partner.id))
+
+      // get all the parents of each child
+      await Promise.all(
+        profile.children.map(async ({ id: childId }) => {
+          const child = await this.getProfile(childId)
+
+          if (!child?.parents?.length) return child
+
+          // find this childs parents
+          child.parents.forEach(parent => {
+            if (parent.id === this.selectedProfile.id) return
+            if (currentPartners.some(currentPartner => currentPartner.id === parent.id)) return
+            if (otherParents.some(otherParent => otherParent.id === parent.id)) return
+
+            otherParents.push(parent)
+          })
+        })
+      )
+
+      // TODO: remove this if statement once ignored profiles are supported
+      if (!this.isSubmitOnly) {
+        // add partners if they have been ignored
+        profile.partners.forEach(partner => {
+          if (partner.id === this.selectedProfile.id) return
+          if (currentPartners.some(currentPartner => currentPartner.id === partner.id)) return
+          if (otherParents.some(otherParent => otherParent.id === partner.id)) return
+          if (this.isNotIgnored(partner.id)) return
+
+          otherParents.push(partner)
+        })
+      }
+
+      // get all the profiles current partnes
+      return otherParents
     },
 
     age (aliveInterval) {
