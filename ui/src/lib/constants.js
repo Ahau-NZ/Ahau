@@ -90,3 +90,6 @@ export const ACCESS_TYPES = [
 export const LINK_CHILD = 'child'
 export const LINK_PARENT = 'parent'
 export const LINK_PARTNER = 'partner'
+
+export const LINK_TYPE_CHILD = 'link/profile-profile/child'
+export const LINK_TYPE_PARTNER = 'link/profile-profile/partner'

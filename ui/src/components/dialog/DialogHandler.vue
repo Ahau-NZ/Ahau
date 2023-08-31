@@ -116,8 +116,15 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 import { mapGetters, mapActions } from 'vuex'
+
+import {
+  ACCESS_KAITIAKI,
+  LINK_TYPE_CHILD,
+  LINK_TYPE_PARTNER,
+  LINK_CHILD,
+  LINK_PARENT
+} from '@/lib/constants.js'
 
 export default {
   name: 'DialogHandler',
@@ -423,7 +430,7 @@ export default {
       }
     },
     async submitPerson (input, type) {
-      const { /* id, children, parents, partners, moveDup, */ customFields: rawCustomFields = {} } = input
+      const { partners, children, parents, /* id, moveDup, */ customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
       // if (moveDup) {
@@ -457,7 +464,7 @@ export default {
         case 'sibling':
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
-            type: 'link/profile-profile/child',
+            type: LINK_TYPE_CHILD,
             // here child is left empty, that field will be "plugged in" upon approval
             parent: (this.dialogType === 'child')
               ? this.selectedProfile.id
@@ -466,78 +473,45 @@ export default {
           }, parentSubmissionId)
           // }
 
-          // TODO: plug in quick add features
+          if (parents) {
+            await this.submitNewLinks(LINK_TYPE_CHILD, parents, parentSubmissionId, true)
+          }
 
           break
         case 'parent':
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
-            type: 'link/profile-profile/child',
+            type: LINK_TYPE_CHILD,
             child: this.selectedProfile.id,
             relationshipAttrs
           }, parentSubmissionId)
           // }
-          break
 
-          // TODO; plug in quick add features
+          if (partners) {
+            await this.submitNewLinks(LINK_TYPE_PARTNER, partners, parentSubmissionId)
+          }
+
+          if (children) {
+            await this.submitNewLinks(LINK_TYPE_CHILD, children, parentSubmissionId)
+          }
+
+          break
         case 'partner':
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
-            type: 'link/profile-profile/partner',
+            type: LINK_TYPE_PARTNER,
             parent: this.selectedProfile.id
           }, parentSubmissionId)
           // }
 
-          // TODO: plug in quick add features
+          if (children) {
+            await this.submitNewLinks(LINK_TYPE_CHILD, children, parentSubmissionId)
+          }
+
           break
         default:
           console.error('wrong type for add person')
       }
-
-      // TODO
-      // case 'child'
-      //     // create the link
-
-      //     // TODO: enable quick add parents
-      //     // Add parents if parent quick links
-      //     // if (parents) await this.quickAddParents(id, parents)
-      //     break
-      // case 'parent':
-      //   // Add parents if partner quick add links
-      //   if (partners) {
-      //     await Promise.all(partners.map(async partner => {
-      //       await this.createPartnerLink({
-      //         child: id,
-      //         parent: partner.id
-      //       })
-      //     }))
-      //   }
-
-      //   // Add children if children quick add links
-      //   if (children) await this.quickAddChildren(id, children)
-
-      //   if (child === this.view.focus) this.$emit('persist-focus', parent)
-      //   else {
-      //     const parentId = this.getParentNodeId(child)
-
-      //     if (!parentId) {
-      //       // when the child doesnt have a parent above them, load the new parents profile
-      //       this.$emit('set-focus-to-ancestor-of', parent)
-      //     }
-      //   }
-      //   // only update personList if we are on personIndex
-      //   if (this.$route.name === 'personIndex') {
-      //     this.personListAdd(parent)
-      //   }
-      //   break
-      // case 'partner':
-
-      //   // Add children if children quick add links
-      //   if (children) await this.quickAddChildren(id, children)
-      //   if (this.$route.name === 'personIndex') {
-      //     this.personListAdd(parent)
-      //   }
-      //   break
     },
     async quickAddParents (child, parents) {
       await Promise.all(
@@ -607,7 +581,7 @@ export default {
 
     async createChildLink ({ child, parent, relationshipAttrs }) {
       return this.saveLink({
-        type: 'link/profile-profile/child',
+        type: LINK_TYPE_CHILD,
         child,
         parent,
         recps: this.view.recps || [this.currentTribe.id],
@@ -632,14 +606,29 @@ export default {
         parent: parentSubmissionId,
         child: submissionId,
         mappedDependencies: [{
-          missingField: parent === undefined ? 'parent' : 'child',
+          missingField: parent === undefined ? LINK_PARENT : LINK_CHILD,
           replacementField: 'targetId'
         }]
       })
     },
+    async submitNewLinks (type, links, parentSubmissionId, isParent = false) {
+      return Promise.all(
+        links.map(link => {
+          const input = {
+            type,
+            relationshipAttrs: type === LINK_TYPE_CHILD ? pick(link, ['relationshipType', 'legallyAdopted']) : undefined
+          }
+
+          if (isParent) input.parent = link.id
+          else input.child = link.id
+
+          return this.submitNewLink(input, parentSubmissionId)
+        })
+      )
+    },
     async createPartnerLink ({ child, parent }) {
       return this.saveLink({
-        type: 'link/profile-profile/partner',
+        type: LINK_TYPE_PARTNER,
         child,
         parent,
         recps: this.view.recps || [this.currentTribe.id]
