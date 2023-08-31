@@ -455,7 +455,8 @@ export default {
       switch (this.dialogType) {
         case 'child':
           // if (!isIgnoredProfile) {
-          await this.submitNewChildLink({
+          await this.submitNewLink({
+            type: 'link/profile-profile/child',
             // here child is left empty, that field will be "plugged in" upon approval
             parent: this.selectedProfile.id,
             relationshipAttrs
@@ -467,7 +468,8 @@ export default {
           break
         case 'parent':
           // if (!isIgnoredProfile) {
-          await this.submitNewParentLink({
+          await this.submitNewLink({
+            type: 'link/profile-profile/child',
             child: this.selectedProfile.id,
             relationshipAttrs
           }, parentSubmissionId)
@@ -475,6 +477,16 @@ export default {
           break
 
           // TODO; plug in quick add features
+        case 'partner':
+          // if (!isIgnoredProfile) {
+          await this.submitNewLink({
+            type: 'link/profile-profile/partner',
+            parent: this.selectedProfile.id
+          }, parentSubmissionId)
+          // }
+
+          // TODO: plug in quick add features
+          break
         default:
           console.error('wrong type for add person')
       }
@@ -516,11 +528,6 @@ export default {
       //   }
       //   break
       // case 'partner':
-      //   parent = this.selectedProfile.id
-      //   child = id
-
-      //   // create the link
-      //   /* if (!isIgnoredProfile) */ await this.createPartnerLink({ parent, child })
 
       //   // Add children if children quick add links
       //   if (children) await this.quickAddChildren(id, children)
@@ -607,52 +614,22 @@ export default {
           this.addLinks({ childLinks: [{ parent, child, ...relationshipAttrs }] })
         })
     },
-    async submitNewChildLink ({ parent, relationshipAttrs }, parentSubmissionId) {
+    async submitNewLink ({ type, parent, child, relationshipAttrs = {} }, parentSubmissionId) {
       const submissionId = await this.proposeNewWhakapapaLink({
         input: {
-          type: 'link/profile-profile/child',
+          type,
           parent,
-          // child - the missing field
-          ...relationshipAttrs
-        },
-        comment: 'create a child link' // TODO: comment
-      })
-
-      // link this submission to the parent submission as a dependency
-      await this.createSubmissionsLink({
-        parent: parentSubmissionId,
-        child: submissionId,
-
-        // here we tell the submission that we are missing the
-        // child field on the child submission, and when that submission
-        // is executed, it should use the targetId as the field value for child
-        mappedDependencies: [{
-          missingField: 'child',
-          replacementField: 'targetId'
-        }]
-      })
-    },
-    async submitNewParentLink ({ child, relationshipAttrs }, parentSubmissionId) {
-      const submissionId = await this.proposeNewWhakapapaLink({
-        input: {
-          type: 'link/profile-profile/child',
           child,
-          // parent - the missing field
           ...relationshipAttrs
-        },
-        comment: 'create a parent link' // TODO: comment
+        }
+        // TODO: comment
       })
 
-      // link this submission to the parent submission as a dependency
       await this.createSubmissionsLink({
         parent: parentSubmissionId,
         child: submissionId,
-
-        // here we tell the submission that we are missing the
-        // parent field on the child submission, and when that submission
-        // is executed, it should use the targetId as the field value for parent
         mappedDependencies: [{
-          missingField: 'parent',
+          missingField: parent === undefined ? 'parent' : 'child',
           replacementField: 'targetId'
         }]
       })

@@ -230,7 +230,7 @@
         <v-card v-if="dependencies.length" outlined class="py-1 mx-3">
           <SubmissionDependencies v-if="parentLinks.length" :label="t('parents')" :dependencies="parentLinks" @selection="updateSelectedDependencies('parents', $event)" :readonly="!showActions"/>
           <SubmissionDependencies v-if="childLinks.length" :label="t('children')" :dependencies="childLinks" @selection="updateSelectedDependencies('children', $event)" :readonly="!showActions"/>
-          <!-- <SubmissionDependencies v-if="partnerLinks.length" :label="t('partners')" :dependencies="partnerLinks" @selection="updateSelectedDependencies('partners', $event)"/> -->
+          <SubmissionDependencies v-if="partnerLinks.length" :label="t('partners')" :dependencies="partnerLinks" @selection="updateSelectedDependencies('partners', $event)" :readonly="!showActions"/>
         </v-card>
 
         <!-- Header for question answers -->
@@ -343,7 +343,7 @@ import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
 const CHILD_LINK = 'link/profile-profile/child'
-// const PARTNER_LINK = 'link/profile-profile/partner'
+const PARTNER_LINK = 'link/profile-profile/partner'
 
 export default {
   name: 'ReviewSubmissionDialog',
@@ -424,14 +424,14 @@ export default {
           )
         })
     },
-    // partnerLinks () {
-    //   return this.dependencies
-    //     .filter(dep => {
-    //       return (
-    //         dep.targetType === PARTNER_LINK
-    //       )
-    //     })
-    // },
+    partnerLinks () {
+      return this.dependencies
+        .filter(dep => {
+          return (
+            dep.targetType === PARTNER_LINK
+          )
+        })
+    },
     submissionTitle () {
       return this.isNewRecord
         ? this.t('createProfileRequest')
