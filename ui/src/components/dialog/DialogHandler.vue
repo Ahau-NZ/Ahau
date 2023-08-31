@@ -465,31 +465,29 @@ export default {
           // TODO: plug in quick add features
 
           break
+        case 'parent':
+          // if (!isIgnoredProfile) {
+          await this.submitNewParentLink({
+            child: this.selectedProfile.id,
+            relationshipAttrs
+          }, parentSubmissionId)
+          // }
+          break
+
+          // TODO; plug in quick add features
         default:
           console.error('wrong type for add person')
       }
 
-      //
+      // TODO
+      // case 'child'
       //     // create the link
 
       //     // TODO: enable quick add parents
       //     // Add parents if parent quick links
       //     // if (parents) await this.quickAddParents(id, parents)
       //     break
-
-      // TODO
       // case 'parent':
-      //   child = this.selectedProfile.id
-      //   parent = id
-
-      //   // if (!isIgnoredProfile) {
-      //   await this.submitNewChildLink({
-      //     child,
-      //     parent,
-      //     relationshipAttrs
-      //   })
-      //   // }
-
       //   // Add parents if partner quick add links
       //   if (partners) {
       //     await Promise.all(partners.map(async partner => {
@@ -630,6 +628,31 @@ export default {
         // is executed, it should use the targetId as the field value for child
         mappedDependencies: [{
           missingField: 'child',
+          replacementField: 'targetId'
+        }]
+      })
+    },
+    async submitNewParentLink ({ child, relationshipAttrs }, parentSubmissionId) {
+      const submissionId = await this.proposeNewWhakapapaLink({
+        input: {
+          type: 'link/profile-profile/child',
+          child,
+          // parent - the missing field
+          ...relationshipAttrs
+        },
+        comment: 'create a parent link' // TODO: comment
+      })
+
+      // link this submission to the parent submission as a dependency
+      await this.createSubmissionsLink({
+        parent: parentSubmissionId,
+        child: submissionId,
+
+        // here we tell the submission that we are missing the
+        // parent field on the child submission, and when that submission
+        // is executed, it should use the targetId as the field value for parent
+        mappedDependencies: [{
+          missingField: 'parent',
           replacementField: 'targetId'
         }]
       })
