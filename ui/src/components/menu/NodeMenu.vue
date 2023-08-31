@@ -78,7 +78,7 @@ export default {
           title: this.t('addPartner'),
           dialog: 'new-person',
           type: 'partner',
-          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-partner.svg')
         },
         {
