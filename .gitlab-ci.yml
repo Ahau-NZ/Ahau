@@ -8,3 +8,5 @@ tests:
   script:
     - cd ui && npm ci
     - npm test
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master' || $CI_PIPELINE_SOURCE == 'merge_request_event' 
