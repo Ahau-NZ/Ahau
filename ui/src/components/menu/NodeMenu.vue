@@ -92,7 +92,7 @@ export default {
           title: this.t('addSibling'),
           dialog: 'new-person',
           type: 'sibling',
-          isPermitted: this.canAddSibling && !this.isSubmitOnly,
+          isPermitted: this.canAddSibling,
           icon: require('@/assets/node-sibling.svg')
         },
         {
