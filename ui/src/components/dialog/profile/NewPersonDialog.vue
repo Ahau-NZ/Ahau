@@ -111,6 +111,8 @@
 
       </v-col>
     </template>
+
+    <!-- Slot at the bottom of the dialog -->
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="accessOptions" permission="edit" disabled/>
     </template>
@@ -270,8 +272,8 @@ export default {
   },
   computed: {
     ...mapGetters('tribe', ['accessOptions', 'currentTribe']),
-    ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
+    ...mapGetters(['currentAccess', 'isKaitiaki']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     isLogin () {
@@ -290,6 +292,8 @@ export default {
       return this.$route.name === 'personIndex'
     },
     generateSuggestions () {
+      // dont generate any suggestions if we are in a submit-only whakapapa
+      if (this.isSubmitOnly) return []
       if (this.hasSelection) return []
 
       if (this.suggestions.length) {
@@ -364,6 +368,9 @@ export default {
       })
 
       return submission
+    },
+    isSubmitOnly () {
+      return !this.isKaitiaki && this.whakapapaView?.permission === 'submit'
     }
   },
   methods: {

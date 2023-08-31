@@ -138,15 +138,19 @@
               </div>
             </div>
             <!-- Improving readability of deceased changes -->
-            <div v-else-if="key == 'deceased'">
-              <v-checkbox hide-details v-model="selectedChanges[key]" :value="value" color="green"
-                class="shrink pl-6 mt-0 black-label">
-                <template v-slot:label>
-                  <span class="checkbox_label">
-                    {{ t('userDeceased', { value }) }}
-                  </span>
-                </template>
-              </v-checkbox>
+            <div v-else-if="key == 'deceased'" class="pl-6">
+              <v-checkbox
+                v-if="showActions"
+                v-model="selectedChanges[key]"
+                :value="value"
+                :label="t('userDeceased', { value })"
+                hide-details
+                color="green"
+                class="shrink mt-0 black-label"
+              />
+              <li v-else>
+                {{ t('userDeceased', { value }) }}
+              </li>
             </div>
 
             <!-- Alt names has different structure {add:[],remove:[]} -->
@@ -218,6 +222,15 @@
               </li>
             </div>
           </v-col>
+        </v-card>
+
+        <v-col v-if="dependencies.length" :class="headerClass">
+          {{ t('family' )}}
+        </v-col>
+        <v-card v-if="dependencies.length" outlined class="py-1 mx-3">
+          <SubmissionDependencies v-if="parentLinks.length" :label="t('parents')" :dependencies="parentLinks" @selection="updateSelectedDependencies('parents', $event)" :readonly="!showActions"/>
+          <!-- <SubmissionDependencies v-if="childLinks.length" :label="t('children')" :dependencies="childLinks" @selection="updateSelectedDependencies('children', $event)"/> -->
+          <!-- <SubmissionDependencies v-if="partnerLinks.length" :label="t('partners')" :dependencies="partnerLinks" @selection="updateSelectedDependencies('partners', $event)"/> -->
         </v-card>
 
         <!-- Header for question answers -->
@@ -300,10 +313,10 @@
 
       <template v-slot:actions>
         <div v-if="showActions">
-          <v-btn @click="submit(false)" text large class="secondary--text">
+          <v-btn @click="decline" text large class="secondary--text">
             <span>{{ t('decline') }}</span>
           </v-btn>
-          <v-btn @click="submit(true)" text large class="blue--text mx-5">
+          <v-btn @click="approve" text large class="blue--text mx-5">
             <span>{{ t('approve') }}</span>
           </v-btn>
         </div>
@@ -324,15 +337,20 @@ import { mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
 
 import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
+
+const CHILD_LINK = 'link/profile-profile/child'
+// const PARTNER_LINK = 'link/profile-profile/partner'
 
 export default {
   name: 'ReviewSubmissionDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    SubmissionDependencies
   },
   props: {
     show: { type: Boolean, required: true },
@@ -345,6 +363,7 @@ export default {
       formData: '',
       comment: '',
       selectedChanges: {},
+      selectedDependencies: {},
       updatedKeys: {
         preferredName: this.t('preferredName'),
         profession: this.t('profession'),
@@ -384,6 +403,35 @@ export default {
     isWebForm () {
       return this.notification?.source === 'webForm'
     },
+    dependencies () {
+      return this.notification?.dependencies || []
+    },
+    // childLinks () {
+    //   return this.dependencies
+    //     .filter(dep => {
+    //       return (
+    //         dep.targetType === CHILD_LINK &&
+    //         dep?.details?.parent === null
+    //       )
+    //     })
+    // },
+    parentLinks () {
+      return this.dependencies
+        .filter(dep => {
+          return (
+            dep.targetType === CHILD_LINK &&
+            dep?.details?.child === null
+          )
+        })
+    },
+    // partnerLinks () {
+    //   return this.dependencies
+    //     .filter(dep => {
+    //       return (
+    //         dep.targetType === PARTNER_LINK
+    //       )
+    //     })
+    // },
     submissionTitle () {
       return this.isNewRecord
         ? this.t('createProfileRequest')
@@ -439,9 +487,9 @@ export default {
       return this.notification?.group?.joiningQuestions
     },
     isNewRecord () {
-      // if there is not source or target, it means we are looking at
+      // if there is not source, it means we are looking at
       // creating a new record
-      return !this.notification.sourceRecord && !this.notification.targetRecord
+      return !this.notification.sourceRecord
     },
     comments () {
       return this.notification?.history
@@ -475,25 +523,27 @@ export default {
       if (age === null) return ' '
       return age.toString()
     },
+    groupName () {
+      return this.notification?.group?.preferredName
+    },
     text () {
       if (this.showActions) {
-        const groupName = this.notification?.group?.preferredName
         if (this.isWebForm) {
-          return this.$t('notifications.submission.profile.new.web', { groupName })
+          return this.$t('notifications.submission.profile.new.web', { groupName: this.groupName })
         }
 
         return this.$t('notifications.submission.profile.edit', {
           applicantName: this.applicantProfile?.preferredName,
           profileName: this.sourceProfile?.preferredName,
-          groupName
+          groupName: this.groupName
         })
       }
 
       switch (this.notification?.isAccepted) {
         case true:
-          return this.$t('notifications.submission.accepted')
+          return this.$t('notifications.submission.accepted', { groupName: this.groupName })
         case false:
-          return this.$t('notifications.submission.declined')
+          return this.$t('notifications.submission.declined', { groupName: this.groupName })
         default:
           return this.$t('notifications.submission.review')
       }
@@ -537,7 +587,13 @@ export default {
   },
   methods: {
     ...mapActions('person', ['updatePerson']),
-    ...mapActions('submissions', ['approveEditGroupPersonSubmission', 'approveNewGroupPersonSubmission', 'rejectSubmission', 'tombstoneSubmission']),
+    ...mapActions('submissions', [
+      'approveEditGroupPersonSubmission',
+      'approveNewGroupPersonSubmission',
+      'approveWhakapapaLinkSubmissions',
+      'rejectSubmission',
+      'tombstoneSubmission'
+    ]),
     ...mapActions('alerts', ['showAlert']),
     selectAllChanges () {
       this.selectedChanges = {}
@@ -569,20 +625,22 @@ export default {
       }
       return string
     },
-    async submit (approved) {
+    async decline () {
+      await this.rejectSubmission({
+        id: this.notification?.id,
+        comment: this.comment
+      })
+
+      this.close()
+    },
+    async approve () {
       const output = {
         id: this.notification?.id, // submissionId
         comment: this.comment
       }
 
-      if (!approved) {
-        await this.rejectSubmission(output)
-        this.close()
-        return
-      }
-
       if (isEmpty(this.selectedChanges)) {
-        this.showAlert({ message: this.t('noChanges'), color: 'green', delay: 3000 })
+        this.showAlert({ message: this.t('noChanges'), color: 'red', delay: 10000 })
         return
       }
 
@@ -591,6 +649,10 @@ export default {
       if (this.isNewRecord) {
         output.recps = [this.notification?.rawGroup?.id]
         await this.approveNewGroupPersonSubmission(output)
+
+        const { parents = [], children = [], partners = [] } = (this.selectedDependencies || {})
+        const selectedDependencies = [...parents, ...children, ...partners]
+        await this.approveWhakapapaLinkSubmissions(selectedDependencies)
       } else {
         await this.approveEditGroupPersonSubmission(output)
       }
@@ -632,9 +694,7 @@ export default {
     getChangesLabel (key, value) {
       const fieldName = this.updatedKeys[key]
       const fieldValue = this.formatValue(value)
-      return this.isNewRecord
-        ? this.t('newField', { fieldName, fieldValue })
-        : this.t('changedField', { fieldName, fieldValue })
+      return this.t('newField', { fieldName, fieldValue })
     },
     getCustomFieldLabel (key, value) {
       const fieldDef = this.tribeCustomFields.find(field => field.key === key)
@@ -686,6 +746,10 @@ export default {
         items.push(customField)
       }
       this.cleanupCustomFields()
+    },
+    updateSelectedDependencies (type, dependencies) {
+      if (dependencies?.length) this.selectedDependencies[type] = dependencies
+      else delete this.selectedDependencies[type]
     }
   }
 }

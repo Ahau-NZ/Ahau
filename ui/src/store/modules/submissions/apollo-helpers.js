@@ -57,6 +57,21 @@ export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields }) 
   }
 }
 
+export const approveNewWhakapapaLink = ({ id, comment, allowedFields }) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $comment: String, $allowedFields: LinkInput!) {
+        approveNewWhakapapaLink(id: $id, comment: $comment, allowedFields: $allowedFields)
+      }
+    `,
+    variables: {
+      id,
+      comment,
+      allowedFields
+    }
+  }
+}
+
 export const rejectSubmission = ({ id, comment }) => {
   return {
     mutation: gql`
@@ -279,14 +294,52 @@ export const SubmissionGroupPersonFragment = gql`
   }
 `
 
+const WhakapapaLinkFragment = gql`
+  fragment FullWhakapapaLinkFragment on WhakapapaLink {
+    linkId
+    type
+    parent
+    child
+    relationshipType
+    legallyAdopted
+    # tombstone
+    recps
+  }
+`
+
+export const SubmissionWhakapapaLinkFragment = gql`
+  ${WhakapapaLinkFragment}
+  fragment SubmissionWhakapapaLinkFragment on Submission {
+    approvedByIds
+    ...on SubmissionWhakapapaLink {
+      details {
+        ...FullWhakapapaLinkFragment
+      }
+      sourceRecord {
+        ...FullWhakapapaLinkFragment
+      }
+      targetRecord {
+        ...FullWhakapapaLinkFragment
+      }
+    }
+  }
+`
+
 export const getSubmissions = ({
   query: gql`
     ${SubmissionFragment}
     ${SubmissionGroupPersonFragment}
+    ${SubmissionWhakapapaLinkFragment}
     query {
       getSubmissions {
         ...SubmissionFragment
         ...SubmissionGroupPersonFragment
+
+        dependencies {
+          id
+          targetType
+          ...SubmissionWhakapapaLinkFragment
+        }
       }
     }
   `

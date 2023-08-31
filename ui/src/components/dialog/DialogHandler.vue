@@ -28,7 +28,7 @@
       :title="newPersonDialogTitle"
       :type="dialogType"
       withView
-      @create="addPerson($event, dialogType)"
+      @create="isSubmitOnly ? submitPerson($event, dialogType) : addPerson($event, dialogType)"
       @close="close"
     />
     <SideNodeDialog
@@ -172,7 +172,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentAccess']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentAccess', 'isKaitiaki']),
     ...mapGetters('notifications', ['currentNotification']),
     ...mapGetters('person', ['selectedProfile']),
     ...mapGetters('tribe', ['currentTribe']),
@@ -184,6 +184,9 @@ export default {
       return this.dialogType === 'person'
         ? this.t('addPerson')
         : this.t('newPersonTitle', { dialogType: this.dialogType, displayName: getDisplayName(this.selectedProfile) })
+    },
+    isSubmitOnly () {
+      return !this.isKaitiaki && this.view?.permission === 'submit'
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -236,7 +239,11 @@ export default {
       'removeLinksToProfile',
       'deleteProfileFromImportantRelationships'
     ]),
-
+    ...mapActions('submissions', [
+      'proposeNewGroupPerson',
+      'proposeNewWhakapapaLink',
+      'createSubmissionsLink'
+    ]),
     isActive (type) {
       return (type === this.dialog || type === this.storeDialog)
     },
@@ -415,6 +422,115 @@ export default {
           console.error('wrong type for add person')
       }
     },
+    async submitPerson (input, type) {
+      const { /* id, children, parents, partners, moveDup, */ customFields: rawCustomFields = {} } = input
+
+      // if moveDup is in input than add duplink
+      // if (moveDup) {
+      //   await this.addImportantRelationship(input)
+      //   delete input.moveDup
+      // }
+
+      // get children, parents, partners quick add links
+      // remove them from input
+      delete input.children
+      delete input.parents
+      delete input.partners
+
+      // set the custom fields
+      input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
+      if (isEmpty(input.customFields)) delete input.customFields
+
+      const parentSubmissionId = await this.submitNewPerson(input)
+
+      // TODO: allow submissions to unignore a profile here
+      // let isIgnoredProfile
+      // if (this.view && this.view.id) {
+      //   isIgnoredProfile = this.view.ignoredProfiles.includes(id)
+      //   if (isIgnoredProfile) await this.removeIgnoredProfile(id)
+      // }
+
+      const relationshipAttrs = pick(input, ['relationshipType', 'legallyAdopted'])
+
+      switch (this.dialogType) {
+        case 'child':
+          // if (!isIgnoredProfile) {
+          await this.submitNewChildLink({
+            // here child is left empty, that field will be "plugged in" upon approval
+            parent: this.selectedProfile.id,
+            relationshipAttrs
+          }, parentSubmissionId)
+          // }
+
+          // TODO: plug in quick add features
+
+          break
+        default:
+          console.error('wrong type for add person')
+      }
+
+      //
+      //     // create the link
+
+      //     // TODO: enable quick add parents
+      //     // Add parents if parent quick links
+      //     // if (parents) await this.quickAddParents(id, parents)
+      //     break
+
+      // TODO
+      // case 'parent':
+      //   child = this.selectedProfile.id
+      //   parent = id
+
+      //   // if (!isIgnoredProfile) {
+      //   await this.submitNewChildLink({
+      //     child,
+      //     parent,
+      //     relationshipAttrs
+      //   })
+      //   // }
+
+      //   // Add parents if partner quick add links
+      //   if (partners) {
+      //     await Promise.all(partners.map(async partner => {
+      //       await this.createPartnerLink({
+      //         child: id,
+      //         parent: partner.id
+      //       })
+      //     }))
+      //   }
+
+      //   // Add children if children quick add links
+      //   if (children) await this.quickAddChildren(id, children)
+
+      //   if (child === this.view.focus) this.$emit('persist-focus', parent)
+      //   else {
+      //     const parentId = this.getParentNodeId(child)
+
+      //     if (!parentId) {
+      //       // when the child doesnt have a parent above them, load the new parents profile
+      //       this.$emit('set-focus-to-ancestor-of', parent)
+      //     }
+      //   }
+      //   // only update personList if we are on personIndex
+      //   if (this.$route.name === 'personIndex') {
+      //     this.personListAdd(parent)
+      //   }
+      //   break
+      // case 'partner':
+      //   parent = this.selectedProfile.id
+      //   child = id
+
+      //   // create the link
+      //   /* if (!isIgnoredProfile) */ await this.createPartnerLink({ parent, child })
+
+      //   // Add children if children quick add links
+      //   if (children) await this.quickAddChildren(id, children)
+      //   if (this.$route.name === 'personIndex') {
+      //     this.personListAdd(parent)
+      //   }
+      //   break
+    },
     async quickAddParents (child, parents) {
       await Promise.all(
         parents.map(async parent => {
@@ -457,6 +573,20 @@ export default {
       // create the person and return their id
       return this.createPerson(input)
     },
+    async submitNewPerson (input) {
+      input.type = this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
+      input.authors = {
+        add: [
+          input.recps.includes(this.whoami.personal.groupId) // if its my personal group
+            ? this.whoami.public.feedId // allow edits from only my feedId
+            : '*' // otherwise allow all authors
+        ]
+      }
+
+      // make the submission
+      // TODO: comment
+      return this.proposeNewGroupPerson({ input, comment: 'create a new profile' })
+    },
 
     async removeIgnoredProfile (id) {
       await this.saveWhakapapaView({
@@ -478,6 +608,31 @@ export default {
         .then(() => {
           this.addLinks({ childLinks: [{ parent, child, ...relationshipAttrs }] })
         })
+    },
+    async submitNewChildLink ({ parent, relationshipAttrs }, parentSubmissionId) {
+      const submissionId = await this.proposeNewWhakapapaLink({
+        input: {
+          type: 'link/profile-profile/child',
+          parent,
+          // child - the missing field
+          ...relationshipAttrs
+        },
+        comment: 'create a child link' // TODO: comment
+      })
+
+      // link this submission to the parent submission as a dependency
+      await this.createSubmissionsLink({
+        parent: parentSubmissionId,
+        child: submissionId,
+
+        // here we tell the submission that we are missing the
+        // child field on the child submission, and when that submission
+        // is executed, it should use the targetId as the field value for child
+        mappedDependencies: [{
+          missingField: 'child',
+          replacementField: 'targetId'
+        }]
+      })
     },
     async createPartnerLink ({ child, parent }) {
       return this.saveLink({
