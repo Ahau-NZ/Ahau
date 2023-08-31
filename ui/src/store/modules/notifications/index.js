@@ -117,7 +117,7 @@ function mapSubmissionValues (whoami) {
     const {
       id,
       // targetId,
-      // targetType,
+      targetType,
 
       targetRecord,
       sourceRecord,
@@ -147,6 +147,7 @@ function mapSubmissionValues (whoami) {
 
     return {
       type: 'submission',
+      targetType,
       from,
       applicant,
       id,

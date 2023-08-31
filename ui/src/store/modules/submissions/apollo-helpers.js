@@ -262,8 +262,10 @@ export const SubmissionGroupPersonFragment = gql`
         profession
         education
         school
-        relationshipType
-        legallyAdopted
+        
+        # NOTE: relationshipType is causing an error
+        # relationshipType
+        # legallyAdopted
 
         altNames: altNamesSubmission {
           add
@@ -336,8 +338,11 @@ export const getSubmissions = ({
     ${SubmissionWhakapapaLinkFragment}
     query {
       getSubmissions {
+        id
+        targetType
         ...SubmissionFragment
         ...SubmissionGroupPersonFragment
+        ...SubmissionWhakapapaLinkFragment
 
         dependencies {
           id

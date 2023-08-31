@@ -31,6 +31,7 @@ module.exports = {
   reviewRegistration: require('./review-registration-dialog.json'),
   tribeSettings: require('./tribe-settings.json'),
   reviewSubmissionDialog: require('./profile-change-request.json'),
+  linkSubmissions: require('./link-submissions.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),
