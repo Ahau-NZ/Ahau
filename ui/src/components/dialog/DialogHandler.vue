@@ -470,10 +470,12 @@ export default {
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
             type: LINK_TYPE_CHILD,
-            // here child is left empty, that field will be "plugged in" upon approval
             parent: (this.dialogType === 'child')
               ? this.selectedProfile.id
               : this.getParentNodeId(this.selectedProfile.id),
+
+            // NOTE: id only has a value when we are creating a submission to link an existing profile
+            child: id,
             relationshipAttrs
           }, parentSubmissionId)
           // }
@@ -488,6 +490,8 @@ export default {
           await this.submitNewLink({
             type: LINK_TYPE_CHILD,
             child: this.selectedProfile.id,
+
+            // NOTE: id only has a value when we are creating a submission to link an existing profile
             parent: id,
             relationshipAttrs
           }, parentSubmissionId)

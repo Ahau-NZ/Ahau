@@ -413,20 +413,32 @@ export default {
     clearSuggestions () {
       this.suggestions = []
     },
-    getCloseSuggestions () {
+    async getCloseSuggestions () {
       // disable close suggestions for everyone, except parents (for now). Other cases to be added in
-      if (this.isSubmitOnly && this.type !== 'parent') return []
+      // TODO: remove this line once all types are supported in submit-only whakapapa
+      if (this.isSubmitOnly && this.type !== 'parent' && this.type !== 'child') return []
+
+      let suggestions = []
 
       switch (this.type) {
         case 'child':
-          return this.suggestedChildren(this.selectedProfile.id)
+          suggestions = await this.suggestedChildren(this.selectedProfile.id)
+          break
         case 'parent':
-          return this.suggestedParents(this.selectedProfile.id)
+          suggestions = await this.suggestedParents(this.selectedProfile.id)
+          break
         case 'partner':
-          return this.findPartners()
-        default:
-          return []
+          suggestions = await this.findPartners()
+          break
       }
+
+      // TODO cherese 28/08/23 here we temporarily filter out ignored profiles in a submit-only whakapapa
+      // until support is added
+      if (!this.isSubmitOnly) return suggestions
+
+      return suggestions.filter(person => {
+        return this.isNotIgnored(person.id)
+      })
     },
     newChildParents (profile) {
       const currentPartners = []
