@@ -5,7 +5,7 @@
       <ProfileChip
         :profile="profile"
 
-        :readonly="readonly && index === 0"
+        :readonly="(readonly && index === 0) || readonly"
         :isNewProfile="isNewProfile(profile)"
         :hideDetails="hideDetails"
 
