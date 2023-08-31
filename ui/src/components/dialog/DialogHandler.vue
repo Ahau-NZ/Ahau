@@ -454,11 +454,14 @@ export default {
 
       switch (this.dialogType) {
         case 'child':
+        case 'sibling':
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
             type: 'link/profile-profile/child',
             // here child is left empty, that field will be "plugged in" upon approval
-            parent: this.selectedProfile.id,
+            parent: (this.dialogType === 'child')
+              ? this.selectedProfile.id
+              : this.getParentNodeId(this.selectedProfile.id),
             relationshipAttrs
           }, parentSubmissionId)
           // }
