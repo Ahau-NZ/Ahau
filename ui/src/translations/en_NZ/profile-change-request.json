@@ -34,13 +34,15 @@
     "changesRequested": "Profile field changes:",
     "createProfileRequest": "Review request to create a new profile",
     "editProfileRequest": "Review request to edit a profile",
+    "deleteProfileRequest": "Review request to delete a profile",
     "submission": {
       "profile": {
         "new": {
           "web": "Received a request to create a new profile in {groupName} via the web registration form",
           "ahau": "Received a request to create a profile in {groupName}"
         },
-        "edit": "{applicantName} has requested to edit {profileName} in the {groupName} (tribe)"
+        "edit": "{applicantName} has requested to edit {profileName} in the {groupName} (tribe)",
+        "delete": "{applicantName} has requested to delete {profileName} in the {groupName} (tribe)"
       },
       "new": "A submission has been received from {applicantName} to edit {sourceName}",
       "accepted": "This submission has been reviewed and was accepted",

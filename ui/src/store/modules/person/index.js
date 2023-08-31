@@ -251,6 +251,7 @@ export default function (apollo) {
           dispatch('alerts/showError', message, { root: true })
           console.error(message, id)
           console.error(err)
+          throw err
         }
         return null
       }

@@ -50,6 +50,8 @@ export default {
 
       // if deleting the focus (top ancestor)
       if (this.selectedProfile.id === this.whakapapaView.focus) {
+        if (this.isSubmitOnly) return false
+
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(this.selectedProfile))
       }
@@ -99,7 +101,7 @@ export default {
           title: this.t('deletePerson'),
           dialog: 'delete-person',
           type: null,
-          isPermitted: this.canDelete && !this.isSubmitOnly,
+          isPermitted: this.canDelete,
           icon: 'mdi-delete'
         }
       ]

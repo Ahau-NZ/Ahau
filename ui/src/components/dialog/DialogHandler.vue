@@ -48,8 +48,9 @@
       v-if="isActive('delete-person')"
       :show="isActive('delete-person')"
       :profile="selectedProfile"
+      :submit-only="isSubmitOnly"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== focus"
-      @submit="removeProfile"
+      @submit="isSubmitOnly ? submitDeletePerson($event) : removeProfile($event)"
       @close="close"
     />
     <WhakapapaViewDialog
@@ -248,6 +249,7 @@ export default {
     ]),
     ...mapActions('submissions', [
       'proposeNewGroupPerson',
+      'proposeDeleteGroupPerson',
       'proposeNewWhakapapaLink',
       'createSubmissionsLink'
     ]),
@@ -512,6 +514,12 @@ export default {
         default:
           console.error('wrong type for add person')
       }
+    },
+    async submitDeletePerson (comment) {
+      await this.proposeDeleteGroupPerson({
+        profileId: this.selectedProfile.id,
+        comment
+      })
     },
     async quickAddParents (child, parents) {
       await Promise.all(
