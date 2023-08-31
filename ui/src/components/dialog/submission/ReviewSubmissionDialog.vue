@@ -51,7 +51,7 @@
                       :image="sourceProfile.avatarImage"
                       :alt="sourceProfile.preferredName"
                       :gender="sourceProfile.gender"
-                      :isView="false"
+                      :isView="isSourceGroup"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -65,12 +65,13 @@
         </v-col>
 
         <!-- Header for changes -->
-        <v-col :class="headerClass">
+        <v-col v-if="!isLinkSubmission" :class="headerClass">
           {{ (isNewRecord || isTombstone) ? t('profileFieldsRequested') : t('changesRequested') }}
         </v-col>
 
         <!-- Profile Field (changes) and Select all section -->
         <FieldList
+          v-if="!isLinkSubmission"
           :fields="profileFields"
           :source-profile="sourceProfile"
           :selected-changes.sync="selectedChanges"
@@ -80,16 +81,13 @@
           :tribeCustomFields="tribeCustomFields"
         />
 
-        <!-- Family links section -->
-        <v-col v-if="dependencies.length" :class="headerClass">
-          {{ t('family' )}}
-        </v-col>
-        <v-card v-if="dependencies.length" outlined class="py-1 mx-3">
-          <SubmissionDependencies v-if="parentLinks.length" :label="t('parents')" :dependencies="parentLinks" @selection="updateSelectedDependencies('parents', $event)" :readonly="!showActions"/>
-          <SubmissionDependencies v-if="childLinks.length" :label="t('children')" :dependencies="childLinks" @selection="updateSelectedDependencies('children', $event)" :readonly="!showActions"/>
-          <SubmissionDependencies v-if="partnerLinks.length" :label="t('partners')" :dependencies="partnerLinks" @selection="updateSelectedDependencies('partners', $event)" :readonly="!showActions"/>
-        </v-card>
+        <LinkSubmission
+          v-else
 
+          :submission="notification"
+        />
+
+        <!-- Family links section -->
         <v-col v-if="dependencies.length" :class="headerClass">
           {{ t('family' )}}
         </v-col>
@@ -205,6 +203,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
 import FieldList from '@/components/submission/FieldList.vue'
+import LinkSubmission from '@/components/submission/LinkSubmission.vue'
 
 import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
@@ -218,7 +217,8 @@ export default {
     Dialog,
     Avatar,
     SubmissionDependencies,
-    FieldList
+    FieldList,
+    LinkSubmission
   },
   props: {
     show: { type: Boolean, required: true },
@@ -239,6 +239,9 @@ export default {
     },
     isTombstone () {
       return Boolean(this.notification?.changes?.tombstone)
+    },
+    isLinkSubmission () {
+      return this.notification?.targetType === CHILD_LINK || this.notification?.targetType === PARTNER_LINK
     },
     dependencies () {
       return this.notification?.dependencies || []
@@ -271,6 +274,12 @@ export default {
     },
     submissionTitle () {
       if (this.isTombstone) return this.t('deleteProfileRequest')
+
+      if (this.isLinkSubmission) {
+        return this.isNewRecord
+          ? this.t('createLinkRequest')
+          : this.t('editLinkRequest')
+      }
 
       return this.isNewRecord
         ? this.t('createProfileRequest')
@@ -312,9 +321,14 @@ export default {
       return this.notification?.applicant || {}
     },
     sourceProfile () {
+      if (this.isLinkSubmission) return this.notification?.group
+
       return this.notification?.sourceRecord || {
         ...(this.notification?.changes || {})
       }
+    },
+    isSourceGroup () {
+      return this.sourceProfile?.id === this.notification?.group?.id
     },
     applicantProfileCustomFields () {
       return this.applicantProfile.customFields
@@ -366,9 +380,15 @@ export default {
       return this.notification?.group?.preferredName
     },
     text () {
+      const groupName = this.notification?.group?.preferredName
+
       if (this.showActions) {
         if (this.isWebForm) {
           return this.$t('notifications.submission.profile.new.web', { groupName: this.groupName })
+        }
+
+        if (this.isLinkSubmission) {
+          return this.$t('notifications.submission.link.new', { groupName })
         }
 
         return this.$t(`notifications.submission.profile.${this.isTombstone ? 'delete' : 'edit'}`, {
@@ -380,9 +400,9 @@ export default {
 
       switch (this.notification?.isAccepted) {
         case true:
-          return this.$t('notifications.submission.accepted', { groupName: this.groupName })
+          return this.$t('notifications.submission.accepted', { groupName })
         case false:
-          return this.$t('notifications.submission.declined', { groupName: this.groupName })
+          return this.$t('notifications.submission.declined', { groupName })
         default:
           return this.isTombstone
             ? this.$t('notifications.submission.delete.review')
@@ -396,7 +416,7 @@ export default {
       delete changes.__typename
 
       // filter all custom fields that dont have a definition
-      changes.customFields = changes?.customFields.filter(field => {
+      changes.customFields = changes?.customFields?.filter(field => {
         return this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
       })
 

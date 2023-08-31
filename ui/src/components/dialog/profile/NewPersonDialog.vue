@@ -296,7 +296,7 @@ export default {
       if (this.isSubmitOnly) return []
       if (this.hasSelection) return []
 
-      if (this.suggestions.length) {
+      if (!this.isSubmitOnly && this.suggestions.length) {
         return [
           ...(this.type ? [{ header: 'Are you looking for:' }] : []),
           ...this.suggestions
@@ -414,6 +414,9 @@ export default {
       this.suggestions = []
     },
     getCloseSuggestions () {
+      // disable close suggestions for everyone, except parents (for now). Other cases to be added in
+      if (this.isSubmitOnly && this.type !== 'parent') return []
+
       switch (this.type) {
         case 'child':
           return this.suggestedChildren(this.selectedProfile.id)

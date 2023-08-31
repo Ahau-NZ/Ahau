@@ -432,7 +432,7 @@ export default {
       }
     },
     async submitPerson (input, type) {
-      const { partners, children, parents, /* id, moveDup, */ customFields: rawCustomFields = {} } = input
+      const { id, partners, children, parents, /* moveDup, */ customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
       // if (moveDup) {
@@ -450,7 +450,10 @@ export default {
       input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
       if (isEmpty(input.customFields)) delete input.customFields
 
-      const parentSubmissionId = await this.submitNewPerson(input)
+      // here we only create a parent submission, if we need to create the profile
+      // if there is an id, it means we are creating a link for an existing profile
+      let parentSubmissionId
+      if (!id) parentSubmissionId = await this.submitNewPerson(input)
 
       // TODO: allow submissions to unignore a profile here
       // let isIgnoredProfile
@@ -485,6 +488,7 @@ export default {
           await this.submitNewLink({
             type: LINK_TYPE_CHILD,
             child: this.selectedProfile.id,
+            parent: id,
             relationshipAttrs
           }, parentSubmissionId)
           // }
@@ -609,6 +613,17 @@ export default {
         }
         // TODO: comment
       })
+
+      // if there isnt a parentSubmissionId, then we arent linking this submission to anything
+      if (!parentSubmissionId) {
+        this.showAlert({
+          message: 'Your submission has been sent for review',
+          delay: 7000,
+          color: 'green'
+        })
+
+        return
+      }
 
       await this.createSubmissionsLink({
         parent: parentSubmissionId,

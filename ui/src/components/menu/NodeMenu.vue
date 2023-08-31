@@ -67,13 +67,23 @@ export default {
         this.selectedProfile.parents.length > 0
       )
     },
+    // this is used to disable adding a parent to the focus in a whakapapaView that is submit-only
+    // this is because we havent covered that edge case yet, so temporarily disabling it here
+    canAddParent () {
+      if (!this.selectedProfile) return false
+      if (!this.isSubmitOnly) return true
+
+      if (this.selectedProfile.id === this.whakapapaView.focus) return false
+
+      return true
+    },
     options () {
       return [
         {
           title: this.t('addParent'),
           dialog: 'new-person',
           type: 'parent',
-          isPermitted: Boolean(this.selectedProfile),
+          isPermitted: this.canAddParent,
           icon: require('@/assets/node-parent.svg')
         },
         {

@@ -35,6 +35,8 @@
     "createProfileRequest": "Review request to create a new profile",
     "editProfileRequest": "Review request to edit a profile",
     "deleteProfileRequest": "Review request to delete a profile",
+    "createLinkRequest": "Review request to create a new link",
+    "editLinkRequest": "Review request to edit a new link",
     "submission": {
       "profile": {
         "new": {
