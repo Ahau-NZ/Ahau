@@ -111,6 +111,8 @@
 
       </v-col>
     </template>
+
+    <!-- Slot at the bottom of the dialog -->
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="accessOptions" permission="edit" disabled/>
     </template>
@@ -122,6 +124,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 
@@ -137,6 +140,22 @@ import { ACCESS_KAITIAKI } from '@/lib/constants.js'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0
+
+function findNewPeople (newProfiles, existingProfiles) {
+  if (!newProfiles?.length) return
+  if (!existingProfiles?.length) return clone(newProfiles)
+
+  const newPeople = clone(newProfiles)
+    .filter(newPerson => {
+      return !existingProfiles.some(existingPerson => {
+        return existingPerson.id === newPerson.id
+      })
+    })
+
+  if (!newPeople?.length) return
+
+  return newPeople
+}
 
 export default {
   name: 'NewPersonDialog',
@@ -234,11 +253,11 @@ export default {
         this.existingProfile = await this.getProfile(this.profile.id)
 
         // if hasSelection and quickAdd Section, show exsisting links
-        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = [...this.existingProfile.parents]
-        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = [...this.existingProfile.children]
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd.newParents = clone(this.existingProfile.parents)
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd.newChildren = clone(this.existingProfile.children)
         if (this.generatePartners && this.existingProfile.partners) {
-          this.quickAdd.partners = [...this.existingProfile.partners]
-          this.quickAdd.newPartners = [...this.existingProfile.partners]
+          this.quickAdd.partners = clone(this.existingProfile.partners)
+          this.quickAdd.newPartners = clone(this.existingProfile.partners)
         }
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
@@ -253,8 +272,8 @@ export default {
   },
   computed: {
     ...mapGetters('tribe', ['accessOptions', 'currentTribe']),
-    ...mapGetters(['currentAccess']),
-    ...mapGetters('whakapapa', ['getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
+    ...mapGetters(['currentAccess', 'isKaitiaki']),
+    ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
     isLogin () {
@@ -273,9 +292,11 @@ export default {
       return this.$route.name === 'personIndex'
     },
     generateSuggestions () {
+      // dont generate any suggestions if we are in a submit-only whakapapa
+      if (this.isSubmitOnly) return []
       if (this.hasSelection) return []
 
-      if (this.suggestions.length) {
+      if (!this.isSubmitOnly && this.suggestions.length) {
         return [
           ...(this.type ? [{ header: 'Are you looking for:' }] : []),
           ...this.suggestions
@@ -347,6 +368,9 @@ export default {
       })
 
       return submission
+    },
+    isSubmitOnly () {
+      return !this.isKaitiaki && this.whakapapaView?.permission === 'submit'
     }
   },
   methods: {
@@ -371,7 +395,9 @@ export default {
       }
     },
     hasProfiles (field) {
-      return this.quickAdd[field] && this.quickAdd[field].length > 0
+      return this.quickAdd[field]
+        ?.filter(Boolean)
+        ?.length
     },
     getSuggestionsByField (field) {
       if (!this.hasProfiles(field)) return []
@@ -387,17 +413,32 @@ export default {
     clearSuggestions () {
       this.suggestions = []
     },
-    getCloseSuggestions () {
+    async getCloseSuggestions () {
+      // disable close suggestions for everyone, except parents (for now). Other cases to be added in
+      // TODO: remove this line once all types are supported in submit-only whakapapa
+      if (this.isSubmitOnly && this.type !== 'parent' && this.type !== 'child') return []
+
+      let suggestions = []
+
       switch (this.type) {
         case 'child':
-          return this.suggestedChildren(this.selectedProfile.id)
+          suggestions = await this.suggestedChildren(this.selectedProfile.id)
+          break
         case 'parent':
-          return this.suggestedParents(this.selectedProfile.id)
+          suggestions = await this.suggestedParents(this.selectedProfile.id)
+          break
         case 'partner':
-          return this.findPartners()
-        default:
-          return []
+          suggestions = await this.findPartners()
+          break
       }
+
+      // TODO cherese 28/08/23 here we temporarily filter out ignored profiles in a submit-only whakapapa
+      // until support is added
+      if (!this.isSubmitOnly) return suggestions
+
+      return suggestions.filter(person => {
+        return this.isNotIgnored(person.id)
+      })
     },
     newChildParents (profile) {
       const currentPartners = []
@@ -426,35 +467,47 @@ export default {
 
     // suggests other parents of children
     async findPartners () {
-      const currentPartners = this.selectedProfile.partners || []
-
-      const suggestedPartners = []
-
-      this.selectedProfile.children.map(child => {
-        if (!child.parents) return child
-
-        this.getParentIds(child.id).forEach(parentId => {
-          if (this.selectedProfile.id === parentId) return
-          if (currentPartners.some(partner => partner.id === parentId)) return
-          if (suggestedPartners.some(partner => partner.id === parentId)) return
-
-          suggestedPartners.push(parent)
-        })
-
-        return child
-      })
-
-      // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
-      profile.partners.forEach(partner => {
-        if (this.selectedProfile.id === partner.id) return
-        if (currentPartners.some(_partner => _partner.id === partner.id)) return
-        if (suggestedPartners.some(_partner => _partner.id === partner.id)) return
 
-        suggestedPartners.push(partner)
-      })
+      const otherParents = []
 
-      return suggestedPartners
+      // get the current partners that arent ignored
+      const currentPartners = (profile.partners || [])
+        .filter(partner => this.isNotIgnored(partner.id))
+
+      // get all the parents of each child
+      await Promise.all(
+        profile.children.map(async ({ id: childId }) => {
+          const child = await this.getProfile(childId)
+
+          if (!child?.parents?.length) return child
+
+          // find this childs parents
+          child.parents.forEach(parent => {
+            if (parent.id === this.selectedProfile.id) return
+            if (currentPartners.some(currentPartner => currentPartner.id === parent.id)) return
+            if (otherParents.some(otherParent => otherParent.id === parent.id)) return
+
+            otherParents.push(parent)
+          })
+        })
+      )
+
+      // TODO: remove this if statement once ignored profiles are supported
+      if (!this.isSubmitOnly) {
+        // add partners if they have been ignored
+        profile.partners.forEach(partner => {
+          if (partner.id === this.selectedProfile.id) return
+          if (currentPartners.some(currentPartner => currentPartner.id === partner.id)) return
+          if (otherParents.some(otherParent => otherParent.id === partner.id)) return
+          if (this.isNotIgnored(partner.id)) return
+
+          otherParents.push(partner)
+        })
+      }
+
+      // get all the profiles current partnes
+      return otherParents
     },
 
     age (aliveInterval) {
@@ -470,40 +523,14 @@ export default {
         recps
       }
 
-      if (this.hasProfiles('newChildren')) {
-        if (this.existingProfile && this.existingProfile.children) {
-          // if quick adding children, remove exisiting children from the list
-          const _children = this.quickAdd.newChildren.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_children.length) submission.children = _children
-        }
-        else submission.children = this.quickAdd.newChildren
-      }
-
-      if (this.hasProfiles('newParents')) {
-        if (this.existingProfile && this.existingProfile.parents) {
-          const _parents = this.quickAdd.newParents.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_parents.length) submission.parents = _parents
-        }
-        else submission.parents = this.quickAdd.newParents
-      }
-
-      if (this.hasProfiles('newPartners')) {
-        if (this.existingProfile && this.existingProfile.partners) {
-          const _partners = this.quickAdd.newPartners.filter(child => {
-            return this.existingProfile.children.every(d => child.id !== d.id)
-          })
-          if (_partners.length) submission.partners = _partners
-        }
-        else submission.partners = this.quickAdd.newPartners
-      }
+      submission.children = findNewPeople(this.quickAdd?.newChildren, this.existingProfile?.children)
+      submission.parents = findNewPeople(this.quickAdd?.newParents, this.existingProfile?.parents)
+      submission.partners = findNewPeople(this.quickAdd?.newPartners, this.existingProfile?.partners)
 
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }
+
       this.$emit('create', submission)
       this.close()
     },

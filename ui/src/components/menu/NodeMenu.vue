@@ -50,6 +50,8 @@ export default {
 
       // if deleting the focus (top ancestor)
       if (this.selectedProfile.id === this.whakapapaView.focus) {
+        if (this.isSubmitOnly) return false
+
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(this.selectedProfile))
       }
@@ -65,41 +67,51 @@ export default {
         this.selectedProfile.parents.length > 0
       )
     },
+    // this is used to disable adding a parent to the focus in a whakapapaView that is submit-only
+    // this is because we havent covered that edge case yet, so temporarily disabling it here
+    canAddParent () {
+      if (!this.selectedProfile) return false
+      if (!this.isSubmitOnly) return true
+
+      if (this.selectedProfile.id === this.whakapapaView.focus) return false
+
+      return true
+    },
     options () {
       return [
         {
           title: this.t('addParent'),
           dialog: 'new-person',
           type: 'parent',
-          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
+          isPermitted: this.canAddParent,
           icon: require('@/assets/node-parent.svg')
         },
         {
           title: this.t('addPartner'),
           dialog: 'new-person',
           type: 'partner',
-          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-partner.svg')
         },
         {
           title: this.t('addChild'),
           dialog: 'new-person',
           type: 'child',
-          isPermitted: Boolean(this.selectedProfile) && !this.isSubmitOnly,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-child.svg')
         },
         {
           title: this.t('addSibling'),
           dialog: 'new-person',
           type: 'sibling',
-          isPermitted: this.canAddSibling && !this.isSubmitOnly,
+          isPermitted: this.canAddSibling,
           icon: require('@/assets/node-sibling.svg')
         },
         {
           title: this.t('deletePerson'),
           dialog: 'delete-person',
           type: null,
-          isPermitted: this.canDelete && !this.isSubmitOnly,
+          isPermitted: this.canDelete,
           icon: 'mdi-delete'
         }
       ]

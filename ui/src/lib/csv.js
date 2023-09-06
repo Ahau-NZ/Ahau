@@ -276,7 +276,8 @@ function nodeToPartner (node, partnerId, customFieldDefs) {
 }
 
 function stringifyArray (arr) {
-  if (!arr || !arr.length) return null
+  if (!arr || !arr.length || !Array.isArray(arr)) return null
+
   return arr.join(DIVIDER)
 }
 

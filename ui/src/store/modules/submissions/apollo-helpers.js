@@ -57,6 +57,21 @@ export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields }) 
   }
 }
 
+export const approveNewWhakapapaLink = ({ id, comment, allowedFields }) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $comment: String, $allowedFields: LinkInput!) {
+        approveNewWhakapapaLink(id: $id, comment: $comment, allowedFields: $allowedFields)
+      }
+    `,
+    variables: {
+      id,
+      comment,
+      allowedFields
+    }
+  }
+}
+
 export const rejectSubmission = ({ id, comment }) => {
   return {
     mutation: gql`
@@ -151,20 +166,20 @@ export const createSubmissionsLink = ({ parent, child, mappedDependencies }) => 
   }
 }
 
-// export const proposeTombstone = ({ recordId, comment, groupId }) => {
-//   return {
-//     mutation: gql`
-//       mutation ($recordId: String!, $comment: String, $groupId: String!) {
-//         proposeTombstone (recordId: $recordId, comment: $comment, groupId: $groupId)
-//       }
-//     `,
-//     variables: {
-//       recordId,
-//       comment
-//       groupId
-//     }
-//   }
-// }
+export const proposeTombstone = ({ recordId, comment, groupId }) => {
+  return {
+    mutation: gql`
+      mutation ($recordId: String!, $comment: String, $groupId: String!) {
+        proposeTombstone (recordId: $recordId, comment: $comment, groupId: $groupId)
+      }
+    `,
+    variables: {
+      recordId,
+      comment,
+      groupId
+    }
+  }
+}
 
 export const SubmissionFragment = gql`
   ${COMMUNITY_FRAGMENT}
@@ -247,8 +262,10 @@ export const SubmissionGroupPersonFragment = gql`
         profession
         education
         school
-        relationshipType
-        legallyAdopted
+        
+        # NOTE: relationshipType is causing an error
+        # relationshipType
+        # legallyAdopted
 
         altNames: altNamesSubmission {
           add
@@ -261,6 +278,10 @@ export const SubmissionGroupPersonFragment = gql`
           ...on PersonCustomFieldDate {
             type
           }
+        }
+        tombstone {
+          date
+          reason
         }
       }
 
@@ -279,14 +300,55 @@ export const SubmissionGroupPersonFragment = gql`
   }
 `
 
+const WhakapapaLinkFragment = gql`
+  fragment FullWhakapapaLinkFragment on WhakapapaLink {
+    linkId
+    type
+    parent
+    child
+    relationshipType
+    legallyAdopted
+    # tombstone
+    recps
+  }
+`
+
+export const SubmissionWhakapapaLinkFragment = gql`
+  ${WhakapapaLinkFragment}
+  fragment SubmissionWhakapapaLinkFragment on Submission {
+    approvedByIds
+    ...on SubmissionWhakapapaLink {
+      details {
+        ...FullWhakapapaLinkFragment
+      }
+      sourceRecord {
+        ...FullWhakapapaLinkFragment
+      }
+      targetRecord {
+        ...FullWhakapapaLinkFragment
+      }
+    }
+  }
+`
+
 export const getSubmissions = ({
   query: gql`
     ${SubmissionFragment}
     ${SubmissionGroupPersonFragment}
+    ${SubmissionWhakapapaLinkFragment}
     query {
       getSubmissions {
+        id
+        targetType
         ...SubmissionFragment
         ...SubmissionGroupPersonFragment
+        ...SubmissionWhakapapaLinkFragment
+
+        dependencies {
+          id
+          targetType
+          ...SubmissionWhakapapaLinkFragment
+        }
       }
     }
   `

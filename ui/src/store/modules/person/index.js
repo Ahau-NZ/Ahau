@@ -74,6 +74,9 @@ export default function (apollo) {
         },
         get partners () {
           return rootGetters['whakapapa/getPartnerIds'](id).map(getters.personPlusFamily).reverse()
+        },
+        get siblings () {
+          return rootGetters['whakapapa/getSiblingIds'](id).map(getters.personPlusFamily)
         }
       }
     },
@@ -248,6 +251,7 @@ export default function (apollo) {
           dispatch('alerts/showError', message, { root: true })
           console.error(message, id)
           console.error(err)
+          throw err
         }
         return null
       }

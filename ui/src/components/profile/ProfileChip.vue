@@ -18,17 +18,25 @@
           <span class="list-title"> {{ displayName }} </span>
           <p v-if="!mobile" class="list-subtitle">Name</p>
         </v-col>
-        <v-col v-if="!mobile" cols="4" class="py-0">
+        <v-col v-if="!mobile && !readonlyRelationship" cols="4" class="py-0">
           <span class="list-title"> {{ profile.placeOfBirth || '...' }} </span>
           <p class="list-subtitle">Place of Birth</p>
         </v-col>
-        <v-col cols="3" class="py-0">
+        <v-col v-if="!readonlyRelationship" cols="3" class="py-0">
           <span class="list-title"> {{ age(profile.aliveInterval) || '...' }} </span>
           <p v-if="!mobile" class="list-subtitle">Year of Birth</p>
         </v-col>
+        <v-col v-if="readonlyRelationship" cols="3" class="py-0">
+          <span class="list-title"> {{ relatedBy || '...' }} </span>
+          <p v-if="!mobile" class="list-subtitle">Related By</p>
+        </v-col>
+        <v-col v-if="readonlyRelationship && legallyAdopted !== true" cols="3" class="py-0">
+          <span class="list-title"> {{ legallyAdopted || '...' }} </span>
+          <p v-if="!mobile" class="list-subtitle">Legally Adopted</p>
+        </v-col>
       </v-row>
     </v-col>
-    <v-col cols="3" class="py-0 px-0">
+    <v-col v-if="!readonlyRelationship" cols="3" class="py-0 px-0">
       <v-select v-if="showRelatedBy"
         label="Related by"
         v-model="relatedBy"
@@ -58,12 +66,20 @@ export default {
     isNewProfile: Boolean,
     readonly: Boolean,
     label: String,
-    hideDetails: Boolean
+    hideDetails: Boolean,
+    readonlyRelationship: Boolean
   },
   data () {
     return {
       relationshipTypes: RELATIONSHIPS,
-      relatedBy: 'birth'
+      relatedBy: 'birth',
+      legallyAdopted: null
+    }
+  },
+  mounted () {
+    if (this.readonlyRelationship) {
+      this.relatedBy = this.profile.relationshipType
+      this.legallyAdopted = this.profile.legallyAdopted
     }
   },
   computed: {

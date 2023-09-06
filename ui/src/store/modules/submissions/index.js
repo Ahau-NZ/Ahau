@@ -1,15 +1,18 @@
 import omit from 'lodash.omit'
+import pick from 'lodash.pick'
 
 import {
   proposeNewGroupPerson,
   proposeEditGroupPerson,
+  proposeTombstone,
   getSubmissions,
   approveEditGroupPersonSubmission,
   rejectSubmission,
   proposeNewWhakapapaLink,
   createSubmissionsLink,
   tombstoneSubmission,
-  approveSubmission
+  approveSubmission,
+  approveNewWhakapapaLink
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -23,32 +26,6 @@ export default function (apollo) {
   }
 
   const actions = {
-    async proposeEditGroupPerson ({ dispatch, rootGetters }, { profileId, input, comment }) {
-      try {
-        if (!profileId) throw new Error('a profile id is required to create a submission to update the profile')
-
-        const res = await apollo.mutate(
-          proposeEditGroupPerson({
-            profileId,
-            input: omit(input, ['id', 'recps']),
-            comment,
-
-            groupId: rootGetters['tribe/tribeId']
-          })
-        )
-
-        if (res.errors) throw res.errors
-
-        // submissionId
-        return res.data.proposeEditGroupPerson
-      } catch (err) {
-        const message = 'Something went wrong while trying to create a submission to update the profile'
-        dispatch('alerts/showError', message, { root: true })
-
-        // eslint-disable-next-line no-console
-        console.error(message, err)
-      }
-    },
     async proposeNewGroupPerson ({ dispatch, rootGetters }, { input, comment }) {
       try {
         const res = await apollo.mutate(
@@ -71,6 +48,60 @@ export default function (apollo) {
 
         console.error(message)
         console.error(err)
+      }
+    },
+    async proposeEditGroupPerson ({ dispatch, rootGetters }, { profileId, input, comment }) {
+      try {
+        if (!profileId) throw new Error('a profile id is required to create a submission to update the profile')
+
+        const res = await apollo.mutate(
+          proposeEditGroupPerson({
+            profileId,
+            input: omit(input, ['id', 'recps']),
+            comment,
+
+            groupId: rootGetters['tribe/tribeId']
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'Submitted for review', { root: true })
+
+        // submissionId
+        return res.data.proposeEditGroupPerson
+      } catch (err) {
+        const message = 'Something went wrong while trying to create a submission to update the profile'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, err)
+      }
+    },
+    async proposeDeleteGroupPerson ({ dispatch, rootGetters }, { profileId, comment, groupId }) {
+      try {
+        if (!profileId) throw new Error('a profile id is required to create a submission to delete the profile')
+
+        const res = await apollo.mutate(
+          proposeTombstone({
+            recordId: profileId,
+            comment,
+            groupId: rootGetters['tribe/tribeId']
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'Submitted for review', { root: true })
+
+        // submissionId
+        return res.data.proposeTombstone
+      } catch (err) {
+        const message = 'Something went wrong while trying to create a submission to delete the profile'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, err)
       }
     },
     async proposeNewWhakapapaLink ({ dispatch, rootGetters }, { input, comment }) {
@@ -147,15 +178,14 @@ export default function (apollo) {
         }
 
         const profileId = await dispatch('person/createPerson', profileInput, { root: true })
-        const res = await apollo.mutate(
-          approveSubmission({
-            id: submissionId,
-            comment: submission.comment,
-            targetId: profileId
-          })
-        )
 
-        if (res.errors) throw res.errors
+        await dispatch('approveSubmission', {
+          id: submissionId,
+          comment: submission.comment,
+          targetId: profileId
+        })
+
+        dispatch('alerts/showMessage', 'The submission was approved and the profile was created', { root: true })
 
         return submissionId
       } catch (err) {
@@ -179,17 +209,91 @@ export default function (apollo) {
         console.error('Something went wrong while trying to approve submission', input.id, err)
       }
     },
-    async rejectSubmission (_, input) {
+    async approveDeleteGroupPersonSubmission ({ dispatch }, input) {
+      const { id, comment, profileId } = input
+      try {
+        const targetId = await dispatch('person/deletePerson', { id: profileId }, { root: true })
+        dispatch('whakapapa/removeLinksToProfile', profileId, { root: true })
+
+        await dispatch('approveSubmission', {
+          id,
+          comment,
+          targetId
+        })
+
+        dispatch('alerts/showAlert', {
+          message: 'The submission was approved and the profile was deleted',
+          delay: 10000,
+          color: 'green'
+        }, { root: true })
+
+        return id
+      } catch (err) {
+        const message = 'Something went wrong while trying to approve the submission'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, id, err)
+      }
+    },
+    async approveWhakapapaLinkSubmission (_, input) {
+      try {
+        if (input.allowedFields.legallyAdopted === null) delete input.allowedFields.legallyAdopted
+
+        const res = await apollo.mutate(
+          approveNewWhakapapaLink(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return input.id
+      } catch (err) {
+        console.error('Something went wrong while trying to approve whakapapa link submission', input.id, err)
+      }
+    },
+    async approveWhakapapaLinkSubmissions ({ dispatch }, submissions) {
+      // NOTE: approveWhakapapaLink submission will automatically handle
+      // plugging in the ID for the missing parent or child field
+      return Promise.all(
+        submissions.map(async submission => {
+          return dispatch('approveWhakapapaLinkSubmission', {
+            id: submission.id,
+            allowedFields: pick(submission.details, ['parent', 'child', 'legallyAdopted', 'relationshipType', 'recps'])
+          })
+        })
+      )
+    },
+    async approveSubmission (_, input) {
+      const { id } = input
+      try {
+        const res = await apollo.mutate(
+          approveSubmission(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return id
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Something went wrong while trying to reject submission', input.id, err)
+      }
+    },
+    async rejectSubmission ({ dispatch }, input) {
       try {
         const res = await apollo.mutate(
           rejectSubmission(input)
         )
         if (res.errors) throw res.errors
 
+        dispatch('alerts/showMessage', 'The submission was rejected and no changes were made', { root: true })
+
         return input.id
       } catch (err) {
+        const message = 'Something went wrong while trying to reject the submission'
+        dispatch('alerts/showError', message, { root: true })
+
         // eslint-disable-next-line no-console
-        console.error('Something went wrong while trying to reject submission', input.id, err)
+        console.error(message, input.id, err)
       }
     },
     async tombstoneSubmission ({ dispatch }, id) {

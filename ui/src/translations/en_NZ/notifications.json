@@ -23,12 +23,21 @@
         "title": "Registration request from {from}",
         "web": "Received a request to register with {groupName} via the web registration form",
         "ahau": "Received a request to create a profile in {groupName}"
+        
       },
-      "edit": "Received a request to edit {profileName} in {groupName}"
+      "edit": "Received a request to edit {profileName} in {groupName}",
+      "delete": "Received a request to delete a profile in {groupName}"
+    },
+    "link": {
+      "new": "Received a request to create a whakapapa link in {groupName}"
     },
     "new": "Has submitted a change to {groupName}",
     "accepted": "Their submission to {groupName} has been accepted",
-    "declined": "Their submission to {groupName} has been declined "
+    "declined": "Their submission to {groupName} has been declined ",
+    "review": "Your submission is pending",
+    "delete": {
+      "review": "Your submission to delete this profile is pending"
+    }
   },
   "systemTitle": "System",
   "newTitle": "New",
