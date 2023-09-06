@@ -1,6 +1,6 @@
 # Changelog | Ahau desktop
 
-## Unreleased
+## v2.22.0
 
 ### Features
 
@@ -14,6 +14,8 @@
 - Submissions
   - Fix bug where approveBy and rejectedBy were renamed and causing an error
   - Fix issue with Altnames causing error on the submission approval process
+- Profiles
+  - Fix bug where csv download was erroring
 
 ## v2.21.0
 
