@@ -27,17 +27,16 @@
       "edit": "Received a request to edit {profileName} in {groupName}",
       "delete": "Received a request to delete a profile in {groupName}"
     },
+    "link": {
+      "new": "Received a request to create a whakapapa link in {groupName}"
+    },
     "new": "Ha enviado un cambio a {groupName}",
     "accepted": "Su envío a {groupName} ha sido aceptado",
     "declined": "Su presentación a {groupName} ha sido rechazada ",
-<<<<<<< HEAD
     "review": "Your submission is pending",
     "delete": {
       "review": "Your submission to delete this profile is pending"
     }
-=======
-    "review": "Your submission is pending"
->>>>>>> origin/master
   },
   "systemTitle": "Sistema",
   "newTitle": "Nuevo",
