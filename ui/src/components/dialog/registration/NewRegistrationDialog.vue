@@ -391,6 +391,7 @@
 </template>
 
 <script>
+import { cloneDeep as clone, isEmpty } from 'lodash-es'
 
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
@@ -403,9 +404,6 @@ import { mapGetters, mapActions } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import { dateIntervalToString } from '@/lib/date-helpers'
 import { findMissingRequiredFields, getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
-
-import clone from 'lodash.clonedeep'
-import isEmpty from 'lodash.isempty'
 
 export default {
   name: 'NewRegistrationDialog',

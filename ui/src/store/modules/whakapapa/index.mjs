@@ -1,7 +1,7 @@
 /* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
 
 import Vue from 'vue'
-import uniqby from 'lodash.uniqby'
+import { uniqBy as uniqby } from 'lodash-es'
 
 import importFromCsvActions from './import-from-csv-actions.mjs'
 import { getWhakapapaView, getDescendantLinks, getWhakapapaViews, saveWhakapapaView, getFamilyLinks } from './lib/apollo-helpers.mjs'

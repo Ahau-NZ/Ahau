@@ -2,7 +2,7 @@ import {
   csvParse as d3CsvParse,
   csvFormat as d3CsvFormat
 } from 'd3'
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 import edtf from 'edtf'
 import ssbUri from 'ssb-uri2'
 

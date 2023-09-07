@@ -1,4 +1,4 @@
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 import gql from 'graphql-tag'
 import { PublicProfileFieldsFragment } from '../profile/apollo-helpers.mjs'
 

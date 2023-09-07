@@ -122,9 +122,7 @@
 <script>
 /* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
 import { mapGetters, mapActions } from 'vuex'
-import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
+import { isEmpty, pick, cloneDeep as clone } from 'lodash-es'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 

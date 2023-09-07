@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 import { pruneEmptyValues } from '../lib/profile-helpers.mjs'
 
 export const TYPES = {

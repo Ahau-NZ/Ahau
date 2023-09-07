@@ -81,11 +81,11 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash-es'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 import StoryCard from '@/components/archive/StoryCard.vue'
 import TimelineButton from '@/components/button/TimelineButton.vue'
-
-import { mapGetters, mapMutations, mapActions } from 'vuex'
-import isEmpty from 'lodash.isempty'
 
 export default {
   name: 'StoriesList',

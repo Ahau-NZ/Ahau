@@ -309,9 +309,7 @@
 </template>
 
 <script>
-
-import isEmpty from 'lodash.isempty'
-import get from 'lodash.get'
+import { isEmpty, get } from 'lodash-es'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'

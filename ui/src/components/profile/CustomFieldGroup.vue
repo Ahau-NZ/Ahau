@@ -16,8 +16,7 @@
 </template>
 
 <script>
-import get from 'lodash.get'
-import isEmpty from 'lodash.isempty'
+import { get, isEmpty } from 'lodash-es'
 
 import Vue from 'vue'
 import CustomField from './CustomField.vue'

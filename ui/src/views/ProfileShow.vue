@@ -81,9 +81,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
-import get from 'lodash.get'
+import { isEqual, isEmpty, get } from 'lodash-es'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'

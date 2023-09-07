@@ -1,4 +1,4 @@
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 import gql from 'graphql-tag'
 
 export const PERMITTED_SETTINGS_ATTRS = [

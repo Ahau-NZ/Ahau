@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { isEmpty, cloneDeep as clone } from 'lodash-es'
 
 import { getPerson as getPersonAndWhanau, mergeAdminProfile } from '@/lib/person-helpers'
 import {
@@ -10,9 +11,6 @@ import {
   findPersonByName,
   loadPersonList
 } from './apollo-helpers'
-
-import isEmpty from 'lodash.isempty'
-import clone from 'lodash.clonedeep'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
 import calculateAge from '@/lib/calculate-age'

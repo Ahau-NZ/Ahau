@@ -1,5 +1,6 @@
 import test from 'tape'
-import clone from 'lodash.clonedeep'
+import { cloneDeep as clone } from 'lodash-es'
+
 import { EMPTY_STORY, setDefaultStory } from './story-helpers.mjs'
 import { getObjectChanges } from './get-object-changes.mjs'
 import { personComplete } from '../mocks/person-profile.mjs'

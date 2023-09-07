@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
+import { pick, cloneDeep as clone } from 'lodash-es'
 
 // disabled until returning empty authors is fixed
 // import { AUTHOR_FRAGMENT } from './person-helpers'

@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 
 export const ARTEFACT_FILE_TYPES = `
   audio/*,

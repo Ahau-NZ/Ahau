@@ -66,9 +66,7 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
+import { isEqual, isEmpty, pick } from 'lodash-es'
 
 import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers'
 import { parseInterval } from '@/lib/date-helpers'

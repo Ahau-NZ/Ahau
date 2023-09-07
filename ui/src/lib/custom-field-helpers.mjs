@@ -1,9 +1,4 @@
-import uniqBy from 'lodash.uniqby'
-import clone from 'lodash.clonedeep'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
-import get from 'lodash.get'
-import orderBy from 'lodash.orderby'
+import { orderBy, uniqBy, cloneDeep as clone, isEmpty, isEqual, get } from 'lodash-es'
 
 export const DEFAULT_NEW_FIELD = {
   label: '',

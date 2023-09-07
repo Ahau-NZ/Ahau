@@ -1,6 +1,6 @@
+import { isEmpty } from 'lodash-es'
 // TODO: move these filters into table vuex
 import calculateAge from '@/lib/calculate-age'
-import isEmpty from 'lodash.isempty'
 
 let tableFilter = []
 

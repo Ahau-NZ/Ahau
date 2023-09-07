@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
+import { pick, cloneDeep as clone } from 'lodash-es'
 
 import { COMMUNITY_FRAGMENT } from './community-helpers.mjs'
 import { PERSON_FRAGMENT } from './person-helpers.mjs'

@@ -450,6 +450,8 @@
 </template>
 
 <script>
+import { isEmpty, get } from 'lodash-es'
+
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
@@ -458,9 +460,6 @@ import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers'
 import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
-
-import isEmpty from 'lodash.isempty'
-import get from 'lodash.get'
 
 import { mapGetters, mapMutations } from 'vuex'
 

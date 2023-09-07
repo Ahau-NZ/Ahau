@@ -95,8 +95,7 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
+import { pick, isEmpty } from 'lodash-es'
 
 import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'

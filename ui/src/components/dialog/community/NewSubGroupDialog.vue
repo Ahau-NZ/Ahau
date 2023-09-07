@@ -77,10 +77,11 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash-es'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import isEmpty from 'lodash.isempty'
 
 import { getObjectChanges } from '@/lib/get-object-changes'
 import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers'

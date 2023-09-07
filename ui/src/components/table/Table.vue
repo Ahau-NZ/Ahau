@@ -81,9 +81,7 @@
 import { pairs as d3Pairs } from 'd3'
 import { mapGetters, mapActions } from 'vuex'
 
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
-import get from 'lodash.get'
+import { isEmpty, isEqual, get } from 'lodash-es'
 
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'

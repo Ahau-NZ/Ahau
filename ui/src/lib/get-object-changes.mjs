@@ -1,8 +1,4 @@
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
-import uniqby from 'lodash.uniqby'
-import { arrayChanges } from './story-helpers.mjs'
-import { parseInterval } from './date-helpers.mjs'
+import { isEqual, isEmpty, uniqBy as uniqby } from 'lodash-es'
 
 function findItemById (initialArray, itemToFind) {
   if (!itemToFind.id) return null

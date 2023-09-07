@@ -1,4 +1,4 @@
-import groupBy from 'lodash.groupby'
+import { groupBy } from 'lodash-es'
 //
 import linkStyle from './link-style.mjs'
 import linkKey from './link-key.mjs'

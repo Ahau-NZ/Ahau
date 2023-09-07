@@ -196,9 +196,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-// import get from 'lodash.get'
+import { isEmpty } from 'lodash-es'
 
-import isEmpty from 'lodash.isempty'
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'

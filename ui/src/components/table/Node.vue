@@ -57,7 +57,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import get from 'lodash.get'
+import { get } from 'lodash-es'
+
 import avatarHelper from '@/lib/avatar-helpers'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers'

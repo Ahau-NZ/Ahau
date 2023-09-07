@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import debounce from 'lodash.debounce'
+import { debounce } from 'lodash-es'
 
 // /* global namespace */
 import root from './root' // probably has modules to split out

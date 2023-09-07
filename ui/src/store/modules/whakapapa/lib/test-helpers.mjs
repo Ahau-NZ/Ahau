@@ -1,4 +1,4 @@
-import merge from 'lodash.merge'
+import { merge } from 'lodash-es'
 
 import src from '../index.mjs'
 const { getters } = src()

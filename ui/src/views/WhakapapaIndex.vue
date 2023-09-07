@@ -87,8 +87,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
+import { isEmpty, pick } from 'lodash-es'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'

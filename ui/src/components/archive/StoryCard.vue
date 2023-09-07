@@ -276,8 +276,8 @@
 </template>
 
 <script>
+import { get } from 'lodash-es'
 import { mapActions, mapGetters } from 'vuex'
-import get from 'lodash.get'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 import { mapActions } from 'vuex'
 
 import ProfileList from '@/components/profile/ProfileList.vue'

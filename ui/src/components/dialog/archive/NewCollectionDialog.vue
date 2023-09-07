@@ -21,8 +21,8 @@
 </template>
 
 <script>
+import { cloneDeep as clone } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
-import clone from 'lodash.clonedeep'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'

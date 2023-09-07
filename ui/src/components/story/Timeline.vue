@@ -82,12 +82,12 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash-es'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 import TimelineCard from '@/components/story/TimelineCard'
 import StoryCard from '@/components/archive/StoryCard.vue'
-import isEmpty from 'lodash.isempty'
 import TimelineButton from '@/components/button/TimelineButton.vue'
-
-import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 // import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
 // import mapProfileMixins from '@/mixins/profile-mixins'

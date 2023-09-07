@@ -1,4 +1,4 @@
-import get from 'lodash.get'
+import { get } from 'lodash-es'
 import Vue from 'vue'
 
 import { whoami } from '../lib/person-helpers.mjs'
