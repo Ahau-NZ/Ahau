@@ -1,4 +1,4 @@
-import { linkColours } from '../lib/colours'
+import { linkColours } from '../lib/colours.mjs'
 
 /*
 

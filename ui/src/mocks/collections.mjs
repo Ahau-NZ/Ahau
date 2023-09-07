@@ -25,7 +25,7 @@ export const collectionMinimum = {
 export const firstMocks = [
   {
     id: '1',
-    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    image: { uri: import('@/assets/mocks/mock3.jpg') },
     title: '1',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
@@ -33,18 +33,18 @@ export const firstMocks = [
     hasAccess: [{
       id: 123,
       preferredName: 'Ian'
-      // avatarImage: require('@/assets/koro.svg')
+      // avatarImage: import('@/assets/koro.svg')
     },
     {
       id: 456,
       preferredName: 'Ben'
-      // avatarImage: require('@/assets/kuia.svg')
+      // avatarImage: import('@/assets/kuia.svg')
     }
     ]
   },
   {
     id: '2',
-    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    image: { uri: import('@/assets/mocks/mock3.jpg') },
     title: '2',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
@@ -52,17 +52,17 @@ export const firstMocks = [
     hasAccess: [{
       id: 123,
       preferredName: 'Ian'
-      // avatarImage: require('@/assets/koro.svg')
+      // avatarImage: import('@/assets/koro.svg')
     },
     {
       id: 456,
       preferredName: 'Ben'
-      // avatarImage: require('@/assets/kuia.svg')
+      // avatarImage: import('@/assets/kuia.svg')
     }]
   },
   {
     id: '3',
-    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    image: { uri: import('@/assets/mocks/mock3.jpg') },
     title: '3',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
@@ -70,17 +70,17 @@ export const firstMocks = [
     hasAccess: [{
       id: 123,
       preferredName: 'Ian',
-      avatarImage: { uri: require('@/assets/koro.svg') }
+      avatarImage: { uri: import('@/assets/koro.svg') }
     },
     {
       id: 456,
       preferredName: 'Ben',
-      avatarImage: { uri: require('@/assets/kuia.svg') }
+      avatarImage: { uri: import('@/assets/kuia.svg') }
     }]
   },
   {
     id: '4',
-    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    image: { uri: import('@/assets/mocks/mock3.jpg') },
     title: '4',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
@@ -88,17 +88,17 @@ export const firstMocks = [
     hasAccess: [{
       id: 123,
       preferredName: 'Ian',
-      avatarImage: { uri: require('@/assets/koro.svg') }
+      avatarImage: { uri: import('@/assets/koro.svg') }
     },
     {
       id: 456,
       preferredName: 'Ben',
-      avatarImage: { uri: require('@/assets/kuia.svg') }
+      avatarImage: { uri: import('@/assets/kuia.svg') }
     }]
   },
   {
     id: '5',
-    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    image: { uri: import('@/assets/mocks/mock3.jpg') },
     title: '5',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
@@ -106,12 +106,12 @@ export const firstMocks = [
     hasAccess: [{
       id: 123,
       preferredName: 'Ian',
-      avatarImage: { uri: require('@/assets/koro.svg') }
+      avatarImage: { uri: import('@/assets/koro.svg') }
     },
     {
       id: 456,
       preferredName: 'Ben',
-      avatarImage: { uri: require('@/assets/kuia.svg') }
+      avatarImage: { uri: import('@/assets/kuia.svg') }
     }]
   }
 ]
