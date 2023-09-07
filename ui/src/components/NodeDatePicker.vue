@@ -61,7 +61,7 @@
 </template>
 <script>
 import edtf from 'edtf'
-import { convertDateObjToString } from '@/lib/date-helpers.js'
+import { convertDateObjToString } from '@/lib/date-helpers'
 
 export default {
   name: 'NodeDatePicker',

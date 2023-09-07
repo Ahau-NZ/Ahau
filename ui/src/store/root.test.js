@@ -1,4 +1,4 @@
-import Root from './root.js'
+import Root from './root'
 
 const test = require('tape')
 const NEW_LOADING_TIMEOUT = 100

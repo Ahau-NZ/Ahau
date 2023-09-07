@@ -184,9 +184,9 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import NodeMenu from '@/components/menu/NodeMenu.vue'
 
-import avatarHelper from '@/lib/avatar-helpers.js'
-import { getRelatives } from '@/lib/person-helpers.js'
-import svgExport from '@/lib/svg-export.js'
+import avatarHelper from '@/lib/avatar-helpers'
+import { getRelatives } from '@/lib/person-helpers'
+import svgExport from '@/lib/svg-export'
 
 export default {
   name: 'WhakapapaShow',

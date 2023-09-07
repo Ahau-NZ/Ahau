@@ -1,5 +1,5 @@
 /* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
-import { ACCESS_KAITIAKI } from '../../../lib/constants.js'
+import { ACCESS_KAITIAKI } from '../../../lib/constants'
 
 // bulk import actions
 

@@ -318,8 +318,8 @@ import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 
-import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers'
+import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers'
 import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 

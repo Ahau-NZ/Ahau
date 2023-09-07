@@ -73,7 +73,7 @@ import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import PersonListIcon from '@/components/button/PersonListIcon.vue'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
 
 export default {
   components: {

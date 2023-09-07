@@ -22,7 +22,7 @@ import isEmpty from 'lodash.isempty'
 import Vue from 'vue'
 import CustomField from './CustomField.vue'
 
-import { getDefaultFieldValue } from '@/lib/custom-field-helpers.js'
+import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
 export default {
   name: 'CustomFieldGroup',

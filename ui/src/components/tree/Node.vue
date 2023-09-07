@@ -106,9 +106,9 @@ import { mapGetters, mapActions } from 'vuex'
 
 import NodeMenuButton from './NodeMenuButton.vue'
 
-import avatarHelper from '@/lib/avatar-helpers.js'
-import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import avatarHelper from '@/lib/avatar-helpers'
+import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants'
+import { getDisplayName } from '@/lib/person-helpers'
 import { RADIUS, PARTNER_RADIUS } from '@/store/modules/tree/constants'
 
 export default {

@@ -105,7 +105,7 @@ import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import { csvFormat } from 'd3'
 
-import { mapNodeToCsvRow } from '@/lib/csv.js'
+import { mapNodeToCsvRow } from '@/lib/csv'
 import { mapLabelToProp } from '@/lib/custom-field-helpers'
 
 import ImportPeopleDialog from '@/components/dialog/ImportPeopleDialog.vue'

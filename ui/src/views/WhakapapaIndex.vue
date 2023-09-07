@@ -97,7 +97,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { ACCESS_KAITIAKI } from '@/lib/constants.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants'
 import CollectionGroup from '../components/archive/CollectionGroup.vue'
 import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 

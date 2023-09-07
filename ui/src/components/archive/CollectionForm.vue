@@ -101,7 +101,7 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 
-import { storiesApolloMixin } from '@/mixins/story-mixins.js'
+import { storiesApolloMixin } from '@/mixins/story-mixins'
 
 import AddButton from '@/components/button/AddButton.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'

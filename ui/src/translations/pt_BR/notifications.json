@@ -30,14 +30,10 @@
     "new": "Enviou uma alteração para {groupName}",
     "accepted": "O seu envio para {groupName} foi aceito",
     "declined": "A sua submissão para {groupName} foi recusada ",
-<<<<<<< HEAD
     "review": "Your submission is pending",
     "delete": {
       "review": "Your submission to delete this profile is pending"
     }
-=======
-    "review": "Your submission is pending"
->>>>>>> origin/master
   },
   "systemTitle": "SISTEMA",
   "newTitle": "Novidades",

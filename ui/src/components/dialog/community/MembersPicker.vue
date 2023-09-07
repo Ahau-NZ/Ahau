@@ -26,8 +26,8 @@
   </v-col>
 </template>
 <script>
-import avatarHelper from '@/lib/avatar-helpers.js'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import avatarHelper from '@/lib/avatar-helpers'
+import { getDisplayName } from '@/lib/person-helpers'
 
 export default {
   name: 'MembersPicker',

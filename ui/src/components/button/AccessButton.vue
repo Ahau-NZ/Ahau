@@ -92,7 +92,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 
 import { ACCESS_TYPES, ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 

@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import uploadFile from '@/mixins/upload-hyper-file.js'
-import { ARTEFACT_FILE_TYPES } from '@/lib/artefact-helpers.js'
+import uploadFile from '@/mixins/upload-hyper-file'
+import { ARTEFACT_FILE_TYPES } from '@/lib/artefact-helpers'
 import AddButton from '@/components/button/AddButton.vue'
 
 export default {

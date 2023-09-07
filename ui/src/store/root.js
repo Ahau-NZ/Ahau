@@ -1,8 +1,8 @@
 import get from 'lodash.get'
 import Vue from 'vue'
 
-import { whoami } from '../lib/person-helpers.js'
-import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants.js'
+import { whoami } from '../lib/person-helpers'
+import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants'
 
 const SECOND = 1000
 

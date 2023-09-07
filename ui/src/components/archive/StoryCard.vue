@@ -289,14 +289,14 @@ import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.v
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
-import { colours } from '@/lib/colours.js'
-import { setDefaultStory } from '@/lib/story-helpers.js'
-import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
-import { getObjectChanges } from '@/lib/get-object-changes.js'
-import { convertBytes } from '@/lib/artefact-helpers.js'
+import { colours } from '@/lib/colours'
+import { setDefaultStory } from '@/lib/story-helpers'
+import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers'
+import { getObjectChanges } from '@/lib/get-object-changes'
+import { convertBytes } from '@/lib/artefact-helpers'
 
-import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
-import { artefactMixin } from '@/mixins/artefact-mixins.js'
+import { methods as mapStoryMethods } from '@/mixins/story-mixins'
+import { artefactMixin } from '@/mixins/artefact-mixins'
 
 export default {
   name: 'StoryCard',

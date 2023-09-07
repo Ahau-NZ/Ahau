@@ -88,14 +88,14 @@ import get from 'lodash.get'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 
-import calculateAge from '../../lib/calculate-age.js'
-import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { mergeAdminProfile } from '@/lib/person-helpers.js'
-import { determineFilter } from '@/lib/filters.js'
+import calculateAge from '../../lib/calculate-age'
+import { dateIntervalToString } from '@/lib/date-helpers'
+import { mergeAdminProfile } from '@/lib/person-helpers'
+import { determineFilter } from '@/lib/filters'
 import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
-import { SORT } from '@/lib/constants.js'
-import { mapNodesToCsv } from '@/lib/csv.js'
+import { SORT } from '@/lib/constants'
+import { mapNodesToCsv } from '@/lib/csv'
 
 export default {
   name: 'WhakapapaTable',

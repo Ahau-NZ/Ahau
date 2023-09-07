@@ -82,8 +82,8 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import isEmpty from 'lodash.isempty'
 
-import { getObjectChanges } from '@/lib/get-object-changes.js'
-import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes'
+import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers'
 
 export default {
   name: 'NewSubGroupDialog',

@@ -456,7 +456,7 @@ import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 
 import isEmpty from 'lodash.isempty'

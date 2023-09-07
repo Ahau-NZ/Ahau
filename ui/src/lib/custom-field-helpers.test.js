@@ -1,3 +1,5 @@
+import test from 'tape'
+
 import {
   getDefaultFields,
   DEFAULT_PROFILE_MODEL,
@@ -6,8 +8,6 @@ import {
   getInitialCustomFieldChanges,
   getCustomFieldChanges
 } from './custom-field-helpers'
-
-const test = require('tape')
 
 const FIELD_DEFS = [
   {

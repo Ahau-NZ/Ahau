@@ -30,14 +30,10 @@
     "new": "Has submitted a change to {groupName}",
     "accepted": "Their submission to {groupName} has been accepted",
     "declined": "Their submission to {groupName} has been declined ",
-<<<<<<< HEAD
     "review": "Your submission is pending",
     "delete": {
       "review": "Your submission to delete this profile is pending"
     }
-=======
-    "review": "Your submission is pending"
->>>>>>> origin/master
   },
   "systemTitle": "System",
   "newTitle": "New",

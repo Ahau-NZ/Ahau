@@ -28,8 +28,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { getObjectChanges } from '@/lib/get-object-changes.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { getObjectChanges } from '@/lib/get-object-changes'
+import mapProfileMixins from '@/mixins/profile-mixins'
 
 function setDefaultCollection (newCollection) {
   const collection = clone(newCollection)

@@ -401,7 +401,7 @@ import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 import calculateAge from '@/lib/calculate-age'
-import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers'
 import { findMissingRequiredFields, getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
 
 import clone from 'lodash.clonedeep'

@@ -42,7 +42,8 @@ module.exports = {
 
     resolve: {
       fallback: {
-        path: require.resolve('path-browserify')
+        path: require.resolve('path-browserify'),
+        http: require.resolve('stream-http')
       }
     },
     plugins: [

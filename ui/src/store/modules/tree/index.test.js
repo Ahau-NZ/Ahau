@@ -1,4 +1,4 @@
-import { _compareAge } from './index.js'
+import { _compareAge } from './index.mjs'
 
 const test = require('tape')
 

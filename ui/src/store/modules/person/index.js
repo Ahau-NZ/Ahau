@@ -14,9 +14,9 @@ import {
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
 
-import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers'
 import calculateAge from '@/lib/calculate-age'
-import { determineFilter } from '@/lib/filters.js'
+import { determineFilter } from '@/lib/filters'
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 import i18n from '@/plugins/i18n'

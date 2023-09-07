@@ -79,7 +79,7 @@ import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollection
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
-import { saveStoryMixin } from '@/mixins/story-mixins.js'
+import { saveStoryMixin } from '@/mixins/story-mixins'
 
 export default {
   name: 'CollectionShow',

@@ -1,8 +1,8 @@
 import { mapActions } from 'vuex'
 
-import { saveStory, getStory, getAllStories, getAllStoriesByMentions } from '@/lib/story-helpers.js'
-import { saveArtefact } from '@/lib/artefact-helpers.js'
-import { saveLink, TYPES } from '@/lib/link-helpers.js'
+import { saveStory, getStory, getAllStories, getAllStoriesByMentions } from '@/lib/story-helpers'
+import { saveArtefact } from '@/lib/artefact-helpers'
+import { saveLink, TYPES } from '@/lib/link-helpers'
 
 export const storiesApolloMixin = {
   apollo: {

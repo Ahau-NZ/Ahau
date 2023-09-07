@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { colours } from '@/lib/colours.js'
+import { colours } from '@/lib/colours'
 
 export default {
   name: 'StoryChip',

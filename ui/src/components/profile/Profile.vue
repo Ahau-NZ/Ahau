@@ -146,7 +146,7 @@ import Avatar from '@/components/Avatar.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import PatakaList from '@/components/community/PatakaList.vue'
 
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 
 export default {
   name: 'ProfileContainer',

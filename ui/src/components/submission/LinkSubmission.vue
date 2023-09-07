@@ -37,9 +37,9 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getDisplayName } from '@/lib/person-helpers.js'
-import linkStyle from '@/store/modules/tree/lib/link-style.js'
-import settings from '@/lib/link.js'
+import { getDisplayName } from '@/lib/person-helpers'
+import linkStyle from '@/store/modules/tree/lib/link-style'
+import settings from '@/lib/link'
 
 import Avatar from '@/components/Avatar.vue'
 

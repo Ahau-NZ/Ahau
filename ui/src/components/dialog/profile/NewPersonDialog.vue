@@ -135,8 +135,8 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
-import { parseInterval } from '@/lib/date-helpers.js'
-import { ACCESS_KAITIAKI } from '@/lib/constants.js'
+import { parseInterval } from '@/lib/date-helpers'
+import { ACCESS_KAITIAKI } from '@/lib/constants'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0

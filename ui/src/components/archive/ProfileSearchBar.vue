@@ -91,7 +91,7 @@ import Chip from '@/components/archive/Chip.vue'
 // default image for list items
 import niho from '@/assets/niho.svg'
 
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 
 export default {
   name: 'ProfileSearchBar',

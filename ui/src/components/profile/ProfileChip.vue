@@ -52,9 +52,9 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 import { RELATIONSHIPS } from '@/lib/constants'
-import { getBirthYear } from '@/lib/date-helpers.js'
+import { getBirthYear } from '@/lib/date-helpers'
 
 export default {
   name: 'ProfileChip',

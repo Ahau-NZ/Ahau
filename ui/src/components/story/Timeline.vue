@@ -89,8 +89,8 @@ import TimelineButton from '@/components/button/TimelineButton.vue'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
-// import mapProfileMixins from '@/mixins/profile-mixins.js'
+// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
+// import mapProfileMixins from '@/mixins/profile-mixins'
 
 export default {
   name: 'StoryTimeline',
