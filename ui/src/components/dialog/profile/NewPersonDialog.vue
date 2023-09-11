@@ -292,8 +292,6 @@ export default {
       return this.$route.name === 'personIndex'
     },
     generateSuggestions () {
-      // dont generate any suggestions if we are in a submit-only whakapapa
-      if (this.isSubmitOnly) return []
       if (this.hasSelection) return []
 
       if (!this.isSubmitOnly && this.suggestions.length) {
@@ -414,10 +412,6 @@ export default {
       this.suggestions = []
     },
     async getCloseSuggestions () {
-      // disable close suggestions for everyone, except parents (for now). Other cases to be added in
-      // TODO: remove this line once all types are supported in submit-only whakapapa
-      if (this.isSubmitOnly && this.type !== 'parent' && this.type !== 'child') return []
-
       let suggestions = []
 
       switch (this.type) {
@@ -430,6 +424,9 @@ export default {
         case 'partner':
           suggestions = await this.findPartners()
           break
+        default:
+          console.error('getCloseSuggestions was given the wrong type', this.type)
+          suggestions = []
       }
 
       // TODO cherese 28/08/23 here we temporarily filter out ignored profiles in a submit-only whakapapa
