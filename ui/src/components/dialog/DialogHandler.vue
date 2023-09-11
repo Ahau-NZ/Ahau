@@ -28,7 +28,7 @@
       :title="newPersonDialogTitle"
       :type="dialogType"
       withView
-      @create="isSubmitOnly ? submitPerson($event, dialogType) : addPerson($event, dialogType)"
+      @create="isSubmitOnly ? submitPerson($event) : addPerson($event, dialogType)"
       @close="close"
     />
     <SideNodeDialog
@@ -431,7 +431,7 @@ export default {
           console.error('wrong type for add person')
       }
     },
-    async submitPerson (input, type) {
+    async submitPerson (input) {
       const { id, partners, children, parents, /* moveDup, */ customFields: rawCustomFields = {} } = input
 
       // if moveDup is in input than add duplink
@@ -440,20 +440,21 @@ export default {
       //   delete input.moveDup
       // }
 
-      // get children, parents, partners quick add links
-      // remove them from input
-      delete input.children
-      delete input.parents
-      delete input.partners
-
-      // set the custom fields
-      input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
-      if (isEmpty(input.customFields)) delete input.customFields
-
       // here we only create a parent submission, if we need to create the profile
       // if there is an id, it means we are creating a link for an existing profile
       let parentSubmissionId
-      if (!id) parentSubmissionId = await this.submitNewPerson(input)
+      if (!id) {
+      // get children, parents, partners quick add links
+      // remove them from input
+        delete input.children
+        delete input.parents
+        delete input.partners
+
+        // set the custom fields
+        input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
+        if (isEmpty(input.customFields)) delete input.customFields
+        parentSubmissionId = await this.submitNewPerson(input)
+      }
 
       // TODO: allow submissions to unignore a profile here
       // let isIgnoredProfile
@@ -481,7 +482,10 @@ export default {
           // }
 
           if (parents) {
-            await this.submitNewLinks(LINK_TYPE_CHILD, parents, parentSubmissionId, true)
+            await this.submitNewLinks({
+              type: LINK_TYPE_CHILD,
+              child: id
+            }, parents, parentSubmissionId)
           }
 
           break
@@ -498,11 +502,17 @@ export default {
           // }
 
           if (partners) {
-            await this.submitNewLinks(LINK_TYPE_PARTNER, partners, parentSubmissionId)
+            await this.submitNewLinks({
+              type: LINK_TYPE_PARTNER,
+              parent: id
+            }, partners, parentSubmissionId)
           }
 
           if (children) {
-            await this.submitNewLinks(LINK_TYPE_CHILD, children, parentSubmissionId)
+            await this.submitNewLinks({
+              type: LINK_TYPE_CHILD,
+              parent: id
+            }, children, parentSubmissionId)
           }
 
           break
@@ -510,13 +520,22 @@ export default {
           // if (!isIgnoredProfile) {
           await this.submitNewLink({
             type: LINK_TYPE_PARTNER,
-            parent: this.selectedProfile.id
+            parent: this.selectedProfile.id,
+
+            // NOTE: id only has a value when we are creating a submission to link an existing profile
+            child: id
           }, parentSubmissionId)
           // }
 
           if (children) {
-            await this.submitNewLinks(LINK_TYPE_CHILD, children, parentSubmissionId)
+            await this.submitNewLinks({
+              type: LINK_TYPE_CHILD,
+              // NOTE: id only has a value when we are creating a submission to link an existing profile
+              parent: id
+            }, children, parentSubmissionId)
           }
+
+          // NOTE: for quick added links, there is no parent submission, so each link will be a separate submission
 
           break
         default:
@@ -638,16 +657,23 @@ export default {
         }]
       })
     },
-    async submitNewLinks (type, links, parentSubmissionId, isParent = false) {
+    async submitNewLinks ({ type, parent, child }, links, parentSubmissionId) {
+      if (!type) {
+        console.error('submitNewLinks is missing the type')
+        return
+      } else if (parent && child) {
+        console.error('submitNewLinks found both a parent and child id, it should only have one')
+        return
+      }
+
       return Promise.all(
         links.map(link => {
           const input = {
             type,
+            parent: parent || link.id,
+            child: child || link.id,
             relationshipAttrs: type === LINK_TYPE_CHILD ? pick(link, ['relationshipType', 'legallyAdopted']) : undefined
           }
-
-          if (isParent) input.parent = link.id
-          else input.child = link.id
 
           return this.submitNewLink(input, parentSubmissionId)
         })

@@ -207,6 +207,7 @@ import LinkSubmission from '@/components/submission/LinkSubmission.vue'
 
 import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
+import pick from 'lodash.pick'
 
 const CHILD_LINK = 'link/profile-profile/child'
 const PARTNER_LINK = 'link/profile-profile/partner'
@@ -474,6 +475,7 @@ export default {
       'approveNewGroupPersonSubmission',
       'approveEditGroupPersonSubmission',
       'approveDeleteGroupPersonSubmission',
+      'approveWhakapapaLinkSubmission',
       'approveWhakapapaLinkSubmissions',
       'rejectSubmission',
       'tombstoneSubmission'
@@ -499,15 +501,27 @@ export default {
         return
       }
 
-      if (isEmpty(this.selectedChanges)) {
+      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission) {
         this.showAlert({ message: this.t('noChanges'), color: 'red', delay: 10000 })
         return
       }
 
-      output.allowedFields = this.selectedChanges
+      // TODO: ui to change the relationshipType they selected and the legallyAdopted
+
+      // TODO: see what allowedFields is meant to have
+      output.allowedFields = this.isLinkSubmission
+        ? pick(this.notification?.changes, ['parent', 'child', 'relationshipType', 'legallyAdopted', 'recps'])
+        : this.selectedChanges
 
       if (this.isNewRecord) {
         output.recps = [this.notification?.rawGroup?.id]
+
+        if (this.isLinkSubmission) {
+          await this.approveWhakapapaLinkSubmission(output)
+          this.close()
+          return
+        }
+
         await this.approveNewGroupPersonSubmission(output)
 
         const { parents = [], children = [], partners = [] } = (this.selectedDependencies || {})

@@ -1,3 +1,6 @@
 {
-  "helpText": "Add {childName} as a {type} to {parentName}, related by {relatedBy}"
+  "helpText": {
+    "child": "Add {childName} as a {type} to {parentName}, related by {relatedBy}",
+    "partner": "Add {childName} as a {type} to {parentName}"
+  }
 }

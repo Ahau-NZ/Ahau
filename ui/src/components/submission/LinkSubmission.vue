@@ -5,33 +5,64 @@
       {{ helpText }}
     </v-card-subtitle>
 
-    <Avatar v-if="parentProfile"
-      class="small-avatar"
-      size="80px"
-      :image="parentProfile.avatarImage"
-      :alt="parentName"
-      :gender="parentProfile.gender"
-      showLabel
-    />
-    <div class="row wrap justify-center" style="height:50px;">
-      <svg>
-        <line
-          x1="150"
-          y1="0"
-          x2="150"
-          y2="50"
-          :style="linkStyle"
-        />
-      </svg>
+    <div v-if="isChildLink">
+      <Avatar v-if="parentProfile"
+        class="small-avatar"
+        size="80px"
+        :image="parentProfile.avatarImage"
+        :alt="parentName"
+        :gender="parentProfile.gender"
+        showLabel
+      />
+      <div class="row wrap justify-center" style="height:50px;">
+        <svg>
+          <line
+            x1="150"
+            y1="0"
+            x2="150"
+            y2="50"
+            :style="linkStyle"
+          />
+        </svg>
+      </div>
+      <Avatar v-if="childProfile"
+        class="small-avatar"
+        size="80px"
+        :image="childProfile.avatarImage"
+        :alt="childName"
+        :gender="childProfile.gender"
+        showLabel
+      />
     </div>
-    <Avatar v-if="childProfile"
-      class="small-avatar"
-      size="80px"
-      :image="childProfile.avatarImage"
-      :alt="childName"
-      :gender="childProfile.gender"
-      showLabel
-    />
+    <div v-else class="d-flex justify-center align-center">
+      <Avatar v-if="parentProfile"
+        class="small-avatar"
+        size="80px"
+        :image="parentProfile.avatarImage"
+        :alt="parentName"
+        :gender="parentProfile.gender"
+        showLabel
+      />
+      <div>
+        <svg style="width: 50px;">
+          <line
+            x1="0"
+            y1="70"
+            x2="50"
+            y2="70"
+            :style="linkStyle"
+          />
+        </svg>
+      </div>
+      <Avatar v-if="childProfile"
+        class="small-avatar"
+        size="80px"
+        :image="childProfile.avatarImage"
+        :alt="childName"
+        :gender="childProfile.gender"
+        showLabel
+      />
+    </div>
   </v-card>
 </template>
 
@@ -40,10 +71,13 @@ import { mapActions } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import linkStyle from '@/store/modules/tree/lib/link-style.js'
 import settings from '@/lib/link.js'
+import {
+  LINK_TYPE_CHILD,
+  LINK_CHILD,
+  LINK_PARTNER
+} from '@/lib/constants.js'
 
 import Avatar from '@/components/Avatar.vue'
-
-const CHILD_LINK = 'link/profile-profile/child'
 
 export default {
   name: 'LinkSubmission',
@@ -83,9 +117,9 @@ export default {
       })
     },
     type () {
-      return this.submission?.targetType === CHILD_LINK
-        ? 'child'
-        : 'partner'
+      return this.submission?.targetType === LINK_TYPE_CHILD
+        ? LINK_CHILD
+        : LINK_PARTNER
     },
     childName () {
       return getDisplayName(this.childProfile)
@@ -96,13 +130,27 @@ export default {
     relationshipType () {
       return this.submission?.changes?.relationshipType
     },
+    isPartnerLink () {
+      return this.type === LINK_PARTNER
+    },
+    isChildLink () {
+      return this.type === LINK_CHILD
+    },
     helpText () {
-      return this.t('helpText', {
+      const opts = {
         childName: this.childName,
         type: this.type,
         parentName: this.parentName,
         relatedBy: this.relationshipType
-      })
+      }
+
+      if (this.isPartnerLink) {
+        delete opts.relatedBy
+
+        return this.t('helpText.partner', opts)
+      }
+
+      return this.t('helpText.child', opts)
     },
     legallyAdopted () {
       return this.submission?.changes?.legallyAdopted
