@@ -104,6 +104,47 @@ export default function (apollo) {
         console.error(message, err)
       }
     },
+    async processWhakapapaLinkSubmission ({ dispatch }, input) {
+      // check if any of the profiles on the link are ignored
+      const groupId = input?.recps[0]
+      if (!groupId) return // TODO: add appropriate error handling here
+
+      const views = (await dispatch('whakapapa/getWhakapapaViews', { groupId }, { root: true })) || []
+
+      function viewsIgnoringProfile (profileId) {
+        return views?.filter(view => view?.ignoredProfiles?.includes(profileId))
+      }
+
+      const { parent, child } = input.allowedFields
+      const viewsIgnoringChild = viewsIgnoringProfile(child)
+      const viewsIgnoringParent = viewsIgnoringProfile(parent)
+
+      // if no profiles are ignored, then we handle it like usual
+      if (!viewsIgnoringChild?.length && !viewsIgnoringParent?.length) {
+        return dispatch('approveWhakapapaLinkSubmission', input)
+      }
+
+      function unignoreFromViews (profileId, views) {
+        return Promise.all(
+          views.map(view => {
+            return dispatch('whakapapa/saveWhakapapaView', {
+              id: view.id,
+              ignoredProfiles: {
+                remove: [profileId]
+              }
+            }, { root: true })
+          })
+        )
+      }
+
+      // otherwise we unignore the profiles in each view that its ignored from
+      await unignoreFromViews(child, viewsIgnoringChild)
+      await unignoreFromViews(parent, viewsIgnoringParent)
+
+      // TODO: what happens if there is no targetId?
+      // approve the submission without executing it
+      await dispatch('approveSubmission', input)
+    },
     async proposeNewWhakapapaLink ({ dispatch, rootGetters }, { input, comment }) {
       try {
         const res = await apollo.mutate(
