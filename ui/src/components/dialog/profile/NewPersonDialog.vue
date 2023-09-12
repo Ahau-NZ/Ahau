@@ -429,13 +429,7 @@ export default {
           suggestions = []
       }
 
-      // TODO cherese 28/08/23 here we temporarily filter out ignored profiles in a submit-only whakapapa
-      // until support is added
-      if (!this.isSubmitOnly) return suggestions
-
-      return suggestions.filter(person => {
-        return this.isNotIgnored(person.id)
-      })
+      return suggestions
     },
     newChildParents (profile) {
       const currentPartners = []
@@ -490,18 +484,14 @@ export default {
         })
       )
 
-      // TODO: remove this if statement once ignored profiles are supported
-      if (!this.isSubmitOnly) {
-        // add partners if they have been ignored
-        profile.partners.forEach(partner => {
-          if (partner.id === this.selectedProfile.id) return
-          if (currentPartners.some(currentPartner => currentPartner.id === partner.id)) return
-          if (otherParents.some(otherParent => otherParent.id === partner.id)) return
-          if (this.isNotIgnored(partner.id)) return
+      profile.partners.forEach(partner => {
+        if (partner.id === this.selectedProfile.id) return
+        if (currentPartners.some(currentPartner => currentPartner.id === partner.id)) return
+        if (otherParents.some(otherParent => otherParent.id === partner.id)) return
+        if (this.isNotIgnored(partner.id)) return
 
-          otherParents.push(partner)
-        })
-      }
+        otherParents.push(partner)
+      })
 
       // get all the profiles current partnes
       return otherParents

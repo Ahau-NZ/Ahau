@@ -476,6 +476,7 @@ export default {
       'approveEditGroupPersonSubmission',
       'approveDeleteGroupPersonSubmission',
       'approveWhakapapaLinkSubmission',
+      'processWhakapapaLinkSubmission',
       'approveWhakapapaLinkSubmissions',
       'rejectSubmission',
       'tombstoneSubmission'
@@ -507,8 +508,6 @@ export default {
       }
 
       // TODO: ui to change the relationshipType they selected and the legallyAdopted
-
-      // TODO: see what allowedFields is meant to have
       output.allowedFields = this.isLinkSubmission
         ? pick(this.notification?.changes, ['parent', 'child', 'relationshipType', 'legallyAdopted', 'recps'])
         : this.selectedChanges
@@ -517,7 +516,7 @@ export default {
         output.recps = [this.notification?.rawGroup?.id]
 
         if (this.isLinkSubmission) {
-          await this.approveWhakapapaLinkSubmission(output)
+          await this.processWhakapapaLinkSubmission(output)
           this.close()
           return
         }

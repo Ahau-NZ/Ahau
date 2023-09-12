@@ -1,11 +1,13 @@
 <template>
-  <v-card outlined class="py-1 mx-3 pl-6">
+  <v-card outlined class="mx-3 pa-3">
     <!-- What do i want to display here? -->
-    <v-card-subtitle class="row wrap justify-center">
+    <span class="row wrap justify-center">
       {{ helpText }}
-    </v-card-subtitle>
+    </span>
 
-    <div v-if="isChildLink">
+    <v-divider class="my-3"/>
+
+    <div v-if="isChildLink" class="my-3">
       <Avatar v-if="parentProfile"
         class="small-avatar"
         size="80px"
@@ -63,6 +65,11 @@
         showLabel
       />
     </div>
+
+    <v-divider v-if="isChildIgnored || isParentIgnored" class="py-3"/>
+
+    <span v-if="isChildIgnored" v-html="t('ignoredPersonText', { name: childName, views: viewsChildIsIgnoredIn.map(v => v.name).join(', ') })"/>
+    <span v-if="isParentIgnored" v-html="t('ignoredPersonText', { name: parentName, views: viewsParentIsIgnoredIn.map(v => v.name).join(', ') })"/>
   </v-card>
 </template>
 
@@ -90,7 +97,8 @@ export default {
   data () {
     return {
       parentProfile: null,
-      childProfile: null
+      childProfile: null,
+      views: []
     }
   },
   watch: {
@@ -103,6 +111,13 @@ export default {
         // load the profiles being linked together
         this.parentProfile = await this.getPersonMinimal(parent)
         this.childProfile = await this.getPersonMinimal(child)
+
+        // check if either of the people in the link are ignored in any of the whakapapa in the tribe
+        // get all whakapapa from this tribe
+        const groupId = submission?.rawGroup?.id
+        if (!groupId) return
+
+        this.views = await this.getWhakapapaViews({ groupId })
       }
     }
   },
@@ -157,10 +172,24 @@ export default {
     },
     isDashed () {
       return ['whangai', 'adopted'].includes(this.relationshipType)
+    },
+    viewsChildIsIgnoredIn () {
+      return this.views
+        .filter(view => view?.ignoredProfiles?.includes(this.childProfile.id))
+    },
+    viewsParentIsIgnoredIn () {
+      return this.views.filter(view => view?.ignoredProfiles?.includes(this.parentProfile.id))
+    },
+    isChildIgnored () {
+      return this.viewsChildIsIgnoredIn?.length
+    },
+    isParentIgnored () {
+      return this.viewsParentIsIgnoredIn?.length
     }
   },
   methods: {
     ...mapActions('person', ['getPersonMinimal']),
+    ...mapActions('whakapapa', ['getWhakapapaViews']),
     t (key, vars) {
       return this.$t('linkSubmissions.' + key, vars)
     }
