@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+  <Dialog ref="dialog" :show="show" :title="title" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -108,13 +108,43 @@
             </v-col>
           </template>
         </ProfileForm>
-
       </v-col>
     </template>
 
-    <!-- Slot at the bottom of the dialog -->
-    <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
+    <template v-if="!isSubmitOnly && accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="person" :accessOptions="accessOptions" permission="edit" disabled/>
+    </template>
+
+    <template v-if="isSubmitOnly" v-slot:actions>
+      <v-col  cols="12" sm="12" class="pa-1 mb-3">
+        <!-- Comment textarea -->
+        <v-textarea
+          v-model="comment"
+          label="Send a comment with your request"
+          outlined
+          hide-details
+          placeholder=" "
+          no-resize
+          :rows="1"
+          auto-grow
+          class="px-5 pt-4"
+        />
+      </v-col>
+      <v-col cols="12" class="py-0">
+        <v-card-text class="row wrap justify-center py-0 font-italic font-weight-light text-caption">
+          This request will be sent to the Kaitiaki of this tribe to review
+        </v-card-text>
+      </v-col>
+      <v-col class="mx-3">
+        <v-row>
+          <v-col v-if="accessOptions && accessOptions.length">
+            <AccessButton type="person" :accessOptions="accessOptions" permission="edit" disabled/>
+          </v-col>
+          <v-spacer v-else />
+          <v-btn text class="secondary--text mt-7" @click="handleClose">Cancel</v-btn>
+          <v-btn text color="blue" class="mt-7" :disabled="!allowSubmissions" @click="handleSubmit">Submit</v-btn>
+        </v-row>
+      </v-col>
     </template>
   </Dialog>
 </template>
@@ -192,7 +222,8 @@ export default {
       },
       existingProfile: null, // the currently profile in database (if it exists)
       isDuplicate: false,
-      moveDup: null
+      moveDup: null,
+      comment: null
     }
   },
   async mounted () {
@@ -272,7 +303,7 @@ export default {
   },
   computed: {
     ...mapGetters('tribe', ['accessOptions', 'currentTribe']),
-    ...mapGetters(['currentAccess', 'isKaitiaki']),
+    ...mapGetters(['currentAccess', 'isKaitiaki', 'allowSubmissions']),
     ...mapGetters('whakapapa', ['whakapapaView', 'getParentIds', 'getRawChildIds', 'getRawParentIds', 'getRawPartnerIds', 'isNotIgnored']),
     ...mapGetters('tree', ['isInTree', 'getNode']),
     ...mapGetters('person', ['selectedProfile']),
@@ -518,12 +549,27 @@ export default {
         submission.moveDup = this.moveDup
       }
 
+      if (this.comment) submission.comment = this.comment
+
       this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {
       this.close()
     },
+
+    // NOTE cherese 14/09/23 for these two methods, we want to take advantage of
+    // some of the built in methods in the Dialog component
+    // around disabling the submit button and re-enabling it.
+    // Disabling the submit is not currently working though!
+    handleClose () {
+      this.$refs.dialog.close()
+    },
+    handleSubmit () {
+      this.$refs.dialog.submit()
+    },
+    // END NOTE
+
     close () {
       this.resetFormData()
       this.$emit('close')
