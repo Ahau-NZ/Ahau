@@ -432,7 +432,20 @@ export default {
       }
     },
     async submitPerson (input) {
-      const { id, partners, children, parents, /* moveDup, */ customFields: rawCustomFields = {} } = input
+      const {
+        id, // id of a profile, if the person we are adding already exists
+
+        // for adding links to a person
+        partners,
+        children,
+        parents,
+
+        customFields: rawCustomFields = {},
+
+        comment // attach a comment from the submitter, to the submission
+
+        /* moveDup, */ // for moving a duplicate profile
+      } = input
 
       // if moveDup is in input than add duplink
       // if (moveDup) {
@@ -453,7 +466,7 @@ export default {
         // set the custom fields
         input.customFields = getInitialCustomFieldChanges(rawCustomFields[this.currentTribe.id], this.tribeCustomFields)
         if (isEmpty(input.customFields)) delete input.customFields
-        parentSubmissionId = await this.submitNewPerson(input)
+        parentSubmissionId = await this.submitNewPerson(input, comment)
       }
 
       // TODO: allow submissions to unignore a profile here
@@ -478,14 +491,14 @@ export default {
             // NOTE: id only has a value when we are creating a submission to link an existing profile
             child: id,
             relationshipAttrs
-          }, parentSubmissionId)
+          }, parentSubmissionId, comment)
           // }
 
           if (parents) {
             await this.submitNewLinks({
               type: LINK_TYPE_CHILD,
               child: id
-            }, parents, parentSubmissionId)
+            }, parents, parentSubmissionId, comment)
           }
 
           break
@@ -498,21 +511,21 @@ export default {
             // NOTE: id only has a value when we are creating a submission to link an existing profile
             parent: id,
             relationshipAttrs
-          }, parentSubmissionId)
+          }, parentSubmissionId, comment)
           // }
 
           if (partners) {
             await this.submitNewLinks({
               type: LINK_TYPE_PARTNER,
               parent: id
-            }, partners, parentSubmissionId)
+            }, partners, parentSubmissionId, comment)
           }
 
           if (children) {
             await this.submitNewLinks({
               type: LINK_TYPE_CHILD,
               parent: id
-            }, children, parentSubmissionId)
+            }, children, parentSubmissionId, comment)
           }
 
           break
@@ -524,7 +537,7 @@ export default {
 
             // NOTE: id only has a value when we are creating a submission to link an existing profile
             child: id
-          }, parentSubmissionId)
+          }, parentSubmissionId, comment)
           // }
 
           if (children) {
@@ -532,7 +545,7 @@ export default {
               type: LINK_TYPE_CHILD,
               // NOTE: id only has a value when we are creating a submission to link an existing profile
               parent: id
-            }, children, parentSubmissionId)
+            }, children, parentSubmissionId, comment)
           }
 
           // NOTE: for quick added links, there is no parent submission, so each link will be a separate submission
@@ -590,7 +603,7 @@ export default {
       // create the person and return their id
       return this.createPerson(input)
     },
-    async submitNewPerson (input) {
+    async submitNewPerson (input, comment) {
       input.type = this.currentAccess.type === ACCESS_KAITIAKI ? 'person/admin' : 'person'
       input.authors = {
         add: [
@@ -601,8 +614,7 @@ export default {
       }
 
       // make the submission
-      // TODO: comment
-      return this.proposeNewGroupPerson({ input, comment: 'create a new profile' })
+      return this.proposeNewGroupPerson({ input, comment })
     },
 
     async removeIgnoredProfile (id) {
@@ -626,15 +638,15 @@ export default {
           this.addLinks({ childLinks: [{ parent, child, ...relationshipAttrs }] })
         })
     },
-    async submitNewLink ({ type, parent, child, relationshipAttrs = {} }, parentSubmissionId) {
+    async submitNewLink ({ type, parent, child, relationshipAttrs = {} }, parentSubmissionId, comment) {
       const submissionId = await this.proposeNewWhakapapaLink({
         input: {
           type,
           parent,
           child,
           ...relationshipAttrs
-        }
-        // TODO: comment
+        },
+        comment
       })
 
       // if there isnt a parentSubmissionId, then we arent linking this submission to anything
@@ -657,7 +669,7 @@ export default {
         }]
       })
     },
-    async submitNewLinks ({ type, parent, child }, links, parentSubmissionId) {
+    async submitNewLinks ({ type, parent, child }, links, parentSubmissionId, comment) {
       if (!type) {
         console.error('submitNewLinks is missing the type')
         return
@@ -675,7 +687,7 @@ export default {
             relationshipAttrs: type === LINK_TYPE_CHILD ? pick(link, ['relationshipType', 'legallyAdopted']) : undefined
           }
 
-          return this.submitNewLink(input, parentSubmissionId)
+          return this.submitNewLink(input, parentSubmissionId, comment)
         })
       )
     },
