@@ -176,7 +176,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-col cols="12" class="py-0">
+        <v-col v-if="showActions" cols="12" class="py-0">
           <v-card-text class="row wrap justify-center font-italic font-weight-light text-caption pb-1">
             {{ t('helpText') }}
           </v-card-text>
@@ -188,7 +188,7 @@
               <v-btn text class="secondary--text" @click="decline">{{  t('decline') }}</v-btn>
               <v-btn text color="blue" @click="approve">{{ t('approve')}}</v-btn>
             </div>
-            <v-btn v-else text color="blue" @click="close">{{ t('close')}}</v-btn>
+            <v-btn v-else text color="blue" class="mt-3" @click="close">{{ t('close')}}</v-btn>
           </v-row>
         </v-col>
       </template>
