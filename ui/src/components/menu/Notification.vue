@@ -67,8 +67,7 @@ export default {
     },
     notificationStatus () {
       switch (true) {
-        case this.isNew:
-          return this.isNewRecord ? 'new' : 'edit'
+        case this.isNew: return 'new'
         case this.isAccepted: return 'accepted'
         default: return 'declined'
       }
@@ -116,7 +115,9 @@ export default {
       if (this.isPersonType) {
         return this.isPersonal
           ? this.t(`personal.submission.profile.${this.notificationStatus}`, { groupName })
-          : this.t(`submission.profile.${this.notificationStatus}`, { groupName })
+          : this.isNewRecord
+            ? this.t('submission.profile.new.ahau', { groupName })
+            : this.t('submission.profile.edit', { groupName, profileName: this.notification?.sourceRecord?.preferredName })
       }
 
       return this.t(`${prepended}${this.notificationType}.${this.notificationStatus}`, { groupName })
