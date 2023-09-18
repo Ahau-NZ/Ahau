@@ -116,7 +116,9 @@ export default {
         return this.isPersonal
           ? this.t(`personal.submission.profile.${this.notificationStatus}`, { groupName })
           : this.isNewRecord
-            ? this.t('submission.profile.new.ahau', { groupName })
+            ? this.isNew
+              ? this.t('submission.profile.new.ahau', { groupName })
+              : this.t(`submission.profile.${this.notificationStatus}`, { groupName })
             : this.t('submission.profile.edit', { groupName, profileName: this.notification?.sourceRecord?.preferredName })
       }
 

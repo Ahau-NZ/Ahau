@@ -41,7 +41,9 @@
         "ahau": "Received a request to create a profile in {groupName}"
       },
       "edit": "Received a request to edit {profileName} in {groupName}",
-      "delete": "Received a request to delete a profile in {groupName}"
+      "delete": "Received a request to delete a profile in {groupName}",
+      "accepted": "This submission to create a profile has been approved",
+      "declined": "This submission to create a profile has been declined"
     },
     "link": {
       "partner": {
