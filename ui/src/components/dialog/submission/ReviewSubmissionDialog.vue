@@ -456,12 +456,13 @@ export default {
     },
     hasAltnameChanges () {
       const altNames = this.notification?.changes?.altNames
+
       if (!altNames) return false
 
       const { add, remove } = altNames
       return (
-        add && add.length &&
-        remove && remove.length
+        (add && add.length) ||
+        (remove && remove.length)
       )
     },
     answers () {
