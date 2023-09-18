@@ -9,7 +9,9 @@
     "submission": {
       "profile": {
         "new": "Your submission to create a new profile in {groupName} is pending",
-        "edit": "Your submission to edit a profile in {groupName} is pending"
+        "edit": "Your submission to edit a profile in {groupName} is pending",
+        "declined": "Your submission to create/edit a profile has been declined",
+        "accepted": "Your submission to create/edit a profile has been accepted"
       },
       "link": {
         "partner": {
