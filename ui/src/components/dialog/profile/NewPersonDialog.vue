@@ -325,7 +325,7 @@ export default {
     generateSuggestions () {
       if (this.hasSelection) return []
 
-      if (!this.isSubmitOnly && this.suggestions.length) {
+      if (this.suggestions.length) {
         return [
           ...(this.type ? [{ header: 'Are you looking for:' }] : []),
           ...this.suggestions
@@ -659,14 +659,21 @@ export default {
 
       return rawSuggestions
         .filter(person => {
+          // TODO cherese 19/09/23 if we are looking at a submit-only whakapapa, then we filter out all duplicate
+          // profiles so they are not suggested. This is only temporary until support for them
+          // is added
+          if (this.isSubmitOnly && this.checkIfDuplicate(person)) return false
+
           return (
             // dont suggest ancestors
             // this will make it hard to add a grandparent as a whangai parent
             // but you can still do that the other way around by adding the grandchild to the grandparent
-            !this.ancestors.some(ancestorId => ancestorId === person.id) &&
+            (
+              !this.ancestors.some(ancestorId => ancestorId === person.id) &&
 
-            // dont suggest direct descendants already in the tree
-            !this.selectedProfile.children.some(child => child.id === person.id)
+              // dont suggest direct descendants already in the tree
+              !this.selectedProfile.children.some(child => child.id === person.id)
+            )
           )
         })
     },
