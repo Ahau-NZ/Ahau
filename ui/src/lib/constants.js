@@ -93,3 +93,6 @@ export const LINK_PARTNER = 'partner'
 
 export const LINK_TYPE_CHILD = 'link/profile-profile/child'
 export const LINK_TYPE_PARTNER = 'link/profile-profile/partner'
+
+export const PROFILE_TYPE_PERSON = 'profile/person'
+export const PROFILE_TYPE_ADMIN = 'profile/person/admin'
