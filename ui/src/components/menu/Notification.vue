@@ -22,6 +22,14 @@
 
 <script>
 import Avatar from '@/components/Avatar'
+import {
+  LINK_TYPE_PARTNER,
+  LINK_TYPE_CHILD,
+  LINK_CHILD,
+  LINK_PARTNER,
+  PROFILE_TYPE_ADMIN,
+  PROFILE_TYPE_PERSON
+} from '@/lib/constants'
 
 export default {
   name: 'NotificationListItem',
@@ -70,6 +78,22 @@ export default {
         return this.t('submission.profile.new.title', { from })
       } else return this.author.preferredName
     },
+    translationType () {
+      switch (this.notification?.targetType) {
+        case LINK_TYPE_PARTNER: return LINK_PARTNER
+        case LINK_TYPE_CHILD: return LINK_CHILD
+        default: return ''
+      }
+    },
+    isLinkType () {
+      return [LINK_TYPE_PARTNER, LINK_TYPE_CHILD].includes(this.notification?.targetType)
+    },
+    isPersonType () {
+      return [PROFILE_TYPE_PERSON, PROFILE_TYPE_ADMIN].includes(this.notification?.targetType)
+    },
+    isNewRecord () {
+      return !this.notification?.sourceRecord
+    },
     text () {
       if (this.isSystem) return this.t('system')
 
@@ -77,6 +101,26 @@ export default {
 
       const prepended = this.isPersonal ? 'personal' + '.' : ''
       if (this.isFromWeb) return this.t('submission.profile.new.web', { groupName })
+
+      if (this.isLinkType) {
+        const type = this.notification.targetType === LINK_TYPE_PARTNER
+          ? LINK_PARTNER
+          : LINK_CHILD
+
+        return this.isPersonal
+          ? this.t(`personal.submission.link.${type}.${this.notificationStatus}`, { groupName })
+          : this.t(`submission.link.${type}.${this.notificationStatus}`, { authorName: this.author.preferredName, groupName })
+      }
+
+      if (this.isPersonType) {
+        return this.isPersonal
+          ? this.t(`personal.submission.profile.${this.notificationStatus}`, { groupName })
+          : this.isNewRecord
+            ? this.isNew
+              ? this.t('submission.profile.new.ahau', { groupName })
+              : this.t(`submission.profile.${this.notificationStatus}`, { groupName })
+            : this.t('submission.profile.edit', { groupName, profileName: this.notification?.sourceRecord?.preferredName })
+      }
 
       return this.t(`${prepended}${this.notificationType}.${this.notificationStatus}`, { groupName })
     },

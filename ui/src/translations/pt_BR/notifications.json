@@ -27,6 +27,9 @@
       "edit": "Received a request to edit {profileName} in {groupName}",
       "delete": "Received a request to delete a profile in {groupName}"
     },
+    "link": {
+      "new": "Received a request to create a whakapapa link in {groupName}"
+    },
     "new": "Enviou uma alteração para {groupName}",
     "accepted": "O seu envio para {groupName} foi aceito",
     "declined": "A sua submissão para {groupName} foi recusada ",

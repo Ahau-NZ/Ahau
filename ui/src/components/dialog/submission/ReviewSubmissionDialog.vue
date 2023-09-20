@@ -120,8 +120,8 @@
           </v-card>
         </v-col>
 
-       <!-- Header for comments -->
-       <v-col v-if="showComments" :class="headerClass">
+        <!-- Header for comments -->
+        <v-col v-if="showComments" :class="headerClass">
           <span>
             {{ t('comments') }}
           </span>
@@ -158,37 +158,39 @@
           </v-card>
         </v-col>
         <v-col class="pt-8" align="center">
-        <v-btn text @click="deleteSubmission">
-          {{ t('deleteSubmission') }}
-          <v-icon class="pl-2">mdi-delete</v-icon>
-        </v-btn>
-      </v-col>
+          <v-btn text @click="deleteSubmission">
+            {{ t('deleteSubmission') }}
+            <v-icon class="pl-2">mdi-delete</v-icon>
+          </v-btn>
+        </v-col>
 
-      <!-- NOTE: for development purposes, this just shows the data in the notification -->
-      <v-col v-if="isDevelopment">
-        <details>
-          <summary>
-            DEBUG: Notification
-          </summary>
-          <code><pre>{{ JSON.stringify(notification, null, 2) }}</pre></code>
-        </details>
-      </v-col>
+        <!-- NOTE: for development purposes, this just shows the data in the notification -->
+        <v-col v-if="isDevelopment">
+          <details>
+            <summary>
+              DEBUG: Notification
+            </summary>
+            <code><pre>{{ JSON.stringify(notification, null, 2) }}</pre></code>
+          </details>
+        </v-col>
       </template>
 
       <template v-slot:actions>
-        <div v-if="showActions">
-          <v-btn @click="decline" text large class="secondary--text">
-            <span>{{ t('decline') }}</span>
-          </v-btn>
-          <v-btn @click="approve" text large class="blue--text mx-5">
-            <span>{{ t('approve') }}</span>
-          </v-btn>
-        </div>
-        <div v-else>
-          <v-btn @click="close" text large class="blue--text mx-5">
-            <span>{{ t('close') }}</span>
-          </v-btn>
-        </div>
+        <v-col v-if="showActions" cols="12" class="py-0">
+          <v-card-text class="row wrap justify-center font-italic font-weight-light text-caption pb-1">
+            {{ t('helpText') }}
+          </v-card-text>
+        </v-col>
+        <v-col class="mx-3 pt-0">
+          <v-row>
+            <v-spacer />
+            <div v-if="showActions">
+              <v-btn text class="secondary--text" @click="decline">{{  t('decline') }}</v-btn>
+              <v-btn text color="blue" @click="approve">{{ t('approve')}}</v-btn>
+            </div>
+            <v-btn v-else text color="blue" class="mt-3" @click="close">{{ t('close')}}</v-btn>
+          </v-row>
+        </v-col>
       </template>
     </Dialog>
   </div>
@@ -196,7 +198,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { isEmpty } from 'lodash-es'
+import { isEmpty, pick } from 'lodash-es'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -452,12 +454,13 @@ export default {
     },
     hasAltnameChanges () {
       const altNames = this.notification?.changes?.altNames
+
       if (!altNames) return false
 
       const { add, remove } = altNames
       return (
-        add && add.length &&
-        remove && remove.length
+        (add && add.length) ||
+        (remove && remove.length)
       )
     },
     answers () {
@@ -473,6 +476,8 @@ export default {
       'approveNewGroupPersonSubmission',
       'approveEditGroupPersonSubmission',
       'approveDeleteGroupPersonSubmission',
+      'approveWhakapapaLinkSubmission',
+      'processWhakapapaLinkSubmission',
       'approveWhakapapaLinkSubmissions',
       'rejectSubmission',
       'tombstoneSubmission'
@@ -498,15 +503,25 @@ export default {
         return
       }
 
-      if (isEmpty(this.selectedChanges)) {
+      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission) {
         this.showAlert({ message: this.t('noChanges'), color: 'red', delay: 10000 })
         return
       }
 
-      output.allowedFields = this.selectedChanges
+      // TODO: ui to change the relationshipType they selected and the legallyAdopted
+      output.allowedFields = this.isLinkSubmission
+        ? pick(this.notification?.changes, ['parent', 'child', 'relationshipType', 'legallyAdopted', 'recps'])
+        : this.selectedChanges
 
       if (this.isNewRecord) {
         output.recps = [this.notification?.rawGroup?.id]
+
+        if (this.isLinkSubmission) {
+          await this.processWhakapapaLinkSubmission(output)
+          this.close()
+          return
+        }
+
         await this.approveNewGroupPersonSubmission(output)
 
         const { parents = [], children = [], partners = [] } = (this.selectedDependencies || {})
