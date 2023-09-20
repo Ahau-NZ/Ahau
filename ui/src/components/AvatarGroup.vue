@@ -41,7 +41,7 @@
 
 <script>
 import Avatar from './Avatar.vue'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 
 export default {
   name: 'AvatarGroup',

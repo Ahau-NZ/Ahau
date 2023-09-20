@@ -95,8 +95,7 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
+import { pick, isEmpty } from 'lodash-es'
 
 import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -113,10 +112,10 @@ import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewReg
 import ReviewSubmissionDialog from '@/components/dialog/submission/ReviewSubmissionDialog.vue'
 
 import { getInitialCustomFieldChanges } from '@/lib/custom-field-helpers'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 import findSuccessor from '@/lib/find-successor'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
 import { mapGetters, mapActions } from 'vuex'
 
 import {
@@ -125,7 +124,7 @@ import {
   LINK_TYPE_PARTNER,
   LINK_CHILD,
   LINK_PARENT
-} from '@/lib/constants.js'
+} from '@/lib/constants'
 
 export default {
   name: 'DialogHandler',

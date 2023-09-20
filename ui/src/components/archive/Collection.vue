@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { formatSubmissionDate } from '@/lib/date-helpers.js'
+import { formatSubmissionDate } from '@/lib/date-helpers'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import niho from '@/assets/niho.svg'
 

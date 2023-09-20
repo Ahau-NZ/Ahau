@@ -17,8 +17,7 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
+import { pick, isEmpty } from 'lodash-es'
 import { mapActions, mapGetters } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'

@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import avatarHelper from '@/lib/avatar-helpers.js'
+import avatarHelper from '@/lib/avatar-helpers'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 export default {

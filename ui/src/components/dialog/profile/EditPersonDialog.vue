@@ -66,15 +66,13 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
+import { isEqual, isEmpty, pick } from 'lodash-es'
 
-import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers.js'
-import { parseInterval } from '@/lib/date-helpers.js'
+import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers'
+import { parseInterval } from '@/lib/date-helpers'
 import calculateAge from '@/lib/calculate-age'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'

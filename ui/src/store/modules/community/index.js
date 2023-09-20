@@ -1,10 +1,10 @@
-import get from 'lodash.get'
+import { get } from 'lodash-es'
 
 import {
   saveCommunity,
   savePublicCommunity,
   updateTribe
-} from '@/lib/community-helpers.js' // TODO cherese 23-08-21 move these to ./apollo-helpers
+} from '@/lib/community-helpers' // TODO cherese 23-08-21 move these to ./apollo-helpers
 
 export default function (apollo) {
   const state = {

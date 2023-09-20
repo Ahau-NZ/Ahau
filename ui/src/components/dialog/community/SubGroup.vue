@@ -78,7 +78,7 @@
 </template>
 <script>
 
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 import Avatar from '@/components/Avatar.vue'
 // import MembersPicker from './MembersPicker.vue'
 import { getTribalProfile } from '../../../lib/community-helpers'

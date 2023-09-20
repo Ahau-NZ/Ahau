@@ -81,9 +81,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
-import get from 'lodash.get'
+import { isEqual, isEmpty, get } from 'lodash-es'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
@@ -94,10 +92,10 @@ import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunity
 import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { deleteTribe, mergeTribeProfiles } from '@/lib/community-helpers.js'
-import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
+import { deleteTribe, mergeTribeProfiles } from '@/lib/community-helpers'
+import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers'
+import { getDisplayName } from '@/lib/person-helpers'
 import { getDefaultFieldValue } from '@/lib/custom-field-helpers'
 
 export default {

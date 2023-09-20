@@ -44,6 +44,7 @@ ahoy(
     ]
   },
   (err, ssb) => {
+    if (err) return console.log(err)
     if (err) throw err
     // this config has updated manifest added
 

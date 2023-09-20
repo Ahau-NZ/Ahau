@@ -198,9 +198,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-// import get from 'lodash.get'
+import { isEmpty, pick } from 'lodash-es'
 
-import isEmpty from 'lodash.isempty'
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
@@ -209,7 +208,6 @@ import LinkSubmission from '@/components/submission/LinkSubmission.vue'
 
 import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
-import pick from 'lodash.pick'
 
 const CHILD_LINK = 'link/profile-profile/child'
 const PARTNER_LINK = 'link/profile-profile/partner'

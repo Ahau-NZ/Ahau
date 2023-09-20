@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
+import { pick } from 'lodash-es'
 
 import { COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
 import { PublicProfileFieldsFragment } from '../profile/apollo-helpers'

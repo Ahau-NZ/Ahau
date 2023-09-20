@@ -79,12 +79,12 @@ import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import Stories from '@/components/archive/Stories.vue'
 import Timeline from '@/components/story/Timeline.vue'
 
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
-import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
+import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
 
 import { VueContext } from 'vue-context'
 

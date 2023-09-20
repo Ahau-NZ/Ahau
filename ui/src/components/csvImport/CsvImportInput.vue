@@ -75,11 +75,8 @@
 </template>
 
 <script>
-import get from 'lodash.get'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
+import { get, pick, cloneDeep as clone } from 'lodash-es'
 import pileSort from 'pile-sort'
-
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import { downloadCsv, importCsv, parseCustomFieldValue } from '@/lib/csv'

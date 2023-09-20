@@ -15,8 +15,9 @@
 </template>
 
 <script>
+import { get } from 'lodash-es'
+
 import whakapapa from '@/assets/whakapapa.png'
-const get = require('lodash.get')
 
 export default {
   name: 'CommunityCard',

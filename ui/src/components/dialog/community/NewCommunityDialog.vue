@@ -101,20 +101,17 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
+import { pick, isEmpty, isEqual } from 'lodash-es'
+import { mapGetters } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
-import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers.js'
-import { getObjectChanges } from '@/lib/get-object-changes.js'
+import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers'
+import { getObjectChanges } from '@/lib/get-object-changes'
 import GroupsList from './GroupsList.vue'
 import Permissions from './Permissions.vue'
 import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
-
-import { mapGetters } from 'vuex'
-import isEqual from 'lodash.isequal'
 
 export default {
   name: 'NewCommunityDialog',

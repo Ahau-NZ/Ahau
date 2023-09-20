@@ -32,9 +32,9 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
-import { getObjectChanges } from '@/lib/get-object-changes.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
+import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers'
+import { getObjectChanges } from '@/lib/get-object-changes'
 
 export default {
   name: 'NewRecordDialog',

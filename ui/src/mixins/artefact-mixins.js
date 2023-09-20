@@ -1,6 +1,6 @@
 import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
-import { getObjectChanges } from '@/lib/get-object-changes.js'
-import { setDefaultStory } from '@/lib/story-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes'
+import { setDefaultStory } from '@/lib/story-helpers'
 
 export const methods = {
   updateArtefacts (artefacts) {

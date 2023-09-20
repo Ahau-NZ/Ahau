@@ -237,11 +237,11 @@
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-import { convertBytes } from '@/lib/artefact-helpers.js'
-import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
+import { cloneDeep as clone } from 'lodash-es'
 
-import clone from 'lodash.clonedeep'
+import Dialog from '@/components/dialog/Dialog.vue'
+import { convertBytes } from '@/lib/artefact-helpers'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import { personComplete } from '@/mocks/person-profile'
 // import AddButton from '@/components/button/AddButton.vue'

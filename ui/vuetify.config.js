@@ -1,4 +1,4 @@
-import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
+import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants'
 
 import en from 'vuetify/es5/locale/en'
 import pt from 'vuetify/es5/locale/pt'

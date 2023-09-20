@@ -55,7 +55,7 @@ import {
 } from 'd3'
 
 import SubTree from './SubTree'
-import settings from '@/lib/link.js'
+import settings from '@/lib/link'
 
 export default {
   name: 'WhakapapaTree',

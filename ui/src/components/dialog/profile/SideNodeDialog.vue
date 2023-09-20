@@ -333,12 +333,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex'
-
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
-import get from 'lodash.get'
+import { isEqual, isEmpty, pick, cloneDeep as clone, get } from 'lodash-es'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -350,10 +345,10 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import EditRelationships from '@/components/profile/EditRelationships.vue'
 
 import calculateAge from '@/lib/calculate-age'
-import { ACCESS_KAITIAKI } from '@/lib/constants.js'
+import { ACCESS_KAITIAKI } from '@/lib/constants'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
-import { parseInterval, dateToString } from '@/lib/date-helpers.js'
-import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers.js'
+import { parseInterval, dateToString } from '@/lib/date-helpers'
+import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers'
 
 function arrayEquals (a, b) {
   return (

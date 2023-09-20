@@ -23,7 +23,7 @@
 </template>
 <script>
 
-import avatarHelper from '@/lib/avatar-helpers.js'
+import avatarHelper from '@/lib/avatar-helpers'
 
 export default {
   name: 'WhakapapaBanner',

@@ -41,8 +41,8 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import uploadFile from '@/mixins/upload-file.js'
-import { makeFile } from '@/lib/file-helpers.js'
+import uploadFile from '@/mixins/upload-file'
+import { makeFile } from '@/lib/file-helpers'
 
 export default {
   name: 'AvatarEditDialog',

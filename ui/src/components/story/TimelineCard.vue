@@ -90,7 +90,7 @@ import Chip from '@/components/archive/Chip.vue'
 import niho from '@/assets/niho.svg'
 
 import { mapGetters } from 'vuex'
-import { yearMonthDay, edtfToDateString } from '@/lib/date-helpers.js'
+import { yearMonthDay, edtfToDateString } from '@/lib/date-helpers'
 
 export default {
   props: ['data', 'loading'],

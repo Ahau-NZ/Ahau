@@ -152,9 +152,7 @@
 <script>
 /* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
 import { mapGetters, mapActions } from 'vuex'
-import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
+import { isEmpty, pick, cloneDeep as clone } from 'lodash-es'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 
@@ -165,8 +163,8 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import calculateAge from '@/lib/calculate-age'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
-import { parseInterval } from '@/lib/date-helpers.js'
-import { ACCESS_KAITIAKI } from '@/lib/constants.js'
+import { parseInterval } from '@/lib/date-helpers'
+import { ACCESS_KAITIAKI } from '@/lib/constants'
 
 const VALID_TYPES = new Set(['child', 'parent', 'sibling', 'partner', 'person'])
 const isNotEmpty = (array) => array && array.length > 0

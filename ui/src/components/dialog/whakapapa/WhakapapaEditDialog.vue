@@ -89,8 +89,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
+import { isEqual, isEmpty } from 'lodash-es'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'

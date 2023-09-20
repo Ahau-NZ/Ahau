@@ -82,15 +82,15 @@
 </template>
 
 <script>
-import TimelineCard from '@/components/story/TimelineCard'
-import StoryCard from '@/components/archive/StoryCard.vue'
-import isEmpty from 'lodash.isempty'
-import TimelineButton from '@/components/button/TimelineButton.vue'
-
+import { isEmpty } from 'lodash-es'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
-// import mapProfileMixins from '@/mixins/profile-mixins.js'
+import TimelineCard from '@/components/story/TimelineCard'
+import StoryCard from '@/components/archive/StoryCard.vue'
+import TimelineButton from '@/components/button/TimelineButton.vue'
+
+// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
+// import mapProfileMixins from '@/mixins/profile-mixins'
 
 export default {
   name: 'StoryTimeline',

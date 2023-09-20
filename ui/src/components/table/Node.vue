@@ -57,10 +57,11 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import get from 'lodash.get'
-import avatarHelper from '@/lib/avatar-helpers.js'
-import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
-import { getDisplayName } from '@/lib/person-helpers.js'
+import { get } from 'lodash-es'
+
+import avatarHelper from '@/lib/avatar-helpers'
+import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants'
+import { getDisplayName } from '@/lib/person-helpers'
 import NodeMenuButton from '../tree/NodeMenuButton.vue'
 // import flower.svg from '@/src/assets'
 

@@ -2,8 +2,7 @@ import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 import { getCustomFields, getDefaultFields, getRawCustomFields } from '@/lib/custom-field-helpers'
 
-import pick from 'lodash.pick'
-import get from 'lodash.get'
+import { pick, get } from 'lodash-es'
 
 const defaultTribeSettings = {
   allowWhakapapaViews: true,

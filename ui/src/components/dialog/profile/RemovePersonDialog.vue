@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import get from 'lodash.get'
+import { get } from 'lodash-es'
 import Dialog from '@/components/dialog/Dialog.vue'
 
 // mode for the type of remove

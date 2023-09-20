@@ -491,9 +491,9 @@ import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vu
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
-import { storiesApolloMixin } from '@/mixins/story-mixins.js'
-import { artefactMixin } from '@/mixins/artefact-mixins.js'
-import { getAllStories } from '@/lib/story-helpers.js'
+import { storiesApolloMixin } from '@/mixins/story-mixins'
+import { artefactMixin } from '@/mixins/artefact-mixins'
+import { getAllStories } from '@/lib/story-helpers'
 
 export default {
   name: 'RecordForm',

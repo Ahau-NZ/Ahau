@@ -31,7 +31,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import avatarHelper from '@/lib/avatar-helpers.js'
+import avatarHelper from '@/lib/avatar-helpers'
 import { RELATIONSHIPS, LINK_CHILD, LINK_PARENT, LINK_PARTNER } from '@/lib/constants'
 
 export default {
