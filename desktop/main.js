@@ -73,8 +73,7 @@ function isAhauRunning () {
   let isRunning
   try {
     // locked => running
-    lockfile.checkSync(testfilePath)
-    isRunning = false
+    isRunning = lockfile.checkSync(testfilePath)
   } catch (err) {
     // error => locked => running
     isRunning = true
