@@ -2,62 +2,85 @@ const ahoy = require('ssb-ahoy')
 const env = require('ahau-env')()
 const chalk = require('chalk')
 const boxen = require('boxen')
+const lockfile = require('lockfile')
+const { join } = require('path')
+const { app } = require('electron')
 const { autoUpdater } = require('electron-updater')
 
-const Config = require('./ssb.config')
+const config = require('./ssb.config')()
 const karakia = require('./karakia')
 
-ahoy(
-  env.isDevelopment
-    ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
-    : `file://${__dirname}/dist/index.html`, // production build
-  {
-    title: 'Ahau',
-    config: Config(),
-    plugins: [
-      require('ssb-db'),
-      require('ssb-conn'),
-      require('ssb-lan'),
-      require('ssb-replicate'),
-      require('ssb-friends'),
+if (isAhauRunning()) {
+  console.log('Ahau already running\nEXITING')
+  app.quit()
+} else {
+  ahoy(
+    env.isDevelopment
+      ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
+      : `file://${__dirname}/dist/index.html`, // production build
+    {
+      title: 'Ahau',
+      config,
+      plugins: [
+        require('ssb-db'),
+        require('ssb-conn'),
+        require('ssb-lan'),
+        require('ssb-replicate'),
+        require('ssb-friends'),
 
-      require('ssb-blobs'),
-      require('ssb-serve-blobs'),
-      require('ssb-hyper-blobs'),
+        require('ssb-blobs'),
+        require('ssb-serve-blobs'),
+        require('ssb-hyper-blobs'),
 
-      require('ssb-query'),
-      require('ssb-backlinks'),
+        require('ssb-query'),
+        require('ssb-backlinks'),
 
-      require('ssb-invite'),
-      require('ssb-tribes'),
-      require('ssb-tribes-registration'),
+        require('ssb-invite'),
+        require('ssb-tribes'),
+        require('ssb-tribes-registration'),
 
-      require('ssb-profile'),
-      require('ssb-settings'),
-      require('ssb-story'),
-      require('ssb-artefact'),
-      require('ssb-whakapapa'),
-      require('ssb-submissions'),
+        require('ssb-profile'),
+        require('ssb-settings'),
+        require('ssb-story'),
+        require('ssb-artefact'),
+        require('ssb-whakapapa'),
+        require('ssb-submissions'),
 
-      require('ssb-ahau'),
-      require('ssb-recps-guard')
-    ]
-  },
-  (err, ssb) => {
-    if (err) return console.log(err)
-    if (err) throw err
-    // this config has updated manifest added
+        require('ssb-ahau'),
+        require('ssb-recps-guard')
+      ]
+    },
+    (err, ssb) => {
+      if (err) throw err
+      // this config has updated manifest added
 
-    /* Karakia tūwhera */
-    karakia()
+      /* Karakia tūwhera */
+      karakia()
 
-    printConfig(ssb.config)
+      printConfig(ssb.config)
 
-    if (env.isProduction) {
-      autoUpdater.checkForUpdatesAndNotify()
+      if (env.isProduction) {
+        autoUpdater.checkForUpdatesAndNotify()
+      }
     }
+  )
+}
+
+/* HELPERS */
+
+function isAhauRunning () {
+  const testfilePath = join(config.path, 'tribes/keystore/LOCK')
+  let isRunning
+  try {
+    // locked => running
+    lockfile.checkSync(testfilePath)
+    isRunning = false
+  } catch (err) {
+    // error => locked => running
+    isRunning = true
   }
-)
+  return isRunning
+}
 
 function printConfig (config) {
   const envName = env.isProduction ? '' : ` ${env.name.toUpperCase()} `
