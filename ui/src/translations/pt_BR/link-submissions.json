@@ -1,3 +1,7 @@
 {
-  "helpText": "Add {childName} as a {type} to {parentName}, related by {relatedBy}"
+  "helpText": {
+    "child": "Add {childName}  as a {type} to {parentName}, related by {relatedBy}",
+    "partner": "Add {childName} as a {type} to {parentName}>"
+  },
+  "ignoredPersonText": "<strong>{name}</strong> has been hidden, approving this submission will un-hide them from the following whakapapa in this tribe: <br><br> <strong>{views}</strong>"
 }
