@@ -70,5 +70,6 @@
     "parents": "Pais",
     "children": "Crianças",
     "partners": "Parceiros",
-    "family": "Family"
+    "family": "Family",
+    "helpText": "Approving this submission will result in profile(s) and/or link(s) being created"
 }
