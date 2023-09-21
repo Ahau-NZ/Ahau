@@ -99,9 +99,13 @@
     </template>
   </Dialog>
 </template>
+
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadCsv } from '@/lib/csv'
+
+import treeURL from '@/assets/tree.jpg'
+import whakapapaListURL from '@/assets/whakapapa-list.jpg'
 
 export default {
   props: {
@@ -113,8 +117,8 @@ export default {
       // youtubeURL: 'https://www.youtube.com/watch?v=XTtETIF8488', // buildCSV uploaded to Mix's account
       youtubeEmbedURL: 'https://www.youtube.com/embed/XTtETIF8488',
       items: [
-        { src: require('@/assets/tree.jpg') },
-        { src: require('@/assets/whakapapa-list.jpg') }
+        { src: treeURL },
+        { src: whakapapaListURL }
       ],
       fields: [
         { name: 'preferredName', description: 'Name the person is known by. Generally, the first name or even a nick name.', formats: ['Text'] },

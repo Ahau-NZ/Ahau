@@ -12,6 +12,8 @@ const mutations = {}
 
 const actions = {
   appUsed ({ state, commit }) {
+    if (!mixpanel) return
+
     mixpanel.throttledTrack('using-app', { version })
     // NOTE thottled means means we can call this action as much as we want and
     // mixpanel will only be hit e.g. once an hour (for this particular event)

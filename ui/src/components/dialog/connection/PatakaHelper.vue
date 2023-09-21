@@ -43,6 +43,10 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import replicateURL from '@/assets/animations/replication-via-internet_css.svg'
+import patakaURL from '@/assets/animations/data-on-a-pātaka_css.svg'
+import corporateURL from '@/assets/animations/corporate-server.svg'
+import alternativeURL from '@/assets/animations/alternative-servers.svg'
 
 export default {
   props: {
@@ -52,22 +56,10 @@ export default {
   data () {
     return {
       items: [
-        {
-          src: require('@/assets/animations/replication-via-internet_css.svg'),
-          text: this.t('replication')
-        },
-        {
-          src: require('@/assets/animations/data-on-a-pātaka_css.svg'),
-          text: this.t('onPataka')
-        },
-        {
-          src: require('@/assets/animations/corporate-server.svg'),
-          text: this.t('corporateServer')
-        },
-        {
-          src: require('@/assets/animations/alternative-servers.svg'),
-          text: this.t('ahauServer')
-        }
+        { src: replicateURL, text: this.t('replication') },
+        { src: patakaURL, text: this.t('onPataka') },
+        { src: corporateURL, text: this.t('corporateServer') },
+        { src: alternativeURL, text: this.t('ahauServer') }
       ]
     }
   },

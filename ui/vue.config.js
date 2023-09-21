@@ -2,6 +2,8 @@ const dotenv = require('dotenv')
 const webpack = require('webpack')
 const { join } = require('path')
 
+// TODO make sure this is working
+// I think VITE handles this quite differently!
 const env = dotenv.config({ path: join(__dirname, '.env') })
 
 if (env.error) {

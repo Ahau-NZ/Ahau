@@ -53,8 +53,13 @@
     </template>
   </Dialog>
 </template>
+
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import tableURL from '@/assets/images/table.png'
+import relationshopsURL from '@/assets/images/relationships.png'
+import ancestorsURL from '@/assets/images/ancestors.png'
+import tableMenuURL from '@/assets/images/table-menu.png'
 
 export default {
   props: {
@@ -65,22 +70,10 @@ export default {
   data () {
     return {
       items: [
-        {
-          src: require('@/assets/images/table.png'),
-          text: 'Example whakapapa registry'
-        },
-        {
-          src: require('@/assets/images/relationships.png'),
-          text: 'Users can hide whakapapa links'
-        },
-        {
-          src: require('@/assets/images/ancestors.png'),
-          text: 'Users can hide ancestors that have passed'
-        },
-        {
-          src: require('@/assets/images/table-menu.png'),
-          text: 'Update ancestor information'
-        }
+        { src: tableURL, text: 'Example whakapapa registry' },
+        { src: relationshopsURL, text: 'Users can hide whakapapa links' },
+        { src: ancestorsURL, text: 'Users can hide ancestors that have passed' },
+        { src: tableMenuURL, text: 'Update ancestor information' }
       ]
     }
   },

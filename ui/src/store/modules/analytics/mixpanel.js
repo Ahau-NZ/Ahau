@@ -36,6 +36,8 @@ function initialize () {
   if (process.env.NODE_ENV === 'development') return dummyAPI
   if (process.env.NODE_ENV === 'test') return dummyAPI
 
+  if (!VUE_APP_MIXPANEL_TOKEN) return console.warn('No MIXPANEL_TOKEN found!')
+
   if (!window.ahoy) {
     // eslint-disable-next-line no-console
     console.log('(analytics) window.ahoy not found - this is only accessible in electron')

@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
-import path from 'path'
 import inject from '@rollup/plugin-inject'
+import path from 'path'
 
 const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim')
 
@@ -20,8 +20,8 @@ export default defineConfig(async () => {
       }
     },
     optimizeDeps: {
-      include: ['buffer', 'process'],
-      force: true
+      include: ['buffer', 'process']
+      // force: true // < for flushing cached node_module state
     },
     plugins: [
       vue(),
@@ -40,13 +40,8 @@ export default defineConfig(async () => {
         enforce: 'post'
       }
     ],
-    css: {
-      preprocessorOptions: {
-        scss: {
-          // to stop all the sass warning about / being a deprecated operator
-          quietDeps: true
-        }
-      }
+    build: {
+      // sourcemap: true < for easier production debugging
     }
   }
 })

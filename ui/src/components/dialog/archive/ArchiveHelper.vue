@@ -52,6 +52,15 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 
+import addRecordURL from '@/assets/images/add-record.png'
+import editArtefactURL from '@/assets/images/edit-artefact.png'
+import viewArchiveURL from '@/assets/images/view-archive.png'
+import viewStoryURL from '@/assets/images/view-story.png'
+
+import mobileAddRecordURL from '@/assets/images/mobile-add-record.png'
+import mobileEditArtefactURL from '@/assets/images/mobile-edit-artefact.png'
+import mobileViewArchiveURL from '@/assets/images/mobile-view-archive.png'
+
 export default {
   props: {
     show: { type: Boolean, required: true }
@@ -60,36 +69,15 @@ export default {
   data () {
     return {
       items: [
-        {
-          src: require('@/assets/images/add-record.png'),
-          text: this.t('itemsStories')
-        },
-        {
-          src: require('@/assets/images/edit-artefact.png'),
-          text: this.t('itemsArtefacts')
-        },
-        {
-          src: require('@/assets/images/view-archive.png'),
-          text: this.t('itemsViewAll')
-        },
-        {
-          src: require('@/assets/images/view-story.png'),
-          text: this.t('itemsIndividual')
-        }
+        { src: addRecordURL, text: this.t('itemsStories') },
+        { src: editArtefactURL, text: this.t('itemsArtefacts') },
+        { src: viewArchiveURL, text: this.t('itemsViewAll') },
+        { src: viewStoryURL, text: this.t('itemsIndividual') }
       ],
       mobileItems: [
-        {
-          src: require('@/assets/images/mobile-add-record.png'),
-          text: this.t('itemsStories')
-        },
-        {
-          src: require('@/assets/images/mobile-edit-artefact.png'),
-          text: this.t('itemsArtefacts')
-        },
-        {
-          src: require('@/assets/images/mobile-view-archive.png'),
-          text: this.t('itemsViewAll')
-        }
+        { src: mobileAddRecordURL, text: this.t('itemsStories') },
+        { src: mobileEditArtefactURL, text: this.t('itemsArtefacts') },
+        { src: mobileViewArchiveURL, text: this.t('itemsViewAll') }
       ]
     }
   },

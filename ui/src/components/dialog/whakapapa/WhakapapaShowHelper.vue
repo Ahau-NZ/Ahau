@@ -61,8 +61,13 @@
     </template>
   </Dialog>
 </template>
+
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import menuURL from '@/assets/images/menu.png'
+import parentURL from '@/assets/images/parent.png'
+import viewURL from '@/assets/images/view.png'
+import exampleURL from '@/assets/images/example.png'
 
 export default {
   props: {
@@ -73,22 +78,10 @@ export default {
   data () {
     return {
       items: [
-        {
-          src: require('@/assets/images/menu.png'),
-          text: 'actions menu'
-        },
-        {
-          src: require('@/assets/images/parent.png'),
-          text: 'adding a person'
-        },
-        {
-          src: require('@/assets/images/view.png'),
-          text: 'a persons profile'
-        },
-        {
-          src: require('@/assets/images/example.png'),
-          text: 'an example whakapapa'
-        }
+        { src: menuURL, text: 'actions menu' },
+        { src: parentURL, text: 'adding a person' },
+        { src: viewURL, text: 'a persons profile' },
+        { src: exampleURL, text: 'an example whakapapa' }
       ]
     }
   },
