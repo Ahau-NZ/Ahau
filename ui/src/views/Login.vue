@@ -70,7 +70,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import Avatar from '@/components/Avatar'
+import Avatar from '@/components/Avatar.vue'
 import NewPersonDialog from '@/components/dialog/profile/NewPersonDialog.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 

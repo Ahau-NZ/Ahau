@@ -112,21 +112,21 @@
           <!-- TANE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0">
             <div class="gender-button" @click="updateSelectedGender('male')">
-              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="smScreen ? 'gender-image-mobile': 'gender-image'">
+              <img ref="taneImg" :class="smScreen ? 'gender-image-mobile': 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.male') }}</p>
             </div>
           </v-col>
           <!-- WAHINE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('female')">
-              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
+              <img ref="wahineImg" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.female') }}</p>
             </div>
           </v-col>
           <!-- DIVERSE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('other')">
-              <img ref="otherImg" :src="require('@/assets/account-outlined.svg')" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
+              <img ref="otherImg" :class="smScreen ? 'gender-image-mobile' : 'gender-image'">
               <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.other') }}</p>
             </div>
           </v-col>
@@ -450,6 +450,7 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
 import { isEmpty, get } from 'lodash-es'
 
 import Avatar from '@/components/Avatar.vue'
@@ -461,7 +462,12 @@ import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers'
 import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 
-import { mapGetters, mapMutations } from 'vuex'
+import taneURL from '@/assets/tane.svg'
+import taneOutlinedURL from '@/assets/tane-outlined.svg'
+import wahineURL from '@/assets/wahine.svg'
+import wahineOutlinedURL from '@/assets/wahine-outlined.svg'
+import otherURL from '@/assets/account-fill.svg'
+import otherOutlinedURL from '@/assets/account-outlined.svg'
 
 export default {
   name: 'ProfileForm',
@@ -500,11 +506,10 @@ export default {
   },
   mounted () {
     this.$refs.form.validate()
+    this.updateSelectedGender(this.formData.gender)
+    // running this initially resets (and maybe sets) the avatar src values
 
     if (this.fullForm) this.showAdvanced = true
-    if (this.formData.gender) {
-      this.updateSelectedGender(this.formData.gender)
-    }
     if (!this.readonly && isEmpty(this.formData.education)) {
       this.formData.education = []
       // this.formData.education.push('')
@@ -675,19 +680,19 @@ export default {
     },
     updateSelectedGender (genderClicked) {
       // reset images to outlined
-      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
-      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-      this.$refs.otherImg.src = require('@/assets/account-outlined.svg')
+      this.$refs.taneImg.src = taneOutlinedURL
+      this.$refs.wahineImg.src = wahineOutlinedURL
+      this.$refs.otherImg.src = otherOutlinedURL
       // hightlight selected image
       this.genderSelected = genderClicked
       if (this.genderSelected === 'male') {
-        this.$refs.taneImg.src = require('@/assets/tane.svg')
+        this.$refs.taneImg.src = taneURL
       }
       if (this.genderSelected === 'female') {
-        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+        this.$refs.wahineImg.src = wahineURL
       }
       if (this.genderSelected === 'other') {
-        this.$refs.otherImg.src = require('@/assets/account-fill.svg')
+        this.$refs.otherImg.src = otherURL
       }
       // update the gender
       this.formData.gender = this.genderSelected

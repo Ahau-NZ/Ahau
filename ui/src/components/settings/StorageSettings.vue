@@ -95,8 +95,9 @@
 <script>
 import gql from 'graphql-tag'
 import { mapActions } from 'vuex'
-const { startDelay: START_DELAY, intervalTime: INTERVAL_TIME } = require('ssb-hyper-blobs/lib/defaults').autoPrune
+import defaults from 'ssb-hyper-blobs/lib/defaults'
 
+const { startDelay: START_DELAY, intervalTime: INTERVAL_TIME } = defaults.autoPrune
 const GB = 1024 * 1024 * 1024
 
 export default {

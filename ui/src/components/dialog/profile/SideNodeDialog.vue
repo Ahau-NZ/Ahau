@@ -810,9 +810,9 @@ export default {
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
-@import '~animate.css/source/sliding_entrances/slideInRight.css';
-@import '~animate.css/source/sliding_exits/slideOutRight.css';
-@import '~animate.css/source/sliding_entrances/slideInUp.css';
+@import 'animate.css/source/sliding_entrances/slideInRight.css';
+@import 'animate.css/source/sliding_exits/slideOutRight.css';
+@import 'animate.css/source/sliding_entrances/slideInUp.css';
 
 .side-menu {
   background-color: white;

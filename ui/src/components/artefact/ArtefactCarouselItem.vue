@@ -85,13 +85,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import mime from 'mime-types'
+import axios from 'axios'
+import renderMedia from 'render-media'
+
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers'
 import FileStream from '@/lib/hyper-file-stream'
 import getVideoPoster from '@/lib/get-video-poster'
-import mime from 'mime-types'
-import axios from 'axios'
-
-const renderMedia = require('render-media')
 
 export default {
   name: 'ArtefactCarouselItem',

@@ -21,7 +21,7 @@
           >
             <g v-for="(node, i) in nodes" :key="`table-${node.data.id}-${i}`" class="node">
               <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="nodeColor(node.data)" :id="node.data.id" />
-              <Node
+              <TableNode
                 :width="colWidth"
                 :node="node"
                 :radius="nodeRadius"
@@ -42,7 +42,7 @@
               <svg :width="columns[3].x - 40" >
                 <g v-if="node.data.partners && node.data.partners.length > 0">
                   <g v-for="(partner, i) in node.data.partners" :key="`${node.data.id}-partner-${partner && partner.id ? partner.id : ''}-${i}`">
-                    <Node
+                    <TableNode
                       v-if="partner && partner.id"
                       :id="partner.id"
                       :width="columns[4].x"
@@ -83,7 +83,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 import { isEmpty, isEqual, get } from 'lodash-es'
 
-import Node from './Node.vue'
+import TableNode from './TableNode.vue'
 import Link from '../tree/Link.vue'
 
 import calculateAge from '../../lib/calculate-age'

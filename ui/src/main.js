@@ -1,14 +1,16 @@
 import Vue from 'vue'
 import VuexRouterSync from 'vuex-router-sync'
-import VuejsClipper from 'vuejs-clipper'
-import gql from 'graphql-tag'
+import VueRx from 'vue-rx'
+import VuejsClipper from 'vuejs-clipper/dist/vuejs-clipper.umd.min'
+import 'vuejs-clipper/dist/vuejs-clipper.css'
 import VueZoomer from 'vue-zoomer'
+import gql from 'graphql-tag'
 
 import App from './App.vue'
 import router from './router'
 import store from './store/index'
 
-import { apolloProvider } from './plugins/vue-apollo'
+import apolloProvider from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
 import i18n from './plugins/i18n'
 import CordovaBackButton from './plugins/cordova-back-button'
@@ -40,6 +42,7 @@ async function main () {
   }
 
   // install
+  Vue.use(VueRx) // peer dependency of vuejs-clipper
   Vue.use(VuejsClipper)
   Vue.use(VueZoomer)
   Vue.use(CordovaBackButton, { router })

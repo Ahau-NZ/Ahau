@@ -2,7 +2,7 @@
   <VueContext ref="menu" class="px-0">
     <li>
       <a href="#" @click.prevent="updateDialog('view-edit-person', null)"  class="d-flex align-center px-4">
-        <img class="contextMenuIcon" :src="require('@/assets/account-circle.svg')"/>
+        <img class="contextMenuIcon" :src="import('@/assets/account-circle.svg')"/>
         <p class="ma-0 pl-3">{{ t('viewPerson') }}</p>
       </a>
     </li>
@@ -84,28 +84,28 @@ export default {
           dialog: 'new-person',
           type: 'parent',
           isPermitted: this.canAddParent,
-          icon: require('@/assets/node-parent.svg')
+          icon: import('@/assets/node-parent.svg')
         },
         {
           title: this.t('addPartner'),
           dialog: 'new-person',
           type: 'partner',
           isPermitted: Boolean(this.selectedProfile),
-          icon: require('@/assets/node-partner.svg')
+          icon: import('@/assets/node-partner.svg')
         },
         {
           title: this.t('addChild'),
           dialog: 'new-person',
           type: 'child',
           isPermitted: Boolean(this.selectedProfile),
-          icon: require('@/assets/node-child.svg')
+          icon: import('@/assets/node-child.svg')
         },
         {
           title: this.t('addSibling'),
           dialog: 'new-person',
           type: 'sibling',
           isPermitted: this.canAddSibling,
-          icon: require('@/assets/node-sibling.svg')
+          icon: import('@/assets/node-sibling.svg')
         },
         {
           title: this.t('deletePerson'),
@@ -141,7 +141,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~vue-context/dist/css/vue-context.css";
+@import "vue-context/dist/css/vue-context.css";
 
 .contextMenuIcon {
     width: 20px;

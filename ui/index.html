@@ -18,22 +18,24 @@
     <meta name="theme-color" content="#007aff">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="./favicon.ico">
     <title>Āhau</title>
     <base href="./" />
+    <script type="module" src="/src/main.js" defer></script>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but whakapapa-ora doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      We're sorry but whakapapa-ora doesn't work properly without JavaScript enabled. Please enable it to continue.
     </noscript>
     <div id="app"></div>
-    <% if (process.env.VUE_APP_PLATFORM === 'cordova') { %>
-      <!-- workaround for File because there's a plugin that overwrites it -->
+    <!-- built files will be auto injected -->
+
+    <!-- workaround for File because there's a plugin that overwrites it -->
+    <!-- TODO enable this for cordova 
       <script>
         window.NativeFile = window.File
       </script>
       <script src="cordova.js"></script>
-    <% } %>
-    <!-- built files will be auto injected -->
+    -->
   </body>
 </html>

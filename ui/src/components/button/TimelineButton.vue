@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import TimelineIcon from '@/components/button/TimelineIcon'
-import ArchiveIcon from '@/components/button/ArchiveIcon'
+import TimelineIcon from '@/components/button/TimelineIcon.vue'
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 export default {
   name: 'TimelineButton',

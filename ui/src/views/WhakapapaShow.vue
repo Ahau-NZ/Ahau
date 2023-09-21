@@ -467,7 +467,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import "~vue-context/dist/css/vue-context.css";
+@import "vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
   height: 100%;

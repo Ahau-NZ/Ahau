@@ -5,11 +5,10 @@ const offForNow = isTimeToFix ? 'error' : 'off'
 module.exports = {
   root: true,
   env: {
-    node: true
+    es2021: true
   },
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false
+    requireConfigFile: false // rm?
   },
   extends: [
     'plugin:vue/essential',

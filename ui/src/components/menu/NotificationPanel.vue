@@ -129,7 +129,7 @@ export default {
           type: 'system',
           from: {
             avatarImage: {
-              uri: require('@/assets/logo_red.svg')
+              uri: import('@/assets/logo_red.svg')
             },
             preferredName: 'Ahau',
             gender: null,

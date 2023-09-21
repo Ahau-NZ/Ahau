@@ -15,6 +15,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
+import defaultHeaderURL from '@/assets/nzheader.jpg'
 
 const COMMUNITY_TYPE = 'community'
 
@@ -35,8 +36,9 @@ export default {
       return this.tribeProfile || {}
     },
     headerImage () {
-      if (this.profile.headerImage) return this.profile.headerImage.uri
-      else return require('@/assets/nzheader.jpg')
+      return this.profile.headerImage
+        ? this.profile.headerImage.uri
+        : defaultHeaderURL
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
