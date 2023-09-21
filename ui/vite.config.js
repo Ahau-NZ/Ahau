@@ -12,6 +12,7 @@ export default defineConfig(async () => {
   // NOTE must by dynamically imported
 
   return {
+    base: process.env.IS_DEV !== 'true' ? './' : '/',
     resolve: {
       alias: {
         ...stdLibBrowser,
