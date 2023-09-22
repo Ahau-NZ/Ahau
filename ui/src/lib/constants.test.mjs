@@ -1,7 +1,14 @@
 import test from 'tape'
+import { readFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
+
 import { ACCESS_TYPES } from './constants.mjs'
 
-import translations from '../translations/en_NZ/access-button.json' assert { type: 'json' }
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const translations = JSON.parse(
+  readFileSync(join(__dirname, '../translations/en_NZ/access-button.json'))
+)
 
 test('ACCESS_TYPES (for AccessButton)', t => {
   t.plan(3)

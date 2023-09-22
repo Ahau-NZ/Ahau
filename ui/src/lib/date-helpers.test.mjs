@@ -1,4 +1,8 @@
 import test from 'tape'
+import { readFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
+
 import {
   dateIntervalToString,
   dateToString,
@@ -6,7 +10,10 @@ import {
   formatSubmissionDate
 } from './date-helpers.mjs'
 
-import months from '../translations/en_NZ/months.json' assert { type: 'json' }
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const months = JSON.parse(
+  readFileSync(join(__dirname, '../translations/en_NZ/months.json'))
+)
 
 function monthTranslations (key) {
   return months[key]
