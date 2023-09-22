@@ -2,7 +2,7 @@ const ahoy = require('ssb-ahoy')
 const env = require('ahau-env')()
 const chalk = require('chalk')
 const boxen = require('boxen')
-const lockfile = require('lockfile')
+const level = require('level')
 const { join } = require('path')
 const { app } = require('electron')
 const { autoUpdater } = require('electron-updater')
@@ -10,11 +10,25 @@ const { autoUpdater } = require('electron-updater')
 const config = require('./ssb.config')()
 const karakia = require('./karakia')
 
-if (isAhauRunning()) {
-  console.log('Ahau already running\nEXITING')
-  app.quit()
-} else {
-  ahoy(
+checkAhauRunning()
+  .then(start)
+  .then(ssb => {
+    /* Karakia tūwhera */
+    karakia()
+
+    printConfig(ssb.config)
+
+    if (env.isProduction) {
+      autoUpdater.checkForUpdatesAndNotify()
+    }
+  })
+  .catch(() => {
+    console.log('Ahau already running\nEXITING')
+    app.quit()
+  })
+
+function start () {
+  return ahoy(
     env.isDevelopment
       ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
       : `file://${__dirname}/dist/index.html`, // production build
@@ -49,36 +63,24 @@ if (isAhauRunning()) {
         require('ssb-ahau'),
         require('ssb-recps-guard')
       ]
-    },
-    (err, ssb) => {
-      if (err) throw err
-      // this config has updated manifest added
-
-      /* Karakia tūwhera */
-      karakia()
-
-      printConfig(ssb.config)
-
-      if (env.isProduction) {
-        autoUpdater.checkForUpdatesAndNotify()
-      }
     }
   )
 }
 
 /* HELPERS */
 
-function isAhauRunning () {
-  const testfilePath = join(config.path, 'tribes/keystore/LOCK')
-  let isRunning
-  try {
-    // locked => running
-    isRunning = lockfile.checkSync(testfilePath)
-  } catch (err) {
-    // error => locked => running
-    isRunning = true
-  }
-  return isRunning
+function checkAhauRunning () {
+  return new Promise((resolve, reject) => {
+    const dbPath = join(config.path, 'tribes/keystore')
+    level(dbPath, (err, db) => {
+      if (err) return reject(err) // err => already open
+
+      db.close((err) => {
+        if (err) console.error(err)
+        resolve()
+      })
+    })
+  })
 }
 
 function printConfig (config) {
