@@ -593,7 +593,7 @@ export default {
     }
   },
   components: {
-    Node,
+    TableNode,
     Link
   }
 }

@@ -1,4 +1,4 @@
-/* eslint-ignore camel-case */
+/* eslint camelcase: "off" */
 import * as en_NZ from './en_NZ/index.mjs'
 import * as en_US from './en_US/index.mjs'
 import * as es_ES from './es_ES/index.mjs'
