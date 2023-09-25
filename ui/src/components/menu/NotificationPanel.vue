@@ -109,9 +109,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import NotificationList from '@/components/menu/NotificationList.vue'
 import pileSort from 'pile-sort'
+
+import NotificationList from '@/components/menu/NotificationList.vue'
 import KeyBackupDialog from '@/components/dialog/KeyBackupDialog.vue'
+import ahauLogoURL from '@/assets/logo_red.svg'
 
 export default {
   components: {
@@ -128,9 +130,7 @@ export default {
         {
           type: 'system',
           from: {
-            avatarImage: {
-              uri: import('@/assets/logo_red.svg')
-            },
+            avatarImage: { uri: ahauLogoURL },
             preferredName: 'Ahau',
             gender: null,
             bornAt: null
