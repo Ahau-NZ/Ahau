@@ -32,8 +32,11 @@
     </template>
   </Dialog>
 </template>
+
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import treeURL from '@/assets/tree.jpg'
+import whakapapaListURL from '@/assets/whakapapa-list.jpg'
 
 export default {
   props: {
@@ -51,8 +54,8 @@ export default {
         { text: 'Value given', value: 'value' }
       ],
       items: [
-        { src: require('@/assets/tree.jpg') },
-        { src: require('@/assets/whakapapa-list.jpg') }
+        { src: treeURL },
+        { src: whakapapaListURL }
       ]
     }
   },

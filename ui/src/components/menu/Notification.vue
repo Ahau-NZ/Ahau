@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Avatar from '@/components/Avatar'
+import Avatar from '@/components/Avatar.vue'
 import {
   LINK_TYPE_PARTNER,
   LINK_TYPE_CHILD,

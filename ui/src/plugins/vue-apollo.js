@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import Client from 'ahau-graphql-client'
+import Env from 'ahau-env'
 
 import possibleTypes from './possibleTypes.json'
 
-const env = require('ahau-env')()
+const env = Env()
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -42,7 +43,7 @@ export function createProvider (opts = {}) {
 }
 
 // currently we just use this so we don't instantiate heaps of providers
-export const apolloProvider = createProvider()
+export default createProvider()
 
 // Manually call this when user log in
 export async function onLogin (apolloClient, token) {

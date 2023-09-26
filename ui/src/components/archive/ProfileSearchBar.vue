@@ -204,7 +204,7 @@ export default {
     padding: 4px 0;
 }
 
-.search-input>>>input {
+.search-input > input {
     text-align: start !important;
 }
 

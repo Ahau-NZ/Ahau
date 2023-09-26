@@ -142,10 +142,11 @@
 </template>
 
 <script>
-import Avatar from '@/components/Avatar'
-import NotificationPanel from '@/components/menu/NotificationPanel'
 import { mapGetters, mapActions } from 'vuex'
-import BackButton from '@/components/button/BackButton'
+
+import BackButton from '@/components/button/BackButton.vue'
+import Avatar from '@/components/Avatar.vue'
+import NotificationPanel from '@/components/menu/NotificationPanel.vue'
 
 import { getTribes } from '../../store/modules/tribe/apollo-helpers'
 

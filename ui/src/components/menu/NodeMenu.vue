@@ -2,7 +2,7 @@
   <VueContext ref="menu" class="px-0">
     <li>
       <a href="#" @click.prevent="updateDialog('view-edit-person', null)"  class="d-flex align-center px-4">
-        <img class="contextMenuIcon" :src="require('@/assets/account-circle.svg')"/>
+        <img class="contextMenuIcon" :src="accountCircleURL"/>
         <p class="ma-0 pl-3">{{ t('viewPerson') }}</p>
       </a>
     </li>
@@ -22,11 +22,22 @@
 <script>
 import { VueContext } from 'vue-context'
 import { mapGetters } from 'vuex'
+
+import accountCircleURL from '@/assets/account-circle.svg'
 import findSuccessor from '@/lib/find-successor'
+import nodeParentURL from '@/assets/node-parent.svg'
+import nodePartnerURL from '@/assets/node-partner.svg'
+import nodeChildURL from '@/assets/node-child.svg'
+import nodeSiblingURL from '@/assets/node-sibling.svg'
 
 export default {
   name: 'NodeMenu',
   props: {},
+  data () {
+    return {
+      accountCircleURL
+    }
+  },
   components: {
     VueContext
   },
@@ -84,28 +95,28 @@ export default {
           dialog: 'new-person',
           type: 'parent',
           isPermitted: this.canAddParent,
-          icon: require('@/assets/node-parent.svg')
+          icon: nodeParentURL
         },
         {
           title: this.t('addPartner'),
           dialog: 'new-person',
           type: 'partner',
           isPermitted: Boolean(this.selectedProfile),
-          icon: require('@/assets/node-partner.svg')
+          icon: nodePartnerURL
         },
         {
           title: this.t('addChild'),
           dialog: 'new-person',
           type: 'child',
           isPermitted: Boolean(this.selectedProfile),
-          icon: require('@/assets/node-child.svg')
+          icon: nodeChildURL
         },
         {
           title: this.t('addSibling'),
           dialog: 'new-person',
           type: 'sibling',
           isPermitted: this.canAddSibling,
-          icon: require('@/assets/node-sibling.svg')
+          icon: nodeSiblingURL
         },
         {
           title: this.t('deletePerson'),
@@ -141,7 +152,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~vue-context/dist/css/vue-context.css";
+@import "vue-context/dist/css/vue-context.css";
 
 .contextMenuIcon {
     width: 20px;

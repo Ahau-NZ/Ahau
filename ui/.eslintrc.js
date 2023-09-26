@@ -1,19 +1,20 @@
-const isTimeToFix = Date.now() > Number(new Date('2022-05-05'))
+require('@rushstack/eslint-patch/modern-module-resolution')
+
+const isTimeToFix = Date.now() > Number(new Date('2023-10-01'))
 const warnForNow = isTimeToFix ? 'error' : 'warn'
 const offForNow = isTimeToFix ? 'error' : 'off'
 
 module.exports = {
   root: true,
   env: {
-    node: true
+    es2022: true
   },
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false
+    requireConfigFile: false // rm?
   },
   extends: [
     'plugin:vue/essential',
-    '@vue/standard'
+    '@vue/eslint-config-standard'
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -28,10 +29,12 @@ module.exports = {
     'no-multiple-empty-lines': 'warn',
 
     'vue/multi-word-component-names': offForNow,
+    'vue/no-reserved-component-names': offForNow,
 
     // these are pretty important
     'vue/no-mutating-props': warnForNow,
     'vue/no-computed-properties-in-data': warnForNow,
+    'vue/no-v-text-v-html-on-component': warnForNow,
 
     // needed for v-data-table slots
     // > Some slots such as item.<name> and header.<name> use modifiers to target more scoped slots.

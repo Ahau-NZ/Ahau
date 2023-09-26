@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import { isEmpty, cloneDeep as clone } from 'lodash-es'
+import pull from 'pull-stream'
+import pullParaMap from 'pull-paramap'
+import Pushable from 'pull-pushable'
 
 import { getPerson as getPersonAndWhanau, mergeAdminProfile } from '@/lib/person-helpers'
 import {
@@ -18,10 +21,6 @@ import { determineFilter } from '@/lib/filters'
 
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 import i18n from '@/plugins/i18n'
-
-const pull = require('pull-stream')
-const pullParaMap = require('pull-paramap')
-const Pushable = require('pull-pushable')
 
 const queue = Pushable()
 // use by going queue.push(runPromise)

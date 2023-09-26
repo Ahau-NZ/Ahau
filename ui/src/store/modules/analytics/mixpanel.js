@@ -2,9 +2,9 @@ import { throttle } from 'lodash-es'
 import mixpanel from 'mixpanel-browser'
 
 const {
-  VUE_APP_MIXPANEL_TOKEN,
-  VUE_APP_MIXPANEL_API_HOST = 'https://api-eu.mixpanel.com'
-} = process.env
+  VITE_MIXPANEL_TOKEN,
+  VITE_MIXPANEL_API_HOST = 'https://api-eu.mixpanel.com'
+} = import.meta.env
 
 // Mixpanel is a analytics platform.
 // We record anonymised telemetry about the apps usage
@@ -33,8 +33,10 @@ const throttleMap = {
 // this map allows us to have a different throttled function per eventName
 
 function initialize () {
-  if (process.env.NODE_ENV === 'development') return dummyAPI
-  if (process.env.NODE_ENV === 'test') return dummyAPI
+  if (import.meta.env.DEV) return dummyAPI
+  if (import.meta.env.NODE_ENV === 'test') return dummyAPI
+
+  if (!VITE_MIXPANEL_TOKEN) return console.warn('No MIXPANEL_TOKEN found!')
 
   if (!window.ahoy) {
     // eslint-disable-next-line no-console
@@ -42,7 +44,7 @@ function initialize () {
     return dummyAPI
   }
 
-  mixpanel.init(VUE_APP_MIXPANEL_TOKEN, { api_host: VUE_APP_MIXPANEL_API_HOST })
+  mixpanel.init(VITE_MIXPANEL_TOKEN, { api_host: VITE_MIXPANEL_API_HOST })
 
   window.ahoy.getConfig().then(config => {
     const mixpanelId = config.mixpanelId

@@ -50,14 +50,15 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
+
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import patakaConfig from '../../../pataka.config'
-import { mapActions } from 'vuex'
+import patakaConfig from '../../../pataka.config.mjs'
 
 export default {
   name: 'PatakaList',

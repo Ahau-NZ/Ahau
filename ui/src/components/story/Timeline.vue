@@ -85,7 +85,7 @@
 import { isEmpty } from 'lodash-es'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-import TimelineCard from '@/components/story/TimelineCard'
+import TimelineCard from '@/components/story/TimelineCard.vue'
 import StoryCard from '@/components/archive/StoryCard.vue'
 import TimelineButton from '@/components/button/TimelineButton.vue'
 

@@ -72,6 +72,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { VueContext } from 'vue-context'
+
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -86,7 +88,6 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
 
-import { VueContext } from 'vue-context'
 
 export default {
   name: 'StoryArchive',
@@ -268,7 +269,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "~vue-context/dist/css/vue-context.css";
+  @import "vue-context/dist/css/vue-context.css";
 
   .top-margin {
     margin-top: 80px

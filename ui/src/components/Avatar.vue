@@ -1,7 +1,7 @@
 <template>
   <!-- no avatar placeholder -->
   <div v-if="placeHolder">
-    <img :src="require('@/assets/account-outlined.svg')"/>
+    <img :src="accountOutlinedURL"/>
     <div :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
@@ -70,6 +70,7 @@
 <script>
 import avatarHelper from '@/lib/avatar-helpers'
 import ImagePicker from '@/components/ImagePicker.vue'
+import accountOutlinedURL from '@/assets/account-outlined.svg'
 
 export default {
   name: 'ProfileAvatar',
@@ -92,6 +93,11 @@ export default {
     placeHolder: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
     showAddIcon: Boolean
+  },
+  data () {
+    return {
+      accountOutlinedURL
+    }
   },
   components: {
     ImagePicker

@@ -1,4 +1,4 @@
-const env = require('ahau-env')()
+import Env from 'ahau-env'
 
 const pataka = {
   dev: {
@@ -11,6 +11,6 @@ const pataka = {
   }
 }
 
-module.exports = env.isDevelopment
+export default Env().isDevelopment
   ? pataka.dev
   : pataka.prod

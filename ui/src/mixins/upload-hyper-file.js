@@ -1,9 +1,12 @@
 import { mapActions } from 'vuex'
+import axios from 'axios'
+import Env from 'ahau-env'
+import _uuid from 'uuid'
+
 import { isCordova } from '../lib/cordova-helpers'
 
-const { ahau: env } = require('ahau-env')()
-const axios = require('axios')
-const { v4: uuid } = require('uuid')
+const { ahau: env } = Env()
+const { v4: uuid } = _uuid
 
 const url = `http://localhost:${(env.hyperBlobs && env.hyperBlobs.port) || 26836}/blob`
 // readKey

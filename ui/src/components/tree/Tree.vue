@@ -54,7 +54,7 @@ import {
   zoomIdentity as d3ZoomIdentity
 } from 'd3'
 
-import SubTree from './SubTree'
+import SubTree from './SubTree.vue'
 import settings from '@/lib/link'
 
 export default {

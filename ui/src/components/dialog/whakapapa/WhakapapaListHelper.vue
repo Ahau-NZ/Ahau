@@ -38,6 +38,8 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import treeURL from '@/assets/tree.jpg'
+import whakapapaList from '@/assets/whakapapa-list.jpg'
 
 export default {
   props: {
@@ -47,14 +49,8 @@ export default {
   data () {
     return {
       items: [
-        {
-          src: require('@/assets/tree.jpg'),
-          text: 'an example whakapapa'
-        },
-        {
-          src: require('@/assets/whakapapa-list.jpg'),
-          text: 'list of whakapapa records'
-        }
+        { src: treeURL, text: 'an example whakapapa' },
+        { src: whakapapaList, text: 'list of whakapapa records' }
       ]
     }
   },

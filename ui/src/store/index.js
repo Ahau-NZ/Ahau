@@ -28,7 +28,7 @@ import table from './modules/table'
 import submissions from './modules/submissions'
 import notifications from './modules/notifications'
 
-import { apolloProvider } from '../plugins/vue-apollo'
+import apolloProvider from '../plugins/vue-apollo'
 import router from '@/router'
 
 const apollo = apolloProvider.defaultClient

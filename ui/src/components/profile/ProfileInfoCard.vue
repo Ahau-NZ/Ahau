@@ -40,9 +40,9 @@
 import { mapActions } from 'vuex'
 
 import calculateAge from '@/lib/calculate-age'
-import AvatarGroup from '@/components/AvatarGroup.vue'
-import ProfileInfoItem from './ProfileInfoItem'
 import { dateIntervalToString } from '@/lib/date-helpers'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import ProfileInfoItem from './ProfileInfoItem.vue'
 
 export default {
   name: 'ProfileInfoCard',
