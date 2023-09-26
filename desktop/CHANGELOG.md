@@ -1,5 +1,30 @@
 # Changelog | Ahau desktop
 
+## v2.23.0
+
+### Bug Fix
+
+- Stop Ahau launching multiple times and causing noisy errors (mainly seen on windows)
+
+### Updates
+
+- translations from Crowdin
+
+### Upgrades
+
+- upgraded modules
+  - `d3`
+  - `lodash.*` > `lodash-es`
+  - `vuejs-clipper`
+  - many other minor/patch updates
+- transitioned from `@vue/cli` > `vite`
+  - lightning fast ui dev + build
+  - dropped a lot of modules no longer needed
+  - new shims needed:
+    - `node-stdlib-browser`
+    - `unplugin-vue-components`
+
+
 ## v2.22.0
 
 ### Features
