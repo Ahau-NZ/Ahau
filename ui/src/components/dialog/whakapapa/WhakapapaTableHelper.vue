@@ -56,10 +56,10 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import tableURL from '@/assets/images/table.png'
-import relationshipsURL from '@/assets/images/relationships.png'
-import ancestorsURL from '@/assets/images/ancestors.png'
-import tableMenuURL from '@/assets/images/table-menu.png'
+import tableURL from '@/assets/images/table.webp'
+import relationshipsURL from '@/assets/images/relationships.webp'
+import ancestorsURL from '@/assets/images/ancestors.webp'
+import tableMenuURL from '@/assets/images/table-menu.webp'
 
 export default {
   props: {

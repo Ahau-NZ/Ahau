@@ -8,7 +8,7 @@ import account from '@/assets/account-2.svg'
 import account2 from '@/assets/account-fill.svg'
 
 import whakapapa from '@/assets/whakapapa.svg'
-import whakapapaPng from '@/assets/whakapapa.png'
+import whakapapaPng from '@/assets/whakapapa.webp'
 
 import calculateAge from './calculate-age'
 import { isCordova } from './cordova-helpers'

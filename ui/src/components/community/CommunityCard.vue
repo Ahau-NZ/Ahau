@@ -17,7 +17,7 @@
 <script>
 import { get } from 'lodash-es'
 
-import whakapapa from '@/assets/whakapapa.png'
+import whakapapa from '@/assets/whakapapa.webp'
 
 export default {
   name: 'CommunityCard',
