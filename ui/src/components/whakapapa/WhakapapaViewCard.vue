@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import whakapapa from '@/assets/whakapapa.png'
+import whakapapa from '@/assets/whakapapa.webp'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import { mapGetters } from 'vuex'
 

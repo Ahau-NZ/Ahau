@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import banner from '@/assets/bg-tohu.png'
+import banner from '@/assets/bg-tohu.webp'
 import { mapGetters, mapMutations } from 'vuex'
 
 import { isCordova } from '@/lib/cordova-helpers'

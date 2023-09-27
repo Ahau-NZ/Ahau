@@ -38,8 +38,8 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import treeURL from '@/assets/tree.jpg'
-import whakapapaList from '@/assets/whakapapa-list.jpg'
+import treeURL from '@/assets/tree.webp'
+import whakapapaList from '@/assets/whakapapa-list.webp'
 
 export default {
   props: {

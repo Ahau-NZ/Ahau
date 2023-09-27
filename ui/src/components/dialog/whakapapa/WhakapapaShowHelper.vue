@@ -64,10 +64,10 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import menuURL from '@/assets/images/menu.png'
-import parentURL from '@/assets/images/parent.png'
-import viewURL from '@/assets/images/view.png'
-import exampleURL from '@/assets/images/example.png'
+import menuURL from '@/assets/images/menu.webp'
+import parentURL from '@/assets/images/parent.webp'
+import viewURL from '@/assets/images/view.webp'
+import exampleURL from '@/assets/images/example.webp'
 
 export default {
   props: {

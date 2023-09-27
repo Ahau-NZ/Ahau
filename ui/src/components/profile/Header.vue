@@ -15,7 +15,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
-import defaultHeaderURL from '@/assets/nzheader.jpg'
+import defaultHeaderURL from '@/assets/nzheader.webp'
 
 const COMMUNITY_TYPE = 'community'
 

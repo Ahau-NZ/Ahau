@@ -104,8 +104,8 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadCsv } from '@/lib/csv'
 
-import treeURL from '@/assets/tree.jpg'
-import whakapapaListURL from '@/assets/whakapapa-list.jpg'
+import treeURL from '@/assets/tree.webp'
+import whakapapaListURL from '@/assets/whakapapa-list.webp'
 
 export default {
   props: {

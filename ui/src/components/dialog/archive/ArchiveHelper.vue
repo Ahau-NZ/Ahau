@@ -52,14 +52,14 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 
-import addRecordURL from '@/assets/images/add-record.png'
-import editArtefactURL from '@/assets/images/edit-artefact.png'
-import viewArchiveURL from '@/assets/images/view-archive.png'
-import viewStoryURL from '@/assets/images/view-story.png'
+import addRecordURL from '@/assets/images/add-record.webp'
+import editArtefactURL from '@/assets/images/edit-artefact.webp'
+import viewArchiveURL from '@/assets/images/view-archive.webp'
+import viewStoryURL from '@/assets/images/view-story.webp'
 
-import mobileAddRecordURL from '@/assets/images/mobile-add-record.png'
-import mobileEditArtefactURL from '@/assets/images/mobile-edit-artefact.png'
-import mobileViewArchiveURL from '@/assets/images/mobile-view-archive.png'
+import mobileAddRecordURL from '@/assets/images/mobile-add-record.webp'
+import mobileEditArtefactURL from '@/assets/images/mobile-edit-artefact.webp'
+import mobileViewArchiveURL from '@/assets/images/mobile-view-archive.webp'
 
 export default {
   props: {
