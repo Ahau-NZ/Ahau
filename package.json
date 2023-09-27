@@ -5,7 +5,7 @@
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
     "postinstall": "cd ui && npm install",
-    "build-ui:desktop": "npm --prefix ui run build:desktop",
+    "build-ui:desktop": "rimraf desktop/dist && npm --prefix ui run build:desktop",
     "build-ui:mobile": "npm --prefix ui run build:mobile",
     "move-release:desktop": "rimraf releases/desktop && mvy desktop/dist/installers releases/desktop",
     "move-release:android": "rimraf releases/android && mvy mobile/platforms/android/app/build/outputs/apk/release/app-release.apk releases/android/",
