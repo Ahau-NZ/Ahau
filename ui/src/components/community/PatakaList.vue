@@ -3,35 +3,77 @@
     <v-row>
       <v-col>
         <v-divider v-if="mobile" light></v-divider>
-        <ProfileCard :title="t('title')">
+        <ProfileCard :title="t('title')" class="patakas">
           <template v-slot:content>
-            <div v-if="!patakas">
-              <SkeletonLoader
-                :cols="12"
-                :totalSkeletons=5
-                skeletonType="list-item-avatar"
-                customClass="pr-n10"
-                width="100%"
-              />
-            </div>
+            <SkeletonLoader
+              v-if="!patakas"
+              :totalSkeletons=2
+              skeletonType="list-item-avatar"
+              width="100%"
+              :cols=12
+              max-height=200
+            />
+
             <div v-else-if="patakas && patakas.length > 0">
-              <v-row v-for="pataka in patakas" :key="pataka.id" class="align-center ml-6">
-                <v-col cols="2" class="pt-0 pl-0">
-                  <Avatar :size="mobile ? '60px' : '46px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
-                </v-col>
-                <v-col cols="10" class="pb-6" justify-center>
-                  <p style="color:black;" class="mb-0">{{ pataka.preferredName }} </p>
-                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px; letter-spacing:1px;">online</span>
-                </v-col>
-              </v-row>
+              <v-list-item v-for="pataka in patakas" :key="pataka.id"
+                class="pataka px-1"
+                :class="{ blocked: pataka.isBlocked, online: pataka.online }"
+              >
+                <v-list-item-avatar>
+                  <Avatar
+                    :image="pataka.avatarImage"
+                    :alt="pataka.preferredName"
+                    :size="mobile ? '60px' : '46px'"
+                    :isView="!pataka.avatarImage"
+                    :online="pataka.online"
+                  />
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title v-if="pataka.preferredName">
+                    {{ pataka.preferredName }}
+                  </v-list-item-title>
+                  <v-list-item-title v-else class="unnamed">
+                    <i>{{ t('unnamed') }}</i>
+                  </v-list-item-title>
+
+                  <v-list-item-subtitle v-if="pataka.isBlocked">
+                    {{ t('blocked') }}
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle v-else-if="pataka.online">
+                    {{ t('online') }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+
+                <v-list-item-action>
+                  <v-btn v-if="!pataka.isBlocked"
+                    icon plain x-small
+                    color="grey"
+                    @click="handleBlock(pataka)"
+                  >
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                  <v-btn v-if="pataka.isBlocked"
+                    icon plain x-small
+                    color="secondary"
+                    @click="handleUnblock(pataka)"
+                  >
+                    <v-icon>mdi-connection</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
             </div>
+
             <div v-else>
               <p class="pl-3 caption">{{ t('notConnected') }}</p>
             </div>
             <v-row justify='center'>
-              <v-btn text small justify-center class="blue--text mt-3" @click="dialog = !dialog">
+              <v-btn text small justify-center
+                class="blue--text mt-3"
+                @click="dialog = !dialog"
+              >
                 <v-icon small class="blue--text pr-2 ml-3">mdi-plus</v-icon>
-                {{ $t('pataka.connectPataka')}}
+                {{ t('connectPataka')}}
               </v-btn>
             </v-row>
           </template>
@@ -41,7 +83,7 @@
     <NewPatakaDialog
       v-if="dialog"
       :show="dialog"
-      :title="$t('pataka.newPataka')"
+      :title="t('newPataka')"
       :connected="connectedPatakaAotearoa"
       @close="dialog = false"
       @submit="connected($event)"
@@ -58,6 +100,7 @@ import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
+import { getPatakas } from '@/store/modules/pataka/apollo-helpers.js'
 import patakaConfig from '../../../pataka.config.mjs'
 
 export default {
@@ -69,21 +112,13 @@ export default {
     SkeletonLoader
   },
   apollo: {
-    patakasRaw: {
-      query: gql`query {
-        patakas {
-          id
-          preferredName
-          avatarImage { uri }
-          description
-        }
-      }`,
+    patakasRaw: getPatakas({
       pollInterval: 10e3,
       fetchPolicy: 'no-cache',
       update (data) {
         return data.patakas
       }
-    },
+    }),
     connectedPeers: {
       query: gql`query{
         connectedPeers {
@@ -119,20 +154,21 @@ export default {
     },
     patakas () {
       if (!this.patakasRaw) return null
+      if (!this.connectedPeers || !this.connectedPeers.pataka) return this.patakasRaw
 
       return this.patakasRaw.map(pataka => {
-        if (this.connectedPeers && this.connectedPeers.pataka && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
-          return {
-            ...pataka,
-            online: true
-          }
-        } else return pataka
+        return {
+          ...pataka,
+          online: this.connectedPeers.pataka.some(peer => peer.id === pataka.id)
+        }
       })
     }
   },
   methods: {
     ...mapActions(['setSyncing']),
     ...mapActions('alerts', ['showAlert']),
+    ...mapActions('pataka', ['blockPataka', 'unblockPataka']),
+
     connected (text) {
       this.dialog = false
       this.showAlert({
@@ -143,6 +179,25 @@ export default {
 
       // update to check ssb.status
     },
+
+    handleBlock (pataka) {
+      this.blockPataka(pataka.feedId)
+        .then(this.updatePatakasRaw)
+    },
+
+    handleUnblock (pataka) {
+      this.unblockPataka(pataka.feedId)
+        .then(this.updatePatakasRaw)
+    },
+
+    updatePatakasRaw () {
+      this.$apollo.query(getPatakas())
+        .then(res => {
+          console.log('here', res)
+          this.patakasRaw = res.data.patakas
+        })
+    },
+
     t (key, vars) {
       return this.$t('pataka.' + key, vars)
     }
@@ -150,5 +205,29 @@ export default {
 }
 </script>
 
-<style style="scss">
+<style lang="scss" scoped>
+
+.patakas {
+  .pataka {
+    min-height: 62px;
+
+    .v-list-item__title {
+      &.unnamed {
+        color: grey;
+      }
+    }
+    .v-list-item__content { color: black; }
+    .v-list-item__subtitle { color: black; }
+
+    &.online {
+      .v-list-item__subtitle { color: #39b752; }
+    }
+    &.blocked {
+      .v-list-item__avatar { filter: grayscale(1) opacity(50%); }
+      .v-list-item__title { filter: grayscale(1) opacity(50%); }
+      .v-list-item__subtitle { color: #b12626; }
+    }
+  }
+}
+
 </style>

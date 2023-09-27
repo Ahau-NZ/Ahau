@@ -1,29 +1,46 @@
 <template>
   <!-- no avatar placeholder -->
-  <div v-if="placeHolder">
+  <div v-if="placeHolder"
+    class="Avatar"
+  >
     <img :src="accountOutlinedURL"/>
     <div :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
   </div>
-  <div v-else-if="clickable" @click.passive="click" style="cursor: pointer;">
+
+  <div v-else-if="clickable"
+    style="cursor: pointer;"
+    class="Avatar"
+    @click.passive="click"
+  >
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
-        <v-btn :dark="dark" v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
+        <v-btn
+          v-if="deletable"
+          :dark="dark"
+          icon x-small light max-width="20px" max-height="20px"
+          class="delete"
+          @click="$emit('delete')"
+        >
           <v-icon :dark="dark">mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView">
-            <v-overlay
-              v-if="showAddIcon"
-              :dark='false'
-              :light="true"
-              color="white"
-              absolute
-              opacity="0.9"
-              value="true"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-overlay>
+
+        <v-avatar
+          :size="size"
+          :tile="isView"
+        >
+          <v-overlay
+            v-if="showAddIcon"
+            :dark='false'
+            :light="true"
+            color="white"
+            absolute
+            opacity="0.9"
+            value="true"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-overlay>
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -31,36 +48,54 @@
             :class="customClass"
           />
         </v-avatar>
+
         <v-row v-if="showLabel && row">
           <v-col class="pl-7 pb-0" >
             <p class="mt-n1" :style="`font-size:1em; ${theme};`"> {{ alt }} </p>
           </v-col>
         </v-row>
       </v-row>
+
       <v-row v-if="showLabel && !row" justify="center">
         <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`" class="limit-text"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
 
-  <div v-else-if="gender !== '' || (image && image.uri)">
+  <div v-else-if="gender !== '' || (image && image.uri)"
+    class="Avatar"
+  >
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
-        <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
+        <v-btn
+          v-if="deletable"
+          icon x-small light max-width="20px" max-height="20px"
+          class="delete"
+          @click="$emit('delete')"
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="isSideViewDialog ? '250px': size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'reduceOpacity' : showPicker}">
+
+        <v-avatar
+          :size="isSideViewDialog ? '250px': size"
+          :tile="isView"
+          class="avatar-container"
+          :class="{ isEditing: isEditing, isOnline: online, reduceOpacity: showPicker }"
+        >
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img v-else :src="getImage" :class="customClass" />
         </v-avatar>
+
         <div v-if="isEditing" :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
           <ImagePicker @updateAvatar="updateAvatar($event)" />
         </div>
       </v-row>
+
       <v-row v-if="showLabel && !row" justify="center">
         <p :style="`font-size:0.8em ${theme};margin-bottom:0`" class="limit-text">{{ alt }} </p>
       </v-row>
     </v-col>
+
     <div v-if="showPicker " :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
@@ -84,6 +119,7 @@ export default {
     showLabel: Boolean,
     clickable: Boolean,
     isView: { type: Boolean, default: false },
+    isBlocked: { type: Boolean, default: false },
     isEditing: Boolean,
     deletable: Boolean,
     dark: Boolean,
