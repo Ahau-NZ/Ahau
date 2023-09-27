@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
+import Inspector from 'unplugin-vue-inspector/vite'
 import inject from '@rollup/plugin-inject'
 import path from 'path'
 
@@ -30,6 +31,12 @@ export default defineConfig(async () => {
           // Vuetify
           VuetifyResolver()
         ]
+      }),
+      // follow setup: https://github.com/webfansplz/vite-plugin-vue-inspector
+      Inspector({
+        vue: 2
+        // enabled: true
+        // hit "Ctrl + Shift" to enable in browser
       }),
       {
         ...inject({
