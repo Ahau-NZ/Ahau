@@ -23,6 +23,7 @@ $ npm run dev
 ```
 
 **NOTE**
+- configure [vite-plugin-vue-inspector](https://github.com/webfansplz/vite-plugin-vue-inspector) !
 - `browserslist` is currently set to the version of Electron we're using
     - this may need to change to support mobile builds in future
     - run `npx browserslist` to see what the current rules are resolving to (see package.json)
@@ -34,6 +35,3 @@ $ npm run dev
     - :fire: mobile build will need something else
     - run `npx browerslist` to see what the rules resolve to!
 - describe how these tools are used in concert
-- upgrade to `d3@7`
-    - full esm means out libs which use it for testing will need to go full esm
-    - change test files to `*.test.mjs`

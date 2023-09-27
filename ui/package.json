@@ -82,6 +82,7 @@
     "typeface-roboto": "^1.1.13",
     "typescript": "^3.9.10",
     "unplugin-vue-components": "^0.25.2",
+    "unplugin-vue-inspector": "^0.5.1",
     "vite": "^4.4.9",
     "vuetify-loader": "^1.9.2"
   },
