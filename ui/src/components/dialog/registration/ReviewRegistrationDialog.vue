@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    <DialogContainer :show="show" :title="title" width="720px" :goBack="close" enableMenu
       @close="close"
     >
 
@@ -304,14 +304,14 @@
           </v-btn>
         </div>
       </template>
-    </Dialog>
+    </DialogContainer>
   </div>
 </template>
 
 <script>
 import { isEmpty, get } from 'lodash-es'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
@@ -324,7 +324,7 @@ import calculateAge from '@/lib/calculate-age'
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
-    Dialog,
+    DialogContainer,
     Avatar,
     ProfileCard,
     ProfileInfoItem

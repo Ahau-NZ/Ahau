@@ -22,7 +22,7 @@ const COMMUNITY_TYPE = 'community'
 // import gql from 'graphql-tag'
 
 export default {
-  name: 'ProfileHeaderImage',
+  name: 'ProfileHeader',
   props: {
     canEdit: Boolean
   },

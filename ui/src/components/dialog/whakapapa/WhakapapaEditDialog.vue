@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show"  :goBack="close" :enableBar="false"
+  <DialogContainer :title="`Edit ${ formData.name } Whakapapa`" :show="show"  :goBack="close" :enableBar="false"
     width="720px" height="370px"
     @submit="submit"
     @close="close"
@@ -84,14 +84,14 @@
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="whakapapa" editing :accessOptions="accessOptions" :permission.sync="formData.permission"/>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { isEqual, isEmpty } from 'lodash-es'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
@@ -112,7 +112,7 @@ function setDefaultData (view) {
 export default {
   name: 'WhakapapaEditDialog',
   components: {
-    Dialog,
+    DialogContainer,
     Avatar,
     AvatarGroup,
     ImagePicker,

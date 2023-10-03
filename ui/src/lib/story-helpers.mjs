@@ -237,7 +237,7 @@ export const getStory = id => ({
       }
     }
   `,
-  variables: { id: id },
+  variables: { id },
   fetchPolicy: 'no-cache'
 })
 

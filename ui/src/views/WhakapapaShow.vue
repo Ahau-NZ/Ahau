@@ -129,7 +129,7 @@
         @toggleSideDialog="toggleSideDialog($event)"
       />
       <div v-if="whakapapaView.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
-        <Table
+        <WhakapapaTable
           ref="table"
           :download.sync="download"
         />
@@ -172,7 +172,6 @@ import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.
 import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 
 import Tree from '@/components/tree/Tree.vue'
-import Table from '@/components/table/Table.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import InfoButton from '@/components/button/InfoButton.vue'
@@ -198,7 +197,6 @@ export default {
     SearchButton,
     SearchFilterButton,
     HelpButton,
-    Table,
     Tree,
     DialogHandler,
     WhakapapaBanner,

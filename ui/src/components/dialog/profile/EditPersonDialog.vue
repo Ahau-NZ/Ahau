@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogContainer
     :show="show"
     :title="title"
     width="720px"
@@ -62,7 +62,7 @@
     </template>
     <!-- End Content Slot -->
 
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
@@ -74,7 +74,7 @@ import calculateAge from '@/lib/calculate-age'
 
 import mapProfileMixins from '@/mixins/profile-mixins'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import SettingsForm from '@/components/settings/SettingsForm.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -84,7 +84,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'EditPersonDialog',
   components: {
-    Dialog,
+    DialogContainer,
     DeleteProfileDialog,
     SettingsForm,
     ProfileForm

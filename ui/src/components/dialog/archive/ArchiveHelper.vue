@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="t('titleArchive')" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <DialogContainer :title="t('titleArchive')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
         <p>{{ t('archiveDescription') }}</p>
@@ -46,11 +46,11 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 
 import addRecordURL from '@/assets/images/add-record.webp'
 import editArtefactURL from '@/assets/images/edit-artefact.webp'
@@ -82,7 +82,7 @@ export default {
     }
   },
   components: {
-    Dialog
+    DialogContainer
   },
   computed: {
     mobile () {

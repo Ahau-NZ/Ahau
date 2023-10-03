@@ -133,6 +133,6 @@ export const getMembers = id => ({
       }
     }
   `,
-  variables: { id: id },
+  variables: { id },
   fetchPolicy: 'no-cache'
 })

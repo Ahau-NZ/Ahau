@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 niho-bg">
     <!-- Header and Title -->
-    <Header v-if="isProfile"
+    <ProfileHeader v-if="isProfile"
       :profile="profile"
     />
     <v-row v-if="isProfile" >
@@ -84,7 +84,6 @@ import { mapGetters, mapActions } from 'vuex'
 import { isEqual, isEmpty, get } from 'lodash-es'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-import Header from '@/components/profile/Header.vue'
 import ProfileButton from '@/components/button/ProfileButton.vue'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -107,7 +106,6 @@ export default {
   ],
   components: {
     SideNavMenu,
-    Header,
     NewCommunityDialog,
     DeleteCommunityDialog,
     EditPersonDialog,

@@ -6,7 +6,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'WhakapapaLink',
+  name: 'TreeLink',
   props: {
     link: {
       type: Object,

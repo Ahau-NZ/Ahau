@@ -123,7 +123,7 @@ export const getArtefact = id => ({
       }
     }
   `,
-  variables: { id: id },
+  variables: { id },
   fetchPolicy: 'no-cache'
 })
 

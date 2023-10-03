@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" width="720px" :goBack="closeOrCancel" enableMenu
+    <DialogContainer :show="show" :title="title" width="720px" :goBack="closeOrCancel" enableMenu
       @submit="submit"
       @close="closeOrCancel"
       submit-label="next"
@@ -12,7 +12,7 @@
       <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
         <AccessButton type="whakapapa" :accessOptions="accessOptions" :permission.sync="formData.permission"/>
       </template>
-    </Dialog>
+    </DialogContainer>
   </div>
 </template>
 
@@ -20,7 +20,7 @@
 import { pick, isEmpty } from 'lodash-es'
 import { mapActions, mapGetters } from 'vuex'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
@@ -121,7 +121,7 @@ export default {
     }
   },
   components: {
-    Dialog,
+    DialogContainer,
     WhakapapaForm,
     AvatarGroup,
     AccessButton

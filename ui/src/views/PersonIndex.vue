@@ -126,7 +126,7 @@ export default {
         text: this.t('prop.' + key),
         align: 'center',
         width: width || 'auto',
-        show: show,
+        show,
         sortable: !disableSort
       }
     }

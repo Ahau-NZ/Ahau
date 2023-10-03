@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+  <DialogContainer :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -22,13 +22,13 @@
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="story" :accessOptions="accessOptions" :permission.sync="formData.permission"/>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
@@ -39,7 +39,7 @@ import { getObjectChanges } from '@/lib/get-object-changes'
 export default {
   name: 'NewRecordDialog',
   components: {
-    Dialog,
+    DialogContainer,
     RecordForm,
     AccessButton
   },

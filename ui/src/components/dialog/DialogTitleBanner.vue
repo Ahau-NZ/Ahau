@@ -53,8 +53,8 @@ export default {
         const maori = str.split(delimiter).slice(0, start + 1).join(delimiter)
         const english = str.split(delimiter).slice(start).join(delimiter)
         titleObj = {
-          maori: maori,
-          english: english
+          maori,
+          english
         }
         return titleObj
       } else {

@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="title" :show="show" width="720px" :goBack="close" enableMenu>
+  <DialogContainer :title="title" :show="show" width="720px" :goBack="close" enableMenu>
     <template v-slot:content>
       <v-card-subtitle>
         <v-col v-if="isWhakapapaShow && !submitOnly" cols="12" sm="5" md="8">
@@ -53,12 +53,12 @@
         </v-row>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { get } from 'lodash-es'
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 
 // mode for the type of remove
 const IGNORE = 'ignore'
@@ -78,7 +78,7 @@ export default {
     submitOnly: Boolean
   },
   components: {
-    Dialog
+    DialogContainer
   },
   data () {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Delete ${ view.name }`" :show="show" width="600px" :goBack="close" enableMenu
+  <DialogContainer :title="`Delete ${ view.name }`" :show="show" width="600px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -10,11 +10,11 @@
         </div>
       </v-card-subtitle>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 
 export default {
   name: 'WhakapapaDeleteDialog',
@@ -36,7 +36,7 @@ export default {
     }
   },
   components: {
-    Dialog
+    DialogContainer
   }
 }
 </script>

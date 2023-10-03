@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+  <DialogContainer :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
     :hideActions="!editing && tab !== 'tab-3'"
@@ -97,14 +97,14 @@
     </template>
     <template v-slot:before-actions>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { pick, isEmpty, isEqual } from 'lodash-es'
 import { mapGetters } from 'vuex'
 
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers'
 import { getObjectChanges } from '@/lib/get-object-changes'
@@ -116,7 +116,7 @@ import DataModel from './DataModel.vue'
 export default {
   name: 'NewCommunityDialog',
   components: {
-    Dialog,
+    DialogContainer,
     CommunityForm,
     GroupsList,
     Permissions,

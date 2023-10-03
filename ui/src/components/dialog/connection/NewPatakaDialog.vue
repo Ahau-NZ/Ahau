@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" width="65vw" :goBack="close" enableMenu @close="$emit('close')">
+    <DialogContainer :show="show" :title="title" width="65vw" :goBack="close" enableMenu @close="$emit('close')">
       <template v-slot:content>
         <v-row>
           <v-col cols="10">
@@ -145,21 +145,21 @@
             </v-btn>
           </v-col>
       </template>
-    </Dialog>
+    </DialogContainer>
     <PatakaHelper v-if="showPatakaHelper" :show="showPatakaHelper" @close="togglePatakaHelper" />
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import PatakaHelper from '@/components/dialog/connection/PatakaHelper.vue'
 import patakaConfig from '../../../../pataka.config'
 
 export default {
   name: 'NewPatakaDialog',
   components: {
-    Dialog,
+    DialogContainer,
     PatakaHelper
   },
   props: {

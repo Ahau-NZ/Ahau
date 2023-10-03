@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="t('titlePataka')" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <DialogContainer :title="t('titlePataka')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4" style="color:black">
         <p>{{ t('description') }}</p>
@@ -38,11 +38,11 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
+import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import replicateURL from '@/assets/animations/replication-via-internet_css.svg'
 import patakaURL from '@/assets/animations/data-on-a-pātaka_css.svg'
 import corporateURL from '@/assets/animations/corporate-server.svg'
@@ -64,7 +64,7 @@ export default {
     }
   },
   components: {
-    Dialog
+    DialogContainer
   },
   computed: {
     mobile () {

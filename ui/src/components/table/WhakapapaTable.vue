@@ -12,7 +12,7 @@
         <svg id="baseGroup" :width="tableWidth">
           <g v-if="!tableFlatten" :transform="`translate(${60} ${80})`">
             <g v-for="link in links" :key="link.id" class="link">
-              <Link :link="link" :class="link.class"/>
+              <TreeLink :link="link" :class="link.class"/>
             </g>
           </g>
           <g
@@ -21,7 +21,7 @@
           >
             <g v-for="(node, i) in nodes" :key="`table-${node.data.id}-${i}`" class="node">
               <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="nodeColor(node.data)" :id="node.data.id" />
-              <TableNode
+              <WhakapapaTableNode
                 :width="colWidth"
                 :node="node"
                 :radius="nodeRadius"
@@ -42,7 +42,7 @@
               <svg :width="columns[3].x - 40" >
                 <g v-if="node.data.partners && node.data.partners.length > 0">
                   <g v-for="(partner, i) in node.data.partners" :key="`${node.data.id}-partner-${partner && partner.id ? partner.id : ''}-${i}`">
-                    <TableNode
+                    <WhakapapaTableNode
                       v-if="partner && partner.id"
                       :id="partner.id"
                       :width="columns[4].x"
@@ -82,9 +82,6 @@ import { pairs as d3Pairs } from 'd3'
 import { mapGetters, mapActions } from 'vuex'
 
 import { isEmpty, isEqual, get } from 'lodash-es'
-
-import TableNode from './TableNode.vue'
-import Link from '../tree/Link.vue'
 
 import calculateAge from '../../lib/calculate-age'
 import { dateIntervalToString } from '@/lib/date-helpers'
@@ -591,10 +588,6 @@ export default {
     t (key, vars) {
       return this.$t('viewTribalRegistry.' + key, vars)
     }
-  },
-  components: {
-    TableNode,
-    Link
   }
 }
 </script>
