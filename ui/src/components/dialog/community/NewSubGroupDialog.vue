@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" :title="title" width="40vw" :goBack="close" enableMenu
+  <DialogContainer :show="show" :title="title" width="40vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -73,13 +73,12 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { isEmpty } from 'lodash-es'
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
@@ -89,7 +88,6 @@ import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers'
 export default {
   name: 'NewSubGroupDialog',
   components: {
-    Dialog,
     Avatar,
     ImagePicker
   },

@@ -20,7 +20,6 @@ export default function (apollo) {
         if (res.errors) throw new Error(res.errors)
 
         dispatch('alerts/showMessage', 'The Story was deleted!', { root: true })
-        return
       } catch (err) {
         console.error(err)
         dispatch('alerts/showError', 'Something went wrong while deleting the Story!', { root: true })

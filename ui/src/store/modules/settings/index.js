@@ -100,8 +100,6 @@ export default function (apollo) {
         )
 
         if (res.errors) throw new Error(res.errors)
-
-        return
       } catch (err) {
         // TODO error alert message
         console.error(err)

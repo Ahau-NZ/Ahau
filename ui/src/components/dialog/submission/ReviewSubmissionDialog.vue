@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="submissionTitle" width="720px" :goBack="close" enableMenu @close="close">
+    <DialogContainer :show="show" :title="submissionTitle" width="720px" :goBack="close" enableMenu @close="close">
 
       <!-- Content Slot -->
       <template v-slot:content>
@@ -192,7 +192,7 @@
           </v-row>
         </v-col>
       </template>
-    </Dialog>
+    </DialogContainer>
   </div>
 </template>
 
@@ -200,7 +200,6 @@
 import { mapActions } from 'vuex'
 import { isEmpty, pick } from 'lodash-es'
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
 import FieldList from '@/components/submission/FieldList.vue'
@@ -215,7 +214,6 @@ const PARTNER_LINK = 'link/profile-profile/partner'
 export default {
   name: 'ReviewSubmissionDialog',
   components: {
-    Dialog,
     Avatar,
     SubmissionDependencies,
     FieldList,

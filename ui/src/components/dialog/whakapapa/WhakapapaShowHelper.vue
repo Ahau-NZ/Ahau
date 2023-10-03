@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="title" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <DialogContainer :title="title" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-5">
         <p>
@@ -59,11 +59,10 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import menuURL from '@/assets/images/menu.webp'
 import parentURL from '@/assets/images/parent.webp'
 import viewURL from '@/assets/images/view.webp'
@@ -94,9 +93,6 @@ export default {
     close () {
       this.$emit('close')
     }
-  },
-  components: {
-    Dialog
   }
 }
 </script>

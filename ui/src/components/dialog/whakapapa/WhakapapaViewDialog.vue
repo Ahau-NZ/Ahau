@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`${view.name} Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <DialogContainer :title="`${view.name} Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
     <template v-slot:content>
       <Avatar
         class="big-avatar"
@@ -40,13 +40,12 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
@@ -55,7 +54,6 @@ import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 export default {
   name: 'WhakapapaViewDialog',
   components: {
-    Dialog,
     Avatar,
     AvatarGroup
   },

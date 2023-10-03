@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+  <DialogContainer :show="show" :title="title" width="55vw" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -17,14 +17,13 @@
     <template v-if="accessOptions && accessOptions.length" v-slot:before-actions>
       <AccessButton type="collection" :accessOptions="accessOptions" disabled permission="view"  />
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { cloneDeep as clone } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
@@ -67,7 +66,6 @@ export default {
   name: 'NewCollectionDialog',
   // TODO 2021-12-03 rename as this is New+Edit
   components: {
-    Dialog,
     CollectionForm,
     AccessButton
   },

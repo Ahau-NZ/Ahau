@@ -2,7 +2,7 @@
   <g>
     <!-- only draw this for top node -->
     <g v-if="parent === null">
-      <Link v-for="link in secondaryLinks" :key="link.key"
+      <TreeLink v-for="link in secondaryLinks" :key="link.key"
         :link="link"
       />
     </g>
@@ -13,12 +13,12 @@
         - children
     -->
 
-    <Link v-for="link in normalLinks" :link="link" :key="link.key"/>
+    <TreeLink v-for="link in normalLinks" :link="link" :key="link.key"/>
     <!-- NOTE: we need to draw highlighted links after normal links in order for them to be drawn above -->
-    <Link v-for="link in higlightedLinks" :link="link" highlight :key="link.key"/>
+    <TreeLink v-for="link in higlightedLinks" :link="link" highlight :key="link.key"/>
 
     <!-- partners -->
-    <Node v-for="partner in partners" :key="`partner-${partner.data.id}`"
+    <TreeNode v-for="partner in partners" :key="`partner-${partner.data.id}`"
       :profileId="partner.data.id"
       :x="partner.x"
       :y="partner.y"
@@ -48,7 +48,7 @@
     />
 
     <!-- rootNode of this subtree -->
-    <Node v-if="data && data.id" :key="`root-${data.id}`"
+    <TreeNode v-if="data && data.id" :key="`root-${data.id}`"
       :profileId="data.id"
       :x="x"
       :y="y"
@@ -63,9 +63,6 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import Node from './Node.vue'
-import Link from './Link.vue'
-
 export default {
   name: 'SubTree',
   props: {
@@ -79,10 +76,6 @@ export default {
     showAvatars: Boolean,
     zooming: Boolean,
     scale: Number
-  },
-  components: {
-    Node,
-    Link
   },
   computed: {
     ...mapGetters('whakapapa', ['pathToRoot']),

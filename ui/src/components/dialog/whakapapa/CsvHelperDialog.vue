@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="'Upload CSV Instructions'" :show="show" @close="close" :width="`720px`" :goBack="close">
+  <DialogContainer :title="'Upload CSV Instructions'" :show="show" @close="close" :width="`720px`" :goBack="close">
 
     <template v-slot:content>
       <v-card-text class="pt-2">
@@ -97,11 +97,10 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadCsv } from '@/lib/csv'
 
 import treeURL from '@/assets/tree.webp'
@@ -141,9 +140,6 @@ export default {
         { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
     }
-  },
-  components: {
-    Dialog
   },
   computed: {
     mobile () {

@@ -88,7 +88,6 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins'
 
-
 export default {
   name: 'StoryArchive',
   props: {

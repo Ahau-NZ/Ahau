@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="title" :show="show" @close="close" :width="'720px'" :goBack="close">
+  <DialogContainer :title="title" :show="show" @close="close" :width="'720px'" :goBack="close">
 
     <template v-slot:content>
       <v-card-text class="pt-8">
@@ -30,11 +30,10 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import treeURL from '@/assets/tree.webp'
 import whakapapaListURL from '@/assets/whakapapa-list.webp'
 
@@ -58,9 +57,6 @@ export default {
         { src: whakapapaListURL }
       ]
     }
-  },
-  components: {
-    Dialog
   },
   computed: {
     mobile () {

@@ -21,7 +21,7 @@ test('vuex/whakapapa getters.recordCount (whangai grandparent complex)', t => {
         Grandaughter╌╌╌╌╌╌╌╌╌╌┘
 
   */
-  const getRecordCount = actions.getRecordCount({ state: state, getters: getters })
+  const getRecordCount = actions.getRecordCount({ state, getters })
 
   t.equal(getRecordCount, 5)
 
@@ -48,7 +48,7 @@ test('vuex/whakapapa getters.recordCount (extended family)', t => {
       xy  ax   ab  bc
 
   */
-  const getRecordCount = actions.getRecordCount({ state: state, getters: getters })
+  const getRecordCount = actions.getRecordCount({ state, getters })
 
   t.equal(getRecordCount, 5) // A, X, B, ax, ab
 

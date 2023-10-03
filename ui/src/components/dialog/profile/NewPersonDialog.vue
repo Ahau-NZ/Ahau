@@ -1,5 +1,5 @@
 <template>
-  <Dialog ref="dialog" :show="show" :title="title" width="720px" :goBack="close" enableMenu
+  <DialogContainer ref="dialog" :show="show" :title="title" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -146,15 +146,13 @@
         </v-row>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 /* eslint brace-style: ["error", "stroustrup", { "allowSingleLine": true }] */
 import { mapGetters, mapActions } from 'vuex'
 import { isEmpty, pick, cloneDeep as clone } from 'lodash-es'
-
-import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 import ProfileList from '@/components/profile/ProfileList.vue'
@@ -189,7 +187,6 @@ export default {
   name: 'NewPersonDialog',
   components: {
     Avatar,
-    Dialog,
     ProfileForm,
     AccessButton,
     ProfileList

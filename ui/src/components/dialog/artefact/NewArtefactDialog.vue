@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" title="edit artefact" width="55vw" :goBack="close" enableMenu dark
+  <DialogContainer :show="show" title="edit artefact" width="55vw" :goBack="close" enableMenu dark
     @submit="submit"
     @close="close"
   >
@@ -233,13 +233,12 @@
         </v-row>
       </v-container>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { cloneDeep as clone } from 'lodash-es'
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import { convertBytes } from '@/lib/artefact-helpers'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
@@ -267,8 +266,7 @@ export default {
     // ProfileSearchBar,
     // AvatarGroup,
     // DialogTitleBanner,
-    NodeDatePicker,
-    Dialog
+    NodeDatePicker
   },
   data () {
     return {

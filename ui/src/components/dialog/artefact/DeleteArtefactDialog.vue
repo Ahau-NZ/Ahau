@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Remove artefact from story`" :show="show" width="720px" :goBack="close" enableMenu
+  <DialogContainer :title="`Remove artefact from story`" :show="show" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -10,12 +10,10 @@
         </div>
       </v-card-subtitle>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-
 export default {
   props: {
     show: { type: Boolean, required: true },
@@ -42,9 +40,6 @@ export default {
       this.$emit('submit', this.index)
       this.close()
     }
-  },
-  components: {
-    Dialog
   }
 }
 </script>

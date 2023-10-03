@@ -1,4 +1,3 @@
-
 // parts of the Error notification system:
 //
 // 1. src/store/modules/error/index.js

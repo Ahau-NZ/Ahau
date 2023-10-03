@@ -1,19 +1,18 @@
 <template>
   <div>
-    <Dialog :show="show" title="Import people to tribal database" width="720px" :goBack="close" enableMenu
+    <DialogContainer :show="show" title="Import people to tribal database" width="720px" :goBack="close" enableMenu
       @submit="submit"
       @close="close"
     >
       <template v-slot:content>
         <CsvImportInput :importedData.sync="importedData" :downloadTemplate="downloadTemplate" />
       </template>
-    </Dialog>
+    </DialogContainer>
   </div>
 </template>
 
 <script>
 
-import Dialog from '@/components/dialog/Dialog.vue'
 import CsvImportInput from '@/components/csvImport/CsvImportInput.vue'
 
 import { mapActions } from 'vuex'
@@ -29,7 +28,6 @@ export default {
     downloadTemplate: Function
   },
   components: {
-    Dialog,
     CsvImportInput
   },
   data () {

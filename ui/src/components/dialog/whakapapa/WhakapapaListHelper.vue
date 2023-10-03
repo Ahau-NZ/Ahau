@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="$t('instructionsWhakapapa.whakapapaInstructionsTitle')" :show="show" @close="close" :width="`550px`" :goBack="close">
+  <DialogContainer :title="$t('instructionsWhakapapa.whakapapaInstructionsTitle')" :show="show" @close="close" :width="`550px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-0">
         {{ $t('instructionsWhakapapa.whakapapaRecord') }}
@@ -33,11 +33,10 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import treeURL from '@/assets/tree.webp'
 import whakapapaList from '@/assets/whakapapa-list.webp'
 
@@ -53,9 +52,6 @@ export default {
         { src: whakapapaList, text: 'list of whakapapa records' }
       ]
     }
-  },
-  components: {
-    Dialog
   },
   computed: {
     mobile () {

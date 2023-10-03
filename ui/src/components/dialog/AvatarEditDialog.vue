@@ -1,5 +1,5 @@
 <template>
-  <Dialog title="Crop Photo" :show="show" :width="width" :goBack="close" enableMenu dark
+  <DialogContainer title="Crop Photo" :show="show" :width="width" :goBack="close" enableMenu dark
     @submit="submit"
     @close="close"
   >
@@ -36,19 +36,15 @@
         ></clipper-range>
       </div>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
 import uploadFile from '@/mixins/upload-file'
 import { makeFile } from '@/lib/file-helpers'
 
 export default {
   name: 'AvatarEditDialog',
-  components: {
-    Dialog
-  },
   props: {
     show: { type: Boolean, default: false },
     avatarImage: String,

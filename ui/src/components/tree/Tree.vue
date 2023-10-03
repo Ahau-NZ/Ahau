@@ -100,7 +100,7 @@ export default {
     // if there are more records here than are recorded, update the whakapapa-view
     this.saveWhakapapaView({
       id: this.whakapapaView.id,
-      recordCount: recordCount
+      recordCount
     })
   },
   computed: {

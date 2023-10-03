@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="t('title')" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <DialogContainer :title="t('title')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
         <p>
@@ -41,20 +41,15 @@
         {{ t('cancelButton') }}
       </v-btn>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-
 export default {
   props: {
     show: { type: Boolean, required: true }
   },
   name: 'KeyBackupDialog',
-  components: {
-    Dialog
-  },
   data () {
     return {
       confirmDeleteInput: ''

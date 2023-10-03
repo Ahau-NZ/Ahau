@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="t('title')" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <DialogContainer :title="t('title')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
         <p>{{ t('whyBackUp') }}</p>
@@ -33,12 +33,11 @@
         </v-btn>
       </v-col>
     </template>
-  </Dialog>
+  </DialogContainer>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadBackup } from '@/lib/download-helper'
 
 export default {
@@ -46,9 +45,6 @@ export default {
     show: { type: Boolean, required: true }
   },
   name: 'KeyBackupDialog',
-  components: {
-    Dialog
-  },
   methods: {
     ...mapActions('settings', ['getBackup', 'updateKeyBackupSettings']),
     ...mapActions('alerts', ['showAlert']),
