@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.24.1
+
+### Bug Fix
+
+- messed up the merge order and last fix did not make it into release :facepalm:
+
 ## v2.24.0
 
 ### Features

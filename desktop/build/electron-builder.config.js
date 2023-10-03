@@ -17,6 +17,7 @@ module.exports = {
 
     /* native bindings  (dependencies of main.bundle.js) */
     'node_modules/node-gyp-build/index.js',
+    'node_modules/node-gyp-build/node-gyp-build.js',
 
     'node_modules/sodium-chloride/index.js',
 
