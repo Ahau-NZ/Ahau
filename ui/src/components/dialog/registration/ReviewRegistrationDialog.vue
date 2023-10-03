@@ -311,7 +311,6 @@
 <script>
 import { isEmpty, get } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
@@ -324,7 +323,6 @@ import calculateAge from '@/lib/calculate-age'
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
-    DialogContainer,
     Avatar,
     ProfileCard,
     ProfileInfoItem

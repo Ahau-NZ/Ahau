@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import replicateURL from '@/assets/animations/replication-via-internet_css.svg'
 import patakaURL from '@/assets/animations/data-on-a-pātaka_css.svg'
 import corporateURL from '@/assets/animations/corporate-server.svg'
@@ -62,9 +61,6 @@ export default {
         { src: alternativeURL, text: this.t('ahauServer') }
       ]
     }
-  },
-  components: {
-    DialogContainer
   },
   computed: {
     mobile () {

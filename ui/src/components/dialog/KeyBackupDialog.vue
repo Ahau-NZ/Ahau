@@ -38,7 +38,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import { downloadBackup } from '@/lib/download-helper'
 
 export default {
@@ -46,9 +45,6 @@ export default {
     show: { type: Boolean, required: true }
   },
   name: 'KeyBackupDialog',
-  components: {
-    DialogContainer
-  },
   methods: {
     ...mapActions('settings', ['getBackup', 'updateKeyBackupSettings']),
     ...mapActions('alerts', ['showAlert']),

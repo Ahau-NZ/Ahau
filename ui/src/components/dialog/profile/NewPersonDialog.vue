@@ -154,8 +154,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import { isEmpty, pick, cloneDeep as clone } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 import ProfileList from '@/components/profile/ProfileList.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -189,7 +187,6 @@ export default {
   name: 'NewPersonDialog',
   components: {
     Avatar,
-    DialogContainer,
     ProfileForm,
     AccessButton,
     ProfileList

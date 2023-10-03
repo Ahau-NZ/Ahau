@@ -394,7 +394,6 @@
 import { cloneDeep as clone, isEmpty } from 'lodash-es'
 
 import Avatar from '@/components/Avatar.vue'
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import EditPersonDialog from '@/components/dialog/profile/EditPersonDialog.vue'
@@ -408,7 +407,6 @@ import { findMissingRequiredFields, getInitialCustomFieldChanges } from '@/lib/c
 export default {
   name: 'NewRegistrationDialog',
   components: {
-    DialogContainer,
     Avatar,
     ProfileCard,
     ProfileInfoItem,

@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 import addRecordURL from '@/assets/images/add-record.webp'
 import editArtefactURL from '@/assets/images/edit-artefact.webp'
 import viewArchiveURL from '@/assets/images/view-archive.webp'
@@ -80,9 +78,6 @@ export default {
         { src: mobileViewArchiveURL, text: this.t('itemsViewAll') }
       ]
     }
-  },
-  components: {
-    DialogContainer
   },
   computed: {
     mobile () {

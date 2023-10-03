@@ -104,7 +104,6 @@
 import { pick, isEmpty, isEqual } from 'lodash-es'
 import { mapGetters } from 'vuex'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers'
 import { getObjectChanges } from '@/lib/get-object-changes'
@@ -116,7 +115,6 @@ import DataModel from './DataModel.vue'
 export default {
   name: 'NewCommunityDialog',
   components: {
-    DialogContainer,
     CommunityForm,
     GroupsList,
     Permissions,

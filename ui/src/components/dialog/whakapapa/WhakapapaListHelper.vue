@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import treeURL from '@/assets/tree.webp'
 import whakapapaList from '@/assets/whakapapa-list.webp'
 
@@ -53,9 +52,6 @@ export default {
         { src: whakapapaList, text: 'list of whakapapa records' }
       ]
     }
-  },
-  components: {
-    DialogContainer
   },
   computed: {
     mobile () {

@@ -152,14 +152,12 @@
 
 <script>
 import gql from 'graphql-tag'
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import PatakaHelper from '@/components/dialog/connection/PatakaHelper.vue'
 import patakaConfig from '../../../../pataka.config'
 
 export default {
   name: 'NewPatakaDialog',
   components: {
-    DialogContainer,
     PatakaHelper
   },
   props: {

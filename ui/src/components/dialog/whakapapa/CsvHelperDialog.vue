@@ -101,7 +101,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import { downloadCsv } from '@/lib/csv'
 
 import treeURL from '@/assets/tree.webp'
@@ -141,9 +140,6 @@ export default {
         { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
     }
-  },
-  components: {
-    DialogContainer
   },
   computed: {
     mobile () {

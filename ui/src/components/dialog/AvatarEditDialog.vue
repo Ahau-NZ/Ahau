@@ -40,15 +40,11 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import uploadFile from '@/mixins/upload-file'
 import { makeFile } from '@/lib/file-helpers'
 
 export default {
   name: 'AvatarEditDialog',
-  components: {
-    DialogContainer
-  },
   props: {
     show: { type: Boolean, default: false },
     avatarImage: String,

@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 export default {
   name: 'DeleteCommunityDialog',
   props: {
@@ -42,9 +40,6 @@ export default {
       // this.close()
       this.$emit('submit')
     }
-  },
-  components: {
-    DialogContainer
   }
 }
 </script>

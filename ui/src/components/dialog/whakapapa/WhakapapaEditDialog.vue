@@ -91,7 +91,6 @@
 import { mapGetters } from 'vuex'
 import { isEqual, isEmpty } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
@@ -112,7 +111,6 @@ function setDefaultData (view) {
 export default {
   name: 'WhakapapaEditDialog',
   components: {
-    DialogContainer,
     Avatar,
     AvatarGroup,
     ImagePicker,

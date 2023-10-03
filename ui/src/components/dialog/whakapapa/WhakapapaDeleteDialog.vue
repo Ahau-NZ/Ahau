@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 export default {
   name: 'WhakapapaDeleteDialog',
   props: {
@@ -34,9 +32,6 @@ export default {
     submit () {
       this.$emit('submit')
     }
-  },
-  components: {
-    DialogContainer
   }
 }
 </script>

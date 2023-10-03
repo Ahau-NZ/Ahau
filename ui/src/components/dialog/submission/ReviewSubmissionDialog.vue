@@ -200,7 +200,6 @@
 import { mapActions } from 'vuex'
 import { isEmpty, pick } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
 import FieldList from '@/components/submission/FieldList.vue'
@@ -215,7 +214,6 @@ const PARTNER_LINK = 'link/profile-profile/partner'
 export default {
   name: 'ReviewSubmissionDialog',
   components: {
-    DialogContainer,
     Avatar,
     SubmissionDependencies,
     FieldList,

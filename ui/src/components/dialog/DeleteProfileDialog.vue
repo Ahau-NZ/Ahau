@@ -45,16 +45,11 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 export default {
   props: {
     show: { type: Boolean, required: true }
   },
   name: 'KeyBackupDialog',
-  components: {
-    DialogContainer
-  },
   data () {
     return {
       confirmDeleteInput: ''

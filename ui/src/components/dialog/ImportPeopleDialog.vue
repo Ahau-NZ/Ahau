@@ -13,7 +13,6 @@
 
 <script>
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import CsvImportInput from '@/components/csvImport/CsvImportInput.vue'
 
 import { mapActions } from 'vuex'
@@ -29,7 +28,6 @@ export default {
     downloadTemplate: Function
   },
   components: {
-    DialogContainer,
     CsvImportInput
   },
   data () {

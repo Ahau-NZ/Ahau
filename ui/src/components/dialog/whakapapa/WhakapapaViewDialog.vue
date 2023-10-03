@@ -46,7 +46,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
@@ -55,7 +54,6 @@ import { ACCESS_ALL_MEMBERS } from '@/lib/constants'
 export default {
   name: 'WhakapapaViewDialog',
   components: {
-    DialogContainer,
     Avatar,
     AvatarGroup
   },

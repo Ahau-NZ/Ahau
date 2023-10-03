@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
-
 export default {
   props: {
     show: { type: Boolean, required: true }
@@ -41,9 +39,6 @@ export default {
       this.$emit('submit')
       this.close()
     }
-  },
-  components: {
-    DialogContainer
   }
 }
 </script>

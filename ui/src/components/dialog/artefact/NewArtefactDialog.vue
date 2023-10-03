@@ -239,7 +239,6 @@
 <script>
 import { cloneDeep as clone } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import { convertBytes } from '@/lib/artefact-helpers'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
@@ -267,8 +266,7 @@ export default {
     // ProfileSearchBar,
     // AvatarGroup,
     // DialogTitleBanner,
-    NodeDatePicker,
-    DialogContainer
+    NodeDatePicker
   },
   data () {
     return {

@@ -58,7 +58,6 @@
 
 <script>
 import { get } from 'lodash-es'
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 
 // mode for the type of remove
 const IGNORE = 'ignore'
@@ -76,9 +75,6 @@ export default {
     profile: { type: Object, required: true },
     warnAboutChildren: { type: Boolean, default: true },
     submitOnly: Boolean
-  },
-  components: {
-    DialogContainer
   },
   data () {
     return {

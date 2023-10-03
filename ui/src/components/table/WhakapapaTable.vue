@@ -80,7 +80,6 @@
 <script>
 import { pairs as d3Pairs } from 'd3'
 import { mapGetters, mapActions } from 'vuex'
-
 import { isEmpty, isEqual, get } from 'lodash-es'
 
 import calculateAge from '../../lib/calculate-age'

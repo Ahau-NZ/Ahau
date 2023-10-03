@@ -79,7 +79,6 @@
 <script>
 import { isEmpty } from 'lodash-es'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
@@ -89,7 +88,6 @@ import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers'
 export default {
   name: 'NewSubGroupDialog',
   components: {
-    DialogContainer,
     Avatar,
     ImagePicker
   },

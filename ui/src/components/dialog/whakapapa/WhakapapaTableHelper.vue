@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import tableURL from '@/assets/images/table.webp'
 import relationshipsURL from '@/assets/images/relationships.webp'
 import ancestorsURL from '@/assets/images/ancestors.webp'
@@ -86,9 +85,6 @@ export default {
     close () {
       this.$emit('close')
     }
-  },
-  components: {
-    DialogContainer
   }
 }
 </script>

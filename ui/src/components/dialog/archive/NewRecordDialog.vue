@@ -28,7 +28,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
@@ -39,7 +38,6 @@ import { getObjectChanges } from '@/lib/get-object-changes'
 export default {
   name: 'NewRecordDialog',
   components: {
-    DialogContainer,
     RecordForm,
     AccessButton
   },

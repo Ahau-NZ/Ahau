@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import menuURL from '@/assets/images/menu.webp'
 import parentURL from '@/assets/images/parent.webp'
 import viewURL from '@/assets/images/view.webp'
@@ -94,9 +93,6 @@ export default {
     close () {
       this.$emit('close')
     }
-  },
-  components: {
-    DialogContainer
   }
 }
 </script>

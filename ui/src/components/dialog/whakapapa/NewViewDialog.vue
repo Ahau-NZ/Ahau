@@ -20,7 +20,6 @@
 import { pick, isEmpty } from 'lodash-es'
 import { mapActions, mapGetters } from 'vuex'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
@@ -121,7 +120,6 @@ export default {
     }
   },
   components: {
-    DialogContainer,
     WhakapapaForm,
     AvatarGroup,
     AccessButton

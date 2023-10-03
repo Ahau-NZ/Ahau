@@ -24,7 +24,6 @@
 import { cloneDeep as clone } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
 
-import DialogContainer from '@/components/dialog/DialogContainer.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
@@ -67,7 +66,6 @@ export default {
   name: 'NewCollectionDialog',
   // TODO 2021-12-03 rename as this is New+Edit
   components: {
-    DialogContainer,
     CollectionForm,
     AccessButton
   },
