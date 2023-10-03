@@ -1,5 +1,28 @@
 # Changelog | Ahau desktop
 
+## v2.24.0
+
+### Features
+
+- add ability to block a Pataka
+- (dev-tools): add vite-inspector tool
+
+### Updates
+
+- update translations
+- tidy up dependencies, linting
+- tidy assets
+  - delete unused assets
+  - compress `.svg` files
+  - convert all images to `.webp`
+- to some linting
+  - renamed "reserved name" components (e.g. `Header`, `Dialog`)
+
+### Bug Fix
+
+- stop Ahau never launching first time! (Fix to the last fix)
+
+
 ## v2.23.0
 
 ### Bug Fix
