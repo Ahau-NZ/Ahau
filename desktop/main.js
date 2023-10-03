@@ -73,7 +73,12 @@ function checkAhauRunning () {
   return new Promise((resolve, reject) => {
     const dbPath = join(config.path, 'tribes/keystore')
     level(dbPath, (err, db) => {
-      if (err) return reject(err) // err => already open
+      if (err) {
+        // if file doesn't exist yet => ahau never been started
+        if (err.message.endsWith('No such file or directory')) return resolve()
+        // other errors indicate a file LOCK exists => ahau open
+        return reject(err)
+      }
 
       db.close((err) => {
         if (err) console.error(err)
