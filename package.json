@@ -31,10 +31,10 @@
     "win:reset-nm-all": "npm run win:clear-all && npm install && cd desktop && npm install"
   },
   "devDependencies": {
-    "husky": "^4.2.1",
+    "husky": "^4.3.8",
     "mvy": "^0.2.1",
-    "rimraf": "^3.0.1",
-    "standard": "^14.3.4"
+    "rimraf": "^3.0.2",
+    "standard": "^17.1.0"
   },
   "husky": {
     "hooks": {

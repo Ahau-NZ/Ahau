@@ -5,9 +5,10 @@
   "homepage": "https://gitlab.com/ahau/ahau",
   "main": "main.bundle.js",
   "scripts": {
-    "start": "electron main.bundle.js -- --title Āhau",
-    "dev": "cross-env NODE_ENV=development electron main.js -- --title Āhau",
-    "build:main": "noderify main.js > main.bundle.js",
+    "postinstall": "patch-package && electron-builder install-app-deps",
+    "start": "electron main.bundle.js",
+    "dev": "cross-env NODE_ENV=development electron main.js",
+    "build:main": "node bundle.mjs",
     "build:icons": "node build/build-icons.js",
     "dist": "npm run build:main && electron-builder --config build/electron-builder.config.js",
     "pack": "npm run dist -- --dir",
@@ -21,9 +22,8 @@
     "chalk": "^4.1.2",
     "electron-updater": "^4.6.5",
     "lodash.merge": "^4.6.2",
-    "secret-stack": "^6.4.2",
-    "ssb-ahau": "^16.0.5",
-    "ssb-ahoy": "^5.0.2",
+    "ssb-ahau": "^16.0.7",
+    "ssb-ahoy": "^6.0.2",
     "ssb-artefact": "^3.2.2",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.1",
@@ -52,9 +52,11 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "esm": "^3.2.25",
-    "noderify": "^5.1.2",
-    "typescript": "^3.9.10"
+    "electron": "20.3.8",
+    "electron-builder": "^24.6.4",
+    "esbuild": "^0.19.4",
+    "esbuild-plugin-fileloc": "^0.0.6",
+    "patch-package": "^8.0.0"
   },
   "optionalDependencies": {
     "@electron/notarize": "^1.2.4",

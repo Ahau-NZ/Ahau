@@ -22,8 +22,9 @@ checkAhauRunning()
       autoUpdater.checkForUpdatesAndNotify()
     }
   })
-  .catch(() => {
-    console.log('Ahau already running\nEXITING')
+  .catch((err) => {
+    if (err) console.log(err)
+    console.log('EXITING')
     app.quit()
   })
 
@@ -33,7 +34,7 @@ function start () {
       ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
       : `file://${__dirname}/dist/index.html`, // production build
     {
-      title: 'Ahau',
+      title: 'Āhau',
       config,
       plugins: [
         require('ssb-db'),
@@ -74,9 +75,12 @@ function checkAhauRunning () {
     const dbPath = join(config.path, 'tribes/keystore')
     level(dbPath, (err, db) => {
       if (err) {
+        console.log(err.message)
         // if file doesn't exist yet => ahau never been started
         if (err.message.endsWith('No such file or directory')) return resolve()
         // other errors indicate a file LOCK exists => ahau open
+
+        console.log('Ahau already running?')
         return reject(err)
       }
 
