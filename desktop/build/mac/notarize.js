@@ -15,10 +15,12 @@ exports.default = async function notarizing (context) {
   console.log('Starting notarization...')
 
   return await notarize({ // eslint-disable-line
+    tool: 'notarytool',
     appBundleId: appId,
     appPath: `${appOutDir}/${appName}.app`,
     appleId,
     // appleIdPassword: `@keychain:"Application Loader: ${appleId}"`
-    appleIdPassword: process.env.APPLE_ID_PASS
+    appleIdPassword: process.env.APPLE_ID_PASS,
+    teamId: process.env.APPLE_TEAM_ID
   })
 }
