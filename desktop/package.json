@@ -54,6 +54,7 @@
     "cross-env": "^7.0.3",
     "esm": "^3.2.25",
     "noderify": "^5.1.2",
+    "ssb-db2": "^7.1.1",
     "typescript": "^3.9.10"
   },
   "optionalDependencies": {
