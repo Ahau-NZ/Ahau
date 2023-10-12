@@ -1,6 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
-const fs = require('fs')
-const path = require('path')
+// const fs = require('fs')
+// const path = require('path')
 
 module.exports = {
   appId: 'io.ahau.ahau',
@@ -57,12 +57,10 @@ module.exports = {
   // To see options: ls installers/linux/unpacked/locales
 
   /* delete files from the pack! */
-  afterPack (context) {
-    fs.rmSync(path.join(context.appOutDir, 'LICENSE.electron.txt'))
-    fs.rmSync(path.join(context.appOutDir, 'LICENSES.chromium.html'))
-    // const ls = fs.readdirSync(context.appOutDir)
-    // console.log(ls)
-  },
+  // afterPack (context) {
+  //   const ls = fs.readdirSync(context.appOutDir)
+  //   console.log(ls)
+  // },
 
   publish: [{
     provider: 'github',
