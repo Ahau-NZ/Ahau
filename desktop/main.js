@@ -23,7 +23,7 @@ checkAhauRunning()
     }
   })
   .catch((err) => {
-    if (err) console.log(err)
+    console.error(err.cause || err)
     console.log('EXITING')
     app.quit()
   })
@@ -31,8 +31,8 @@ checkAhauRunning()
 function start () {
   return ahoy(
     env.isDevelopment
-      ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}` // dev-server
-      : `file://${__dirname}/dist/index.html`, // production build
+      ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}`
+      : `file://${__dirname}/dist/index.html`, // eslint-disable-line
     {
       title: 'Āhau',
       config,
@@ -80,8 +80,7 @@ function checkAhauRunning () {
         if (err.message.endsWith('No such file or directory')) return resolve()
         // other errors indicate a file LOCK exists => ahau open
 
-        console.log('Ahau already running?')
-        return reject(err)
+        return reject(Error(err, { cause: 'Ahau already running' }))
       }
 
       db.close((err) => {
