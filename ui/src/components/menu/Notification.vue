@@ -28,7 +28,8 @@ import {
   LINK_CHILD,
   LINK_PARTNER,
   PROFILE_TYPE_ADMIN,
-  PROFILE_TYPE_PERSON
+  PROFILE_TYPE_PERSON,
+  WHAKAPAPA_TYPE
 } from '@/lib/constants'
 
 export default {
@@ -91,6 +92,9 @@ export default {
     isPersonType () {
       return [PROFILE_TYPE_PERSON, PROFILE_TYPE_ADMIN].includes(this.notification?.targetType)
     },
+    isWhakapapaType () {
+      return this.notification?.targetType === WHAKAPAPA_TYPE
+    },
     isNewRecord () {
       return !this.notification?.sourceRecord
     },
@@ -98,9 +102,16 @@ export default {
       if (this.isSystem) return this.t('system')
 
       const groupName = this.notification.group?.preferredName
+      const authorName = this.author?.preferredName
 
       const prepended = this.isPersonal ? 'personal' + '.' : ''
       if (this.isFromWeb) return this.t('submission.profile.new.web', { groupName })
+
+      if (this.isWhakapapaType) {
+        return this.isPersonal
+          ? this.t(`personal.submission.ignore.${this.notificationStatus}`, { groupName })
+          : this.t(`submission.ignore.${this.notificationStatus}`, { authorName, groupName })
+      }
 
       if (this.isLinkType) {
         const type = this.notification.targetType === LINK_TYPE_PARTNER
@@ -109,7 +120,7 @@ export default {
 
         return this.isPersonal
           ? this.t(`personal.submission.link.${type}.${this.notificationStatus}`, { groupName })
-          : this.t(`submission.link.${type}.${this.notificationStatus}`, { authorName: this.author.preferredName, groupName })
+          : this.t(`submission.link.${type}.${this.notificationStatus}`, { authorName, groupName })
       }
 
       if (this.isPersonType) {

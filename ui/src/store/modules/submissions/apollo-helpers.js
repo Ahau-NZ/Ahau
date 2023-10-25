@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 import { pick } from 'lodash-es'
 
 import { COMMUNITY_FRAGMENT } from '@/lib/community-helpers'
-
 import {
   PERMITTED_PERSON_ATTRS,
   PERSON_FRAGMENT
@@ -42,6 +41,20 @@ export const approveEditGroupPersonSubmission = ({ id, comment, allowedFields })
   }
 }
 
+export const approveEditWhakapapaViewSubmission = ({ id, comment, allowedFields }) => {
+  return {
+    mutation: gql`
+      mutation ($id: String!, $comment: String, $allowedFields: WhakapapaViewInput!) {
+        approveEditWhakapapaView(id: $id, comment: $comment, allowedFields: $allowedFields)
+      }
+      `,
+    variables: {
+      id,
+      comment,
+      allowedFields
+    }
+  }
+}
 export const approveNewGroupPersonSubmission = ({ id, comment, allowedFields }) => {
   return {
     mutation: gql`
@@ -129,6 +142,22 @@ export const proposeEditGroupPerson = ({ profileId, input, comment, groupId }) =
     `,
     variables: {
       profileId,
+      input,
+      comment,
+      groupId
+    }
+  }
+}
+
+export const proposeEditWhakapapaView = ({ whakapapaId, input, comment, groupId }) => {
+  return {
+    mutation: gql`
+      mutation ($whakapapaId: String!, $input: WhakapapaViewInput!, $comment: String, $groupId: String!) {
+        proposeEditWhakapapaView (whakapapaId: $whakapapaId, input: $input, comment: $comment, groupId: $groupId)
+      }
+    `,
+    variables: {
+      whakapapaId,
       input,
       comment,
       groupId
@@ -331,11 +360,66 @@ export const SubmissionWhakapapaLinkFragment = gql`
   }
 `
 
+export const SubmissionWhakapapaViewFragment = gql`
+  fragment SubmissionWhakapapaViewFragment on Submission {
+    ...on SubmissionWhakapapaView {
+      details {
+        # TODO: add other fields here when they are supported
+        ignoredProfiles: ignoredProfilesSubmission {
+          add
+          remove
+        }
+      }
+
+      # TODO cherese 20/09/23 we will need to plug in other fields when they are supported
+      # There is a problem here where the typeDefs for the WhakapapaView type
+      # ID is different from Person type which is ID!. They will need
+      # to be the same in order for the interface to use both of them in the same query
+      # the UI will be written to use sourceId and targetId to avoid this problem
+      
+
+      # this is the existing whakapapa that we are updating (if its an update)
+      sourceRecord {
+        # WARNING: there is an issue with using id directly.
+        # ApolloError: Fields "sourceRecord" conflict because subfields "id" conflict because they return conflicting types "ID" and "ID!".
+        # Use different aliases on the fields to fetch both if this was intentional.
+        # To fix we will need to make sure the ID's are matching in each module (profile, whakapapa, link, etc)
+        whakapapaId: id
+        name
+        image {
+          uri
+        }
+
+        # WARNING: do not use ignoredProfiles here, must use ignoredProfilesSubmission instead
+        ignoredProfiles: ignoredProfilesSubmission {
+          add
+          remove
+        }
+      }
+
+      # this is the result from the update
+      targetId
+      targetRecord {
+        name
+        image {
+          uri
+        }
+        # WARNING: do not use ignoredProfiles here, must use ignoredProfilesSubmission instead
+        ignoredProfiles: ignoredProfilesSubmission {
+          add
+          remove
+        }
+      }
+    }
+  }
+`
+
 export const getSubmissions = ({
   query: gql`
     ${SubmissionFragment}
     ${SubmissionGroupPersonFragment}
     ${SubmissionWhakapapaLinkFragment}
+    ${SubmissionWhakapapaViewFragment}
     query {
       getSubmissions {
         id
@@ -343,6 +427,7 @@ export const getSubmissions = ({
         ...SubmissionFragment
         ...SubmissionGroupPersonFragment
         ...SubmissionWhakapapaLinkFragment
+        ...SubmissionWhakapapaViewFragment
 
         dependencies {
           id
