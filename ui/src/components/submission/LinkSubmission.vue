@@ -1,6 +1,5 @@
 <template>
   <v-card outlined class="mx-3 pa-3">
-    <!-- What do i want to display here? -->
     <span class="row wrap justify-center">
       {{ helpText }}
     </span>

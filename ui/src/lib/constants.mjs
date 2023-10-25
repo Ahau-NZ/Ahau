@@ -96,3 +96,11 @@ export const LINK_TYPE_PARTNER = 'link/profile-profile/partner'
 
 export const PROFILE_TYPE_PERSON = 'profile/person'
 export const PROFILE_TYPE_ADMIN = 'profile/person/admin'
+
+// mode for the type of remove
+export const IGNORE = 'ignore'
+export const DELETE = 'delete'
+
+export const WHAKAPAPA_TYPE = 'whakapapa/view'
+
+export const WEB_FORM = 'webForm'

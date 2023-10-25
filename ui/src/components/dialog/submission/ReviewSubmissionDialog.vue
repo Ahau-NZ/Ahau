@@ -51,7 +51,7 @@
                       :image="sourceProfile.avatarImage"
                       :alt="sourceProfile.preferredName"
                       :gender="sourceProfile.gender"
-                      :isView="isSourceGroup"
+                      :isView="isSourceGroup || sourceProfile.isView"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -64,28 +64,32 @@
           </v-card>
         </v-col>
 
-        <!-- Header for changes -->
-        <v-col v-if="!isLinkSubmission" :class="headerClass">
-          {{ (isNewRecord || isTombstone) ? t('profileFieldsRequested') : t('changesRequested') }}
-        </v-col>
-
-        <!-- Profile Field (changes) and Select all section -->
-        <FieldList
-          v-if="!isLinkSubmission"
-          :fields="profileFields"
-          :source-profile="sourceProfile"
-          :selected-changes.sync="selectedChanges"
-          :changes="changes"
-          :show-actions="showActions"
-          :is-tombstone="isTombstone"
-          :tribeCustomFields="tribeCustomFields"
-        />
-
         <LinkSubmission
-          v-else
-
+          v-if="isLinkSubmission"
           :submission="notification"
         />
+
+        <WhakapapaViewSubmission
+          v-else-if="isWhakapapaSubmission"
+          :submission="notification"
+        />
+
+        <div v-else>
+          <v-col :class="headerClass">
+            {{ (isNewRecord || isTombstone) ? t('profileFieldsRequested') : t('changesRequested') }}
+          </v-col>
+
+          <!-- Profile Field (changes) and Select all section -->
+          <FieldList
+            :fields="profileFields"
+            :source-profile="sourceProfile"
+            :selected-changes.sync="selectedChanges"
+            :changes="changes"
+            :show-actions="showActions"
+            :is-tombstone="isTombstone"
+            :tribeCustomFields="tribeCustomFields"
+          />
+        </div>
 
         <!-- Family links section -->
         <v-col v-if="dependencies.length" :class="headerClass">
@@ -178,7 +182,7 @@
       <template v-slot:actions>
         <v-col v-if="showActions" cols="12" class="py-0">
           <v-card-text class="row wrap justify-center font-italic font-weight-light text-caption pb-1">
-            {{ t('helpText') }}
+            {{ isWhakapapaSubmission ? t('ignoredHelpText') : t('helpText') }}
           </v-card-text>
         </v-col>
         <v-col class="mx-3 pt-0">
@@ -204,12 +208,17 @@ import Avatar from '@/components/Avatar.vue'
 import SubmissionDependencies from '@/components/submission/SubmissionDependencies.vue'
 import FieldList from '@/components/submission/FieldList.vue'
 import LinkSubmission from '@/components/submission/LinkSubmission.vue'
+import WhakapapaViewSubmission from '@/components/submission/WhakapapaViewSubmission.vue'
 
 import { getTribeCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
-const CHILD_LINK = 'link/profile-profile/child'
-const PARTNER_LINK = 'link/profile-profile/partner'
+import {
+  LINK_TYPE_CHILD,
+  LINK_TYPE_PARTNER,
+  WHAKAPAPA_TYPE,
+  WEB_FORM
+} from '@/lib/constants'
 
 export default {
   name: 'ReviewSubmissionDialog',
@@ -217,7 +226,8 @@ export default {
     Avatar,
     SubmissionDependencies,
     FieldList,
-    LinkSubmission
+    LinkSubmission,
+    WhakapapaViewSubmission
   },
   props: {
     show: { type: Boolean, required: true },
@@ -234,13 +244,16 @@ export default {
   },
   computed: {
     isWebForm () {
-      return this.notification?.source === 'webForm'
+      return this.notification?.source === WEB_FORM
     },
     isTombstone () {
       return Boolean(this.notification?.changes?.tombstone)
     },
     isLinkSubmission () {
-      return this.notification?.targetType === CHILD_LINK || this.notification?.targetType === PARTNER_LINK
+      return this.notification?.targetType === LINK_TYPE_CHILD || this.notification?.targetType === LINK_TYPE_PARTNER
+    },
+    isWhakapapaSubmission () {
+      return this.notification?.targetType === WHAKAPAPA_TYPE
     },
     dependencies () {
       return this.notification?.dependencies || []
@@ -249,7 +262,7 @@ export default {
       return this.dependencies
         .filter(dep => {
           return (
-            dep.targetType === CHILD_LINK &&
+            dep.targetType === LINK_TYPE_CHILD &&
             dep?.details?.parent === null
           )
         })
@@ -258,7 +271,7 @@ export default {
       return this.dependencies
         .filter(dep => {
           return (
-            dep.targetType === CHILD_LINK &&
+            dep.targetType === LINK_TYPE_CHILD &&
             dep?.details?.child === null
           )
         })
@@ -267,12 +280,18 @@ export default {
       return this.dependencies
         .filter(dep => {
           return (
-            dep.targetType === PARTNER_LINK
+            dep.targetType === LINK_TYPE_PARTNER
           )
         })
     },
     submissionTitle () {
       if (this.isTombstone) return this.t('deleteProfileRequest')
+
+      if (this.isWhakapapaSubmission) {
+        return this.isNewRecord
+          ? this.t('createWhakapapaRequest')
+          : this.t('editWhakapapaRequest')
+      }
 
       if (this.isLinkSubmission) {
         return this.isNewRecord
@@ -320,6 +339,14 @@ export default {
       return this.notification?.applicant || {}
     },
     sourceProfile () {
+      if (this.isWhakapapaSubmission) {
+        const whakapapa = this.notification?.sourceRecord
+        return {
+          preferredName: whakapapa.name,
+          avatarImage: whakapapa.image,
+          isView: true
+        }
+      }
       if (this.isLinkSubmission) return this.notification?.group
 
       return this.notification?.sourceRecord || {
@@ -379,11 +406,18 @@ export default {
       return this.notification?.group?.preferredName
     },
     text () {
-      const groupName = this.notification?.group?.preferredName
+      const groupName = this.groupName
 
       if (this.showActions) {
         if (this.isWebForm) {
-          return this.$t('notifications.submission.profile.new.web', { groupName: this.groupName })
+          return this.$t('notifications.submission.profile.new.web', { groupName })
+        }
+
+        if (this.isWhakapapaSubmission) {
+          return this.$t('notifications.submission.ignore.new', {
+            authorName: this.notification?.from?.preferredName,
+            groupName
+          })
         }
 
         if (this.isLinkSubmission) {
@@ -393,7 +427,7 @@ export default {
         return this.$t(`notifications.submission.profile.${this.isTombstone ? 'delete' : 'edit'}`, {
           applicantName: this.applicantProfile?.preferredName,
           profileName: this.sourceProfile?.preferredName,
-          groupName: this.groupName
+          groupName
         })
       }
 
@@ -475,6 +509,7 @@ export default {
       'approveEditGroupPersonSubmission',
       'approveDeleteGroupPersonSubmission',
       'approveWhakapapaLinkSubmission',
+      'approveEditWhakapapaViewSubmission',
       'processWhakapapaLinkSubmission',
       'approveWhakapapaLinkSubmissions',
       'rejectSubmission',
@@ -501,7 +536,7 @@ export default {
         return
       }
 
-      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission) {
+      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission  && !this.isWhakapapaSubmission) {
         this.showAlert({ message: this.t('noChanges'), color: 'red', delay: 10000 })
         return
       }
@@ -526,6 +561,19 @@ export default {
         const selectedDependencies = [...parents, ...children, ...partners]
         await this.approveWhakapapaLinkSubmissions(selectedDependencies)
       } else {
+
+        if (this.isWhakapapaSubmission) {
+          // NOTE: gets rid of the typename field
+          const ignoredProfiles = pick(this.notification?.changes?.ignoredProfiles, ['add', 'remove'])
+    
+          // TODO cherese 2023-09-27 add more fields as they are supported. We only supporting ignoredProfiles at the moment
+          if (this.notification?.sourceRecord?.whakapapaId) output.whakapapaId = this.notification?.sourceRecord?.whakapapaId
+          output.allowedFields = { ignoredProfiles }
+          
+          await this.approveEditWhakapapaViewSubmission(output)
+          this.close()
+          return
+        }
         await this.approveEditGroupPersonSubmission(output)
       }
 

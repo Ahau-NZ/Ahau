@@ -99,7 +99,7 @@ export default function (apollo) {
     showExtendedFamily: state => Boolean(state.view.changes.showExtendedFamily),
     autoCollapse: state => state.view.changes.autoCollapse,
     isLoadingWhakapapa: state => state.loadingCount || state.loadingWhakapapa,
-
+    isOpenWhakapapa: (state) => (whakapapaId) => state.view === whakapapaId,
     findPathToRoot: (_, getters) => (start) => FindPathToRoot(getters)(start),
     pathToRoot: (state, getters, rootState, rootGetters) => {
       const id = rootGetters['tree/searchedProfileId']
@@ -374,6 +374,9 @@ export default function (apollo) {
       // set loadingwhakapapa:true in loadWhakapapaView
       state.loadingWhakapapa = false
     },
+    updateViewInViews (state, view) {
+      Vue.set(state.views, view.id, view)
+    },
     setViewFocus (state, profileId) {
       state.view.changes.focus = profileId
     },
@@ -519,11 +522,12 @@ export default function (apollo) {
     },
     setPath (state, path) {
       state.path = path
-    }
+    },
   }
 
   const actions = {
     resetWhakapapaView ({ commit }) { commit('resetWhakapapaView') },
+    updateViewInViews ({ commit }, view) { commit('updateViewInViews', view) },
     addLinks ({ commit }, links) { commit('addLinks', links) },
     setExtendedFamily ({ commit }, extended) { commit('setExtendedFamily', extended) },
     toggleViewMode ({ commit, dispatch }) { commit('toggleViewMode') },
@@ -610,18 +614,22 @@ export default function (apollo) {
       dispatch('addLinks', { ...links, isLoadingFocus })
     },
 
-    async saveWhakapapaView ({ commit, dispatch, rootGetters, state }, input) {
-      const result = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
-      if (!result) return
+    async saveWhakapapaView ({ commit, dispatch, state }, input) {
+      const { id: whakapapaId } = input
+  
+      if (!whakapapaId) return // no update without an id
+  
+      const updateId = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
+      if (!updateId) return
 
-      const view = await dispatch('getWhakapapaView', result)
+      const view = await dispatch('getWhakapapaView', whakapapaId)
 
       // if updating whakapapa while in whakapapa view
       if (state.view.id) commit('setView', view)
       // else if updating recordCount after leaving whakapapa view
       else state.views[view.id] = view
 
-      return result
+      return whakapapaId
     },
     setView ({ commit }, view) {
       commit('setView', view)
@@ -777,17 +785,20 @@ export default function (apollo) {
 
       // find rules which mention profileId
       await Promise.all(
-        Object.values(state.view.importantRelationships).map(async rule => {
-          const important = [rule.primary, ...rule.other].map(r => r.profileId)
-          if (!important.includes(profileId)) return
+        Object.values(state.view.importantRelationships)
+          .map(async rule => {
+            const important = [rule.primary, ...rule.other]
+              .map(r => r.profileId)
 
-          return dispatch('saveWhakapapaView', {
-            id: state.view.id,
-            importantRelationships: {
-              profileId,
-              important: important.filter(id => id !== profileId)
-            }
-          })
+            if (!important.includes(profileId)) return
+
+            return dispatch('saveWhakapapaView', {
+              id: state.view.id,
+              importantRelationships: {
+                profileId,
+                important: important.filter(id => id !== profileId)
+              }
+            })
           // NOTE this may leave some importantRelationships with not enough "important" links
           // But the getImportantRelationship getter filters out rules which are not useful
         })
