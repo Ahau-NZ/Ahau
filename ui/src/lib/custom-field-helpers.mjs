@@ -1,4 +1,4 @@
-import { orderBy, uniqBy, cloneDeep as clone, isEmpty, isEqual, get } from 'lodash-es'
+import { isEmpty, isEqual, get } from 'lodash-es'
 
 export const DEFAULT_NEW_FIELD = {
   label: '',
@@ -44,29 +44,47 @@ export const REQUIRED_DISABLED_FIELDS = ['description', 'no longer living', 'dat
 // by putting them in order of key, then the first of duplicates will
 // be the only one that is kept
 function getUniqueFields (fields) {
-  return uniqBy(
-    orderBy(fields, ['key'], ['desc']), 'label'
-  )
+  const fieldNames = Array.from(new Set(fields.map(f => f.label)))
+  const fieldsByTime = fields.sort((a, b) => b.key >= a.key ? -1 : +1)
+
+  return fieldNames
+    .map(label => {
+      // find first match which is untombstoned
+      const untombstoned = fieldsByTime.find(f => f.label === label && !f.tombstone)
+      if (untombstoned) return untombstoned
+
+      return fieldsByTime.find(f => f.label === label)
+    })
 }
 
+// default fields, but informed by customFields, which can be used to mutate defaults
 export function getDefaultFields (customFields) {
   const uniqueCustomFields = getUniqueFields(customFields)
 
-  return clone(DEFAULT_PROFILE_MODEL).map(defaultField => {
-    const customDefaultField = uniqueCustomFields.find(customField => customField.label === defaultField.label)
-    if (customDefaultField) {
-      return customDefaultField
-    }
-    return defaultField
-  })
+  return DEFAULT_PROFILE_MODEL
+    .map(defaultField => {
+      // see if there is a custom field definition overidding default
+      const customField = uniqueCustomFields
+        .find(field => field.label === defaultField.label)
+
+      // return that or all back to default
+      return customField || defaultField
+    })
+    // drop the tombstoned ones!
+    .filter(field => !field.tombstone)
 }
 
-export function getCustomFields (rawCustomFields) {
-  const uniqueCustomFields = getUniqueFields(rawCustomFields)
+// custom fields, but excluding fields that are mutating the default fields
+export function getCustomFields (customFields) {
+  const uniqueCustomFields = getUniqueFields(customFields)
 
-  return uniqueCustomFields.filter(customField => {
-    return !clone(DEFAULT_PROFILE_MODEL).some(defaultField => defaultField.label === customField.label)
-  })
+  return uniqueCustomFields
+    .filter(field => (
+      !DEFAULT_PROFILE_MODEL.some(defaultField => defaultField.label === field.label)
+    ))
+    // drop the tombstoned ones!
+    .filter(field => !field.tombstone)
+    .sort((a, b) => b.key >= a.key ? -1 : +1)
 }
 
 export function findMissingRequiredFields (profile, requiredFields) {
@@ -199,7 +217,6 @@ export function getTribeCustomFields (rawTribe, isKaitiaki) {
   const rawCustomFields = getRawCustomFields(rawTribe, isKaitiaki)
 
   return getCustomFields(rawCustomFields)
-    .filter(field => !field.tombstone)
 }
 
 const convertCustomFieldObjectToArray = ([key, value]) => ({ key, value })
