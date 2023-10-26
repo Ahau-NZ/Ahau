@@ -23,7 +23,7 @@ export default function (apollo) {
     },
     adminTribeId: state => state?.currentTribe?.admin?.id,
     currentTribe: state => state.currentTribe,
-    tribeSettings: (state, getters) => {
+    tribeSettings (state, getters) {
       const tribeProfile = getters.tribeProfile
       if (!tribeProfile) return null
 
@@ -33,7 +33,7 @@ export default function (apollo) {
       // arent apart of (public community profiles dont have these fields)
       return pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
     },
-    tribeProfile: (state, getters, rootState) => {
+    tribeProfile (state, getters, rootState) {
       const tribe = state.currentTribe
       if (!tribe) return null
 
@@ -58,7 +58,7 @@ export default function (apollo) {
 
       return null
     },
-    tribeJoiningQuestions: (state, getters) => {
+    tribeJoiningQuestions (state, getters) {
       if (getters.isPersonalTribe) return []
 
       return get(state, 'currentTribe.public[0].joiningQuestions')
@@ -67,7 +67,7 @@ export default function (apollo) {
     /*
      =========== CUSTOM FIELDS =================
     */
-    rawTribeCustomFields: (state, getters, _, rootGetters) => {
+    rawTribeCustomFields (state, getters, _, rootGetters) {
       if (getters.isPersonalTribe) return []
 
       // for admin subgroups, we just use the parent groups custom field definitions
@@ -76,34 +76,31 @@ export default function (apollo) {
     },
     tribeDefaultFields (state, getters) {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => {
-          return (
-            // get rid of kaitiaki-only fields on your personal group
-            !(getters.isPersonalTribe && field.visibleBy === 'admin') &&
-            !field.tombstone
-          )
-        })
+        .filter(field => (
+          // keep fields that are NOT person group, NOT kaitiaki-only
+          !getters.isPersonalTribe ||
+          field.visibleBy !== 'admin'
+        ))
     },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
-        .filter(field => !field.tombstone)
     },
-    tribeRequiredCustomFields: (state, getters) => {
+    tribeRequiredCustomFields (state, getters) {
       return getters.tribeCustomFields
         .filter(field => field.required)
     },
-    tribeRequiredDefaultFields: (state, getters) => {
+    tribeRequiredDefaultFields (state, getters) {
       return getters.tribeDefaultFields
         .filter(field => field.required)
     },
-    tribeRequiredFields: (state, getters) => {
+    tribeRequiredFields (state, getters) {
       return [...getters.tribeRequiredCustomFields, ...getters.tribeRequiredDefaultFields]
     },
     /*
      =========== CUSTOM FIELDS END =================
     */
 
-    tribeKaitiaki: (state, getters) => {
+    tribeKaitiaki (state, getters) {
       const tribe = state.currentTribe
       if (!tribe) return []
       if (getters.isPersonalTribe) return []
@@ -113,7 +110,7 @@ export default function (apollo) {
 
       return profile.kaitiaki
     },
-    tribeMembers: (state, getters) => {
+    tribeMembers (state, getters) {
       const tribe = state.currentTribe
 
       if (!tribe) return []
@@ -122,17 +119,17 @@ export default function (apollo) {
       // get the members of the tribe
       return tribe.members || []
     },
-    tribeProfileId: (_, getters) => {
+    tribeProfileId (_, getters) {
       const profile = getters.tribeProfile
       if (!profile) return null
 
       return profile.id
     },
-    isPersonalTribe: (state, _, rootState) => {
+    isPersonalTribe (state, _, rootState) {
       if (!state.currentTribe) return false
       return state.currentTribe.id === rootState.whoami.personal.groupId
     },
-    parentTribe: (state, getters) => {
+    parentTribe (state, getters) {
       const tribe = state.currentTribe
 
       if (!tribe) return null
@@ -143,7 +140,7 @@ export default function (apollo) {
         return otherTribe.admin && otherTribe.admin.id === tribe.id
       })
     },
-    accessOptions: (state, getters, rootState) => {
+    accessOptions (state, getters, rootState) {
       const tribe = state.currentTribe
 
       if (!tribe) return []
@@ -191,7 +188,7 @@ export default function (apollo) {
     },
     tribes: state => state.tribes,
     joinedTribes: (state, getters) => getters.tribes.filter(tribe => get(tribe, 'private.length') && get(tribe, 'public.length')),
-    customFieldsByTribe: (state, getters) => {
+    customFieldsByTribe (state, getters) {
       return getters.joinedTribes.map(tribe => {
         return {
           tribeId: tribe.id,

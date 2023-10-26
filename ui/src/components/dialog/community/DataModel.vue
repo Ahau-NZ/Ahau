@@ -167,12 +167,12 @@ import { cloneDeep as clone } from 'lodash-es'
 
 import { getCustomFields, getDefaultFields, REQUIRED_DISABLED_FIELDS, DISABLED_DEFAULT_FIELDS } from '@/lib/custom-field-helpers'
 
-const DEFAULT_NEW_FIELD = {
+const buildNewField = () => ({
   label: '',
   type: 'text',
   required: false,
   visibleBy: 'members'
-}
+})
 
 const SINGLE_LIST = 'singleList'
 const MULTI_LIST = 'multiList'
@@ -208,7 +208,7 @@ export default {
       ],
       rules: [value => !!value || 'Required.'],
       currentField: {},
-      newField: clone(DEFAULT_NEW_FIELD)
+      newField: buildNewField()
     }
   },
   mounted () {
@@ -254,12 +254,28 @@ export default {
       return REQUIRED_DISABLED_FIELDS.includes(field.label)
     },
     updateRequiredField (selectedField) {
-      const newField = selectedField
-      if (!newField.key) newField.key = this.generateTimestamp()
-      const index = this.allFields.findIndex(field => field.label === newField.label)
-      const dataFields = this.allFields
-      dataFields[index] = selectedField
-      this.$emit('update:customFields', dataFields)
+      const newCustomFields = clone(this.customFields)
+      const isMatch = (field) => field.label === selectedField.label
+
+      // if is existing customField, mutate that
+      const index = newCustomFields.findIndex(isMatch)
+      const existingField = newCustomFields[index]
+      if (existingField) {
+        newCustomFields[index].required = selectedField.required
+      } // eslint-disable-line
+      else {
+        // otherwise, check if it's an existing defaultField we want to use as a template
+        // (or revert to empty)
+        const existingField = this.defaultFields.find(isMatch) || {}
+
+        newCustomFields.push({
+          key: this.generateTimestamp(),
+          ...clone(existingField),
+          required: selectedField.required
+        })
+      }
+
+      this.$emit('update:customFields', newCustomFields)
     },
     updateNewFieldByType (type) {
       switch (type) {
@@ -278,31 +294,36 @@ export default {
       }
     },
     closeNewFieldDialog () {
-      this.newField = clone(DEFAULT_NEW_FIELD)
+      this.newField = buildNewField()
       this.newFieldDialog = false
     },
     addCustomField () {
-      const index = this.allFields.findIndex(field => field.label === this.newField.label)
-      if (index > -1) {
-        const dataFields = clone(this.allFields)
-        dataFields[index] = this.newField
+      const newCustomFields = clone(this.customFields)
+      const isMatch = (field) => field.label === this.newField.label
 
-        // if it was already tombstoned, we have to create a new key to create a whole new field
-        if (dataFields[index].tombstone) {
-          dataFields[index].tombstone = null
-          dataFields[index].key = this.generateTimestamp()
+      // if is existing customField, mutate that
+      const index = newCustomFields.findIndex(isMatch)
+      const existingField = newCustomFields[index]
+      if (existingField) {
+        newCustomFields[index] = {
+          ...existingField, // already a clone
+          ...clone(this.newField),
+          tombstone: null
         }
+      } // eslint-disable-line
+      else {
+        // otherwise, check if it's an existing defaultField we want to use as a template
+        // (or revert to empty)
+        const existingField = this.defaultFields.find(isMatch) || {}
 
-        if (!dataFields[index].key) dataFields[index].key = this.generateTimestamp()
-
-        this.$emit('update:customFields', dataFields)
-        this.closeNewFieldDialog()
-        return
+        newCustomFields.push({
+          key: this.generateTimestamp(),
+          ...clone(existingField),
+          ...clone(this.newField)
+        })
       }
-      this.newField.key = this.generateTimestamp()
-      const dataFields = clone(this.allFields)
-      dataFields.push(this.newField)
-      this.$emit('update:customFields', dataFields)
+
+      this.$emit('update:customFields', newCustomFields)
       this.closeNewFieldDialog()
     },
     t (key, vars) {
@@ -313,11 +334,34 @@ export default {
       this.deleteFieldDialog = true
     },
     deleteField () {
-      const index = this.allFields.findIndex(field => field.label === this.currentField.label)
-      const dataFields = clone(this.allFields)
-      if (!dataFields[index].key) dataFields[index].key = this.generateTimestamp()
-      dataFields[index].tombstone = { date: Date.now() }
-      this.$emit('update:customFields', dataFields)
+      // mutate the customFields
+      const newCustomFields = clone(this.customFields)
+
+      // if is existing customField, mutate that
+      const index = this.customFields.findIndex(field => field === this.currentField)
+      const existingField = newCustomFields[index]
+      if (existingField) {
+        // if it's already in customFields, away we go!
+        newCustomFields[index] = {
+          ...existingField, // already a clone
+          tombstone: {
+            date: Date.now()
+          }
+        }
+      } // eslint-disable-line
+      else {
+        // if it's not, that means it's probably a defaultField,
+        // so we need to make key for it, and add it to customFields
+        newCustomFields.push({
+          key: this.generateTimestamp(),
+          ...clone(this.currentField),
+          tombstone: {
+            date: Date.now()
+          }
+        })
+      }
+
+      this.$emit('update:customFields', newCustomFields)
       this.deleteFieldDialog = false
     },
     generateTimestamp () {
