@@ -92,7 +92,16 @@ function mac () {
       category: 'public.app-category.social-networking',
       icon: 'build/mac/icon.icns',
       hardenedRuntime: true, // N
-      gatekeeperAssess: false // N
+      gatekeeperAssess: false, // N
+      notarize: {
+        teamId: process.env.APPLE_TEAM_ID
+
+        // NOTE: the following options MUST be specified via ENV to activate notarization step.
+        // It seems electrion-builder doesn't want them entered here as well - they are listed
+        // for context + clarity
+        // appleId: process.env.APPLE_ID,
+        // appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD
+      } // N
       // entitlements: 'build/mac/entitlements.mac.plist', // N
       // entitlementsInherit: 'build/mac/entitlements.mac.plist' // N
     },
@@ -101,8 +110,7 @@ function mac () {
       background: 'build/mac/background.png',
       icon: 'build/mac/dmg-icon.icns',
       sign: false // N
-    },
-    afterSign: 'build/mac/notarize.js' // N
+    }
     // N = this settings requires for Apple notarization
     // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
   }
