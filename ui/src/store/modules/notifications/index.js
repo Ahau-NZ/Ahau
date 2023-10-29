@@ -3,14 +3,16 @@ import { listGroupApplications } from '@/lib/tribes-application-helpers'
 export default function (apollo) {
   const state = {
     applications: [],
-    submissions: [],
     currentNotification: {}
   }
 
   const getters = {
     currentNotification: state => state.currentNotification,
     applications: state => state.applications,
-    submissions: state => state.submissions,
+    submissions: (state, getters, rootState, rootGetters) => {
+      return rootGetters['submissions/submissions']
+        .map(mapSubmissionValues(rootState.whoami))
+    },
     notifications: (state, getters) => {
       return [...getters.applications, ...getters.submissions]
     }
@@ -19,9 +21,6 @@ export default function (apollo) {
   const mutations = {
     updateApplications (state, applications) {
       state.applications = applications
-    },
-    updateSubmissions (state, submissions) {
-      state.submissions = submissions
     },
     updateNotifications (state, notifications) {
       state.notifications = notifications
@@ -32,15 +31,7 @@ export default function (apollo) {
   }
 
   const actions = {
-    async listSubmissions ({ commit, dispatch, rootState: { whoami } }) {
-      const submissions = ((await dispatch('submissions/getSubmissions', null, { root: true }) || []))
-        .map(mapSubmissionValues(whoami))
-
-      commit('updateSubmissions', submissions)
-
-      return submissions
-    },
-    async listGroupApplications ({ commit, rootState: { whoami } }) {
+    async listGroupApplications ({ commit, rootState }) {
       try {
         const res = await apollo.query(
           listGroupApplications()
@@ -51,7 +42,7 @@ export default function (apollo) {
         const { unseen, accepted, declined } = res.data
 
         const applications = [...unseen, ...accepted, ...declined]
-          .map(mapValues(whoami))
+          .map(mapValues(rootState.whoami))
           .filter(n => n.group)
           .reverse()
 
@@ -64,7 +55,7 @@ export default function (apollo) {
     },
     async getAllNotifications ({ dispatch }) {
       await dispatch('listGroupApplications')
-      await dispatch('listSubmissions')
+      await dispatch('submissions/loadSubmissions', null, { root: true })
     },
     setCurrentNotification ({ commit }, notification) {
       commit('updateCurrentNotification', notification)
@@ -111,7 +102,6 @@ function mapValues (whoami) {
   }
 }
 
-// similar to mapValues but for submissions
 function mapSubmissionValues (whoami) {
   return function (submission) {
     const {

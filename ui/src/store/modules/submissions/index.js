@@ -16,12 +16,17 @@ import {
 
 export default function (apollo) {
   const state = {
+    submissions: []
   }
 
   const getters = {
+    submissions: state => state.submissions
   }
 
   const mutations = {
+    updateSubmissions (state, submissions) {
+      state.submissions = submissions
+    }
   }
 
   const actions = {
@@ -185,15 +190,12 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async getSubmissions () {
+    async loadSubmissions ({ commit, dispatch, rootState: { whoami } }) {
       try {
-        const res = await apollo.query(
-          getSubmissions
-        )
-
+        const res = await apollo.query(getSubmissions)
         if (res.errors) throw res.errors
 
-        return res.data.getSubmissions
+        commit('updateSubmissions', res.data.getSubmissions)
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Something went wrong while trying to get all submissions', err)
@@ -336,13 +338,13 @@ export default function (apollo) {
         console.error(message, input.id, err)
       }
     },
-    async tombstoneSubmission ({ dispatch }, id) {
+    async tombstoneSubmission ({ state, commit, dispatch }, id) {
       try {
-        const res = await apollo.mutate(
-          tombstoneSubmission(id)
-        )
+        const res = await apollo.mutate(tombstoneSubmission(id))
         if (res.errors) throw res.errors
 
+        const newSubmissions = state.submissions.filter(s => s.id !== id)
+        commit('updateSubmissions', newSubmissions)
         dispatch('alerts/showMessage', 'The submission was deleted', { root: true })
       } catch (err) {
         const message = 'Something went wrong while trying to delete the submission'

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!tempHide">
+  <div>
     <v-list-item class="py-1" @click="$emit('click')">
       <Avatar
         size="50px"
@@ -48,11 +48,6 @@ export default {
   },
   components: {
     Avatar
-  },
-  data () {
-    return {
-      tempHide: false
-    }
   },
   computed: {
     bold () {
@@ -161,9 +156,6 @@ export default {
       if (!confirm(this.t('submission.archiveConfirmation'))) return
 
       await this.tombstoneSubmission(this.notification.id) // the submissionId
-
-      // temporarily hide this component until it is tombstoned and removed from the list automatically
-      this.tempHide = true
     },
     t (key, vars) {
       return this.$t('notifications.' + key, vars)
