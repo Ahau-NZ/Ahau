@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!tempHide">
     <v-list-item class="py-1" @click="$emit('click')">
       <Avatar
         size="50px"
@@ -15,12 +15,21 @@
           :class="`text-caption ${bold}`"
         >{{ text }}</v-list-item-subtitle>
       </v-list-item-content>
+      <v-list-item-action v-if="notificationType === 'submission'">
+        <v-btn text icon @click.stop="deleteSubmission">
+          <v-icon>
+            mdi-archive
+          </v-icon>
+        </v-btn>
+      </v-list-item-action>
     </v-list-item>
     <v-divider></v-divider>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import Avatar from '@/components/Avatar.vue'
 import {
   LINK_TYPE_PARTNER,
@@ -39,6 +48,11 @@ export default {
   },
   components: {
     Avatar
+  },
+  data () {
+    return {
+      tempHide: false
+    }
   },
   computed: {
     bold () {
@@ -142,6 +156,14 @@ export default {
     }
   },
   methods: {
+    ...mapActions('submissions', ['tombstoneSubmission']),
+    async deleteSubmission () {
+      if (!confirm('Are you sure you want to archive this submission?')) return
+
+      await this.tombstoneSubmission(this.notification.id) // the submissionId
+      // temporarily hide this component until it is tombstoned and removed from the list
+      this.tempHide = true
+    },
     t (key, vars) {
       return this.$t('notifications.' + key, vars)
     }
