@@ -36,6 +36,7 @@
     "declined": "Has been declined to join {groupName}"
   },
   "submission": {
+    "archiveConfirmation": "Are you sure you want to archive this submission?",
     "profile": {
       "new": {
         "title": "Registration request from {from}",

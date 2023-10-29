@@ -158,10 +158,11 @@ export default {
   methods: {
     ...mapActions('submissions', ['tombstoneSubmission']),
     async deleteSubmission () {
-      if (!confirm('Are you sure you want to archive this submission?')) return
+      if (!confirm(this.t('submission.archiveConfirmation'))) return
 
       await this.tombstoneSubmission(this.notification.id) // the submissionId
-      // temporarily hide this component until it is tombstoned and removed from the list
+
+      // temporarily hide this component until it is tombstoned and removed from the list automatically
       this.tempHide = true
     },
     t (key, vars) {
