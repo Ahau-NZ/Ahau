@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.25.1
+
+### Patches
+
+- fixed dependencies that were blocking esbuild
+
 ## v2.25.0
 
 ### Features
