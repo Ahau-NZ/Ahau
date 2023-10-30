@@ -8,22 +8,27 @@
     },
     "submission": {
       "profile": {
-        "new": "Your submission to create a new profile in {groupName} is pending",
-        "edit": "Your submission to edit a profile in {groupName} is pending",
-        "declined": "Your submission to create/edit a profile has been declined",
-        "accepted": "Your submission to create/edit a profile has been accepted"
+        "new": "Tu envío para crear un nuevo perfil en {groupName} está pendiente",
+        "edit": "Tu envío para editar un perfil en {groupName} está pendiente",
+        "declined": "Su envío para crear/editar un perfil ha sido rechazado",
+        "accepted": "Su envío para crear/editar un perfil ha sido aceptado"
       },
       "link": {
         "partner": {
-          "new": "Your submission to link a partner in {groupName} is pending",
-          "accepted": "Your submission to link a partner has been approved",
-          "declined": "Your submission to link a partner has been declined"
+          "new": "Tu envío para vincular a un socio en {groupName} está pendiente",
+          "accepted": "Su envío para vincular a un socio ha sido aprobado",
+          "declined": "Su envío para vincular a un socio ha sido rechazado"
         },
         "child": {
-          "new": "Your submission to link a child in {groupName} is pending",
-          "accepted": "Your submission to link a child has been approved",
-          "declined": "Your submission to link a child has been declined"
+          "new": "Tu envío para vincular a un niño en {groupName} está pendiente",
+          "accepted": "Su envío para vincular a un hijo ha sido aprobado",
+          "declined": "Su envío para vincular a un niño ha sido rechazado"
         }
+      },
+      "ignore": {
+        "new": "Tu envío para ocultar una persona en {groupName} está pendiente",
+        "accepted": "Tu envío para ocultar a una persona en {groupName} ha sido aprobado",
+        "declined": "Tu envío para ocultar a una persona en {groupName} ha sido rechazado"
       },
       "new": "Su envío a {groupName} está pendiente",
       "accepted": "Su envío a {groupName} ha sido aceptado",
@@ -38,34 +43,39 @@
   "submission": {
     "profile": {
       "new": {
-        "title": "Registration request from {from}",
-        "web": "Received a request to register with {groupName} via the web registration form",
-        "ahau": "Received a request to create a profile in {groupName}"
+        "title": "Solicitud de registro de {from}",
+        "web": "Se ha recibido una solicitud para registrarse con {groupName} a través del formulario de registro web",
+        "ahau": "Recibida una solicitud para crear un perfil en {groupName}"
       },
-      "edit": "Received a request to edit {profileName} in {groupName}",
-      "delete": "Received a request to delete a profile in {groupName}",
-      "accepted": "This submission to create a profile has been approved",
-      "declined": "This submission to create a profile has been declined"
+      "edit": "Recibida una solicitud para editar {profileName} en {groupName}",
+      "delete": "Recibida una solicitud para eliminar un perfil en {groupName}",
+      "accepted": "Este envío para crear un perfil ha sido aprobado",
+      "declined": "Este envío para crear un perfil ha sido rechazado"
     },
     "link": {
       "partner": {
-        "new": "Received a request from {authorName} to link a partner in {groupName}",
-        "accepted": "This submission to link a partner has been approved",
-        "declined": "This submission to link a partner has been declined"
+        "new": "Recibida una solicitud de {authorName} para vincular a un socio en {groupName}",
+        "accepted": "Este envío para vincular a un socio ha sido aprobado",
+        "declined": "Este envío para vincular a un socio ha sido rechazado"
       },
       "child": {
-        "new": "Received a request from {authorName} to link a child in {groupName}",
-        "accepted": "This submission to link a child has been approved",
-        "declined": "This submission to link a child has been declined"
+        "new": "Recibió una solicitud de {authorName} para vincular a un niño en {groupName}",
+        "accepted": "Este envío para vincular a un hijo ha sido aprobado",
+        "declined": "Este envío para vincular a un hijo ha sido rechazado"
       },
-      "new": "Received a request to create a whakapapa link in {groupName}"
+      "new": "Se ha recibido una solicitud para crear un enlace whakapapa en {groupName}"
+    },
+    "ignore": {
+      "new": "Recibió una solicitud de {authorName} para ocultar a una persona en {groupName}",
+      "accepted": "Este envío para ocultar un perfil en {groupName} ha sido aprobado",
+      "declined": "Este envío para ocultar un perfil en {groupName} ha sido rechazado"
     },
     "new": "Ha enviado un cambio a {groupName}",
     "accepted": "Su envío a {groupName} ha sido aceptado",
     "declined": "Su presentación a {groupName} ha sido rechazada ",
-    "review": "Your submission is pending",
+    "review": "Su envío está pendiente",
     "delete": {
-      "review": "Your submission to delete this profile is pending"
+      "review": "Su envío para eliminar este perfil está pendiente"
     }
   },
   "systemTitle": "Sistema",

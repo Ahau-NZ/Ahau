@@ -37,6 +37,8 @@
     "deleteProfileRequest": "Review request to delete a profile",
     "createLinkRequest": "Review request to create a new link",
     "editLinkRequest": "Review request to edit a new link",
+    "createWhakapapaRequest": "Review request to create a family tree",
+    "editWhakapapaRequest": "Review request to edit a family tree",
     "submission": {
         "profile": {
             "new": {
@@ -71,5 +73,8 @@
     "children": "Children",
     "partners": "Partners",
     "family": "Family",
-    "helpText": "Approving this submission will result in profile(s) and/or link(s) being created"
+    "helpText": "Approving this submission will result in profile(s) and/or link(s) being created",
+    "ignoredHelpText": "Approving this submission will result in the profile(s) listed being hidden in the family tree above",
+    "hideProfileText": " Hide this profile from the {whakapapaName} (family tree)",
+    "unsupported": "Unsupported Content"
 }

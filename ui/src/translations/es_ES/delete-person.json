@@ -1,24 +1,55 @@
 {
-  "title": "Eliminar {preferredName}",
-  "deleteLabel": "borrar",
   "cancel": "cancelar",
   "whakapapaShow": {
-    "hideProfile": "Ocultar este perfil de este registro de whakapapa",
-    "deleteProile": "Eliminar este perfil de todos los registros whakapapa",
-    "deleteConfirmation": " ¿Está seguro que desea eliminar este perfil de este registro whakapapapa?",
-    "hideConfirmation": "¿Está seguro que desea ocultar este perfil de este registro whakapapapa?",
+    "title": {
+      "delete": "Eliminar {name}",
+      "ignore": "Ocultar {name}"
+    },
+    "options": {
+      "ignore": "Ocultar este perfil de este registro de whakapapa",
+      "delete": "Eliminar este perfil de todos los registros whakapapa"
+    },
+    "confirmation": {
+      "delete": "¿Está seguro que desea eliminar este perfil de este registro whakapapapa?",
+      "ignore": "¿Está seguro que desea ocultar este perfil de este registro whakapapapa?"
+    },
+    "buttonLabel": {
+      "delete": "borrar",
+      "ignore": "ocultar"
+    },
     "warnAboutChildren": "Esto también eliminará todos los hijos conectados del registro whakapapapa."
   },
   "personIndex": {
-    "deleteConfirmation": "¿Está seguro que desea eliminar este perfil?",
-    "warnAboutChildren": "Esto también eliminará todos los hijos conectados de todos los registros whakapapa a los que este perfil está vinculado."
+    "title": {
+      "delete": "Eliminar {name}"
+    },
+    "confirmation": {
+      "delete": "¿Está seguro que desea eliminar este perfil?"
+    },
+    "warnAboutChildren": "Esto también eliminará todos los hijos conectados de todos los registros whakapapa a los que este perfil está vinculado.",
+    "buttonLabel": {
+      "delete": "borrar"
+    }
   },
   "submission": {
-    "title": "Submit proposal to delete {preferredName}",
-    "deleteLabel": "enviar",
-    "deleteConfirmation": "Are you sure you want to send a submission to the kaitiaki of this tribe to delete this profile from this whakapapa record?",
+    "title": {
+      "delete": "Enviar propuesta para eliminar {name}",
+      "ignore": "Enviar propuesta para ocultar {name}"
+    },
+    "options": {
+      "ignore": "Ocultar este perfil de este registro de whakapapa",
+      "delete": "Eliminar este perfil de todos los registros whakapapa"
+    },
+    "buttonLabel": {
+      "delete": "enviar",
+      "ignore": "enviar"
+    },
+    "confirmation": {
+      "delete": "¿Está seguro de que desea enviar un envío al kaitiaki de esta tribu para eliminar este perfil de este registro whakapapapa?",
+      "ignore": "¿Está seguro de que desea enviar un envío al kaitiaki de esta tribu para ocultar este perfil de este registro whakapapapa?"
+    },
     "warnAboutChildren": "Once accepted by the kaitiaki, this will also remove all connect children from the whakapapa record.",
-    "comment": "Comment (optional)",
-    "commentText": "Send a comment with your submission"
+    "comment": "Comentario (opcional)",
+    "commentText": "Enviar un comentario con su envío"
   }
 }
