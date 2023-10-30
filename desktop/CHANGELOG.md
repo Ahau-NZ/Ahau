@@ -1,5 +1,27 @@
 # Changelog | Ahau desktop
 
+## v2.25.0
+
+### Features
+
+- submissions for proposing profiles to be ignored from a whakapapa
+
+
+### Updates
+
+- `ssb-friends` updated - fixes initial sync
+- `electron` upgraded to version 26
+- `electron-builder` updated
+  - NOTE change in ENV vars for Mac
+- `secret-stack` updated to version 7
+- replaced `noderify` with `esbuild`
+- translations updated
+
+
+### Patches
+
+- refactored tribe data field editing to be cleaner
+
 ## v2.24.1
 
 ### Bug Fix
