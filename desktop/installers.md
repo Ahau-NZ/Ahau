@@ -21,14 +21,14 @@
   5. create two new certificate, one for **Developer ID Application** and one for **Developer ID Installer**
       > NOTE: you might need to jump through CSR (code signing request) hoops at this point
   6. Download the certificates and click on them to install them in your keychain
-- a `desktop/electron-builder.env` file with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g:
+- a `desktop/electron-builder.env` file with environment variables `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` for notarization, e.g:
 
     ```
     APPLE_ID=name@company.com
-    APPLE_ID_PASS=asdl-tyan-osla-ttyb
+    APPLE_APP_SPECIFIC_PASSWORD=asdl-tyan-osla-ttyb
     APPLE_TEAM_ID=Z4E9R3WFQQ
     ```
-    - `APPLE_ID_PASS` is an application specific password created from your `APPLE_ID` see [here](https://support.apple.com/en-nz/HT204397#:~:text=How%20to%20generate%20an%20app%2Dspecific%20password)
+    - `APPLE_APP_SPECIFIC_PASSWORD` is an application specific password created from your `APPLE_ID` see [here](https://support.apple.com/en-nz/HT204397#:~:text=How%20to%20generate%20an%20app%2Dspecific%20password)
     - `APPLE_TEAM_ID` is the team ID you want to notarize under, you can find this by logging into your [Apple Developer Account](https://developer.apple.com/account/) and it should  be listed
   
 
