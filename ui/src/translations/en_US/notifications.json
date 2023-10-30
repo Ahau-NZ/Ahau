@@ -25,6 +25,11 @@
           "declined": "Your submission to link a child has been declined"
         }
       },
+      "ignore": {
+        "new": "Your submission to hide a person in {groupName} is pending",
+        "accepted": "Your submission to hide a person in {groupName} has been approved",
+        "declined": "Your submission to hide a person in {groupName} has been declined"
+      },
       "new": "Your submission to {groupName} is pending",
       "accepted": "Your submission to {groupName} has been accepted",
       "declined": "Your submission to {groupName} has been declined"
@@ -58,7 +63,12 @@
         "accepted": "This submission to link a child has been approved",
         "declined": "This submission to link a child has been declined"
       },
-      "new": "Received a request to create a whakapapa link in {groupName}"
+      "new": "Received a request to create a genealogy link in {groupName}"
+    },
+    "ignore": {
+      "new": "Received a request from {authorName} to hide a person in {groupName}",
+      "accepted": "This submission to hide a profile in {groupName} has been approved",
+      "declined": "This submission to hide a profile in {groupName} has been declined"
     },
     "new": "Has submitted a change to {groupName}",
     "accepted": "This submission to {groupName} has been accepted",

@@ -30,46 +30,51 @@
     "comments": "comentários",
     "close": "FECHAR",
     "message": "Enviar uma mensagem",
-    "profileFieldsRequested": "Profile fields:",
-    "changesRequested": "Profile field changes:",
-    "createProfileRequest": "Review request to create a new profile",
-    "editProfileRequest": "Review request to edit a profile",
-    "deleteProfileRequest": "Review request to delete a profile",
-    "createLinkRequest": "Review request to create a new link",
-    "editLinkRequest": "Review request to edit a new link",
+    "profileFieldsRequested": "Campos de perfil:",
+    "changesRequested": "Alterações no campo do perfil:",
+    "createProfileRequest": "Revise a solicitação para criar um novo perfil",
+    "editProfileRequest": "Revise a solicitação para editar um perfil",
+    "deleteProfileRequest": "Revise a solicitação para excluir um perfil",
+    "createLinkRequest": "Revise a solicitação para criar um novo link",
+    "editLinkRequest": "Revise a solicitação para editar um novo link",
+    "createWhakapapaRequest": "Revise a solicitação para criar uma whakapa",
+    "editWhakapapaRequest": "Revise a solicitação para editar uma apa",
     "submission": {
         "profile": {
             "new": {
-                "web": "Received a request to create a new profile in {groupName} via the web registration form",
-                "ahau": "Received a request to create a profile in {groupName}"
+                "web": "Recebemos uma solicitação para criar um novo perfil no {groupName} através do formulário de registro web",
+                "ahau": "Recebeu um pedido para criar um perfil no {groupName}"
             },
-            "edit": "{applicantName} has requested to edit {profileName} in the {groupName} (tribe)",
-            "delete": "{applicantName} has requested to delete {profileName} in the {groupName} (tribe)"
+            "edit": "{applicantName} pediu para editar {profileName} no {groupName} (tribo)",
+            "delete": "{applicantName} solicitou a exclusão de {profileName} no {groupName} (tribo)"
         },
-        "new": "A submission has been received from {applicantName} to edit {sourceName}",
-        "accepted": "This submission has been reviewed and was accepted",
-        "rejected": "This submission has been reviewed and was rejected",
-        "review": "This submission is waiting to be reviewed"
+        "new": "Uma submissão do {applicantName} foi recebida para editar {sourceName}",
+        "accepted": "Esta submissão foi revisada e aceita",
+        "rejected": "Esta submissão foi revisada e rejeitada",
+        "review": "Este envio está aguardando análise"
     },
-    "noChanges": "You must select atleast one profile field to approve this submission",
+    "noChanges": "Você deve selecionar pelo menos um campo de perfil para aprovar esta submissão",
     "newField": "{fieldName}: {fieldValue}",
-    "changedField": "Changed {fieldName} to {fieldValue}",
+    "changedField": "Alterado {fieldName} para {fieldValue}",
     "altNameChanges": {
-        "add": "alternative name (added): {name}",
-        "remove": "alternative name (removed): {name}"
+        "add": "nome alternativo (adicionado): {name}",
+        "remove": "nome alternativo (removido): {name}"
     },
-    "deleteSubmission": "Delete this Submission",
-    "addedPicture": "Added new profile picture:",
-    "changedPicture": "Changed profile picture:",
-    "userDeceased": "no longer living: {value}",
+    "deleteSubmission": "Excluir esta submissão",
+    "addedPicture": "Adicionada nova imagem de perfil:",
+    "changedPicture": "Imagem do perfil alterada:",
+    "userDeceased": "não está vivencido: {value}",
     "answers": "Respostas à pergunta",
-    "selectAll": "Select all",
-    "unselectAll": "Unselect all",
-    "saveComment": "Save a comment",
-    "reviewInfo": "Select the profile information you would like to save ",
+    "selectAll": "Selecionar todos",
+    "unselectAll": "Desmarcar todos",
+    "saveComment": "Salvar um comentário",
+    "reviewInfo": "Selecione as informações de perfil que você deseja salvar ",
     "parents": "Pais",
     "children": "Crianças",
     "partners": "Parceiros",
-    "family": "Family",
-    "helpText": "Approving this submission will result in profile(s) and/or link(s) being created"
+    "family": "Familiares",
+    "helpText": "Aprovar esta submissão irá resultar em perfil(s) e/ou link(s) sendo criados",
+    "ignoredHelpText": "Aprovar esta submissão fará com que os perfis listados sejam ocultados em whakapa acima",
+    "hideProfileText": " Ocultar este perfil do {whakapapaName} (whakapapa)",
+    "unsupported": "Conteúdo não suportado"
 }

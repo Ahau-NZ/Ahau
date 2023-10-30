@@ -1,7 +1,7 @@
 {
   "helpText": {
-    "child": "Add {childName}  as a {type} to {parentName}, related by {relatedBy}",
-    "partner": "Add {childName} as a {type} to {parentName}>"
+    "child": "Adicionar {childName}  como {type} para {parentName}, relacionado por {relatedBy}",
+    "partner": "Adicionar {childName} como {type} para {parentName}>"
   },
-  "ignoredPersonText": "<strong>{name}</strong> has been hidden, approving this submission will un-hide them from the following whakapapa in this tribe: <br><br> <strong>{views}</strong>"
+  "ignoredPersonText": "<strong>{name}</strong> foi escondido, aprovando esta submissão irá reocultá-la do seguinte whakapa nesta tribo: <br><br> <strong>{views}</strong>"
 }
