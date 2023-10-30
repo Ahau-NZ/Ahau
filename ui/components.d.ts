@@ -224,5 +224,6 @@ declare module 'vue' {
     WhakapapaTableHelper: typeof import('./src/components/dialog/whakapapa/WhakapapaTableHelper.vue')['default']
     WhakapapaViewCard: typeof import('./src/components/whakapapa/WhakapapaViewCard.vue')['default']
     WhakapapaViewDialog: typeof import('./src/components/dialog/whakapapa/WhakapapaViewDialog.vue')['default']
+    WhakapapaViewSubmission: typeof import('./src/components/submission/WhakapapaViewSubmission.vue')['default']
   }
 }

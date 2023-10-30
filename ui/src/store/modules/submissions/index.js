@@ -4,6 +4,7 @@ import {
   proposeNewGroupPerson,
   proposeEditGroupPerson,
   proposeTombstone,
+  proposeEditWhakapapaView,
   getSubmissions,
   approveEditGroupPersonSubmission,
   rejectSubmission,
@@ -13,6 +14,10 @@ import {
   approveSubmission,
   approveNewWhakapapaLink
 } from './apollo-helpers'
+
+import {
+  saveWhakapapaView
+} from '../whakapapa/lib/apollo-helpers.mjs'
 
 export default function (apollo) {
   const state = {
@@ -77,7 +82,7 @@ export default function (apollo) {
         console.error(message, err)
       }
     },
-    async proposeDeleteGroupPerson ({ dispatch, rootGetters }, { profileId, comment, groupId }) {
+    async proposeDeleteGroupPerson ({ dispatch, rootGetters }, { profileId, comment }) {
       try {
         if (!profileId) throw new Error('a profile id is required to create a submission to delete the profile')
 
@@ -97,6 +102,33 @@ export default function (apollo) {
         return res.data.proposeTombstone
       } catch (err) {
         const message = 'Something went wrong while trying to create a submission to delete the profile'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, err)
+      }
+    },
+    async proposeEditWhakapapaView ({ dispatch, rootGetters }, { whakapapaId, input, comment }) {
+      try {
+        if (!whakapapaId) throw new Error('a whakapapa view id is required to create a submission to update a whakapapa view')
+
+        const res = await apollo.mutate(
+          proposeEditWhakapapaView({
+            whakapapaId,
+            input,
+            comment,
+            groupId: rootGetters['tribe/tribeId']
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'Submitted for review', { root: true })
+
+        // submissionId
+        return res.data.proposeEditWhakapapaView
+      } catch (err) {
+        const message = 'Something went wrong while trying to create a submission to edit a whakapapa view'
         dispatch('alerts/showError', message, { root: true })
 
         // eslint-disable-next-line no-console
@@ -125,13 +157,15 @@ export default function (apollo) {
 
       function unignoreFromViews (profileId, views) {
         return Promise.all(
-          views.map(view => {
-            return dispatch('whakapapa/saveWhakapapaView', {
+          views.map(async view => {
+            await dispatch('whakapapa/saveWhakapapaView', {
               id: view.id,
               ignoredProfiles: {
                 remove: [profileId]
               }
             }, { root: true })
+
+            return view.id
           })
         )
       }
@@ -302,6 +336,59 @@ export default function (apollo) {
           })
         })
       )
+    },
+    async approveEditWhakapapaViewSubmission ({ dispatch }, input) {
+      const {
+        id: submissionId,
+        comment,
+
+        whakapapaId,
+        allowedFields
+      } = input
+
+      try {
+        const whakapapaInput = {
+          id: whakapapaId,
+
+          // NOTE: this only supports ignored fields at the moment
+          ...allowedFields
+        }
+        // TODO: Cherese 4/10/23 there is a bug with using this method directly.
+        // The bug: not saving the ignored profile changes, i wasnt able to reproduce it in a test
+        // rather than spending more time debugging, we will just manually execute the
+        // submission (save the whakapapa) and manually approve by passing the updateId (targetId)
+        // const res = await apollo.mutate(
+        //   approveEditWhakapapaViewSubmission(input)
+        // )
+
+        // NOTE: not using the helper in store/whakapapa because it reloads the whakapapa which will fail
+        const whakapapaUpdateId = await apollo.niceMutation(dispatch, saveWhakapapaView(whakapapaInput))
+        await dispatch('approveSubmission', {
+          id: submissionId,
+          comment,
+          targetId: whakapapaUpdateId
+        })
+
+        const view = await dispatch('whakapapa/getWhakapapaView', whakapapaId, { root: true })
+
+        // if updating whakapapa while in whakapapa view
+        dispatch('whakapapa/updateViewInViews', view, { root: true })
+        await dispatch('whakapapa/loadWhakapapaView', whakapapaId, { root: true })
+
+        // TODO: change this help text when we add support to add/edit whakapapa views
+        // for now we only supports ignoring a profile
+        dispatch('alerts/showMessage', 'The submission was approved and the profile was hidden', { root: true })
+
+        return submissionId
+      } catch (err) {
+        dispatch('whakapapa/setForceReload', false, { root: true })
+
+        const message = 'Something went wrong while trying to approve the submission'
+        dispatch('alerts/showError', message, { root: true })
+
+        // eslint-disable-next-line no-console
+        console.error(message, input.id, err)
+      }
     },
     async approveSubmission (_, input) {
       const { id } = input

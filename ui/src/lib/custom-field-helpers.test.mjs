@@ -58,6 +58,126 @@ test('getDefaultFields + getCustomFields (empty)', t => {
   t.end()
 })
 
+test('getDefaultFields (non-empty)', t => {
+  const customFields = [
+    {
+      key: '1690502653223',
+      label: 'A',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    },
+    {
+      key: '1690502659077',
+      label: 'B',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    }
+  ]
+
+  t.deepEqual(
+    getDefaultFields(customFields),
+    DEFAULT_PROFILE_MODEL,
+    'works with untombstoned customFields'
+  )
+
+  customFields[0].tombstone = { date: Date.now() }
+  t.deepEqual(
+    getDefaultFields(customFields),
+    DEFAULT_PROFILE_MODEL,
+    'works with tombstoned customFields'
+  )
+  customFields[1].tombstone = { date: Date.now() }
+  t.deepEqual(
+    getDefaultFields(customFields),
+    DEFAULT_PROFILE_MODEL,
+    'works with tombstoned customFields'
+  )
+
+  t.end()
+})
+
+test('getDefaultFields (tombstone a default field)', t => {
+  const label = 'birth order'
+  t.true(
+    DEFAULT_PROFILE_MODEL.find(f => f.label === label),
+    label + ' is a default field'
+  )
+  const customFields = [
+    {
+      key: '1657665746447',
+      label,
+      required: true,
+      type: 'text',
+      visibleBy: 'members',
+      tombstone: {
+        date: new Date()
+      }
+    }
+  ]
+
+  t.deepEqual(
+    getDefaultFields(customFields).find(field => field.label === label),
+    undefined,
+    'can tombstone that default field'
+  )
+
+  t.end()
+})
+
+test('getDefaultFields (duplicate field label, one active)', t => {
+  const customFields = [
+    {
+      key: '1657665746445',
+      label: 'full name',
+      required: true,
+      type: 'text',
+      visibleBy: 'members',
+      tombstone: {
+        date: new Date()
+      }
+    },
+    {
+      key: '1657665746447',
+      label: 'full name',
+      required: true,
+      type: 'text',
+      visibleBy: 'members',
+      tombstone: null // << the active one!
+    },
+    {
+      key: '1657665746449',
+      label: 'full name',
+      required: true,
+      type: 'text',
+      visibleBy: 'members',
+      tombstone: {
+        date: new Date()
+      }
+    }
+  ]
+
+  t.deepEqual(
+    getDefaultFields(customFields).find(field => field.label === 'full name'),
+    {
+      key: '1657665746447',
+      label: 'full name',
+      required: true,
+      type: 'text',
+      visibleBy: 'members',
+      tombstone: null // << the active one!
+    },
+    'returns the default fields that isnt a tombstone, removing duplicate labels'
+  )
+
+  t.end()
+})
+
 test('getCustomFields', t => {
   const customFields = [
     { // default one
@@ -76,12 +196,14 @@ test('getCustomFields', t => {
     }
   ]
 
-  const defaultFields = DEFAULT_PROFILE_MODEL
-  defaultFields[1] = customFields[0]
+  // MUTATING CONST
+  const originalField = DEFAULT_PROFILE_MODEL[1]
+  DEFAULT_PROFILE_MODEL[1] = customFields[0]
+  // makes the second default field "full name" instead of "first name"
 
   t.deepEqual(
     getDefaultFields(customFields).map(f => f.label),
-    defaultFields.map(f => f.label),
+    DEFAULT_PROFILE_MODEL.map(f => f.label),
     'returns all the default field labels including the one that was updated'
   )
 
@@ -90,27 +212,73 @@ test('getCustomFields', t => {
     [
       customFields[1]
     ],
-    'returns the custom fields from a set containing both custom and default custom ones'
+    'returns the custom fields from a set containing both custom fields + default (mutated) fields'
+  )
+
+  // REVERSING MUTATION
+  DEFAULT_PROFILE_MODEL[1] = originalField
+
+  t.end()
+})
+
+// this test may be a repeat of the test above it :shrugs:
+test('getCustomFields (non-empty)', t => {
+  const customFields = [
+    {
+      key: '1690502653223',
+      label: 'A',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    },
+    {
+      key: '1690502659077',
+      label: 'B',
+      type: 'text',
+      required: false,
+      visibleBy: 'members',
+      tombstone: null,
+      __typename: 'CommunityCustomField'
+    }
+  ]
+
+  t.deepEqual(
+    getCustomFields(customFields),
+    customFields,
+    'works with untombstoned customFields'
+  )
+
+  customFields[0].tombstone = { date: Date.now() }
+  t.deepEqual(
+    getCustomFields(customFields),
+    [customFields[1]],
+    'works with tombstoned customFields'
+  )
+
+  customFields[1].tombstone = { date: Date.now() }
+  t.deepEqual(
+    getCustomFields(customFields),
+    [],
+    'works with tombstoned customFields'
   )
 
   t.end()
 })
 
-test('getDefaultFields', t => {
+test('getCustomFields (orders by key)', t => {
   const customFields = [
     {
-      key: '1657665746445',
-      label: 'full name',
+      key: '1746666455457', // later
+      label: 'favourate song',
       required: true,
       type: 'text',
-      visibleBy: 'members',
-      tombstone: {
-        date: new Date()
-      }
+      visibleBy: 'members'
     },
     {
-      key: '1657665746447',
-      label: 'full name',
+      key: '1657665746445', // earlier
+      label: 'favourate band',
       required: true,
       type: 'text',
       visibleBy: 'members'
@@ -118,15 +286,9 @@ test('getDefaultFields', t => {
   ]
 
   t.deepEqual(
-    getDefaultFields(customFields).find(field => field.label === 'full name'),
-    {
-      key: '1657665746447',
-      label: 'full name',
-      required: true,
-      type: 'text',
-      visibleBy: 'members'
-    },
-    'returns the default fields that isnt a tombstone, removing duplicate labels'
+    getCustomFields(customFields).map(f => f.label),
+    ['favourate band', 'favourate song'],
+    'returns customFields in order of keys (asserted datetime created)'
   )
 
   t.end()

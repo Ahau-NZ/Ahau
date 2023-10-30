@@ -50,7 +50,7 @@
       :profile="selectedProfile"
       :submit-only="isSubmitOnly"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== focus"
-      @submit="isSubmitOnly ? submitDeletePerson($event) : removeProfile($event)"
+      @submit="isSubmitOnly ? submitRemovePerson($event) : removeProfile($event)"
       @close="close"
     />
     <WhakapapaViewDialog
@@ -123,7 +123,9 @@ import {
   LINK_TYPE_CHILD,
   LINK_TYPE_PARTNER,
   LINK_CHILD,
-  LINK_PARENT
+  LINK_PARENT,
+  DELETE
+  // IGNORE
 } from '@/lib/constants'
 
 export default {
@@ -250,6 +252,7 @@ export default {
       'proposeNewGroupPerson',
       'proposeDeleteGroupPerson',
       'proposeNewWhakapapaLink',
+      'proposeEditWhakapapaView',
       'createSubmissionsLink'
     ]),
     isActive (type) {
@@ -554,9 +557,22 @@ export default {
           console.error('wrong type for add person')
       }
     },
-    async submitDeletePerson (comment) {
-      await this.proposeDeleteGroupPerson({
-        profileId: this.selectedProfile.id,
+    async submitRemovePerson ({ action, comment }) {
+      if (action === DELETE) {
+        return this.proposeDeleteGroupPerson({
+          profileId: this.selectedProfile.id,
+          comment
+        })
+      }
+
+      // action === IGNORE
+      return this.proposeEditWhakapapaView({
+        whakapapaId: this.$route.params.whakapapaId,
+        input: {
+          ignoredProfiles: {
+            add: [this.selectedProfile.id]
+          }
+        },
         comment
       })
     },

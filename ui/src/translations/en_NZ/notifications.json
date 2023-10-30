@@ -25,6 +25,11 @@
           "declined": "Your submission to link a child has been declined"
         }
       },
+      "ignore": {
+        "new": "Your submission to hide a person in {groupName} is pending",
+        "accepted": "Your submission to hide a person in {groupName} has been approved",
+        "declined": "Your submission to hide a person in {groupName} has been declined"
+      },
       "new": "Your submission to {groupName} is pending",
       "accepted": "Your submission to {groupName} has been accepted",
       "declined": "Your submission to {groupName} has been declined"
@@ -49,20 +54,25 @@
     },
     "link": {
       "partner": {
-        "new": "You have received a request from {authorName} to link a partner in {groupName}",
+        "new": "Received a request from {authorName} to link a partner in {groupName}",
         "accepted": "This submission to link a partner has been approved",
         "declined": "This submission to link a partner has been declined"
       },
       "child": {
-        "new": "You have received a request from {authorName} to link a child in {groupName}",
+        "new": "Received a request from {authorName} to link a child in {groupName}",
         "accepted": "This submission to link a child has been approved",
         "declined": "This submission to link a child has been declined"
       },
       "new": "Received a request to create a whakapapa link in {groupName}"
     },
+    "ignore": {
+      "new": "Received a request from {authorName} to hide a person in {groupName}",
+      "accepted": "This submission to hide a profile in {groupName} has been approved",
+      "declined": "This submission to hide a profile in {groupName} has been declined"
+    },
     "new": "Has submitted a change to {groupName}",
-    "accepted": "Their submission to {groupName} has been accepted",
-    "declined": "Their submission to {groupName} has been declined ",
+    "accepted": "This submission to {groupName} has been accepted",
+    "declined": "This submission to {groupName} has been declined ",
     "review": "Your submission is pending",
     "delete": {
       "review": "Your submission to delete this profile is pending"
