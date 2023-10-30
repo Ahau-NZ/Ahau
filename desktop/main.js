@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const ahoy = require('ssb-ahoy')
 const env = require('ahau-env')()
 const chalk = require('chalk')
@@ -6,6 +7,18 @@ const level = require('level')
 const { join } = require('path')
 const { app } = require('electron')
 const { autoUpdater } = require('electron-updater')
+
+// WARNING monkey patch! --------------------------------------
+const na = require('sodium-native')
+na.sodium_malloc = function sodium_malloc_monkey_patched (n) {
+  return Buffer.alloc(n)
+}
+// Electron > 20.3.8 breaks a napi method that `sodium_malloc`
+// depends on to create external buffers. (see v8 memory cage)
+//
+// This crashes electron when called by various libraries, so
+// we monkey-patch this particular function.
+// ------------------------------------------------------------
 
 const config = require('./ssb.config')()
 const karakia = require('./karakia')
@@ -34,7 +47,7 @@ function start () {
       ? `http://localhost:${process.env.DEV_SERVER_PORT || 3000}`
       : `file://${__dirname}/dist/index.html`, // eslint-disable-line
     {
-      title: 'Ahau',
+      title: 'Āhau',
       config,
       plugins: [
         require('ssb-db'),
@@ -75,6 +88,7 @@ function checkAhauRunning () {
     const dbPath = join(config.path, 'tribes/keystore')
     level(dbPath, (err, db) => {
       if (err) {
+        console.log(err.message)
         // if file doesn't exist yet => ahau never been started
         if (err.message.endsWith('No such file or directory')) return resolve()
         // other errors indicate a file LOCK exists => ahau open

@@ -1,0 +1,18 @@
+diff --git a/node_modules/pull-fs/util.js b/node_modules/pull-fs/util.js
+index 2d2577c..3e40463 100644
+--- a/node_modules/pull-fs/util.js
++++ b/node_modules/pull-fs/util.js
+@@ -86,13 +86,3 @@ exports.readFile = function (parse) {
+     })
+   })
+ }
+-
+-if(!module.parent) {
+-  pull(
+-    pull.values(['.']),
+-    starStar(),
+-    pull.drain(console.log)
+-  )
+-}
+-
+-
