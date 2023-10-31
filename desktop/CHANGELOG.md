@@ -1,5 +1,12 @@
 # Changelog | Ahau desktop
 
+## v2.25.2
+
+## Patches
+
+- fixed `sodium-native` monkey patch (needed `sodium_free`)
+- fixed Mixpanel ENV missing
+
 ## v2.25.1
 
 ### Patches
