@@ -13,6 +13,7 @@ const na = require('sodium-native')
 na.sodium_malloc = function sodium_malloc_monkey_patched (n) {
   return Buffer.alloc(n)
 }
+na.sodium_free = function sodium_free_monkey_patched () {}
 // Electron > 20.3.8 breaks a napi method that `sodium_malloc`
 // depends on to create external buffers. (see v8 memory cage)
 //
