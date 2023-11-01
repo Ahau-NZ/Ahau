@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## v2.25.3
+
+This is a reversions of the electron updates in v2.25.x
+It's v2.24.1 plus notarazing updates, plus intial replication updates
+
 ## v2.24.1
 
 ### Bug Fix
