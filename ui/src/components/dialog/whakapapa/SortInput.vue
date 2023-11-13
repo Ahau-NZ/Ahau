@@ -26,7 +26,7 @@
               @click="updateSort({value: item.value, event: $event})"
             >
               <v-list-item-content>
-                <v-list-item-title style="font-size: smaller" v-text="item.text"></v-list-item-title>
+                <v-list-item-title style="font-size: smaller">{{ item.text }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>

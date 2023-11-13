@@ -55,7 +55,7 @@ export default {
   },
   data () {
     return {
-      ignoredProfiles: [],
+      ignoredProfiles: []
       // unIgnoredProfiles: []
     }
   },
@@ -68,7 +68,7 @@ export default {
           ids.map(profileId => this.getPersonMinimal(profileId))
         )
       }
-    },
+    }
     // unIgnoredIds: {
     //   deep: true,
     //   immediate: true,
