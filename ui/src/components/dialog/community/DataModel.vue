@@ -21,7 +21,7 @@
             single-line
             class="custom-select"
             v-bind="customProps"
-            :disabled="item.label === 'first name'"
+            :disabled="isDisabledField(item)"
           ></v-select>
         </template>
         <template v-slot:item.required="{ item }"> <!-- eslint-disable-line -->
