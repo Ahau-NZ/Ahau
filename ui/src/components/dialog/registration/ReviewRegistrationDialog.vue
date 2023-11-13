@@ -397,7 +397,8 @@ export default {
       if (isEmpty(this.notification)) {
         return true
       }
-      if (!this.notification.isPersonal && this.notification.isNew) return true
+      // if (!this.notification.isPersonal && this.notification.isNew) return true
+      if (!this.notification.isPersonal) return true
 
       return false
     },

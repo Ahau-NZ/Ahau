@@ -210,6 +210,7 @@ export default {
     },
     submit () {
       const output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
+      console.log({ output })
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)
