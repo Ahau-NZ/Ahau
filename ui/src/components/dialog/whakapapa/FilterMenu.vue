@@ -31,7 +31,7 @@
           <!-- Hide Deceased -->
           <v-list-item class="py-4">
             <v-list-item-content>
-              <v-list-item-title align="start" v-text="'Hide deceased'" />
+              <v-list-item-title align="start">{{ t('hideDeceased') }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="hideDeceased"/>
@@ -80,7 +80,7 @@
           <!-- Toggle names only -->
           <v-list-item class="py-4">
             <v-list-item-content>
-              <v-list-item-title align="start" v-text="t('avatars')" />
+              <v-list-item-title align="start">{{  t('avatars') }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch v-model="showAvatars"/>
@@ -90,7 +90,7 @@
           <!-- show partners and parents -->
           <v-list-item class="pb-4">
             <v-list-item-content>
-              <v-list-item-title align="start" v-text=" t('parents')"/>
+              <v-list-item-title align="start">{{ t('parents') }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch :value="showExtendedFamily" @change="setExtendedFamily($event)" />
@@ -99,7 +99,7 @@
 
           <v-list-item class="pb-4">
             <v-list-item-content>
-              <v-list-item-title align="start" v-text=" t('autoCollapse')"/>
+              <v-list-item-title align="start">{{ t('autoCollapse') }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch v-model='autoCollapse' @change='toggleAutoCollapse($event)' :disabled="autoCollapse"/>
