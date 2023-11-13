@@ -35,7 +35,10 @@ export const DEFAULT_PROFILE_MODEL = [
 ]
 
 // these are default fields which are disabled (you cant change or remove them)
-export const DISABLED_DEFAULT_FIELDS = ['first name']
+export const DISABLED_DEFAULT_FIELDS = [
+  'first name', // NOTE: this is required for all profiles
+  'profile image' // TODO cherese 2023-10-31 changes to this field as a custom field are not yet supported, so disabling it until support is added
+]
 
 // these are default fields where the required field cannot be enabled
 export const REQUIRED_DISABLED_FIELDS = ['description', 'no longer living', 'date of death', 'place of birth', 'place of death', 'buried location']
