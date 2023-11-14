@@ -675,12 +675,10 @@ export default {
       */
       await this.updatePersonalProfile(input)
 
-      if (customFields) {
-        const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
-        if (!isEmpty(customFieldValues)) {
-          this.rawCustomFields = customFields
-          this.customFields = customFieldValues
-        }
+      const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+      if (!isEmpty(customFieldValues)) {
+        this.rawCustomFields = customFields
+        this.customFields = customFieldValues
       }
 
       // reload your personal profiles
