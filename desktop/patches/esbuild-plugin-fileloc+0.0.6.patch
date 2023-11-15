@@ -1,0 +1,23 @@
+diff --git a/node_modules/esbuild-plugin-fileloc/dist/index.js b/node_modules/esbuild-plugin-fileloc/dist/index.js
+index 2b185f5..449e91f 100644
+--- a/node_modules/esbuild-plugin-fileloc/dist/index.js
++++ b/node_modules/esbuild-plugin-fileloc/dist/index.js
+@@ -37,11 +37,14 @@ const filelocPlugin = (options) => ({
+       const isWindows = /^win/.test(import_process.default.platform);
+       const esc = (p) => isWindows ? p.replace(/\\/g, "/") : p;
+       const variables = `
++        const { join: pathJoin } = require('path')
++        const relativefilename = "${esc(import_path.default.relative(rootDir, args.path))}"
++        const relativedirname = "${esc(import_path.default.relative(rootDir, import_path.default.dirname(args.path)))}"
+         const __fileloc = {
+-          filename: "${esc(args.path)}",
+-          dirname: "${esc(import_path.default.dirname(args.path))}",
+-          relativefilename: "${esc(import_path.default.relative(rootDir, args.path))}",
+-          relativedirname: "${esc(import_path.default.relative(rootDir, import_path.default.dirname(args.path)))}"
++          filename: pathJoin(__dirname, relativefilename),
++          dirname: pathJoin(__dirname, relativedirname),
++          relativefilename,
++          relativedirname 
+         };
+         let __line = 0;
+       `;

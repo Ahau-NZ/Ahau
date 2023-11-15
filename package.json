@@ -11,7 +11,7 @@
     "move-release:android": "rimraf releases/android && mvy mobile/platforms/android/app/build/outputs/apk/release/app-release.apk releases/android/",
     "move-release:android-dev": "rimraf releases/android && mvy mobile/platforms/android/app/build/outputs/apk/release/app-release.apk releases/android/app-release-dev.apk",
     "move-release:ios": "rimraf releases/ios && mvy mobile/platforms/ios/Whakapapa.xcarchive releases/ios/",
-    "release:desktop": "npm run build-ui:desktop && cd desktop && npm run publish && cd .. && npm run move-release:desktop",
+    "release:desktop": "npm run build-ui:desktop && npm --prefix desktop run publish && npm run move-release:desktop",
     "release:android": "cd mobile && npm run dist:android && cd .. && npm run move-release:android",
     "release:android-dev": "cd mobile && npm run dist:android-dev && cd .. && npm run move-release:android-dev",
     "release:ios": "cd mobile && npm run dist:ios && cd .. && npm run move-release:ios",
