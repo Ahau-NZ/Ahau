@@ -4,7 +4,8 @@
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "author": "Āhau Ltd.",
   "scripts": {
-    "postinstall": "npx sass-migrator division node_modules/vuetify/**/*.s*ss",
+    "postinstall": "patch-package && npm run fix:sass",
+    "fix:sass": "npx sass-migrator division node_modules/vuetify/**/*.s*ss",
     "dev": "vite --port 3000",
     "build": "vite build",
     "build:desktop": "vite build --outDir ../desktop/dist",
@@ -72,14 +73,15 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.17.0",
     "node-stdlib-browser": "^1.2.0",
+    "patch-package": "^8.0.0",
     "sass": "^1.68.0",
     "standard": "^17.1.0",
     "tap-arc": "^1.0.1",
     "tape": "^5.7.0",
     "typeface-roboto": "^1.1.13",
     "unplugin-vue-components": "^0.25.2",
-    "vite": "^4.4.9",
-    "unplugin-vue-inspector": "^0.5.1"
+    "unplugin-vue-inspector": "^0.5.1",
+    "vite": "^4.4.9"
   },
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "license": "AGPL-3.0",

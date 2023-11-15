@@ -48,6 +48,7 @@ export default defineConfig(async () => {
       }
     ],
     build: {
+      emptyOutDir: true
       // sourcemap: true < for easier production debugging
     }
   }
