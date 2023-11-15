@@ -1,5 +1,16 @@
 # Changelog | Ahau desktop
 
+## v2.25.4
+
+## Patches
+
+- fix `esbuild` setup
+- drop un-needed fonts
+
+## v2.25.3
+
+A partial rollback - `esbuild` problems
+
 ## v2.25.2
 
 ## Patches
