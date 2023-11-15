@@ -536,7 +536,7 @@ export default {
         return
       }
 
-      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission  && !this.isWhakapapaSubmission) {
+      if (isEmpty(this.selectedChanges) && !this.isLinkSubmission && !this.isWhakapapaSubmission) {
         this.showAlert({ message: this.t('noChanges'), color: 'red', delay: 10000 })
         return
       }
@@ -561,15 +561,14 @@ export default {
         const selectedDependencies = [...parents, ...children, ...partners]
         await this.approveWhakapapaLinkSubmissions(selectedDependencies)
       } else {
-
         if (this.isWhakapapaSubmission) {
           // NOTE: gets rid of the typename field
           const ignoredProfiles = pick(this.notification?.changes?.ignoredProfiles, ['add', 'remove'])
-    
+
           // TODO cherese 2023-09-27 add more fields as they are supported. We only supporting ignoredProfiles at the moment
           if (this.notification?.sourceRecord?.whakapapaId) output.whakapapaId = this.notification?.sourceRecord?.whakapapaId
           output.allowedFields = { ignoredProfiles }
-          
+
           await this.approveEditWhakapapaViewSubmission(output)
           this.close()
           return

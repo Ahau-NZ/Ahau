@@ -20,9 +20,9 @@
       <div class="d-flex flex-no-wrap flex-start align-stretch">
         <div class="cover-image" :style="background(view)"></div>
         <div class="information">
-          <v-card-title v-text="view.name" class="py-3" style="word-break: break-word;"/>
-          <v-card-subtitle v-if="description" v-text="description" class="py-1"/>
-          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} records`" class="mt-n2"/>
+          <v-card-title class="py-3" style="word-break: break-word;">{{ view.name }}</v-card-title>
+          <v-card-subtitle v-if="description" class="py-1">{{ description }}</v-card-subtitle>
+          <v-card-subtitle v-if="view.recordCount" class="mt-n2">{{ t('recordCount', { count: view.recordCount }) }}</v-card-subtitle>
           <v-card-text v-if="hasSlotContent">
             <slot></slot>
           </v-card-text>

@@ -522,7 +522,7 @@ export default function (apollo) {
     },
     setPath (state, path) {
       state.path = path
-    },
+    }
   }
 
   const actions = {
@@ -616,9 +616,9 @@ export default function (apollo) {
 
     async saveWhakapapaView ({ commit, dispatch, state }, input) {
       const { id: whakapapaId } = input
-  
+
       if (!whakapapaId) return // no update without an id
-  
+
       const updateId = await apollo.niceMutation(dispatch, saveWhakapapaView(input))
       if (!updateId) return
 
@@ -801,7 +801,7 @@ export default function (apollo) {
             })
           // NOTE this may leave some importantRelationships with not enough "important" links
           // But the getImportantRelationship getter filters out rules which are not useful
-        })
+          })
       )
     },
 
