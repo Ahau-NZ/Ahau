@@ -1,0 +1,14 @@
+diff --git a/node_modules/@mdi/font/css/materialdesignicons.css b/node_modules/@mdi/font/css/materialdesignicons.css
+index d46973d..6501476 100644
+--- a/node_modules/@mdi/font/css/materialdesignicons.css
++++ b/node_modules/@mdi/font/css/materialdesignicons.css
+@@ -1,8 +1,7 @@
+ /* MaterialDesignIcons.com */
+ @font-face {
+   font-family: "Material Design Icons";
+-  src: url("../fonts/materialdesignicons-webfont.eot?v=5.9.55");
+-  src: url("../fonts/materialdesignicons-webfont.eot?#iefix&v=5.9.55") format("embedded-opentype"), url("../fonts/materialdesignicons-webfont.woff2?v=5.9.55") format("woff2"), url("../fonts/materialdesignicons-webfont.woff?v=5.9.55") format("woff"), url("../fonts/materialdesignicons-webfont.ttf?v=5.9.55") format("truetype");
++  src: url("../fonts/materialdesignicons-webfont.woff2?v=5.9.55") format("woff2");
+   font-weight: normal;
+   font-style: normal;
+ }
