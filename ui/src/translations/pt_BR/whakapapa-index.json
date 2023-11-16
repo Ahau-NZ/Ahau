@@ -10,5 +10,6 @@
   "editDescription": "Editar descrição do whakapa",
   "onlyYouHaveAccess": "Somente você tem acesso a esta apa-de-whakapa",
   "youCanMakeChanges": "Você pode fazer alterações neste whakapa",
-  "onlyKaitiakiCanMakeChanges": "Somente os kaitiaki podem fazer mudanças para esta apáxia"
+  "onlyKaitiakiCanMakeChanges": "Somente os kaitiaki podem fazer mudanças para esta apáxia",
+  "recordCount": "{count} records"
 }
