@@ -75,3 +75,42 @@ cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
   }
   else console.log('type not yet supported:', type)
 })
+
+startAtalaPrism(ssb)
+
+function startAtalaPrism (ssb) {
+  if (!ssb.config?.atalaPrism?.mediatorDID) return
+
+  console.log('starting atala-prism')
+
+  ssb.atalaPrism.start()
+    .then(autoRequestPresentations)
+    .catch(err => console.log('atala no!', err))
+
+  function autoRequestPresentations () {
+    // TODO check if you have any verifiers
+
+    pull(
+      ssb.messagesByType({
+        type: 'registration/group',
+        private: true,
+        live: true,
+        old: false
+      }),
+      // TODO add validation of message using schema
+      pull.map(m => m?.value?.content),
+      pull.filter(content => (
+        typeof content === 'object' &&
+        content?.tangles?.registration?.root === null
+        // only keep root messages
+        // TODO check you're not the author!
+      )),
+      pull.drain(content => {
+        const { groupId, recps } = content // eslint-disable-line
+        const [poBoxId, feedId] = recps
+
+        ssb.atalaPrism.requestPresentation(groupId, poBoxId, feedId)
+      })
+    )
+  }
+}
