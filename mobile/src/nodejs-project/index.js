@@ -36,6 +36,7 @@ const ssb = SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-submissions'))
 
   .use(require('ssb-ahau'))
+  .use(require('ssb-atala-prism'))
   .use(require('ssb-recps-guard'))
 
   .call(null, config)
