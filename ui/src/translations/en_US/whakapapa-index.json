@@ -10,5 +10,6 @@
   "editDescription": "Edit genealogy description",
   "onlyYouHaveAccess": "Only you have access to this genealogy",
   "youCanMakeChanges": "You can make changes to this genealogy",
-  "onlyKaitiakiCanMakeChanges": "Only admins can make changes to this genealogy"
+  "onlyKaitiakiCanMakeChanges": "Only admins can make changes to this genealogy",
+  "recordCount": "{count} records"
 }

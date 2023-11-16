@@ -34,5 +34,6 @@
   "avatars": "Mostrar fotos de perfil",
   "parents": "Mostrar família estendida",
   "autoCollapse": "Mostrar todas as linhas da família",
-  "default": "reverter alterações"
+  "default": "reverter alterações",
+  "hideDeceased": "Hide Deceased"
 }

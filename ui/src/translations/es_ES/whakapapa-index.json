@@ -10,5 +10,6 @@
   "editDescription": "Editar descripción de whakapapa",
   "onlyYouHaveAccess": "Sólo tienes acceso a este whakapapa",
   "youCanMakeChanges": "Puedes hacer cambios en este whakapapa",
-  "onlyKaitiakiCanMakeChanges": "Sólo kaitiaki puede hacer cambios a este whakapapa"
+  "onlyKaitiakiCanMakeChanges": "Sólo kaitiaki puede hacer cambios a este whakapapa",
+  "recordCount": "{count} records"
 }

@@ -10,5 +10,6 @@
   "editDescription": "Whakatika ngā whakaahuatanga whakapapa",
   "onlyYouHaveAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei whakapapa",
   "youCanMakeChanges": "You can make changes to this whakapapa",
-  "onlyKaitiakiCanMakeChanges": "Only kaitiaki can make changes to this whakapapa"
+  "onlyKaitiakiCanMakeChanges": "Only kaitiaki can make changes to this whakapapa",
+  "recordCount": "{count} records"
 }

@@ -41,6 +41,7 @@
     "declined": "Ha sido rechazado para unirse a {groupName}"
   },
   "submission": {
+    "archiveConfirmation": "Are you sure you want to archive this submission?",
     "profile": {
       "new": {
         "title": "Solicitud de registro de {from}",
