@@ -56,7 +56,8 @@ if [ $BUILD_PLATFORM == "android" ]; then
   # XCode will build this by its own so iOS isn't necessary
   log "Installing and compiling sodium-native-nodejs-mobile...";
   cd ./node_modules/sodium-native-nodejs-mobile
-  npm install --omit=optional --no-package-lock --silent
+  # npm install --omit=optional --no-package-lock --silent
+  npm install --omit=optional --no-package-lock
   cd ../..
 fi
 
@@ -100,6 +101,8 @@ declare -a modulesRoot=(
   "leveldown"
   "bufferutil"
   "systeminformation"
+  "sodium-browserify"
+  "sodium-browserify-tweetnacl"
 )
 for module in "${modulesRoot[@]}"
 do
