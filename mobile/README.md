@@ -102,6 +102,16 @@ NOTES:
     - preserving the object structure to make it clear how to merge those back in later
 - Gradle intro : https://developer.android.com/build
 
+- our new Vite setup generate ESM JS by default
+    - Cordova may not accept / support this?
+        - fix? use `@vitejs/plugin-legacy` to support no-module
+- debugging in production
+    - change the `--release` flag to `--debug`
+    - connect the phone by USB
+    - enable USB debugging
+    - open the app
+    - open `chrome://inspect#devices` in Chrome / Chromium
+
 
 ```bash
 $ npm install

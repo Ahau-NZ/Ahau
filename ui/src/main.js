@@ -50,10 +50,17 @@ async function main () {
 
   if (isCordova()) {
     nodejsClient.start({
-      onReady: () => {
-        // console.log('nodejs-mobile and GraphQL server are fully ready')
+      onReady () {
+        console.log('nodejs-mobile and GraphQL server are fully ready')
         startVue()
         navigator.splashscreen.hide()
+      },
+      onAnyMessage (msg) {
+        const p = document.createElement('p')
+        p.innerText = msg.toString() === '[object Object]'
+          ? JSON.stringify(msg)
+          : msg.toString()
+        document.body.appendChild(p)
       }
     })
     return

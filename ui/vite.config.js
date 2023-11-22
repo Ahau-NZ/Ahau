@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
+import legacy from '@vitejs/plugin-legacy'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import Inspector from 'unplugin-vue-inspector/vite'
@@ -32,6 +33,12 @@ export default defineConfig(async () => {
           VuetifyResolver()
         ]
       }),
+
+      // https://github.com/vitejs/vite/tree/v4.5.0/packages/plugin-legacy
+      legacy({
+        // targets: ['defaults', 'not IE 11']
+      }),
+
       // follow setup: https://github.com/webfansplz/vite-plugin-vue-inspector
       Inspector({
         vue: 2
