@@ -70,38 +70,47 @@ const config = makeConfig(appName, {
   }
 })
 
-// eslint-disable-next-line no-useless-call
-SecretStack({ appKey: env.caps.shs })
-  // Core
-  .use(require('ssb-master'))
-  .use(require('ssb-db'))
-  // Replication
-  .use(require('ssb-replicate')) // needs: db
-  .use(require('ssb-friends')) // needs: db, replicate
-  // Connections
-  .use(require('ssb-no-auth'))
-  .use(require('ssb-lan'))
-  .use(require('ssb-conn')) // needs: db, friends, lan
-  .use(require('ssb-invite')) // needs: db, conn
-  .use(require('ssb-promiscuous')) // needs: conn, friends
-  // Queries
-  .use(require('ssb-query')) // needs: db
-  .use(require('ssb-backlinks')) // needs: db
-  .use(require('ssb-whakapapa'))
-  .use(require('ssb-profile'))
-  .use(require('ssb-settings'))
-  .use(require('ssb-artefact'))
-  .use(require('ssb-story'))
-  .use(require('ssb-submissions'))
-  // Blobs
-  .use(require('ssb-blobs'))
-  .use(require('ssb-serve-blobs')) // needs: blobs
-  .use(require('ssb-hyper-blobs'))
-  // Private groups
-  .use(require('ssb-tribes'))
-  .use(require('ssb-tribes-registration'))
-  // Custom
-  .use(require('ssb-ahau'))
-  .use(require('ssb-recps-guard'))
+console.log('ahau - backend starting')
 
-  .call(null, config)
+try {
+  // eslint-disable-next-line no-useless-call
+  SecretStack({ appKey: env.caps.shs })
+    // Core
+    .use(require('ssb-master'))
+    .use(require('ssb-db'))
+    // Replication
+    .use(require('ssb-replicate')) // needs: db
+    .use(require('ssb-friends')) // needs: db, replicate
+    // Connections
+    // .use(require('ssb-no-auth'))
+    .use(require('ssb-lan'))
+    .use(require('ssb-conn')) // needs: db, friends, lan
+    .use(require('ssb-invite')) // needs: db, conn
+    // .use(require('ssb-promiscuous')) // needs: conn, friends
+    // Queries
+    .use(require('ssb-query')) // needs: db
+    .use(require('ssb-backlinks')) // needs: db
+    .use(require('ssb-whakapapa'))
+    .use(require('ssb-profile'))
+    .use(require('ssb-settings'))
+    .use(require('ssb-artefact'))
+    .use(require('ssb-story'))
+    .use(require('ssb-submissions'))
+    // Blobs
+    .use(require('ssb-blobs'))
+    .use(require('ssb-serve-blobs')) // needs: blobs
+    .use(require('ssb-hyper-blobs'))
+    // Private groups
+    .use(require('ssb-tribes'))
+    .use(require('ssb-tribes-registration'))
+    // Custom
+    .use(require('ssb-ahau'))
+    .use(require('ssb-recps-guard'))
+
+    .call(null, config)
+} catch (err) {
+  console.log('ahau - backend error:', err.message)
+  console.error(err)
+}
+
+console.log('ahau - backend started :)')
