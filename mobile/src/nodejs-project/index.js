@@ -82,7 +82,7 @@ try {
     .use(require('ssb-replicate')) // needs: db
     .use(require('ssb-friends')) // needs: db, replicate
     // Connections
-    // .use(require('ssb-no-auth'))
+    .use(require('ssb-no-auth'))
     .use(require('ssb-lan'))
     .use(require('ssb-conn')) // needs: db, friends, lan
     .use(require('ssb-invite')) // needs: db, conn

@@ -31,7 +31,7 @@ fi
 
 # Install node-gyp in order to Cordova to run `prepare`
 log "Installing node-gyp in order to Cordova to run 'prepare'"
-npm install node-gyp --no-save
+npm install node-gyp@9 --no-save
 
 cd ./www/nodejs-project
 
@@ -92,6 +92,8 @@ done
 
 declare -a modulesRoot=(
   "sodium-native"
+  "sodium-browserify"
+  "sodium-browserify-tweetnacl"
   "leveldown"
   "bufferutil"
   "systeminformation"
@@ -133,6 +135,7 @@ declare -a packagesToBabelify=(
   "@ssb-graphql/submissions"
   "@ssb-graphql/whakapapa"
   "graphql-yoga"
+  "secret-stack"
   "ssb-profile"
   "ssb-whakapapa"
   "ssb-ahau"

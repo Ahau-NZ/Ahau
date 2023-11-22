@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# source nvm for later steps
+. ~/.nvm/nvm.sh
+
 INFO='\e[1;30m\e[46m';
 WARN='\e[1;30m\e[41m';
 RESET='\e[0m';
@@ -24,10 +27,12 @@ log "Starting to build to $RUN_PLATFORM..."
 rm -rf ./www;
 
 # Bundle the new frontend
+nvm use 18
 cd ../ui;
 cross-env PLATFORM=cordova \
 npm run build:mobile;
 cd ../mobile;
+nvm use 12
 
 # Bundle the new backend
 ./scripts/build-nodejs-project.sh $RUN_PLATFORM;
