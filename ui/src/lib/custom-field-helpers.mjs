@@ -1,4 +1,4 @@
-import { isEmpty, isEqual, get } from 'lodash-es'
+import { isEmpty, isEqual, get, cloneDeep as clone } from 'lodash-es'
 
 export const DEFAULT_NEW_FIELD = {
   label: '',
@@ -79,6 +79,10 @@ export function getDefaultFields (customFields) {
 
 // custom fields, but excluding fields that are mutating the default fields
 export function getCustomFields (customFields) {
+  // WARNING: there is an infinite loop, unsure where its root is, but
+  // this line fixes it
+  customFields = clone(customFields)
+
   const uniqueCustomFields = getUniqueFields(customFields)
 
   return uniqueCustomFields
