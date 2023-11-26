@@ -451,7 +451,7 @@ export default {
           suggestions = await this.findPartners()
           break
         default:
-          console.error('getCloseSuggestions was given the wrong type', this.type)
+          if (this.$route.name !== 'community/whakapapa') console.error(this.t('typeError', { type: this.type }))
           suggestions = []
       }
 
