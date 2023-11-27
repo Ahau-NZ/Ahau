@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VuexRouterSync from 'vuex-router-sync'
 import VueRx from 'vue-rx'
-import VuejsClipper from 'vuejs-clipper/dist/vuejs-clipper.umd.min'
+import VuejsClipper from 'vuejs-clipper/dist/vuejs-clipper.umd.js'
 import 'vuejs-clipper/dist/vuejs-clipper.css'
 import VueZoomer from 'vue-zoomer'
 import gql from 'graphql-tag'
@@ -55,14 +55,10 @@ async function main () {
         // console.log('nodejs-mobile and GraphQL server are fully ready')
         startVue()
         navigator.splashscreen.hide()
+      },
+      onAnyMessage (msg) {
+        console.log(msg)
       }
-      // onAnyMessage (msg) {
-      //   const p = document.createElement('p')
-      //   p.innerText = msg.toString() === '[object Object]'
-      //     ? JSON.stringify(msg)
-      //     : msg.toString()
-      //   document.body.appendChild(p)
-      // }
     })
     return
   }

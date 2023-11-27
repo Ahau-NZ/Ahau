@@ -111,6 +111,7 @@ NOTES:
     - enable USB debugging
     - open the app
     - open `chrome://inspect#devices` in Chrome / Chromium
+      - you may have to run `adb devices` to get the daemon running for it to show up in Chrome
 
 
 ```bash

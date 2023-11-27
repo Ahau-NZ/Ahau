@@ -14,6 +14,11 @@ onFailure() {
   echo -e "${WARN} Unhandled script error $1 at ${BASH_SOURCE[0]}:${BASH_LINENO[0]} ${RESET}" >&2
   exit 1
 }
+
+# source nvm
+. ~/.nvm/nvm.sh
+nvm use 12;
+
 set -eEu -o pipefail
 shopt -s extdebug
 IFS=$'\n\t'
@@ -55,11 +60,11 @@ if [ $NODE_ENV == "production" ]; then
   sleep 1;
   $(npm bin)/cordova-set-version;
 
-  # warn "UNDO: --debug";
-  # NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --debug --device \
-  #   --buildConfig=./build.json;
-  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --release --device \
+  warn "UNDO: --debug";
+  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --debug --device \
     --buildConfig=./build.json;
+  # NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --release --device \
+  #   --buildConfig=./build.json;
 else
   log "Compiling App for local development...";
 
@@ -68,4 +73,5 @@ else
   cordova run $RUN_PLATFORM --nobuild --device;
 fi
 
+nvm use 18;
 log "DONE!"

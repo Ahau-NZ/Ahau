@@ -2,6 +2,9 @@
   "name": "ahau-mobile-server",
   "version": "2.0.0",
   "main": "main.js",
+  "scripts": {
+    "update": "node update-package.js"
+  },
   "engines": {
     "node": "12.22.12",
     "npm": ">=6.14.18 < 9"
@@ -38,7 +41,7 @@
     "ssb-config": "^3.4.6",
     "ssb-conn": "^1.0.0",
     "ssb-db": "^20.4.1",
-    "ssb-friends": "~4.2.1",
+    "ssb-friends": "^4.4.10",
     "ssb-hyper-blobs": "^3.0.0",
     "ssb-invite": "^2.1.7",
     "ssb-lan": "^1.2.3",

@@ -1,0 +1,21 @@
+diff --git a/node_modules/ssb-friends/index.js b/node_modules/ssb-friends/index.js
+index 2d8cab6..4d6374d 100644
+--- a/node_modules/ssb-friends/index.js
++++ b/node_modules/ssb-friends/index.js
+@@ -2,7 +2,6 @@
+ const LayeredGraph = require('layered-graph')
+ const isFeed = require('ssb-ref').isFeed
+ const contacts = require('./contacts')
+-const db2Contacts = require('./db2-contacts')
+ const setupLegacy = require('./legacy')
+ const help = require('./help')
+ const authGlue = require('./glue/auth')
+@@ -35,7 +34,7 @@ exports.init = function (sbot, config) {
+   layered.max = max
+ 
+   if (sbot.db) {
+-    sbot.db.registerIndex(db2Contacts(layered.createLayer))
++    throw Error('unpatch after db2 install')
+   } else {
+     contacts(sbot, layered.createLayer, config)
+   }
