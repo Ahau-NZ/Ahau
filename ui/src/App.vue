@@ -16,7 +16,7 @@
       </v-container>
     </v-main>
 
-    <div v-if="!isMobile" class='version'>
+    <div class='version' :style="isMobile ? 'left: 0; right: initial;' : ''">
       <span>version</span> {{version}}
     </div>
 
@@ -276,14 +276,17 @@ body {
 }
 
 .version {
+  z-index: 2;
   color: #999;
   position: fixed;
   bottom: 5px;
   right: 10px;
   font-size: .8rem;
-  transition: all .3s ease-in;
+  transition: color, font-size .3s ease-in;
 
   span {
+    display: inline-block;
+    width: 6px;
     font-size: .8rem;
     color: rgba(0,0,0,0);
     transition: all .3s ease-in;
@@ -299,6 +302,7 @@ body {
     border-radius: 4px;
 
     span {
+      width: initial;
       color: #555;
     }
   }
