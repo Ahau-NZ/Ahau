@@ -304,7 +304,7 @@ export default {
         : this.t('editProfileRequest')
     },
     isDevelopment () {
-      return process.env.NODE_ENV === 'development'
+      return import.meta.env.DEV
     },
     mobile () {
       return this.$vuetify.breakpoint.xs

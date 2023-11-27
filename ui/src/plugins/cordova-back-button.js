@@ -1,9 +1,8 @@
 const cordovaBackButtonPlugin = {}
 
 cordovaBackButtonPlugin.install = function (Vue, options) {
-  if (process.env.VUE_APP_PLATFORM !== 'cordova') {
-    return
-  }
+  if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') return
+
   let handlers = []
 
   function created () {

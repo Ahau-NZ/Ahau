@@ -82,7 +82,7 @@ export default {
       await this.loadTribe(this.$route.params.tribeId)
     }
 
-    if (process.env.VUE_APP_PLATFORM === 'cordova') {
+    if (import.meta.env.VITE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
     }
   },

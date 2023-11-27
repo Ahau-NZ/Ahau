@@ -14,6 +14,7 @@ export default defineConfig(async () => {
   // NOTE must by dynamically imported
 
   return {
+    // TODO may want to tweak based on cordova...
     base: process.env.NODE_ENV !== 'development' ? './' : '/',
     resolve: {
       alias: {

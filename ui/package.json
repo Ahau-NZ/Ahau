@@ -9,7 +9,7 @@
     "dev": "vite --port 3000",
     "build": "vite build",
     "build:desktop": "vite build --outDir ../desktop/dist",
-    "build:mobile": "vite build --outDir ../mobile/www",
+    "build:mobile": "cross-env VITE_APP_PLATFORM=cordova vite build --outDir ../mobile/www",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.mjs,.vue --ignore-path .gitignore --fix src",
     "test:js": "cross-env NODE_ENV=development tape 'src/**/*.test.*js' | tap-arc",

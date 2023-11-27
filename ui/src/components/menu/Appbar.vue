@@ -232,7 +232,7 @@ export default {
   },
   mounted () {
     this.getAllNotifications()
-    if (process.env.VUE_APP_PLATFORM !== 'cordova') {
+    if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
   },

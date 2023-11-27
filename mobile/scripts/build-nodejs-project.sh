@@ -123,22 +123,25 @@ if [ $BUILD_PLATFORM == "android" ]; then
   ./scripts/android/build-native-modules.sh
 fi
 
-log "Bundling some dependencies with babel to support Node version...";
+log "Babel-bundling some dependencies to support Node 12";
 cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
+  "@apollo/cache-control-types"
   "@envelop/core"
   "@envelop/validation-cache"
   "@graphql-yoga/logger"
   "@graphql-yoga/subscription"
+  "@ssb-graphql/main"
   "@ssb-graphql/profile"
   "@ssb-graphql/submissions"
   "@ssb-graphql/whakapapa"
   "graphql-yoga"
   "secret-stack"
-  "ssb-profile"
-  "ssb-whakapapa"
   "ssb-ahau"
+  "ssb-profile"
+  "ssb-serve-blobs"
+  "ssb-whakapapa"
   "urlpattern-polyfill"
 )
 # TIP: to find module that need transpiling, run `npm run relsease:android`

@@ -1,14 +1,12 @@
-process.env.VUE_APP_PLATFORM = process.env.PLATFORM === 'cordova'
-  ? 'cordova'
-  : 'web'
-
-const publicPath = (process.env.VUE_APP_PLATFORM === 'cordova' || process.env.NODE_ENV === 'production')
-  ? './'
-  : '/'
+const publicPath = (
+  import.meta.env.VITE_APP_PLATFORM === 'cordova' ||
+  import.meta.env.PROD
+) ? './' : '/'
 
 module.exports = {
   publicPath,
   devServer: {
+    // TODO ?
     port: process.env.DEV_SERVER_PORT || 3000
   },
   transpileDependencies: ['vuetify'],

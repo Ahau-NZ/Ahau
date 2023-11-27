@@ -106,7 +106,7 @@ NOTES:
     - Cordova may not accept / support this?
         - fix? use `@vitejs/plugin-legacy` to support no-module
 - debugging in production
-    - change the `--release` flag to `--debug`
+    - change the `--release` flag to `--debug` in `scripts/run.sh`
     - connect the phone by USB
     - enable USB debugging
     - open the app

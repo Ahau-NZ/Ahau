@@ -19,6 +19,7 @@ import nodejsClient from './plugins/cordova-nodejs-client'
 import { isCordova } from './lib/cordova-helpers'
 
 if (isCordova()) {
+  console.log('starting up, waiting for "deviceready"')
   document.addEventListener('deviceready', main, false)
 } else {
   main()

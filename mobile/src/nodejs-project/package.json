@@ -43,7 +43,6 @@
     "ssb-invite": "^2.1.7",
     "ssb-lan": "^1.2.3",
     "ssb-master": "^1.0.3",
-    "ssb-no-auth": "^1.0.0",
     "ssb-profile": "^5.18.0",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",

@@ -1,7 +1,5 @@
-const CORDOVA_ENV_NAME = 'cordova'
-
 export function isCordova () {
-  return process.env.VUE_APP_PLATFORM === CORDOVA_ENV_NAME
+  return import.meta.env.VITE_APP_PLATFORM === 'cordova'
 }
 
 function writeErrorOnDownloadFile (err) {
