@@ -66,8 +66,6 @@ const config = makeConfig(appName, {
   }
 })
 
-console.log('ahau - backend starting')
-
 // eslint-disable-next-line no-useless-call
 SecretStack({ appKey: env.caps.shs })
   // .use(require('ssb-master'))
@@ -101,5 +99,3 @@ SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-recps-guard'))
 
   .call(null, config)
-
-console.log('ahau - backend started :)')

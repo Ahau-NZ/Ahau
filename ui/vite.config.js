@@ -6,12 +6,12 @@ import Components from 'unplugin-vue-components/vite'
 import Inspector from 'unplugin-vue-inspector/vite'
 import inject from '@rollup/plugin-inject'
 import path from 'path'
+import fs from 'fs/promises'
 
 const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim')
 
 export default defineConfig(async () => {
   const { default: stdLibBrowser } = await import('node-stdlib-browser')
-  // NOTE must by dynamically imported
 
   return {
     // TODO may want to tweak based on cordova...
@@ -35,11 +35,6 @@ export default defineConfig(async () => {
         ]
       }),
 
-      // https://github.com/vitejs/vite/tree/v4.5.0/packages/plugin-legacy
-      legacy({
-        // targets: ['defaults', 'not IE 11']
-      }),
-
       // follow setup: https://github.com/webfansplz/vite-plugin-vue-inspector
       Inspector({
         vue: 2
@@ -53,7 +48,9 @@ export default defineConfig(async () => {
           Buffer: [esbuildShim, 'Buffer']
         }),
         enforce: 'post'
-      }
+      },
+
+      ...mobilePlugins()
     ],
     build: {
       emptyOutDir: true
@@ -61,3 +58,23 @@ export default defineConfig(async () => {
     }
   }
 })
+
+function mobilePlugins () {
+  if (process.env.VITE_APP_PLATFORM !== 'cordova') return []
+
+  return [
+    {
+      name: 'index-html-mobile-replacement',
+      transformIndexHtml () {
+        return fs.readFile('./index.cordova.html', 'utf8')
+      }
+    },
+
+    legacy({
+      renderModernChunks: false
+    })
+    // NOTE this plugin enables the export of non-ESM index.legacy.js
+    // as cordova (at least version we use) does not support ESM modules
+    // https://github.com/vitejs/vite/tree/v4.5.0/packages/plugin-legacy
+  ]
+}

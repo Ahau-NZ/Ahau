@@ -362,6 +362,12 @@ export default {
 .sideNav {
   max-width: 300px;
   transition: top 0.2s ease;
+
+  &.userMobile,
+  &.archiveMobile,
+  &.stickMobile {
+    max-width: 102%;
+  }
 }
 
 .sticky {
@@ -377,25 +383,26 @@ export default {
 .userMobile {
   position: absolute;
   top: 310px;
-  width: 101.5%;
+  width: 102%;
 }
 .archiveMobile {
   position: absolute;
   top: 0px;
-  width: 101.5%;
+  width: 102%;
 }
 .stickyMobile {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
   top: 50px;
-  width: 101.5%;
+  width: 102%;
   z-index: 3;
   background: linear-gradient(
     rgba(255, 255, 255, 0.9),
     rgba(255, 255, 255, 0.02)
   );
-.box-shadow {
-   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
-}}
+  .box-shadow {
+     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+}
 
 .hideStickyMobile {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
