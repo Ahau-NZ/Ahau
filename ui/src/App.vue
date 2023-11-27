@@ -301,6 +301,8 @@ body {
     border: 1px solid #444;
     border-radius: 4px;
 
+    margin-left: 6px;
+
     span {
       width: initial;
       color: #555;
