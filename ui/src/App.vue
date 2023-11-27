@@ -3,7 +3,10 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
 
     <!-- Sizes your content based upon application components -->
-    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ mobileWhakapapaTitleStyle: mobile }">
+    <v-main
+      v-if="!isMobile || isMobile && !storeDialog"
+      :class="{ main: true, isMobile }"
+    >
       <!-- Provides the application the proper gutter -->
       <v-container fluid class="pa-0">
         <transition name="fade" mode="out-in">
@@ -13,7 +16,7 @@
       </v-container>
     </v-main>
 
-    <div v-if="!mobile" class='version'>
+    <div v-if="!isMobile" class='version'>
       <span>version</span> {{version}}
     </div>
 
@@ -129,7 +132,7 @@ export default {
     ...mapGetters(['isKaitiaki']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
     ...mapGetters(['storeDialog', 'loadingState']),
-    mobile () {
+    isMobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
@@ -215,6 +218,11 @@ a {
 /* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
+  max-height: 100vh;
+
+  .v-main {
+    max-height: 100vh;
+  }
 }
 
 /* //custom backgrounds per route. see above 'watcher' */
@@ -247,14 +255,24 @@ body {
 
 // see https://css-tricks.com/custom-scrollbars-in-webkit/
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 10px
 }
 </style>
 
 <style lang="scss" scoped>
-.mobileWhakapapaTitleStyle {
-  padding-top: 56px !important;
-  overflow-x: hidden;
+.main {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &.isMobile {
+    padding-top: 56px !important;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0px;
+    }
+  }
 }
 
 .version {
