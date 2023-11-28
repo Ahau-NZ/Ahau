@@ -1,32 +1,8 @@
 diff --git a/node_modules/ssb-ahau/src/graphql/index.js b/node_modules/ssb-ahau/src/graphql/index.js
-index b4750e7..4d075cd 100644
+index b4750e7..d37662a 100644
 --- a/node_modules/ssb-ahau/src/graphql/index.js
 +++ b/node_modules/ssb-ahau/src/graphql/index.js
-@@ -21,7 +21,6 @@ const Settings = require('@ssb-graphql/settings')
- const Author = require('./author')
- const GroupInit = require('./group-init')
- const Backup = require('./backup')
--const Stats = require('./stats')
- 
- module.exports = async function graphqlServer (ssb) {
-   const PORT = (ssb.config.graphql && ssb.config.graphql.port) || env.graphql.port
-@@ -45,7 +44,6 @@ module.exports = async function graphqlServer (ssb) {
- 
-   const invite = Invite(ssb)
-   const backup = Backup(ssb)
--  const stats = Stats(ssb)
- 
-   let context = {}
-   if (ssb.config.graphql && ssb.config.graphql.loadContext !== false) {
-@@ -66,7 +64,6 @@ module.exports = async function graphqlServer (ssb) {
-       author,
-       groupInit,
-       invite,
--      stats,
-       backup
-     ],
-     context,
-@@ -84,12 +81,12 @@ module.exports = async function graphqlServer (ssb) {
+@@ -84,12 +84,12 @@ module.exports = async function graphqlServer (ssb) {
      cordova-bridge is used in Cordova, DO NOT REMOVE!
      The if statement is uncommented by patch-package in the mobile platform
    */
@@ -45,3 +21,30 @@ index b4750e7..4d075cd 100644
  
    return httpServer
  }
+diff --git a/node_modules/ssb-ahau/src/graphql/stats.js b/node_modules/ssb-ahau/src/graphql/stats.js
+index fe98fa0..d0e1e3b 100644
+--- a/node_modules/ssb-ahau/src/graphql/stats.js
++++ b/node_modules/ssb-ahau/src/graphql/stats.js
+@@ -1,5 +1,4 @@
+ const gql = require('graphql-tag')
+-const si = require('systeminformation')
+ const fs = require('fs')
+ const path = require('path')
+ 
+@@ -78,13 +77,9 @@ function Resolvers (ssb, externalGetters) {
+   const resolvers = {
+     Query: {
+       fileSystemStats: async () => {
+-        const fsSize = await si.fsSize()
+-        const sizes = fsSize
+-          .filter(fs => appPath.startsWith(fs.mount))
+-          .sort((a, b) => b.mount.length - a.mount.length) // longest first
+-
+-        if (!sizes.length) return null
+-        return sizes[0]
++        const err = Error('fileSystemStats not yet supported in mobile')
++        console.log(err)
++        throw err
+       },
+       ahauDBStats: async () => {
+         return {}

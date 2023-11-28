@@ -1,73 +1,13 @@
-const path = require('path')
-const ssbKeys = require('ssb-keys')
-const makeConfig = require('ssb-config/inject')
+/* eslint-disable brace-style */
 const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
+const cordova = require('cordova-bridge')
+const pull = require('pull-stream')
 
-const { createOrMigrate } = require('./config-helper')
-
-// Get base path
-let appDataDir
-if (process.env.PLATFORM === 'cordova') {
-  const cordova = require('cordova-bridge')
-  appDataDir = cordova.app.datadir()
-} else {
-  appDataDir = require('os').homedir()
-}
-
-// App name
-const oldAppName = process.env.NODE_ENV === 'development' ? 'ahau-dev' : 'ssb-ahau'
-const appName = env.appName
-const ssbPath = path.resolve(appDataDir, `.${appName}`)
-
-// Create or migrate config path
-createOrMigrate(appDataDir, appName, oldAppName)
-
-const keys = ssbKeys.loadOrCreateSync(path.join(ssbPath, 'secret'))
-
-const config = makeConfig(appName, {
-  path: ssbPath,
-  port: env.port,
-  keys,
-  caps: env.caps,
-
-  conn: { autostart: true },
-  friends: { hops: 2 },
-  lan: { legacy: false },
-
-  connections: {
-    incoming: {
-      /* Causing error: */
-      /* Error: ssb-config: conflicting connection settings for: net port */
-      // net: [{ scope: 'private', transform: 'shs', port: 26831 }],
-      tunnel: [{ scope: 'public', transform: 'shs' }]
-    },
-    outgoing: {
-      net: [{ transform: 'shs' }],
-      tunnel: [{ transform: 'shs' }]
-    }
-  },
-  serveBlobs: {
-    port: env.serveBlobs.port,
-    cors: true,
-    csp: ''
-  },
-  hyperBlobs: {
-    port: env.hyperBlobs.port,
-    autoPrune: false
-  },
-  graphql: {
-    port: env.graphql.port
-  },
-  recpsGuard: {
-    allowedTypes: [
-      'contact', 'pub' // needed for ssb-invite
-    ]
-  }
-})
+const config = require('./ssb.config')()
 
 // eslint-disable-next-line no-useless-call
-SecretStack({ appKey: env.caps.shs })
+const ssb = SecretStack({ appKey: env.caps.shs })
   // .use(require('ssb-master'))
   .use(require('ssb-db'))
   .use(require('ssb-query'))
@@ -99,3 +39,40 @@ SecretStack({ appKey: env.caps.shs })
   .use(require('ssb-recps-guard'))
 
   .call(null, config)
+
+// path: "tribes.list"
+
+cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
+  let func = ssb
+  let _path = path.split('.')
+  while (_path.length) {
+    const get = _path.shift()
+    func = func[get]
+    if (!func) {
+      console.error('No such path:', path)
+      _path = []
+    }
+  }
+
+  const cb = (err, result) => {
+    if (err) cordova.channel.post('error', err)
+    else cordova.channel.post('result', { path, args, result })
+  }
+
+  if (type === 'async') func(...args, cb)
+  else if (type === 'source') {
+    pull(
+      func(...args),
+      pull.collect(cb)
+    )
+  }
+  else if (type === 'sync') {
+    try {
+      const result = func(...args)
+      cb(null, result)
+    } catch (err) {
+      cb(err)
+    }
+  }
+  else console.log('type not yet supported:', type)
+})

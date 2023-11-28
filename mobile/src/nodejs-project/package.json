@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "main": "main.js",
   "scripts": {
+    "postinstall": "patch-package",
     "update": "node update-package.js"
   },
   "engines": {
@@ -61,7 +62,7 @@
     "utp-native-nodejs-mobile": "2.1.4-0"
   },
   "devDependencies": {
-    "noise-protocol": "3.0.1",
-    "hmac-blake2b": "2.0.0"
+    "hmac-blake2b": "2.0.0",
+    "noise-protocol": "3.0.1"
   }
 }
