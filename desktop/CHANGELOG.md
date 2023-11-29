@@ -1,8 +1,17 @@
 # Changelog | Ahau desktop
 
+## v2.25.5
+
+### Patches
+
+- fixes an infinite loop in `ProfileForm` causing dialogs like `SideNodeDialog` and `NewPersonDialog` to crash
+- removes .woff files from roboto-latin
+- translations
+
+
 ## v2.25.4
 
-## Patches
+### Patches
 
 - fix `esbuild` setup
 - drop un-needed fonts
@@ -13,7 +22,7 @@ A partial rollback - `esbuild` problems
 
 ## v2.25.2
 
-## Patches
+### Patches
 
 - fixed `sodium-native` monkey patch (needed `sodium_free`)
 - fixed Mixpanel ENV missing
