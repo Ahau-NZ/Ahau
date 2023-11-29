@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.25.6
+
+### Patches
+
+- install `ssb-ahoy@6.1.1` which downgrades to `secret-stack@6` to fix incompatability with `ssb-replicate`
+
 ## v2.25.5
 
 ### Patches
