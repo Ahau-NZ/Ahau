@@ -61,10 +61,10 @@ if [ $NODE_ENV == "production" ]; then
   $(npm bin)/cordova-set-version;
 
   warn "UNDO: --debug";
-  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --debug --device \
-    --buildConfig=./build.json;
-  # NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --release --device \
+  # NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --debug --device \
   #   --buildConfig=./build.json;
+  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova build $RUN_PLATFORM --release --device \
+    --buildConfig=./build.json;
 else
   log "Compiling App for local development...";
 

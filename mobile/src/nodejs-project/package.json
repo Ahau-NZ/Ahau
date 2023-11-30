@@ -32,7 +32,7 @@
     "obz": "^1.1.1",
     "patch-package": "^6.4.7",
     "pull-stream": "^3.7.0",
-    "secret-stack": "^7.1.0",
+    "secret-stack": "^6.4.2",
     "sodium-chloride-native-nodejs-mobile": "1.7.1",
     "sodium-native": "3.2.0",
     "ssb-ahau": "^16.0.10",
