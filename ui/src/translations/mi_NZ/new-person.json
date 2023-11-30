@@ -8,5 +8,6 @@
   "unknown": "Tautangata",
   "age": "Tau",
   "addPerson": "Add person to database",
-  "existingPerson": "Person already exists in Database"
+  "existingPerson": "Person already exists in Database",
+  "typeError": "getCloseSuggestions was given the wrong type {type}"
 }
