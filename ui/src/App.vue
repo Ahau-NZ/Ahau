@@ -3,7 +3,10 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
 
     <!-- Sizes your content based upon application components -->
-    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ mobileWhakapapaTitleStyle: mobile }">
+    <v-main
+      v-if="!isMobile || isMobile && !storeDialog"
+      :class="{ main: true, isMobile }"
+    >
       <!-- Provides the application the proper gutter -->
       <v-container fluid class="pa-0">
         <transition name="fade" mode="out-in">
@@ -13,7 +16,7 @@
       </v-container>
     </v-main>
 
-    <div v-if="!mobile" class='version'>
+    <div class='version' :style="isMobile ? 'left: 0; right: initial;' : ''">
       <span>version</span> {{version}}
     </div>
 
@@ -82,7 +85,7 @@ export default {
       await this.loadTribe(this.$route.params.tribeId)
     }
 
-    if (process.env.VUE_APP_PLATFORM === 'cordova') {
+    if (import.meta.env.VITE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
     }
   },
@@ -129,7 +132,7 @@ export default {
     ...mapGetters(['isKaitiaki']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
     ...mapGetters(['storeDialog', 'loadingState']),
-    mobile () {
+    isMobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
@@ -215,6 +218,11 @@ a {
 /* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
+  max-height: 100vh;
+
+  .v-main {
+    max-height: 100vh;
+  }
 }
 
 /* //custom backgrounds per route. see above 'watcher' */
@@ -247,25 +255,38 @@ body {
 
 // see https://css-tricks.com/custom-scrollbars-in-webkit/
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 10px
 }
 </style>
 
 <style lang="scss" scoped>
-.mobileWhakapapaTitleStyle {
-  padding-top: 56px !important;
-  overflow-x: hidden;
+.main {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &.isMobile {
+    padding-top: 56px !important;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0px;
+    }
+  }
 }
 
 .version {
+  z-index: 2;
   color: #999;
   position: fixed;
   bottom: 5px;
   right: 10px;
   font-size: .8rem;
-  transition: all .3s ease-in;
+  transition: color, font-size .3s ease-in;
 
   span {
+    display: inline-block;
+    width: 6px;
     font-size: .8rem;
     color: rgba(0,0,0,0);
     transition: all .3s ease-in;
@@ -280,7 +301,10 @@ body {
     border: 1px solid #444;
     border-radius: 4px;
 
+    margin-left: 6px;
+
     span {
+      width: initial;
       color: #555;
     }
   }

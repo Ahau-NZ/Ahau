@@ -1,0 +1,17 @@
+diff --git a/node_modules/chloride/index.js b/node_modules/chloride/index.js
+index d7499fa..0490682 100644
+--- a/node_modules/chloride/index.js
++++ b/node_modules/chloride/index.js
+@@ -1,11 +1 @@
+-if(process.env.CHLORIDE_JS) {
+-  module.exports = require('./browser')
+-} else {
+-  try {
+-    module.exports = require('./bindings')
+-  } catch (err) {
+-    console.warn('error loading sodium bindings:', err.message)
+-    console.warn('falling back to javascript version.')
+-    module.exports = require('./browser')
+-  }
+-}
++module.exports = require('./bindings')

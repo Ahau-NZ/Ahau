@@ -1,107 +1,78 @@
-const path = require('path')
-const ssbKeys = require('ssb-keys')
-const makeConfig = require('ssb-config/inject')
+/* eslint-disable brace-style */
 const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
+const cordova = require('cordova-bridge')
+const pull = require('pull-stream')
 
-const { createOrMigrate } = require('./config-helper')
-
-// Get base path
-let appDataDir
-if (process.env.PLATFORM === 'cordova') {
-  const cordova = require('cordova-bridge')
-  appDataDir = cordova.app.datadir()
-} else {
-  appDataDir = require('os').homedir()
-}
-
-// App name
-const oldAppName = process.env.NODE_ENV === 'development' ? 'ahau-dev' : 'ssb-ahau'
-const appName = env.appName
-const ssbPath = path.resolve(appDataDir, `.${appName}`)
-
-// Create or migrate config path
-createOrMigrate(appDataDir, appName, oldAppName)
-
-const keys = ssbKeys.loadOrCreateSync(path.join(ssbPath, 'secret'))
-
-const config = makeConfig(appName, {
-  port: env.port,
-  path: ssbPath,
-  keys,
-  caps: env.caps,
-  conn: {
-    autostart: true
-  },
-  lan: {
-    legacy: false
-  },
-  friends: {
-    hops: 2
-  },
-  connections: {
-    incoming: {
-      /* Causing error: */
-      /* Error: ssb-config: conflicting connection settings for: net port */
-      // net: [{ scope: 'private', transform: 'shs', port: 26831 }],
-      tunnel: [{ scope: 'public', transform: 'shs' }]
-    },
-    outgoing: {
-      net: [{ transform: 'shs' }],
-      tunnel: [{ transform: 'shs' }]
-    }
-  },
-  recpsGuard: {
-    allowedTypes: [
-      'contact', 'pub' // needed for ssb-invite
-    ]
-  },
-  serveBlobs: {
-    port: env.serveBlobs.port,
-    cors: true,
-    csp: ''
-  },
-  hyperBlobs: {
-    port: env.hyperBlobs.port,
-    autoPrune: false
-  },
-  graphql: {
-    port: env.graphql.port
-  }
-})
+const config = require('./ssb.config')()
 
 // eslint-disable-next-line no-useless-call
-SecretStack({ appKey: env.caps.shs })
-  // Core
-  .use(require('ssb-master'))
+const ssb = SecretStack({ appKey: env.caps.shs })
+  // .use(require('ssb-master'))
   .use(require('ssb-db'))
-  // Replication
+  .use(require('ssb-query'))
+  .use(require('ssb-backlinks'))
+
+  // .use(require('ssb-no-auth'))
+  .use(require('ssb-conn')) // needs: db, friends, lan
+  .use(require('ssb-lan'))
   .use(require('ssb-replicate')) // needs: db
   .use(require('ssb-friends')) // needs: db, replicate
-  // Connections
-  .use(require('ssb-no-auth'))
-  .use(require('ssb-lan'))
-  .use(require('ssb-conn')) // needs: db, friends, lan
-  .use(require('ssb-invite')) // needs: db, conn
-  .use(require('ssb-promiscuous')) // needs: conn, friends
-  // Queries
-  .use(require('ssb-query')) // needs: db
-  .use(require('ssb-backlinks')) // needs: db
-  .use(require('ssb-whakapapa'))
-  .use(require('ssb-profile'))
-  .use(require('ssb-settings'))
-  .use(require('ssb-artefact'))
-  .use(require('ssb-story'))
-  .use(require('ssb-submissions'))
-  // Blobs
+  // .use(require('ssb-promiscuous')) // needs: conn, friends
+
   .use(require('ssb-blobs'))
   .use(require('ssb-serve-blobs')) // needs: blobs
   .use(require('ssb-hyper-blobs'))
-  // Private groups
+
+  .use(require('ssb-invite')) // needs: db, conn
   .use(require('ssb-tribes'))
   .use(require('ssb-tribes-registration'))
-  // Custom
+
+  .use(require('ssb-profile'))
+  .use(require('ssb-settings'))
+  .use(require('ssb-story'))
+  .use(require('ssb-artefact'))
+  .use(require('ssb-whakapapa'))
+  .use(require('ssb-submissions'))
+
   .use(require('ssb-ahau'))
   .use(require('ssb-recps-guard'))
 
   .call(null, config)
+
+// path: "tribes.list"
+
+cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
+  let func = ssb
+  let _path = path.split('.')
+  while (_path.length) {
+    const get = _path.shift()
+    func = func[get]
+    if (!func) {
+      console.error('No such path:', path)
+      _path = []
+    }
+  }
+
+  const cb = (err, result) => {
+    if (err) cordova.channel.post('error', err)
+    else cordova.channel.post('result', { path, args, result })
+  }
+
+  if (type === 'async') func(...args, cb)
+  else if (type === 'source') {
+    pull(
+      func(...args),
+      pull.collect(cb)
+    )
+  }
+  else if (type === 'sync') {
+    try {
+      const result = func(...args)
+      cb(null, result)
+    } catch (err) {
+      cb(err)
+    }
+  }
+  else console.log('type not yet supported:', type)
+})

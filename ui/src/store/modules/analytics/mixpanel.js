@@ -46,6 +46,7 @@ function initialize () {
 
   mixpanel.init(VITE_MIXPANEL_TOKEN, { api_host: VITE_MIXPANEL_API_HOST })
 
+  // TODO window.ahoy only exists in the electron env
   window.ahoy.getConfig().then(config => {
     const mixpanelId = config.mixpanelId
     mixpanel.identify(mixpanelId)
@@ -53,7 +54,7 @@ function initialize () {
     mixpanel.people.set({
       application: 'ahau',
       isPataka: false,
-      isMobile: process.env.VUE_APP_PLATFORM === 'cordova',
+      isMobile: import.meta.env.VITE_APP_PLATFORM === 'cordova',
       userId: mixpanelId
     })
 
