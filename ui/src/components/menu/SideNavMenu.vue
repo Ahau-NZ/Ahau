@@ -149,6 +149,15 @@ export default {
       default: false
     }
   },
+  components: {
+    ArchiveIcon,
+    // ActivityIcon,
+    WhakapapaIcon,
+    PersonListIcon,
+    UserIcon,
+    Avatar,
+    RegisterButton
+  },
   data () {
     return {
       // magic strings
@@ -199,13 +208,12 @@ export default {
     },
     showWhakapapa () {
       if (this.isCommunity) return true
-      else if (this.profile.id === this.whoami.personal.profile.id) return true
+      else if (this.isPersonalTribe) return true
       else return false
     },
     showPeopleList () {
       if (!this.profile) return false
-
-      if (this.profile.id === this.whoami.personal.profile.id) return true
+      if (this.isPersonalTribe) return true
       if (!Array.isArray(this.profile.kaitiaki)) return false
 
       return this.profile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId)
@@ -322,15 +330,6 @@ export default {
     t (key, vars) {
       return this.$t('sideNav.' + key, vars)
     }
-  },
-  components: {
-    ArchiveIcon,
-    // ActivityIcon,
-    WhakapapaIcon,
-    PersonListIcon,
-    UserIcon,
-    Avatar,
-    RegisterButton
   }
 }
 </script>
