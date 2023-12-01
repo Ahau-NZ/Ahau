@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     getSwitchLabel (val) {
-      return val === true ? this.t('off') : this.t('on')
+      return val === true ? this.t('on') : this.t('off')
     },
     t (key, vars) {
       return this.$t('tribeSettings.' + key, vars)

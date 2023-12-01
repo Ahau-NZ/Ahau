@@ -265,7 +265,7 @@
                 <v-checkbox v-model="checkbox1" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- STEP 3: Share Kaitiaki information  -->
+              <!-- STEP 4: Share Kaitiaki information  -->
               <v-stepper-step
                 :complete="step > 4"
                 step="4"

@@ -31,6 +31,8 @@ import reviewRegistration from './review-registration-dialog.json'
 import tribeSettings from './tribe-settings.json'
 import reviewSubmissionDialog from './profile-change-request.json'
 import linkSubmissions from './link-submissions.json'
+import walletShow from './wallet-show.json'
+import identityRequirements from './identity-requirements.json'
 
 /* Nav / misc */
 import accessButton from './access-button.json'
@@ -52,6 +54,7 @@ import button from './button.json'
 import importPeopleForm from './import-csv.json'
 
 export {
+  walletShow,
   viewTribes,
   personIndex,
   whakapapaIndex,
@@ -80,6 +83,7 @@ export {
   tribeSettings,
   reviewSubmissionDialog,
   linkSubmissions,
+  identityRequirements,
 
   accessButton,
   appBarMenu,
