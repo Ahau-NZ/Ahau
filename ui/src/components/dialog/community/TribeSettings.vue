@@ -1,6 +1,7 @@
 <template>
   <v-container fluid >
     <v-row>
+      <!-- Kaitiaki -->
       <v-col cols="12" class="overline">
         {{ t('kaitiakiFeatures') }}
       </v-col>

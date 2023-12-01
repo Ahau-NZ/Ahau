@@ -28,6 +28,7 @@ import dialogHandler from './dialog-handler.json'
 import dialog from './dialog.json'
 import editPersonDialog from './edit-person-dialog.json'
 import reviewRegistration from './review-registration-dialog.json'
+import newRegistration from './new-registration.json'
 import tribeSettings from './tribe-settings.json'
 import reviewSubmissionDialog from './profile-change-request.json'
 import linkSubmissions from './link-submissions.json'
@@ -80,6 +81,7 @@ export {
   dialog,
   editPersonDialog,
   reviewRegistration,
+  newRegistration,
   tribeSettings,
   reviewSubmissionDialog,
   linkSubmissions,

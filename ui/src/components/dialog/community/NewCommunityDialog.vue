@@ -136,7 +136,11 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     settings () {
-      return pick(this.formData, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+      return pick(this.formData, [
+        'allowWhakapapaViews',
+        'allowStories',
+        'allowPersonsList'
+      ])
     },
     profileFields: {
       get: function () {

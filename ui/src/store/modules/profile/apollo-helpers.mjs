@@ -25,15 +25,17 @@ export const CommunityProfileFieldsFragment = gql`
 ${SharedProfileFieldsFragment}
 fragment CommunityProfileFields on Community {
   ...SharedProfileFields
+
+  # private settings
+  allowWhakapapaViews
+  allowStories
+  allowPersonsList
+  
+  # public settings
   joiningQuestions {
     type
     label
   }
-
-  # settings
-  allowWhakapapaViews
-  allowStories
-  allowPersonsList
 }
 `
 

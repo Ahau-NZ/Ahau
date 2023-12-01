@@ -37,15 +37,18 @@ export const EMPTY_COMMUNITY = {
   postCode: null,
   email: null,
   phone: null,
-  joiningQuestions: [],
+
   authors: [],
   kaitiaki: [],
-  customFields: [],
 
   // private community settings
   allowWhakapapaViews: true,
   allowStories: true,
-  allowPersonsList: true
+  allowPersonsList: true,
+
+  // public community settings
+  joiningQuestions: [],
+  customFields: []
 }
 
 export function setDefaultCommunity (newCommunity) {
@@ -63,14 +66,16 @@ export function setDefaultCommunity (newCommunity) {
     postCode: community.postCode,
     email: community.email,
     phone: community.phone,
-    joiningQuestions: community.joiningQuestions,
     authors: (community.kaitiaki || community.tiaki).map(d => ({ ...d.profile, feedId: d.feedId })),
-    customFields: community.customFields || [],
 
     // private community settings
     allowWhakapapaViews: community.allowWhakapapaViews,
     allowStories: community.allowStories,
-    allowPersonsList: community.allowPersonsList
+    allowPersonsList: community.allowPersonsList,
+
+    // public community settings
+    joiningQuestions: community.joiningQuestions,
+    customFields: community.customFields || []
   }
 }
 // TODO: uncomment needed fields
@@ -103,7 +108,6 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'avatarImage',
   'headerImage',
   'id',
-  'poBoxId',
   'type',
   'preferredName',
   'description',
@@ -121,7 +125,9 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   // private community settings
   'allowWhakapapaViews',
   'allowStories',
-  'allowPersonsList'
+  'allowPersonsList',
+
+  'poBoxId'
 ]
 
 export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
