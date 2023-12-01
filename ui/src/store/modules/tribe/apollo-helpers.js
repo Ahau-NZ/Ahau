@@ -24,7 +24,7 @@ export const getTribe = ({
         private {
           ...CommunityFragment
 
-          # settings
+          # private settings
           allowWhakapapaViews
           allowStories
           allowPersonsList
@@ -50,7 +50,7 @@ export const getTribes = ({
         private {
           ...CommunityFragment
 
-          # settings
+          # private settings
           allowWhakapapaViews
           allowStories
           allowPersonsList
