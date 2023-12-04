@@ -40,7 +40,9 @@ to pin down the exact versions of tools needed to all work together.
       - `java -version` should be 8
     - Gradle
       - `sdk install gradle 8.1`
-    - Android Studio: https://developer.android.com/studio/
+    - Android Studio
+      - https://developer.android.com/studio/
+        - download the latest from this page
       - https://developer.android.com/studio/install#linux
         ```bash
         sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
@@ -48,20 +50,21 @@ to pin down the exact versions of tools needed to all work together.
         sudo mv android-studio /opt/
         cd /usr/bin && sudo ln -s /opt/android-studio/bin/studio.sh studio
         ```
-      - start android studio from terminal `studio`, and follow the default path for setup
-        - went "More actions > SDK Manager" and added
-          - SDK Platforms tab
-             - [x] Android 10.0 (Q)
-          - SDK Tools tab:
-             - [x] Android SDK Build-Tools > 30.0.3
-                - check "show package details"
-             - [x] Android NDK (side by side) > 22.1.7161670
-                - note this is the last version which has the `make-standalone-toolchain.sh` we need
-             - [x] Android SDK Command-line Tools (latest)
-             - [x] CMake > 3.10.2.4988404
-                - check "show package details"
-             - [x] Android SDK Tools (obselete)
-                - uncheck "hide obselete packages"
+        - the `tar.gz` file name will depend on your download
+      - start android studio from terminal `studio`, choose "Standard" Install Type
+      - once installed on dashboard click "More actions > SDK Manager" and added
+        - SDK Platforms tab
+           - [x] Android 10.0 (Q)
+        - SDK Tools tab:
+           - [x] Android SDK Build-Tools > 30.0.3
+              - check "show package details"
+           - [x] Android NDK (side by side) > 22.1.7161670
+              - note this is the last version which has the `make-standalone-toolchain.sh` we need
+           - [x] Android SDK Command-line Tools (latest)
+           - [x] CMake > 3.10.2.4988404
+              - check "show package details"
+           - [x] Android SDK Tools (obselete)
+              - uncheck "hide obselete packages"
       - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
         ```
         export ANDROID_HOME=$HOME/Android/Sdk
@@ -83,6 +86,7 @@ to pin down the exact versions of tools needed to all work together.
     ```bash
     sudo apt-get install make gcc python2 libtool
     ```
+    - NOTE: modern linux defaults to python3, but does not set up `python` in `$PATH`
     - may need to set up "python" to point at correct version of python
         ```bash
         cd /usr/bin
@@ -92,6 +96,7 @@ to pin down the exact versions of tools needed to all work together.
 4. set the mobile part of the repo up
     ```bash
     cd mobile
+    nvm use 12
     npm install && npm run setup
     ```
 
@@ -113,6 +118,14 @@ NOTES:
     - open `chrome://inspect#devices` in Chrome / Chromium
       - you may have to run `adb devices` to get the daemon running for it to show up in Chrome
 
+- buggy android setup? Burn them all:
+    ```bash
+    cd mobile
+    nvm use 12
+    rm -rf node_module platform plugins
+    npm i
+    npm run setup
+    ```
 
 ```bash
 $ npm install
