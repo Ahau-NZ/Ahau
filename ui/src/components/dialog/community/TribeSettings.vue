@@ -3,6 +3,27 @@
     <v-row>
       <!-- Kaitiaki -->
       <v-col cols="12" class="overline">
+        {{ t('credentialFeatures') }}
+      </v-col>
+      <v-col class="py-0 font-italic">
+        {{ t('credentialFeaturesDescription') }}
+      </v-col>
+      <v-col cols="12" class="pl-5">
+        <v-row v-for="(setting, i) in credentialSettings" :key="i" class="py-0">
+          <v-col class="py-0">
+            <v-switch
+              v-model="setting.value"
+              :label="setting.label(setting.value)"
+              color="blue"
+              class="py-0 switch"
+              hide-details
+              @change="emitChanges(setting.key, setting.value)"
+            ></v-switch>
+          </v-col>
+          <v-spacer v-if="!mobile" class="py-0"/>
+        </v-row>
+      </v-col>
+      <v-col cols="12" class="overline">
         {{ t('kaitiakiFeatures') }}
       </v-col>
       <v-col class="py-0 font-italic">
@@ -57,6 +78,13 @@ export default {
   },
   data () {
     return {
+      credentialSettings: [
+        {
+          key: 'credentialIssuer',
+          label: d => this.t('credentialIssuer', { toggle: this.getSwitchLabel(d) }),
+          value: this.settings.credentialIssuer
+        }
+      ],
       kaitiakiSettings: [
         {
           key: 'allowPersonsList',
