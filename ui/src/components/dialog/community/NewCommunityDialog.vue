@@ -47,7 +47,7 @@
                 {{ $t('addCommunityForm.delete') }}
                 <v-icon class="pl-2">mdi-delete</v-icon>
               </v-btn>
-              <v-btn color="blue-grey" dark @click="nextTab">
+              <v-btn color="#516a64" dark @click="nextTab">
                 {{ $t('addCommunityForm.next') }}
                 <v-icon class="pl-2">mdi-page-next-outline</v-icon>
               </v-btn>
@@ -55,30 +55,9 @@
           </v-col>
         </v-tab-item>
         <v-tab-item value="tab-2">
-          <DataModel :customFields.sync="formData.customFields"/>
-          <v-divider class="my-10"></v-divider>
-          <v-row class="ma-2">
-            <v-col cols="12">
-              <p>{{ t('form') }}</p>
-            </v-col>
-            <v-col cols="10" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1">
-              <v-text-field
-                v-model="formData.joiningQuestions[i].label"
-                append-icon="mdi-delete"
-                @click:append="removeJoiningQuestion(i)"
-                :label="`Question ${i + 1}`"
-                :placeholder="t('questionPlaceholder')"
-                auto-focus
-                outlined
-                hide-details
-              />
-            </v-col>
-            <v-col cols="12" justify="start" class="px-1">
-              <v-btn color="#3b3b3b" class="white--text" @click="addQuestionField">
-                <v-icon class="pr-1">mdi-plus</v-icon> {{ t('addQuestion') }}
-              </v-btn>
-            </v-col>
-          </v-row>
+          <DataModel :customFields.sync="profileFields"/>
+          <v-divider class="my-2"></v-divider>
+          <RegistrationQuestions :joiningQuestions.sync="formData.joiningQuestions"/>
           <v-row justify="center" class="my-4">
             <v-btn color="blue-grey" dark @click="nextTab">
               {{ $t('addCommunityForm.next') }}
@@ -102,7 +81,6 @@
 
 <script>
 import { pick, isEmpty, isEqual } from 'lodash-es'
-import { mapGetters } from 'vuex'
 
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers'
@@ -111,6 +89,11 @@ import GroupsList from './GroupsList.vue'
 import Permissions from './Permissions.vue'
 import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
+import RegistrationQuestions from './RegistrationQuestions.vue'
+
+import { mapGetters } from 'vuex'
+
+const customFieldTypes = ['text', 'list', 'array', 'checkbox', 'number', 'date']
 
 export default {
   name: 'NewCommunityDialog',
@@ -119,7 +102,8 @@ export default {
     GroupsList,
     Permissions,
     TribeSettings,
-    DataModel
+    DataModel,
+    RegistrationQuestions
   },
   props: {
     show: { type: Boolean, required: true },
@@ -140,24 +124,9 @@ export default {
       immediate: true,
       handler (settings) {
         if (!settings) return
-
         this.formData.allowWhakapapaViews = settings.allowWhakapapaViews
         this.formData.allowStories = settings.allowStories
         this.formData.allowPersonsList = settings.allowPersonsList
-      }
-    },
-    'formData.joiningQuestions': {
-      deep: true,
-      immediate: true,
-      handler (joiningQuestions) {
-        if (joiningQuestions && joiningQuestions.length > 0) this.allowJoiningQuestions = true
-        else this.allowJoiningQuestions = false
-      }
-    },
-    tab (newVal) {
-      if (newVal !== 'tab-2') return
-      if (this.formData && this.formData.joiningQuestions && this.formData.joiningQuestions.length < 1) {
-        this.formData.joiningQuestions.push({ label: '', type: 'input' })
       }
     }
   },
@@ -167,18 +136,28 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     settings () {
-      return pick(this.formData, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+      return pick(this.formData, [
+        'allowWhakapapaViews',
+        'allowStories',
+        'allowPersonsList'
+      ])
+    },
+    profileFields: {
+      get: function () {
+        const fields = this.formData.customFields.filter(field => customFieldTypes.find(i => i === field.type))
+        return fields || []
+      },
+      set: function (newValue) {
+        this.formData.customFields = newValue
+      }
+    },
+    profileFiles () {
+      const fields = [...this.formData.customFields]
+      return fields.filter(field => field.type === 'file') || []
     }
   },
   methods: {
-    addQuestionField () {
-      if (!this.formData.joiningQuestions) this.formData.joiningQuestions = []
-      this.formData.joiningQuestions.push({ label: '', type: 'input' })
-    },
-    removeJoiningQuestion (index) {
-      this.formData.joiningQuestions.splice(index, 1)
-    },
-    updateSettings ({ key, value }) {
+    async updateSettings ({ key, value }) {
       this.formData[key] = value
     },
     submit () {

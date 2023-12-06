@@ -55,7 +55,7 @@
                 :rules="[() => isValidPersonalProfile]"
                 error-icon="mdi-close"
               >
-                Update your information
+                {{ t('updateInfo') }}
               </v-stepper-step>
               <v-stepper-content step="1">
                 <v-card
@@ -66,7 +66,7 @@
                 >
                   <v-card-text>
                     <div v-if="isLoadingProfile">
-                      Please wait while your profile is updating
+                      {{ t('updatingProfile') }}
                       <v-progress-circular
                         indeterminate
                         color="#b12526"
@@ -74,10 +74,10 @@
                     </div>
                     <div v-else>
                       <div v-if="isValidPersonalProfile">
-                        No updates required. Go to your profile if you wish to provide more information
+                       {{ t('noUpdates') }}
                       </div>
                       <div v-else>
-                        Please update the following information on your profile: <br>
+                        {{ t('updatesNeeded' )}} <br>
                         <ul>
                           <li v-for="({ prop }) in missingRequiredFields" :key="prop">
                             {{ prop }}
@@ -92,7 +92,7 @@
                   :disabled="isLoadingProfile"
                   @click="goProfile"
                 >
-                  Go to edit profile
+                  {{ t('editProfile') }}
                 </v-btn>
                 <v-btn
                   :disabled="!isValidPersonalProfile || isLoadingProfile"
@@ -100,7 +100,7 @@
                   color="primary"
                   @click="step = hasJoiningQuestions ? 2 : 3"
                 >
-                  Next
+                  {{ t('next') }}
                 </v-btn>
               </v-stepper-content>
               <!-- STEP 2: Joining Questions -->
@@ -109,7 +109,7 @@
                 step="2"
                 :color="step > 2 ? 'green' : 'black'"
               >
-                {{ hasJoiningQuestions ? 'Please answer these questions to join this community' : 'No joining questions to answer' }}
+                {{ hasJoiningQuestions ? t('joiningQuestions') : t('noJoiningQuestions') }}
               </v-stepper-step>
 
               <v-stepper-content step="2">
@@ -133,7 +133,7 @@
                   color="primary"
                   @click="step = 3"
                 >
-                  Next
+                  {{ t('next') }}
                 </v-btn>
               </v-stepper-content>
 
@@ -143,7 +143,7 @@
                 step="3"
                 :color="checkbox1 ? 'green' : 'black'"
               >
-                Share your information with the Community Members
+                {{ t('shareInfoMembers') }}
               </v-stepper-step>
 
               <v-stepper-content step="3">
@@ -154,11 +154,7 @@
                   outlined
                 >
                   <v-card-text>
-                    I agree to share the following information with the
-                    <strong>
-                      <i>{{ formData.preferredName }}</i>
-                    </strong>
-                    community members
+                    <span v-html="t('agreeMembers', { groupName: formData.preferredName })"/>
                   </v-card-text>
                   <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
@@ -265,13 +261,13 @@
                 <v-checkbox v-model="checkbox1" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- STEP 3: Share Kaitiaki information  -->
+              <!-- STEP 4: Share Kaitiaki information  -->
               <v-stepper-step
                 :complete="step > 4"
                 step="4"
                 :color="checkbox2 ? 'green' : 'black'"
               >
-                Share your information with the Community Kaitiaki
+                {{ t('shareInfoKaitiaki') }}
                 <small></small>
               </v-stepper-step>
 
@@ -283,11 +279,7 @@
                   outlined
                 >
                   <v-card-text>
-                    I agree to share the following information with the
-                    <strong>
-                      <i>{{ formData.preferredName }}</i>
-                    </strong>
-                    community kaitiaki
+                    <span v-html="t('agreeKaitiaki', { groupName: formData.preferredName })"/>
                   </v-card-text>
                   <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
                     <template v-slot:content>
@@ -337,11 +329,9 @@
                 <v-checkbox v-model="checkbox2" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- comment -->
-              <v-stepper-step
-                step="5"
-              >
-                Send a comment with your request
+              <!-- Step 6: Comment -->
+              <v-stepper-step step="5">
+                {{ t('sendComment') }}
               </v-stepper-step>
               <v-stepper-content step="5">
                 <v-card
@@ -353,7 +343,7 @@
                   <v-col cols="12" :class="mobile ? 'pt-4 px-0' : 'pt-6 px-5'">
                     <v-textarea
                       v-model="comment"
-                      label="Send a comment with your request"
+                      :label="t('sendComment')"
                       no-resize
                       v-bind="customProps"
                       rows="3"
@@ -364,6 +354,7 @@
                 </v-card>
               </v-stepper-content>
             </v-stepper>
+
           </v-form>
         </v-col>
       </template>
@@ -371,10 +362,10 @@
       <!-- Actions Slot -->
       <template v-slot:actions>
         <v-btn @click="close" text large class="secondary--text">
-          <span>cancel</span>
+          <span>{{ t('cancel') }}</span>
         </v-btn>
         <v-btn @click="submit" text large class="blue--text mx-5" :disabled="disableSubmission">
-          <span>submit</span>
+          <span>{{ t('submit') }}</span>
         </v-btn>
       </template>
     </DialogContainer>
@@ -456,7 +447,9 @@ export default {
       if (checkbox) this.step = 4 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) this.step = 5
+      if (checkbox) {
+        this.step = 5
+      }
     }
   },
   computed: {
@@ -583,10 +576,12 @@ export default {
       */
       await this.updatePersonalProfile(input)
 
-      const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
-      if (!isEmpty(customFieldValues)) {
-        this.rawCustomFields = customFields
-        this.customFields = customFieldValues
+      if (customFields) {
+        const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+        if (!isEmpty(customFieldValues)) {
+          this.rawCustomFields = customFields
+          this.customFields = customFieldValues
+        }
       }
 
       // reload your personal profiles
@@ -609,6 +604,9 @@ export default {
         id: this.personalProfile.id,
         ...input
       })
+    },
+    t (key, vars) {
+      return this.$t('newRegistration.' + key, vars)
     }
   }
 }

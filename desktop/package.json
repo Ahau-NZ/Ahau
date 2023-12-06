@@ -23,6 +23,7 @@
     "electron-updater": "^4.6.5",
     "lodash.merge": "^4.6.2",
     "ssb-ahau": "^16.2.0",
+    "secret-stack": "^6.4.2",
     "ssb-ahoy": "^6.1.1",
     "ssb-artefact": "^3.2.2",
     "ssb-backlinks": "^2.1.1",

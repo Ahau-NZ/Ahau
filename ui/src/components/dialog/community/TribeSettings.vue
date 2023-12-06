@@ -1,6 +1,7 @@
 <template>
   <v-container fluid >
     <v-row>
+      <!-- Kaitiaki -->
       <v-col cols="12" class="overline">
         {{ t('kaitiakiFeatures') }}
       </v-col>
@@ -84,7 +85,7 @@ export default {
   },
   methods: {
     getSwitchLabel (val) {
-      return val === true ? this.t('off') : this.t('on')
+      return val === true ? this.t('on') : this.t('off')
     },
     t (key, vars) {
       return this.$t('tribeSettings.' + key, vars)

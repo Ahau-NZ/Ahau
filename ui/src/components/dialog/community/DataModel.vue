@@ -1,170 +1,178 @@
 <template>
   <div class="ma-2 mt-4">
-    <p class="black--text">{{ t('dataModel') }}</p>
-      <v-data-table
-        :headers="headers"
-        :items="filteredFields"
-        class="elevation-1"
-        disable-sort
-        disable-pagination
-        hide-default-footer
-        show-expand
-        :expanded="expandedFields"
-        item-key="label"
-      >
+    <div class="pl-4">
+      <p class="overline black--text">{{ t('dataModel') }}</p>
+      <p class="black--text">{{ t('dataModelInstructions') }}</p>
+    </div>
+    <!-- profile data table -->
+    <v-data-table
+      :headers="headers"
+      :items="filteredFields"
+      class="elevation-1"
+      disable-sort
+      disable-pagination
+      hide-default-footer
+      show-expand
+      :expanded="expandedFields"
+      item-key="label"
+    >
 
-        <!-- TODO: this is disabled for now as we do not implement this yet -->
-        <template v-slot:item.visibleBy="{ item }"> <!-- eslint-disable-line -->
-          <v-select
-            v-model="item.visibleBy"
-            :items="items"
-            single-line
-            class="custom-select"
-            v-bind="customProps"
-            :disabled="isDisabledField(item)"
-          ></v-select>
-        </template>
-        <template v-slot:item.required="{ item }"> <!-- eslint-disable-line -->
-          <v-checkbox
-            v-if="!isRequiredDisabled(item)"
-            v-model="item.required"
-            @click="updateRequiredField(item)"
-            :disabled="isDisabledField(item)"
-          ></v-checkbox>
-        </template>
-        <template v-slot:item.delete="{ item }"> <!-- eslint-disable-line -->
-          <v-icon
-            @click="showDeleteFieldDialog(item)"
-            :disabled="isDisabledField(item)"
-          >mdi-delete</v-icon>
-        </template>
+      <!-- TODO: this is disabled for now as we do not implement this yet -->
+      <template v-slot:item.visibleBy="{ item }"> <!-- eslint-disable-line -->
+        <v-select
+          v-model="item.visibleBy"
+          :items="items"
+          single-line
+          class="custom-select"
+          v-bind="customProps"
+          :disabled="isDisabledField(item)"
+        ></v-select>
+      </template>
+      <template v-slot:item.required="{ item }"> <!-- eslint-disable-line -->
+        <v-checkbox
+          v-if="!isRequiredDisabled(item)"
+          v-model="item.required"
+          @click="updateRequiredField(item)"
+          :disabled="isDisabledField(item)"
+        ></v-checkbox>
+      </template>
+      <template v-slot:item.delete="{ item }"> <!-- eslint-disable-line -->
+        <v-icon
+          @click="showDeleteFieldDialog(item)"
+          :disabled="isDisabledField(item)"
+        >mdi-delete</v-icon>
+      </template>
 
-        <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-          <v-icon
-            v-if="item.type === 'list'"
-            :class="{
-              'v-data-table__expand-icon': true,
-              'v-data-table__expand-icon--active': isExpanded
-            }"
-            @click.stop="expand(!isExpanded)"
-            >$expand</v-icon
-          >
-        </template>
-        <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">
-            <v-text-field
-              class="mx-2 mt-2"
-              label="list options"
-              :disabled="item.label === 'gender'"
-              v-model="item.options"
-            />
-          </td>
-        </template>
-      </v-data-table>
-      <v-col cols="12" justify="start" class="px-1">
-        <v-btn color="#3b3b3b" class="white--text" @click="newFieldDialog = true">
-          <v-icon class="pr-1">mdi-plus</v-icon> {{ t('addDataPoint') }}
-        </v-btn>
-      </v-col>
-      <v-dialog
-          v-if="newFieldDialog"
-          v-model="newFieldDialog"
-          max-width="500px"
-          light
+      <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+        <v-icon
+          v-if="item.type === 'list'"
+          :class="{
+            'v-data-table__expand-icon': true,
+            'v-data-table__expand-icon--active': isExpanded
+          }"
+          @click.stop="expand(!isExpanded)"
+          >$expand</v-icon
         >
-          <v-card>
-            <v-card-title>
-              <span class="dialog-title">{{ t('newFieldDialogTitle') }}</span>
-            </v-card-title>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <v-text-field
+            class="mx-2 mt-2"
+            label="list options"
+            :disabled="item.label === 'gender'"
+            v-model="item.options"
+          />
+        </td>
+      </template>
+    </v-data-table>
+    <!-- add new button -->
+    <v-col cols="12" justify="start" class="px-1">
+      <v-btn color="#3b3b3b" class="white--text" @click="newFieldDialog = true">
+        <v-icon class="pr-1">mdi-plus</v-icon> {{ t('addProfileField') }}
+      </v-btn>
+    </v-col>
+    <!-- add new field dialog -->
+    <v-dialog
+        v-if="newFieldDialog"
+        v-model="newFieldDialog"
+        max-width="500px"
+        light
+      >
+        <v-card>
+          <v-card-title>
+            <span class="dialog-title">{{ t('newFieldDialogTitle') }}</span>
+          </v-card-title>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="newField.label"
-                      label="Label"
-                      :rules="rules"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                  >
-                    <v-select
-                      label="input type"
-                      :value="newField.text"
-                      :items="typeOptions"
-                      class="custom-select"
-                      @input="updateNewFieldByType"
-                      v-bind="customProps"
-                    ></v-select>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                  >
-                    <v-select
-                      label="visible by"
-                      v-model="newField.visibleBy"
-                      :items="items"
-                      class="custom-select"
-                      v-bind="customProps"
-                    ></v-select>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                  >
-                    <v-checkbox
-                      label="required field"
-                      v-model="newField.required"
-                    ></v-checkbox>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                >
+                  <v-text-field
+                    v-model="newField.label"
+                    :label="t('label')"
+                    :rules="rules"
+                    v-bind="customProps"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                >
+                  <v-select
+                    :label="t('inputType')"
+                    :value="newField.text"
+                    :items="typeOptions"
+                    class="custom-select"
+                    @input="updateNewFieldByType"
+                    v-bind="customProps"
+                  ></v-select>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                >
+                  <v-select
+                    :label="t('visibleBy')"
+                    v-model="newField.visibleBy"
+                    :items="items"
+                    class="custom-select"
+                    v-bind="customProps"
+                  ></v-select>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                >
+                  <v-checkbox
+                    :label="t('required')"
+                    v-model="newField.required"
+                  ></v-checkbox>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                @click="closeNewFieldDialog"
-                text
-                :large="!mobile"
-                class="secondary--text"
-              >
-                {{ $t('dialog.cancel') }}
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                :large="!mobile"
-                @click="addCustomField"
-                :disabled="!newField.label"
-              >
-                {{ $t('dialog.save') }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="deleteFieldDialog" light max-width="500px">
-          <v-card>
-            <p class="pa-5">Are you sure you want to delete this field from profiles?</p>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="red darken-2" text @click="deleteFieldDialog = false">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteField">Confirm</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              @click="closeNewFieldDialog"
+              text
+              :large="!mobile"
+              class="secondary--text"
+            >
+              {{ $t('dialog.cancel') }}
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              text
+              :large="!mobile"
+              @click="addCustomField"
+              :disabled="!newField.label"
+            >
+              {{ $t('dialog.save') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+    <!-- delete field dialog -->
+    <v-dialog v-model="deleteFieldDialog" light max-width="500px">
+      <v-card>
+        <p class="pa-5">Are you sure you want to delete this field from profiles?</p>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-2" text @click="deleteFieldDialog = false">Cancel</v-btn>
+          <v-btn color="blue darken-1" text @click="deleteField">Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </div>
 </template>
 <script>
-import { cloneDeep as clone } from 'lodash-es'
 
+import { cloneDeep as clone } from 'lodash-es'
 import { getCustomFields, getDefaultFields, REQUIRED_DISABLED_FIELDS, DISABLED_DEFAULT_FIELDS } from '@/lib/custom-field-helpers'
 
 const buildNewField = () => ({
@@ -194,17 +202,17 @@ export default {
         { text: this.t('deleteField'), value: 'delete', width: '50px' }
       ],
       items: [
-        { text: 'kaitiaki only', value: 'admin' },
-        { text: 'all members', value: 'members' }
+        { text: this.t('kaitiakiOnly'), value: 'admin' },
+        { text: this.t('allMembers'), value: 'members' }
       ],
       typeOptions: [
-        { text: 'text', type: 'text' },
-        { text: 'number', type: 'number' },
-        { text: 'date', type: 'date' },
-        { text: 'checkbox', type: 'checkbox' },
-        { text: 'list (choose single entry)', value: SINGLE_LIST, type: 'list', multiple: false },
-        { text: 'list (choose multiple entries) ', value: MULTI_LIST, type: 'list', multiple: true },
-        { text: 'multiple entries', value: 'array' }
+        { text: this.t('text'), type: 'text' },
+        { text: this.t('number'), type: 'number' },
+        { text: this.t('date'), type: 'date' },
+        { text: this.t('checkbox'), type: 'checkbox' },
+        { text: this.t('list.single'), value: SINGLE_LIST, type: 'list', multiple: false },
+        { text: this.t('list.multiple'), value: MULTI_LIST, type: 'list', multiple: true },
+        { text: this.t('multiple'), value: 'array' }
       ],
       rules: [value => !!value || 'Required.'],
       currentField: {},
@@ -227,7 +235,6 @@ export default {
     customDefaultFields () {
       return this.defaultFields.filter(field => field.key)
     },
-
     customDataFields () {
       return getCustomFields(this.customFields)
     },

@@ -29,9 +29,11 @@ export default function (apollo) {
 
       if (getters.isPersonalTribe) return defaultTribeSettings
 
-      // NOTE: this returns an empty object for tribes we
-      // arent apart of (public community profiles dont have these fields)
-      return pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+      // NOTE: should only return the public setting for tribes we arent apart of
+      return {
+        // private settings
+        ...pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+      }
     },
     tribeProfile (state, getters, rootState) {
       const tribe = state.currentTribe

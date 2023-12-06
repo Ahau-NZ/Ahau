@@ -369,7 +369,7 @@
           <v-col cols="12" class="px-0">
             <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
-            <span class="pa-0 pl-2 ma-0" style="font-style:italic">({{ t('kaitiakiOnly') }})</span>
+            <span v-if="!isLoginPage" class="pa-0 pl-2 ma-0" style="font-style:italic">({{ t('kaitiakiOnly') }})</span>
           </v-col>
           <!-- Email -->
           <v-col v-if="hasDefaultField('email')" :cols="sideViewCols" class="pa-1">
@@ -547,8 +547,11 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
-    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields', 'rawTribeCustomFields']),
     ...mapGetters('person', ['person']),
+    phone () {
+      return this.hasDefaultField('phone')
+    },
     currentAltNames () {
       return get(this.formData, 'altNames.currentState', [])
     },
@@ -565,11 +568,11 @@ export default {
     isLoginPage () {
       return this.$route.name === 'login'
     },
-    isPersonalProfilePage () {
-      return (this.profile.id === this.whoami.personal.profile.id)
+    isPersonalProfile () {
+      return this.isMyProfile(this.profile.id)
     },
     showPersonalInfo () {
-      return this.isKaitiaki || this.isMyProfile(this.profile.id)
+      return this.isKaitiaki || this.isPersonalProfile || this.isLoginPage
     },
     showBirthOrder () {
       if (!this.hasDefaultField('birthOrder')) return false
@@ -636,7 +639,7 @@ export default {
     customFieldsByTribes () {
       // Here if we are viewing our own profile on ProfileShow, we want to display
       // all custom fields from all tribes
-      if (!this.showCustomFields && this.isPersonalProfilePage) {
+      if (!this.showCustomFields && this.isPersonalProfile) {
         return this.joinedTribes.map(tribe => {
           return {
             tribeId: tribe.id,
@@ -667,10 +670,15 @@ export default {
     ...mapMutations(['setAllowSubmissions']),
     getDisplayName,
     hasDefaultField (key) {
+      if (this.isLoginPage) return true
       if (!this.currentTribe) return false // avoid displaying any fields until the tribe has loaded
 
       const label = mapPropToLabel(key)
       if (!label) return
+
+      if (this.isPersonalProfile) { // if editing a personal profle show all default fields except those which have been tombstoned
+        return !this.rawTribeCustomFields(this.profile.id).filter(field => !field.tombtoned).some(field => field.label === label)
+      }
 
       // find in defaultCustomFields
       return this.tribeDefaultFields.some(field => field.label === label)

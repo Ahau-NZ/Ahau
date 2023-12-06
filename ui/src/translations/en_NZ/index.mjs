@@ -28,9 +28,12 @@ import dialogHandler from './dialog-handler.json'
 import dialog from './dialog.json'
 import editPersonDialog from './edit-person-dialog.json'
 import reviewRegistration from './review-registration-dialog.json'
+import newRegistration from './new-registration.json'
 import tribeSettings from './tribe-settings.json'
 import reviewSubmissionDialog from './profile-change-request.json'
 import linkSubmissions from './link-submissions.json'
+import walletShow from './wallet-show.json'
+import identityRequirements from './identity-requirements.json'
 
 /* Nav / misc */
 import accessButton from './access-button.json'
@@ -52,6 +55,7 @@ import button from './button.json'
 import importPeopleForm from './import-csv.json'
 
 export {
+  walletShow,
   viewTribes,
   personIndex,
   whakapapaIndex,
@@ -77,9 +81,11 @@ export {
   dialog,
   editPersonDialog,
   reviewRegistration,
+  newRegistration,
   tribeSettings,
   reviewSubmissionDialog,
   linkSubmissions,
+  identityRequirements,
 
   accessButton,
   appBarMenu,
