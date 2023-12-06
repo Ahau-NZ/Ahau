@@ -11,7 +11,7 @@
   "allowStories": "Stories and collections: {toggle}",
   "credentialFeatures": "Membership Credentials",
   "credentialFeaturesDescription": "Activate this setting if you would like to issue digital membership credentials to new members",
-  "credentialIssuer": "Issue membership credentials: {toggle}",
+  "issuesVerifiedCredentials": "Issue membership credentials: {toggle}",
   "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "on",
   "off": "off",

@@ -80,9 +80,9 @@ export default {
     return {
       credentialSettings: [
         {
-          key: 'credentialIssuer',
-          label: d => this.t('credentialIssuer', { toggle: this.getSwitchLabel(d) }),
-          value: this.settings.credentialIssuer
+          key: 'issuesVerifiedCredentials',
+          label: d => this.t('issuesVerifiedCredentials', { toggle: this.getSwitchLabel(d) }),
+          value: this.settings.issuesVerifiedCredentials
         }
       ],
       kaitiakiSettings: [
