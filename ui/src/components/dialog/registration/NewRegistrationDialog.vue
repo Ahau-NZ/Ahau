@@ -333,8 +333,9 @@
               <!-- STEP 5 Agree to recieve digital credentials -->
                <v-stepper-step
                 v-if="issuesVerifiedCredentials"
+                :complete="step > 5"
                 step="5"
-                :color="step4Checkbox ? 'gray' : 'black'"
+                :color="step5Checkbox ? 'green' : 'black'"
               >
                 {{ translateIdentity('credsTnC.title') }}
                 <small></small>
@@ -359,21 +360,7 @@
                     <p>{{ translateIdentity('credsTnC.video') }}<a href="https://www.youtube.com/watch?v=Ew-_F-OtDFI&list=RDLVlixl_FRhlhE&index=2&ab_channel=MicrosoftSecurity">video</a></p>
                   </v-card-text>
                 </v-card>
-                <!-- <v-checkbox v-model="step5Checkbox" label="I Agree" disabled/> -->
-                <!-- TODO: remove when -->
-                <v-row>
-                  <v-col cols="12" class="font-italic">
-                    {{ t('featureUnavailable') }}
-                  </v-col>
-                  <v-col cols="12">
-                    <v-btn
-                      color="primary"
-                      @click="step5Checkbox = true"
-                    >
-                      {{ t('skip') }}
-                    </v-btn>
-                  </v-col>
-                </v-row>
+                <v-checkbox v-model="step5Checkbox" label="I Agree" />
               </v-stepper-content>
 
               <!-- comment -->
