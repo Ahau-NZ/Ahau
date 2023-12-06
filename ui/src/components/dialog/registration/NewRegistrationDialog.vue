@@ -329,11 +329,59 @@
                 <v-checkbox v-model="checkbox2" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- Step 6: Comment -->
-              <v-stepper-step step="5">
+              <!-- STEP 5 Agree to recieve digital credentials -->
+               <v-stepper-step
+                v-if="issuesVerifiedCredentials"
+                step="5"
+                :color="checkbox2 ? 'gray' : 'black'"
+              >
+                {{ translateIdentity('credsTnC.title') }}
+                <small></small>
+              </v-stepper-step>
+              <v-stepper-content v-if="issuesVerifiedCredentials" step="5">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    <p><strong>{{ translateIdentity('credsTnC.about') }}</strong></p>
+                    <p>{{ translateIdentity('credsTnC.register') }}</p>
+                    <div class="pl-4">
+                      <p>{{ translateIdentity('credsTnC.reciept') }}</p>
+                      <p>{{ translateIdentity('credsTnC.creation') }}</p>
+                      <p>{{ translateIdentity('credsTnC.ownership') }}</p>
+                      <p>{{ translateIdentity('credsTnC.storage') }}</p>
+                      <p>{{ translateIdentity('credsTnC.id') }}</p>
+                    </div>
+                    <p>{{ translateIdentity('credsTnC.video') }}<a href="https://www.youtube.com/watch?v=Ew-_F-OtDFI&list=RDLVlixl_FRhlhE&index=2&ab_channel=MicrosoftSecurity">video</a></p>
+                  </v-card-text>
+                </v-card>
+                <!-- <v-checkbox v-model="checkbox3" label="I Agree" disabled/> -->
+                <!-- TODO: remove when -->
+                <v-row>
+                  <v-col cols="12" class="font-italic">
+                    {{ t('featureUnavailable') }}
+                  </v-col>
+                  <v-col cols="12">
+                    <v-btn
+                      color="primary"
+                      @click="checkbox3 = true"
+                    >
+                      {{ t('skip') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-stepper-content>
+
+              <!-- comment -->
+              <v-stepper-step
+                step="6"
+              >
                 {{ t('sendComment') }}
               </v-stepper-step>
-              <v-stepper-content step="5">
+              <v-stepper-content step="6">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -414,6 +462,7 @@ export default {
       step: 1,
       checkbox1: null,
       checkbox2: null,
+      checkbox3: null,
       formData: clone(this.profile),
       showEditDialog: false,
 
@@ -447,15 +496,19 @@ export default {
       if (checkbox) this.step = 4 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) {
-        this.step = 5
-      }
+      if (checkbox) this.step = 5
+    },
+    checkbox3 (checkbox) {
+      if (checkbox) this.step = 6
     }
   },
   computed: {
     ...mapGetters(['whoami']),
     ...mapGetters('alerts', ['alertSettings']),
-    ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields', 'tribeSettings']),
+    issuesVerifiedCredentials () {
+      return this.tribeSettings.issuesVerifiedCredentials
+    },
     personalProfile () {
       return {
         ...this.whoami.personal.profile,
@@ -529,7 +582,7 @@ export default {
       return this.answers && this.answers.length > 0
     },
     disableSubmission () {
-      return this.step !== 5
+      return this.issuesVerifiedCredentials ? this.step !== 6 : this.step !== 5
     },
     submission () {
       return {
@@ -543,6 +596,12 @@ export default {
     ...mapActions(['setWhoami']),
     ...mapActions('person', ['updatePerson']),
     ...mapActions('alerts', ['showAlert']),
+    translateIdentity (key) {
+      return this.$t('identityRequirements.' + key)
+    },
+    t (key, vars) {
+      return this.$t('newRegistration.' + key, vars)
+    },
     close () {
       this.$emit('close')
     },
@@ -604,9 +663,6 @@ export default {
         id: this.personalProfile.id,
         ...input
       })
-    },
-    t (key, vars) {
-      return this.$t('newRegistration.' + key, vars)
     }
   }
 }
