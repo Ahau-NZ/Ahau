@@ -142,7 +142,7 @@
               <v-stepper-step
                 :complete="step > 3"
                 step="3"
-                :color="checkbox1 ? 'green' : 'black'"
+                :color="step3Checkbox ? 'green' : 'black'"
               >
                 {{ t('shareInfoMembers') }}
               </v-stepper-step>
@@ -266,7 +266,7 @@
               <v-stepper-step
                 :complete="step > 4"
                 step="4"
-                :color="checkbox2 ? 'green' : 'black'"
+                :color="step3Checkbox ? 'green' : 'black'"
               >
                 {{ t('shareInfoKaitiaki') }}
                 <small></small>
