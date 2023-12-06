@@ -15,10 +15,6 @@ onFailure() {
   exit 1
 }
 
-# source nvm
-. ~/.nvm/nvm.sh
-nvm use 12
-
 set -eEu -o pipefail
 shopt -s extdebug
 IFS=$'\n\t'
