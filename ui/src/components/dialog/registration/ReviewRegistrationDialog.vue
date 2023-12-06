@@ -316,7 +316,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
-import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers'
+import { acceptGroupApplication, declineGroupApplication, offerMembershipCredential } from '@/lib/tribes-application-helpers'
 import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
@@ -331,6 +331,20 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
     notification: Object
+    // {
+    //   id: ??
+    //   isNew: Boolean,
+    //   isPersonal: Boolean,
+    //   group: {
+    //     ?id?
+    //     preferredName: String,
+    //     customFields: ??
+    //   },
+    //   from: {
+    //     preferredName
+    //   },
+    //   applicant: ??
+    // }
   },
   data () {
     return {
@@ -471,10 +485,35 @@ export default {
         ? acceptGroupApplication(output)
         : declineGroupApplication(output)
 
+      const tribeId = this.notification.tribeId
+      const issuers = await window.ahoy?.getConfig().then(config => {
+        return config?.atalaPrism?.issuers[tribeId]
+      })
+
       try {
         const res = await this.$apollo.mutate(mutation)
 
         if (res.errors) throw res.errors
+        else if (approved && issuers) {
+          console.log('===here===')
+          const input = {
+            tribeId,
+            poBoxId: this.group.poBoxId,
+            feedId: this.applicant.recps[1],
+            claims: {
+              person: {
+                fullName: this.applicant.legalName,
+                dateOfBirth: this.dob
+              }
+            }
+          }
+          const credentialMutation = offerMembershipCredential(input)
+          await this.$apollo.mutate(credentialMutation)
+            .then(res => {
+              console.log(res)
+              if (res.errors) throw res.errors
+            })
+        }
 
         // success
         this.close()

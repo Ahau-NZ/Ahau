@@ -7,6 +7,7 @@ const level = require('level')
 const { join } = require('path')
 const { app } = require('electron')
 const { autoUpdater } = require('electron-updater')
+const pull = require('pull-stream')
 
 // WARNING monkey patch! --------------------------------------
 const na = require('sodium-native')
@@ -35,6 +36,8 @@ checkAhauRunning()
     if (env.isProduction) {
       autoUpdater.checkForUpdatesAndNotify()
     }
+
+    startAtalaPrism(ssb)
   })
   .catch((err) => {
     console.error(err.cause || err)
@@ -76,6 +79,7 @@ function start () {
         require('ssb-submissions'),
 
         require('ssb-ahau'),
+        require('ssb-atala-prism'),
         require('ssb-recps-guard')
       ]
     }
@@ -125,4 +129,41 @@ function printConfig (config) {
     borderStyle: 'round',
     borderColor: 'blue'
   }))
+}
+
+function startAtalaPrism (ssb) {
+  if (!ssb.config?.atalaPrism?.mediatorDID) return
+
+  console.log('starting atala-prism')
+
+  ssb.atalaPrism.start()
+    .then(autoRequestPresentations)
+    .catch(err => console.log('atala no!', err))
+
+  function autoRequestPresentations () {
+    // TODO check if you have any verifiers
+
+    pull(
+      ssb.messagesByType({
+        type: 'registration/group',
+        private: true,
+        live: true,
+        old: false
+      }),
+      // TODO add validation of message using schema
+      pull.map(m => m?.value?.content),
+      pull.filter(content => (
+        typeof content === 'object' &&
+        content?.tangles?.registration?.root === null
+        // only keep root messages
+        // TODO check you're not the author!
+      )),
+      pull.drain(content => {
+        const { groupId, recps } = content // eslint-disable-line
+        const [poBoxId, feedId] = recps
+
+        ssb.atalaPrism.requestPresentation(groupId, poBoxId, feedId)
+      })
+    )
+  }
 }

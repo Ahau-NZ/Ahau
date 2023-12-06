@@ -90,6 +90,7 @@ function mapValues (whoami) {
       applicant: applicant || null,
 
       group: _group,
+      tribeId: group.id,
       id: application.id,
       answers,
       history,
@@ -143,6 +144,7 @@ function mapSubmissionValues (whoami) {
       id,
 
       group: _group,
+      tribeId: group.id,
       rawGroup: group,
 
       // status
