@@ -103,7 +103,8 @@
                   {{ t('next') }}
                 </v-btn>
               </v-stepper-content>
-              <!-- STEP 2: Joining Questions -->
+
+              <!-- STEP 2: joining questions -->
               <v-stepper-step
                 :complete="step > 2"
                 step="2"
@@ -258,7 +259,7 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <v-checkbox v-model="checkbox1" label="I Agree"/>
+                <v-checkbox v-model="step3Checkbox" label="I Agree"/>
               </v-stepper-content>
 
               <!-- STEP 4: Share Kaitiaki information  -->
@@ -326,14 +327,14 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <v-checkbox v-model="checkbox2" label="I Agree"/>
+                <v-checkbox v-model="step4Checkbox" label="I Agree"/>
               </v-stepper-content>
 
               <!-- STEP 5 Agree to recieve digital credentials -->
                <v-stepper-step
                 v-if="issuesVerifiedCredentials"
                 step="5"
-                :color="checkbox2 ? 'gray' : 'black'"
+                :color="step4Checkbox ? 'gray' : 'black'"
               >
                 {{ translateIdentity('credsTnC.title') }}
                 <small></small>
@@ -358,7 +359,7 @@
                     <p>{{ translateIdentity('credsTnC.video') }}<a href="https://www.youtube.com/watch?v=Ew-_F-OtDFI&list=RDLVlixl_FRhlhE&index=2&ab_channel=MicrosoftSecurity">video</a></p>
                   </v-card-text>
                 </v-card>
-                <!-- <v-checkbox v-model="checkbox3" label="I Agree" disabled/> -->
+                <!-- <v-checkbox v-model="step5Checkbox" label="I Agree" disabled/> -->
                 <!-- TODO: remove when -->
                 <v-row>
                   <v-col cols="12" class="font-italic">
@@ -367,7 +368,7 @@
                   <v-col cols="12">
                     <v-btn
                       color="primary"
-                      @click="checkbox3 = true"
+                      @click="step5Checkbox = true"
                     >
                       {{ t('skip') }}
                     </v-btn>
@@ -460,9 +461,9 @@ export default {
   data () {
     return {
       step: 1,
-      checkbox1: null,
-      checkbox2: null,
-      checkbox3: null,
+      step3Checkbox: null,
+      step4Checkbox: null,
+      step5Checkbox: null,
       formData: clone(this.profile),
       showEditDialog: false,
 
@@ -492,14 +493,18 @@ export default {
     step (step) {
       if (step === 2 && !this.hasJoiningQuestions) this.step = 3
     },
-    checkbox1 (checkbox) {
-      if (checkbox) this.step = 4 // step to the next section
+    step3Checkbox (isStep3) {
+      if (isStep3) this.step = 4 // step to the next section
     },
-    checkbox2 (checkbox) {
-      if (checkbox) this.step = 5
+    step4Checkbox (isStep4) {
+      if (isStep4) {
+        // figure out the next step, depending on if step 5 is visible or not
+        if (this.issuesVerifiedCredentials) this.step = 5
+        else this.step = 6
+      }
     },
-    checkbox3 (checkbox) {
-      if (checkbox) this.step = 6
+    step5Checkbox (isStep5) {
+      if (isStep5) this.step = 6
     }
   },
   computed: {
