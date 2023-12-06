@@ -310,13 +310,13 @@
 
 <script>
 import { isEmpty, get } from 'lodash-es'
+import { mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
-import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers'
 import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
@@ -435,6 +435,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tribe', ['approveRegistration', 'declineRegistration']),
     getFieldValue (fieldDef) {
       // find the value from the applicants profile (if there is one)
       let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
@@ -461,26 +462,16 @@ export default {
       return this.$t('months.' + key, vars)
     },
     async submit (approved) {
-      const output = {
+      const input = {
         id: this.notification.id, // the applicationId
         comment: this.comment
         // TODO (later): groupIntro
       }
 
-      const mutation = approved
-        ? acceptGroupApplication(output)
-        : declineGroupApplication(output)
+      if (approved) await this.approveRegistration(input)
+      else await this.declineRegistration(input)
 
-      try {
-        const res = await this.$apollo.mutate(mutation)
-
-        if (res.errors) throw res.errors
-
-        // success
-        this.close()
-      } catch (err) {
-        console.error('Something went wrong while trying to accept/decline application', err)
-      }
+      this.close()
     },
     close () {
       this.$emit('close')
