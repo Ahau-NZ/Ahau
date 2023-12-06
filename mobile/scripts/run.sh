@@ -70,4 +70,3 @@ else
 fi
 
 log "DONE!"
-nvm use 18

@@ -27,7 +27,7 @@ fs.writeFileSync(
 )
 
 console.log(' DONE')
-console.log(' Remember to npm instal')
+console.log(' Remember to npm install')
 
 function log (key, oldValue, newValue) {
   if (oldValue === newValue) console.log(green(' ✓'), key)
