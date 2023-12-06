@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. ~/.nvm/nvm.sh
+nvm use 12
+
 INFO='\e[1;30m\e[46m';
 WARN='\e[1;30m\e[41m';
 RESET='\e[0m';
@@ -140,6 +143,7 @@ declare -a packagesToBabelify=(
   "secret-stack"
   "ssb-ahau"
   "ssb-profile"
+  "ssb-ref"
   "ssb-serve-blobs"
   "ssb-whakapapa"
   "urlpattern-polyfill"

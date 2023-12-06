@@ -87,7 +87,11 @@ to pin down the exact versions of tools needed to all work together.
     sudo apt-get install make gcc python2 libtool
     ```
     - NOTE: modern linux defaults to python3, but does not set up `python` in `$PATH`
-    - may need to set up "python" to point at correct version of python
+    - a script in NDK uses "python".. you need to make it point at python 2:
+      - **Option 1** - patch the script (recommended)
+        - open `Android/Sdk/ndk/22.1.7171670/build/tools/make-standalone-toolchain.sh`
+        - change `python` → `python2`
+      - **Option 2** - symlink
         ```bash
         cd /usr/bin
         sudo ln -s python2 python
@@ -117,14 +121,15 @@ NOTES:
     - open the app
     - open `chrome://inspect#devices` in Chrome / Chromium
       - you may have to run `adb devices` to get the daemon running for it to show up in Chrome
+- should this folder be installed / managed by node 12/ 18?
+    - need `cordova` installed globally in each version
 
 - buggy android setup? Burn them all:
     ```bash
-    cd mobile
-    nvm use 12
-    rm -rf node_module platform plugins
-    npm i
-    npm run setup
+    $ cd mobile
+    $ rm -rf node_module platform plugins
+    $ npm i
+    $ npm run setup
     ```
 
 ```bash

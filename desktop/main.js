@@ -22,6 +22,7 @@ na.sodium_free = function sodium_free_monkey_patched () {}
 // ------------------------------------------------------------
 
 const config = require('./ssb.config')()
+const plugins = require('./ssb.plugins')
 const karakia = require('./karakia')
 
 checkAhauRunning()
@@ -50,34 +51,7 @@ function start () {
     {
       title: 'Āhau',
       config,
-      plugins: [
-        require('ssb-db'),
-        require('ssb-conn'),
-        require('ssb-lan'),
-        require('ssb-replicate'),
-        require('ssb-friends'),
-
-        require('ssb-blobs'),
-        require('ssb-serve-blobs'),
-        require('ssb-hyper-blobs'),
-
-        require('ssb-query'),
-        require('ssb-backlinks'),
-
-        require('ssb-invite'),
-        require('ssb-tribes'),
-        require('ssb-tribes-registration'),
-
-        require('ssb-profile'),
-        require('ssb-settings'),
-        require('ssb-story'),
-        require('ssb-artefact'),
-        require('ssb-whakapapa'),
-        require('ssb-submissions'),
-
-        require('ssb-ahau'),
-        require('ssb-recps-guard')
-      ]
+      plugins
     }
   )
 }

@@ -40,8 +40,6 @@ const ssb = SecretStack({ appKey: env.caps.shs })
 
   .call(null, config)
 
-// path: "tribes.list"
-
 cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
   let func = ssb
   let _path = path.split('.')
