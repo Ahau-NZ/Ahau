@@ -1,6 +1,7 @@
 import { initGroup, getTribe, getTribes, addAdminsToGroup, getMembers } from './apollo-helpers'
 import { ACCESS_PRIVATE, ACCESS_ALL_MEMBERS, ACCESS_KAITIAKI } from '@/lib/constants'
 import { getCustomFields, getDefaultFields, getRawCustomFields } from '@/lib/custom-field-helpers'
+import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers'
 
 import { pick, get } from 'lodash-es'
 
@@ -332,6 +333,41 @@ export default function (apollo) {
         return res.data.listGroupAuthors
       } catch (err) {
         console.error('failed to get the groups members', err)
+      }
+    },
+    async approveRegistration ({ dispatch }, input) {
+      try {
+        const res = await apollo.mutate(
+          acceptGroupApplication(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'The registration was approved!', { root: true })
+
+        return res.data.acceptGroupApplication
+      } catch (err) {
+        console.error(err)
+        dispatch('alerts/showError', 'Something went wrong while approving the registration!', { root: true })
+
+        return null
+      }
+    },
+    async declineRegistration ({ dispatch }, input) {
+      try {
+        const res = await apollo.mutate(
+          declineGroupApplication(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        dispatch('alerts/showMessage', 'The registration was declined!', { root: true })
+        return res.data.declineGroupApplication
+      } catch (err) {
+        console.error(err)
+        dispatch('alerts/showError', 'Something went wrong while declining the registration!', { root: true })
+
+        return null
       }
     }
   }
