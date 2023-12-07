@@ -22,6 +22,7 @@
     "chalk": "^4.1.2",
     "electron-updater": "^4.6.5",
     "lodash.merge": "^4.6.2",
+    "secret-stack": "^6.4.2",
     "ssb-ahau": "^16.0.10",
     "ssb-ahoy": "^6.1.1",
     "ssb-artefact": "^3.2.2",
