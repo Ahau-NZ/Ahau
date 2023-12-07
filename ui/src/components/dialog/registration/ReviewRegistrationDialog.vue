@@ -310,13 +310,13 @@
 
 <script>
 import { isEmpty, get } from 'lodash-es'
+import { mapActions } from 'vuex'
 
 import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
-import { acceptGroupApplication, declineGroupApplication, offerMembershipCredential } from '@/lib/tribes-application-helpers'
 import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
@@ -331,20 +331,6 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
     notification: Object
-    // {
-    //   id: ??
-    //   isNew: Boolean,
-    //   isPersonal: Boolean,
-    //   group: {
-    //     ?id?
-    //     preferredName: String,
-    //     customFields: ??
-    //   },
-    //   from: {
-    //     preferredName
-    //   },
-    //   applicant: ??
-    // }
   },
   data () {
     return {
@@ -382,11 +368,23 @@ export default {
       return this.applicant.customFields
     },
     group () {
-      return this.notification.group
+      return this.notification?.group
     },
     tribeCustomFields () {
-      return getCustomFields(this.group.customFields)
+      return getCustomFields(this.group?.customFields)
         .filter(field => !field.tombstone)
+    },
+    tribeId () {
+      return this.notification?.tribeId
+    },
+    poBoxId () {
+      return this.group?.poBoxId
+    },
+    applicantId () {
+      return this.notification?.applicantId
+    },
+    issuesVerifiedCredentials () {
+      return get(this.notification, 'rawGroup.public[0].issuesVerifiedCredentials')
     },
     answers () {
       return this.notification.answers
@@ -449,6 +447,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tribe', ['approveRegistration', 'declineRegistration']),
+    ...mapActions('credentials', ['isValidConfig']),
     getFieldValue (fieldDef) {
       // find the value from the applicants profile (if there is one)
       let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
@@ -475,51 +475,53 @@ export default {
       return this.$t('months.' + key, vars)
     },
     async submit (approved) {
-      const output = {
+      const input = {
         id: this.notification.id, // the applicationId
         comment: this.comment
         // TODO (later): groupIntro
       }
 
-      const mutation = approved
-        ? acceptGroupApplication(output)
-        : declineGroupApplication(output)
-
-      const tribeId = this.notification.tribeId
-      const issuers = await window.ahoy?.getConfig().then(config => {
-        return config?.atalaPrism?.issuers[tribeId]
-      })
-
-      try {
-        const res = await this.$apollo.mutate(mutation)
-
-        if (res.errors) throw res.errors
-        else if (approved && issuers) {
-          console.log('===here===')
-          const input = {
-            tribeId,
-            poBoxId: this.group.poBoxId,
-            feedId: this.applicant.recps[1],
-            claims: {
-              person: {
-                fullName: this.applicant.legalName,
-                dateOfBirth: this.dob
-              }
-            }
-          }
-          const credentialMutation = offerMembershipCredential(input)
-          await this.$apollo.mutate(credentialMutation)
-            .then(res => {
-              console.log(res)
-              if (res.errors) throw res.errors
-            })
-        }
-
-        // success
+      // decline the registration if it wasnt approved
+      if (!approved) {
+        await this.declineRegistration(input)
         this.close()
-      } catch (err) {
-        console.error('Something went wrong while trying to accept/decline application', err)
+        return
       }
+
+      // if this tribe doesnt issue credentials, then approve
+      if (!this.issuesVerifiedCredentials) {
+        await this.approveRegistration(input)
+        this.close()
+        return
+      }
+
+      // otherwise, we make sure the config is set
+      // up properly for this tribe
+      // and dont approve
+      if (!this.isValidConfig(this.tribeId)) {
+        alert('TODO: Missing required config to issue credentials with atala prism')
+        return
+      }
+
+      // approve the registration
+      await this.approveRegistration(input)
+
+      // start the offer process
+      const offerInput = {
+        tribeId: this.tribeId,
+        poBoxId: this.poBoxId,
+        feedId: this.applicantId,
+        claims: {
+          person: {
+            fullName: this.applicant.legalName,
+            dateOfBirth: this.dob
+          }
+        }
+      }
+
+      await this.offerCredential(offerInput)
+
+      this.close()
     },
     close () {
       this.$emit('close')

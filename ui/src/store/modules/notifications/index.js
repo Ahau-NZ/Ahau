@@ -88,8 +88,10 @@ function mapValues (whoami) {
       type: 'application',
       from,
       applicant: applicant || null,
+      applicantId,
 
       group: _group,
+      rawGroup: group,
       tribeId: group.id,
       id: application.id,
       answers,

@@ -69,6 +69,9 @@ export const APPLICATION_FRAGMENT = gql`
       id
       public {
         ...CommunityFragment
+
+        # public settings
+        issuesVerifiedCredentials
       }
       private {
         ...CommunityFragment
