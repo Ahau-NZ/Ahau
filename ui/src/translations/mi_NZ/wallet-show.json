@@ -1,0 +1,11 @@
+{
+  "identityCredentials": "Identity Credentials",
+  "credentialNotFound": "No identity credentials found",
+  "tribalMember": "Member credential",
+  "credentialDescription": "This identity credential verifies that you are a registered member of {name} ",
+  "info": "Information",
+  "name": "Ingoa",
+  "dob": "Whānanautanga mai",
+  "issued": "Issued",
+  "status": "Status"
+}

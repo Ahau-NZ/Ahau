@@ -17,5 +17,10 @@
   "ahauStorageLimit": "Límite de almacenamiento Ahau",
   "limitOptionDescription": "Las fotos y vídeos antiguos se eliminarán automáticamente para dar espacio a otros nuevos cuando se alcance este límite",
   "defaultOption": "Mantener todos los artefactos",
-  "defaultOptionDescription": "Ahau descargará y guardará una copia de toda la información y los archivos a los que ha accedido. Hace esto para que el contenido esté disponible fuera de línea, y crea una copia de la información para mantener la seguridad"
+  "defaultOptionDescription": "Ahau descargará y guardará una copia de toda la información y los archivos a los que ha accedido. Hace esto para que el contenido esté disponible fuera de línea, y crea una copia de la información para mantener la seguridad",
+  "betaTitle": "Beta Features",
+  "betaNote": "Beta features are new features which enable you to try out new functionality before it is released to the public. Please note that beta features may not be fully tested and may not work as expected.",
+  "allowIdentityWallet": "Digital Identity Wallet features {toggle}.",
+  "on": "en",
+  "off": "apagado"
 }
