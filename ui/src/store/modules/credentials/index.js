@@ -7,7 +7,6 @@ export default function (apollo) {
 
   const actions = {
     async isValidConfig (context, tribeId) {
-      // check the tribe has issuesVerifiedCredentials enabled
       const config = await window.ahoy?.getConfig()
 
       return Boolean(config?.atalaPrism?.issuers[tribeId])

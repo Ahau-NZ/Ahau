@@ -22,7 +22,7 @@
     "chalk": "^4.1.2",
     "electron-updater": "^4.6.5",
     "lodash.merge": "^4.6.2",
-    "ssb-ahau": "^16.2.1",
+    "ssb-ahau": "gitlab:ahau/lib/ssb-plugins/ssb-ahau#atala-prism",
     "ssb-ahoy": "^6.1.1",
     "ssb-artefact": "^3.2.2",
     "ssb-atala-prism": "^0.1.0",

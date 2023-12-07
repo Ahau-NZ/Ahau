@@ -448,7 +448,7 @@ export default {
   },
   methods: {
     ...mapActions('tribe', ['approveRegistration', 'declineRegistration']),
-    ...mapActions('credentials', ['isValidConfig']),
+    ...mapActions('credentials', ['isValidConfig', 'offerCredential']),
     getFieldValue (fieldDef) {
       // find the value from the applicants profile (if there is one)
       let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
