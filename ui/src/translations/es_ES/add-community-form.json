@@ -12,7 +12,8 @@
   "country": "País",
   "phone": "Teléfono",
   "setupRegistrationForm": "Configurar formulario de registro tribal",
-  "form": "Crea tus preguntas de registro tribal",
+  "form": "Add questions to your registration form",
+  "registrationQuestions": "Registration questions",
   "addQuestion": "Añadir pregunta",
   "question": "Pregunta",
   "questionPlaceholder": "Ejemplo: ¿Por qué te gustaría unirte a esta tribu?",
@@ -31,8 +32,9 @@
   "createWhakapapas": "Create whakapapa records",
   "createCollections": "Crear colecciones",
   "createStories": "Crear historias",
-  "addDataPoint": "Añadir punto de datos",
-  "dataModel": "Establece tu modelo de datos para perfiles tribales",
+  "addProfileField": "Add profile field",
+  "dataModel": "Profiles Data model",
+  "dataModelInstructions": "Establece tu modelo de datos para perfiles tribales",
   "data": "Datos",
   "type": "Tipo",
   "included": "Incluye",
@@ -41,5 +43,19 @@
   "settings": "Ajustes",
   "deleteField": "Eliminar",
   "newFieldDialogTitle": "Añadir nuevo campo a los perfiles",
-  "next": "siguiente"
+  "next": "siguiente",
+  "label": "Label",
+  "inputType": "Input type",
+  "visibleBy": "Visible by",
+  "kaitiakiOnly": "Kaitiaki only",
+  "allMembers": "Todos los miembros",
+  "text": "text",
+  "number": "number",
+  "date": "date",
+  "checkbox": "checkbox",
+  "list": {
+    "single": "list (choose single entry)",
+    "multiple": "list (choose multiple entries)"
+  },
+  "multiple": "multiple entries"
 }
