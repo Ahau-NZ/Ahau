@@ -57,6 +57,11 @@
         <v-tab-item value="tab-2">
           <DataModel :customFields.sync="profileFields"/>
           <v-divider class="my-2"></v-divider>
+          <!-- TODO: Add update  -->
+          <!-- <IdentityRequirements :files.sync="profileFiles"/>
+          <v-divider class="my-2"></v-divider> -->
+          <AcceptCredentials :settings="settings" @change="updateSettings" />
+          <v-divider class="my-2"></v-divider>
           <RegistrationQuestions :joiningQuestions.sync="formData.joiningQuestions"/>
           <v-row justify="center" class="my-4">
             <v-btn color="blue-grey" dark @click="nextTab">
@@ -90,6 +95,8 @@ import Permissions from './Permissions.vue'
 import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
 import RegistrationQuestions from './RegistrationQuestions.vue'
+// import IdentityRequirements from './IdentityRequirements.vue'
+import AcceptCredentials from './AcceptCredentials.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -103,7 +110,9 @@ export default {
     Permissions,
     TribeSettings,
     DataModel,
-    RegistrationQuestions
+    RegistrationQuestions,
+    // IdentityRequirements,
+    AcceptCredentials
   },
   props: {
     show: { type: Boolean, required: true },
@@ -116,6 +125,7 @@ export default {
     return {
       formData: setDefaultCommunity(this.profile),
       tab: null
+      // identityRequirements: null,
     }
   },
   watch: {
@@ -130,6 +140,7 @@ export default {
 
         // verified credentials
         this.formData.issuesVerifiedCredentials = settings.issuesVerifiedCredentials
+        this.formData.acceptsVerifiedCredentials = settings.acceptsVerifiedCredentials
       }
     }
   },
@@ -143,7 +154,8 @@ export default {
         'allowWhakapapaViews',
         'allowStories',
         'allowPersonsList',
-        'issuesVerifiedCredentials'
+        'issuesVerifiedCredentials',
+        'acceptsVerifiedCredentials'
       ])
     },
     profileFields: {
@@ -156,7 +168,7 @@ export default {
       }
     },
     profileFiles () {
-      const fields = [...this.formData.customFields]
+      const fields = this.formData.customFields
       return fields.filter(field => field.type === 'file') || []
     }
   },

@@ -33,6 +33,7 @@ fragment CommunityProfileFields on Community {
   
   # public settings
   issuesVerifiedCredentials
+  acceptsVerifiedCredentials
   joiningQuestions {
     type
     label

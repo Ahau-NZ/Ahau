@@ -23,6 +23,7 @@ export const getTribe = ({
 
           # public settings
           issuesVerifiedCredentials
+          acceptsVerifiedCredentials
         }
         private {
           ...CommunityFragment
@@ -52,6 +53,7 @@ export const getTribes = ({
 
           # public settings
           issuesVerifiedCredentials
+          acceptsVerifiedCredentials
         }
         private {
           ...CommunityFragment
@@ -92,7 +94,8 @@ const communityProfileAttrs = [
   // for public only
   'issuesVerifiedCredentials',
   'joiningQuestions',
-  'customFields'
+  'customFields',
+  'acceptsVerifiedCredentials'
 ]
 
 export const initGroup = (_input) => {
