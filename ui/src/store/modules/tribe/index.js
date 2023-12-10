@@ -8,7 +8,8 @@ import { pick, get } from 'lodash-es'
 const defaultTribeSettings = {
   allowWhakapapaViews: true,
   allowStories: true,
-  allowPersonsList: true
+  allowPersonsList: true,
+  acceptsVerifiedCredentials: false
 }
 
 export default function (apollo) {
@@ -33,7 +34,10 @@ export default function (apollo) {
       // NOTE: should only return the public setting for tribes we arent apart of
       return {
         // private settings
-        ...pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList'])
+        ...pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList']),
+
+        // public settings
+        acceptsVerifiedCredentials: get(getters.currentTribe, 'public[0].acceptsVerifiedCredentials')
       }
     },
     tribeProfile (state, getters, rootState) {

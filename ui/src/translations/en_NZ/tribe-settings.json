@@ -3,18 +3,13 @@
   "kaitiakiFeaturesDescription": "Turn on/off the features available to kaitiaki of this community",
   "memberFeatures": "Member Features",
   "memberFeaturesDescription": "Turn on/off the features available to members and kaitiaki of this community",
-  "allowVerifiedCredentials": "Turn {toggle} Verified Credentials",
-  "verifiedCredentialsOffHelpText": "Turning this feature on will allow verified credentials to be attached to a tribal registration",
-  "verifiedCredentialsOnHelpText": "Turning this feature off will remove the ability to attach verified credentials to a tribal registration",
+  "acceptsVerifiedCredentials": "Accept membership credentials: {toggle}",
+  "verifiedCredentialsOffHelpText": "Activate this setting to accept tribal membership credentials with new registrations",
+  "verifiedCredentialsOnHelpText": "Turn off this setting if you do not want to accept tribal membership credentials with new registrations",
   "allowPersonsList": "People database: {toggle}",
   "allowWhakapapaViews": "Whakapapa records: {toggle}",
   "allowStories": "Stories and collections: {toggle}",
-  "credentialFeatures": "Membership Credentials",
-  "credentialFeaturesDescription": "Activate this setting if you would like to issue digital membership credentials to new members",
-  "credentialIssuer": "Issue membership credentials: {toggle}",
-  "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "on",
   "off": "off",
-  "addAcceptCredTitle": "Accept Membership credentials",
-  "addAcceptCreds": "Activate this setting to accept tribal membership credentials with new registrations"
+  "addAcceptCredTitle": "Accept Membership credentials"
 }

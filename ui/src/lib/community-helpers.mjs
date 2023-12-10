@@ -47,6 +47,7 @@ export const EMPTY_COMMUNITY = {
   allowPersonsList: true,
 
   // public community settings
+  acceptsVerifiedCredentials: false,
   joiningQuestions: [],
   customFields: []
 }
@@ -75,6 +76,7 @@ export function setDefaultCommunity (newCommunity) {
 
     // public community settings
     joiningQuestions: community.joiningQuestions,
+    acceptsVerifiedCredentials: community.acceptsVerifiedCredentials,
     customFields: community.customFields || []
   }
 }
@@ -148,7 +150,8 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'tombstone',
   'tiaki',
   'joiningQuestions',
-  'customFields'
+  'customFields',
+  'acceptsVerifiedCredentials'
 ]
 
 export const COMMUNITY_FRAGMENT = gql`
