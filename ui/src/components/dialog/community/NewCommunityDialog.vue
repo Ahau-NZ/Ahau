@@ -137,6 +137,9 @@ export default {
         this.formData.allowWhakapapaViews = settings.allowWhakapapaViews
         this.formData.allowStories = settings.allowStories
         this.formData.allowPersonsList = settings.allowPersonsList
+
+        // verified credentials
+        this.formData.issuesVerifiedCredentials = settings.issuesVerifiedCredentials
         this.formData.acceptsVerifiedCredentials = settings.acceptsVerifiedCredentials
       }
     }
@@ -151,6 +154,7 @@ export default {
         'allowWhakapapaViews',
         'allowStories',
         'allowPersonsList',
+        'issuesVerifiedCredentials',
         'acceptsVerifiedCredentials'
       ])
     },

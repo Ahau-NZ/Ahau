@@ -9,6 +9,9 @@ const defaultTribeSettings = {
   allowWhakapapaViews: true,
   allowStories: true,
   allowPersonsList: true,
+
+  // public settings
+  issuesVerifiedCredentials: false,
   acceptsVerifiedCredentials: false
 }
 
@@ -37,6 +40,7 @@ export default function (apollo) {
         ...pick(tribeProfile, ['allowWhakapapaViews', 'allowStories', 'allowPersonsList']),
 
         // public settings
+        issuesVerifiedCredentials: get(getters.currentTribe, 'public[0].issuesVerifiedCredentials'),
         acceptsVerifiedCredentials: get(getters.currentTribe, 'public[0].acceptsVerifiedCredentials')
       }
     },

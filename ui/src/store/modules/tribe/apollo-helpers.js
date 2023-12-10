@@ -22,6 +22,7 @@ export const getTribe = ({
           ...CommunityFragment
 
           # public settings
+          issuesVerifiedCredentials
           acceptsVerifiedCredentials
         }
         private {
@@ -51,6 +52,7 @@ export const getTribes = ({
           ...CommunityFragment
 
           # public settings
+          issuesVerifiedCredentials
           acceptsVerifiedCredentials
         }
         private {
@@ -90,6 +92,7 @@ const communityProfileAttrs = [
   'allowPersonsList',
 
   // for public only
+  'issuesVerifiedCredentials',
   'joiningQuestions',
   'customFields',
   'acceptsVerifiedCredentials'
