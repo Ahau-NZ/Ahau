@@ -9,6 +9,10 @@
   "allowPersonsList": "People database: {toggle}",
   "allowWhakapapaViews": "Whakapapa records: {toggle}",
   "allowStories": "Stories and collections: {toggle}",
+  "credentialFeatures": "Membership Credentials",
+  "credentialFeaturesDescription": "Activate this setting if you would like to issue digital membership credentials to new members",
+  "issuesVerifiedCredentials": "Issue membership credentials: {toggle}",
+  "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "on",
   "off": "off",
   "addAcceptCredTitle": "Accept Membership credentials"
