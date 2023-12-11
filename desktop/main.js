@@ -134,7 +134,7 @@ function printConfig (config) {
 function startAtalaPrism (ssb) {
   if (!ssb.config?.atalaPrism?.mediatorDID) return
 
-  console.log('starting atala-prism')
+  console.log('starting atala-prism...')
 
   ssb.atalaPrism.start()
     .then(autoRequestPresentations)

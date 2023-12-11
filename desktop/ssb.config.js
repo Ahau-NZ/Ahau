@@ -9,8 +9,6 @@ const merge = require('lodash.merge')
 const appPath = envPaths(process.env.APP_NAME || env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
-console.log(configPath)
-
 const core = {
   path: appPath,
   port: env.ahau.port,

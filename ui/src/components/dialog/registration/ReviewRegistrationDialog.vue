@@ -448,7 +448,7 @@ export default {
   },
   methods: {
     ...mapActions('tribe', ['approveRegistration', 'declineRegistration']),
-    ...mapActions('credentials', ['isValidConfig', 'offerCredential']),
+    ...mapActions('credentials', ['isValidIssuer', 'offerCredential']),
     getFieldValue (fieldDef) {
       // find the value from the applicants profile (if there is one)
       let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
@@ -495,15 +495,19 @@ export default {
         return
       }
 
+      await this.handleIssuingCredential(input)
+    },
+    async handleIssuingCredential (input) {
       // otherwise, we make sure the config is set
       // up properly for this tribe
       // and dont approve
-      if (!this.isValidConfig(this.tribeId)) {
+      if (!this.isValidIssuer(this.tribeId)) {
         alert('TODO: Missing required config to issue credentials with atala prism')
         return
       }
 
       // approve the registration
+      // TODO: should we wait until they have accepted the credential offer to then approve the registration?
       await this.approveRegistration(input)
 
       // start the offer process

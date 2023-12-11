@@ -1,15 +1,26 @@
 import { offerMembershipCredential } from '@/lib/tribes-application-helpers.mjs'
 
+const handleErr = (msg) => {
+  console.error(msg)
+  return false
+}
+
 export default function (apollo) {
   const state = {}
   const getters = {}
   const mutations = {}
 
   const actions = {
-    async isValidConfig (context, tribeId) {
+    async isValidIssuer (context, tribeId) {
       const config = await window.ahoy?.getConfig()
 
-      return Boolean(config?.atalaPrism?.issuers[tribeId])
+      const atalaPrismConfig = config?.atalaPrism
+
+      if (!atalaPrismConfig) return handleErr('Missing atalaPrism ssb config')
+      if (!atalaPrismConfig?.mediatorId) return handleErr('Missing atalaPrism.mediatorId ssb config')
+      if (!atalaPrismConfig.issuers[tribeId]) return handleErr('Missing atalaPrism.issuers ssb config for the tribe with id: ' + tribeId)
+
+      return true
     },
     async offerCredential ({ dispatch }, input) {
       try {
