@@ -513,8 +513,8 @@ export default {
         feedId: this.applicantId,
         claims: {
           person: {
-            fullName: this.applicant.legalName,
-            dateOfBirth: this.dob
+            fullName: this.applicant.legalName || this.applicant.preferredName,
+            dateOfBirth: this.dob.trim()
           }
         }
       }

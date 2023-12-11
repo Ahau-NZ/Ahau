@@ -70,7 +70,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'TribeSettings',
   props: {
