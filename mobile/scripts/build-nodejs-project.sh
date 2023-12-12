@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. ~/.nvm/nvm.sh
+nvm use 12;
+
 INFO='\e[1;30m\e[46m';
 WARN='\e[1;30m\e[41m';
 RESET='\e[0m';

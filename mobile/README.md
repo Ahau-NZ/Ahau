@@ -112,8 +112,7 @@ NOTES:
 - Gradle intro : https://developer.android.com/build
 
 - our new Vite setup generate ESM JS by default
-    - Cordova may not accept / support this?
-        - fix? use `@vitejs/plugin-legacy` to support no-module
+    - fix: use `@vitejs/plugin-legacy` to support no-module
 - debugging in production
     - change the `--release` flag to `--debug` in `scripts/run.sh`
     - connect the phone by USB
@@ -121,8 +120,12 @@ NOTES:
     - open the app
     - open `chrome://inspect#devices` in Chrome / Chromium
       - you may have to run `adb devices` to get the daemon running for it to show up in Chrome
-- should this folder be installed / managed by node 12/ 18?
-    - need `cordova` installed globally in each version
+
+- this folder should be managed with node 12, npm 6
+  - assumes you are using EXACTLY node 12.19.0
+  - assumes npm installed at `~/.nvm/versions/node/v12.19.0/bin/npm`
+    - see `mobile/patches/nodejs-mobile-cordova+*.patch`
+    - this was done because somehow gradle was picking up wrong npm version
 
 - buggy android setup? Burn them all:
     ```bash
