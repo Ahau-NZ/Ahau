@@ -15,7 +15,7 @@
   "noVerifiedCredentials": "Verified credentials are disabled for this tribe",
   "featureUnavailable": "This feature is currently unavailable.",
   "sendComment": "Send a comment with your request",
-  "submit": "Submit",
-  "cancel": "Cancel",
+  "submit": "Enviar",
+  "cancel": "Cancelar",
   "skip": "Skip"
 }

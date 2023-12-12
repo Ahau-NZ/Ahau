@@ -3,9 +3,17 @@
   "kaitiakiFeaturesDescription": "Activar/desactivar las características disponibles para kaitiaki de esta comunidad",
   "memberFeatures": "Características del miembro",
   "memberFeaturesDescription": "Activar/desactivar las características disponibles para los miembros y kaitiaki de esta comunidad",
-  "allowPersonsList": "Cambiar la lista de {toggle} personas",
-  "allowWhakapapaViews": "Gira {toggle} registros de whakapapa",
-  "allowStories": "Convierte {toggle} el archivo e historias",
+  "acceptsVerifiedCredentials": "Accept membership credentials: {toggle}",
+  "verifiedCredentialsOffHelpText": "Activate this setting to accept tribal membership credentials with new registrations",
+  "verifiedCredentialsOnHelpText": "Turn off this setting if you do not want to accept tribal membership credentials with new registrations",
+  "allowPersonsList": "People database: {toggle}",
+  "allowWhakapapaViews": "Whakapapa records: {toggle}",
+  "allowStories": "Stories and collections: {toggle}",
+  "credentialFeatures": "Membership Credentials",
+  "credentialFeaturesDescription": "Activate this setting if you would like to issue digital membership credentials to new members",
+  "issuesVerifiedCredentials": "Issue membership credentials: {toggle}",
+  "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "en",
-  "off": "apagado"
+  "off": "apagado",
+  "addAcceptCredTitle": "Accept Membership credentials"
 }

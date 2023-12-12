@@ -20,6 +20,10 @@ export const getTribe = ({
         id 
         public {
           ...CommunityFragment
+
+          # public settings
+          issuesVerifiedCredentials
+          acceptsVerifiedCredentials
         }
         private {
           ...CommunityFragment
@@ -46,6 +50,10 @@ export const getTribes = ({
         id
         public {
           ...CommunityFragment
+
+          # public settings
+          issuesVerifiedCredentials
+          acceptsVerifiedCredentials
         }
         private {
           ...CommunityFragment
@@ -84,8 +92,10 @@ const communityProfileAttrs = [
   'allowPersonsList',
 
   // for public only
+  'issuesVerifiedCredentials',
   'joiningQuestions',
-  'customFields'
+  'customFields',
+  'acceptsVerifiedCredentials'
 ]
 
 export const initGroup = (_input) => {

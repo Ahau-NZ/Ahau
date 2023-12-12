@@ -8,7 +8,7 @@
     <v-row :class="readonly ? 'pl-4' : ''">
       <!-- Upload profile photo -->
       <v-col :order="smScreen ? '' : '2'" class="py-0">
-        <v-row :class="!isSideViewDialog || mobile ? 'justify-center pt-6' : 'justify-center ' ">
+        <v-row :class="!isSideViewDialog || mobile ? 'justify-center pt-6' : 'justify-center'">
           <!-- Avatar -->
           <Avatar
             :class="showAvatar ? 'big-avatar' : 'big-avatar avatarPlaceholder'"
@@ -92,7 +92,7 @@
 
         <!-- No longer living -->
         <v-row v-if="!isLoginPage && !readonly && hasDefaultField('isDeceased')" class="mb-8">
-          <v-col :cols="sideViewCols" :class="mobile ? 'py-0 ' : 'pt-0'">
+          <v-col :cols="sideViewCols" :class="mobile ? 'py-0' : 'pt-0'">
             <v-checkbox
               v-model="formData.deceased"
               :label="t('notLiving')"
@@ -104,7 +104,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="hasDefaultField('gender')" :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'" justify='start'>
+    <v-row v-if="hasDefaultField('gender')" :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'" justify="start">
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('genderIdentity') }}</p>
@@ -137,7 +137,7 @@
                 :label="t('gender.unknown')" :hide-details="true"
                 v-bind="customProps"
                 outlined
-                />
+              />
             </v-col>
           </div>
         </v-row>
@@ -145,17 +145,14 @@
     </v-row>
 
     <v-row>
-      <slot name="addParents" v-if="typeIsChild">
-      </slot>
-      <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
-      </slot>
-      <slot name="addPartners" v-if="typeIsParent">
-      </slot>
+      <slot name="addParents" v-if="typeIsChild"/>
+      <slot name="addChildren" v-if="typeIsPartner || typeIsParent"/>
+      <slot name="addPartners" v-if="typeIsParent"/>
     </v-row>
 
     <!-- If is duplicate -->
     <v-row v-if="isDuplicate" class="pl-4">
-      <v-col cols="12" class="">
+      <v-col cols="12">
         <!-- profile exists: title -->
         <v-row>
           <p>{{ t('profileExists') }}</p>
@@ -190,7 +187,7 @@
           />
         </v-col>
         <!-- Alt names -->
-        <template v-if="hasDefaultField('altNames')" >
+        <template v-if="hasDefaultField('altNames')">
           <!-- TODO: configure required -->
           <v-col v-for="(altName, index) in currentAltNames"
             :key="`value-alt-name-${index}`"
@@ -227,7 +224,7 @@
             />
           </v-col>
           <v-col>
-            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('addName')" @click="addAltNameField" row/>
+            <AddButton align="flex-end" :justify="justifyBtn" :width="'50px'" :label="t('addName')" @click="addAltNameField" row/>
           </v-col>
         </template>
       </v-row>
@@ -284,16 +281,16 @@
           </v-col>
         </template>
 
-        <v-col v-if="hasDefaultField('description')" cols="12" sm="12" class="pa-1" >
+        <v-col v-if="hasDefaultField('description')" cols="12" sm="12" class="pa-1">
           <!-- Description textarea -->
-            <v-textarea
-              v-model="formData.description"
-              :label="t('description', {displayName: formData.preferredName})"
-              v-bind="customProps"
-              no-resize
-              :rows="readonly ? 0 : 3"
-              auto-grow
-            />
+          <v-textarea
+            v-model="formData.description"
+            :label="t('description', { displayName: formData.preferredName })"
+            v-bind="customProps"
+            no-resize
+            :rows="readonly ? 0 : 3"
+            auto-grow
+          />
         </v-col>
       </v-row>
 
@@ -337,7 +334,7 @@
           />
         </v-col>
         <v-col v-if="!readonly">
-          <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
+          <AddButton align="flex-end" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
         </v-col>
       </v-row>
 
@@ -359,7 +356,7 @@
           />
         </v-col>
         <v-col v-if="!readonly">
-          <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
+          <AddButton align="flex-end" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
         </v-col>
       </v-row>
 
@@ -434,16 +431,16 @@
           <span class="pa-0 ma-0" style="font-weight:bold">{{ t('communityFieldsTitle') }}</span>
         </v-col>
         <!-- Groups custom fields into tribes -->
-        <v-row v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
+        <v-col v-for="tribe in customFieldsByTribes" :key="tribe.tribeId">
           <CustomFieldGroup
             :tribe="tribe"
             :profile="tribe.profileInTribe"
             :readonly="readonly"
             :sideView="isSideViewDialog"
-            :fieldValues.sync="formData.customFields[tribe.tribeId]"
+            
             :isRegistration="isRegistration"
           />
-        </v-row>
+        </v-col>
       </template>
     </div>
   </v-form>
@@ -677,7 +674,11 @@ export default {
       if (!label) return
 
       if (this.isPersonalProfile) { // if editing a personal profle show all default fields except those which have been tombstoned
-        return !this.rawTribeCustomFields(this.profile.id).filter(field => !field.tombtoned).some(field => field.label === label)
+        console.warn('There may be an issue with loading custom fields in this ProfileForm')
+
+        return this.tribeDefaultFields
+          .filter(field => !field.tombstone)
+          .some(field => field.label === label)
       }
 
       // find in defaultCustomFields

@@ -3,9 +3,17 @@
   "kaitiakiFeaturesDescription": "Liga/desliga os recursos disponíveis para kaitiaki desta comunidade",
   "memberFeatures": "Características do Membro",
   "memberFeaturesDescription": "Liga/desliga os recursos disponíveis para membros e kaitiaki desta comunidade",
-  "allowPersonsList": "Vire {toggle} povos na lista",
-  "allowWhakapapaViews": "Girar {toggle} registros de whakapa",
-  "allowStories": "Mude o {toggle} para arquivo e histórias",
+  "acceptsVerifiedCredentials": "Accept membership credentials: {toggle}",
+  "verifiedCredentialsOffHelpText": "Activate this setting to accept tribal membership credentials with new registrations",
+  "verifiedCredentialsOnHelpText": "Turn off this setting if you do not want to accept tribal membership credentials with new registrations",
+  "allowPersonsList": "People database: {toggle}",
+  "allowWhakapapaViews": "Whakapapa records: {toggle}",
+  "allowStories": "Stories and collections: {toggle}",
+  "credentialFeatures": "Membership Credentials",
+  "credentialFeaturesDescription": "Activate this setting if you would like to issue digital membership credentials to new members",
+  "issuesVerifiedCredentials": "Issue membership credentials: {toggle}",
+  "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "ligado",
-  "off": "desligado"
+  "off": "desligado",
+  "addAcceptCredTitle": "Accept Membership credentials"
 }
