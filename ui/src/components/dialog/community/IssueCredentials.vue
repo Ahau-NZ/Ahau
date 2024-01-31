@@ -2,7 +2,7 @@
   <div class="ma-2">
     <!-- title -->
     <v-col class="py-0 font-italic">
-      {{ t('acceptCredentialsDescription') }}
+      {{ t('issueCredentialsDescription') }}
     </v-col>
     <v-col cols="12" class="pl-5 py-0">
       <v-row v-for="(setting, i) in credentialSettings" :key="i" class="py-0">
@@ -22,7 +22,7 @@
 <script>
 
 export default {
-  name: 'AcceptCredentials',
+  name: 'IssueCredentails',
   props: {
     settings: Object
   },
@@ -30,9 +30,9 @@ export default {
     return {
       credentialSettings: [
         {
-          key: 'acceptsVerifiedCredentials',
-          label: d => this.t('acceptCredentialsToggle', { toggle: this.getSwitchLabel(d) }),
-          value: this.settings.acceptsVerifiedCredentials
+          key: 'issuesVerifiedCredentials',
+          label: d => this.t('issueCredentialsToggle', { toggle: this.getSwitchLabel(d) }),
+          value: this.settings.issuesVerifiedCredentials
         }
       ]
     }

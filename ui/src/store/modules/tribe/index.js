@@ -18,10 +18,18 @@ const defaultTribeSettings = {
 export default function (apollo) {
   const state = {
     currentTribe: null,
-    tribes: []
+    tribes: [],
+    betaFeaturesEnabled: false
   }
 
   const getters = {
+    betaFeaturesEnabled: (state, getters) => {
+      return (
+        state.betaFeaturesEnabled ||
+        getters.tribeSettings.issuesVerifiedCredentials ||
+        getters.tribeSettings.acceptsVerifiedCredentials
+      )
+    },
     tribeId: state => state?.currentTribe?.id,
     tribePoboxId: state => {
       return get(state, 'currentTribe.public[0].poBoxId')
@@ -222,6 +230,10 @@ export default function (apollo) {
     },
     resetCurrentTribe (state) {
       state.currentTribe = null
+    },
+    setBetaFeaturesEnabled (state, enabled) {
+      state.betaFeaturesEnabled = enabled
+      console.log('state', state.betaFeaturesEnabled)
     }
   }
 
@@ -234,6 +246,9 @@ export default function (apollo) {
     },
     updateTribes ({ commit }, tribes) {
       commit('updateTribes', tribes)
+    },
+    setBetaFeaturesEnabled ({ commit }, enabled) {
+      commit('setBetaFeaturesEnabled', enabled)
     },
     async getTribe ({ rootState, dispatch }, id) {
       try {
