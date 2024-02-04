@@ -13,8 +13,9 @@
   "agreeKaitiaki": "I agree to share the following information with the <strong><i>{groupName}</i></strong> community kaitiaki",
   "verifiedCredentials": "Upload verified credentials with your registration",
   "noVerifiedCredentials": "Verified credentials are disabled for this tribe",
-  "featureUnavailable": "This feature is currently unavailable, please check back later.",
+  "featureUnavailable": "This feature is currently unavailable.",
   "sendComment": "Send a comment with your request",
   "submit": "submeter",
-  "cancel": "cancelar"
+  "cancel": "cancelar",
+  "skip": "Skip"
 }

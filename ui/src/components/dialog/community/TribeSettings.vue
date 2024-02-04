@@ -1,28 +1,7 @@
 <template>
-  <v-container fluid >
+  <v-container fluid>
     <v-row>
       <!-- Kaitiaki -->
-      <v-col cols="12" class="overline">
-        {{ t('credentialFeatures') }}
-      </v-col>
-      <v-col class="py-0 font-italic">
-        {{ t('credentialFeaturesDescription') }}
-      </v-col>
-      <v-col cols="12" class="pl-5">
-        <v-row v-for="(setting, i) in credentialSettings" :key="i" class="py-0">
-          <v-col class="py-0">
-            <v-switch
-              v-model="setting.value"
-              :label="setting.label(setting.value)"
-              color="blue"
-              class="py-0 switch"
-              hide-details
-              @change="emitChanges(setting.key, setting.value)"
-            ></v-switch>
-          </v-col>
-          <v-spacer v-if="!mobile" class="py-0"/>
-        </v-row>
-      </v-col>
       <v-col cols="12" class="overline">
         {{ t('kaitiakiFeatures') }}
       </v-col>
@@ -65,15 +44,33 @@
           </v-col>
         </v-row>
       </v-col>
+      <ToggleBetaFeatures class="mt-4">
+        <template>
+          <v-col cols="12" class="overline">
+            {{ t('credentialFeatures') }}
+          </v-col>
+          <IssueCredentials :settings="settings" @change="emitCredChanges" />
+          <AcceptCredentials :settings="settings" @change="emitCredChanges" class="mt-8" />
+        </template>
+      </ToggleBetaFeatures>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import ToggleBetaFeatures from './ToggleBetaFeatures.vue'
+import AcceptCredentials from './AcceptCredentials.vue'
+import IssueCredentials from './IssueCredentials.vue'
+
 export default {
   name: 'TribeSettings',
   props: {
     settings: Object
+  },
+  components: {
+    ToggleBetaFeatures,
+    AcceptCredentials,
+    IssueCredentials
   },
   data () {
     return {
@@ -81,7 +78,7 @@ export default {
         {
           key: 'issuesVerifiedCredentials',
           label: d => this.t('issuesVerifiedCredentials', { toggle: this.getSwitchLabel(d) }),
-          value: this.settings.issuesVerifiedCredentials
+          value: false // this.settings.issuesVerifiedCredentials TODO: update when ataprism in merged
         }
       ],
       kaitiakiSettings: [
@@ -118,6 +115,10 @@ export default {
       return this.$t('tribeSettings.' + key, vars)
     },
     emitChanges (key, value) {
+      this.$emit('change', { key, value })
+    },
+    emitCredChanges ({ key, value }) {
+      console.log(key, value)
       this.$emit('change', { key, value })
     }
   }

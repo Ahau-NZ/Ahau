@@ -57,11 +57,6 @@
         <v-tab-item value="tab-2">
           <DataModel :customFields.sync="profileFields"/>
           <v-divider class="my-2"></v-divider>
-          <!-- TODO: Add update  -->
-          <!-- <IdentityRequirements :files.sync="profileFiles"/>
-          <v-divider class="my-2"></v-divider> -->
-          <AcceptCredentials :settings="settings" @change="updateSettings" />
-          <v-divider class="my-2"></v-divider>
           <RegistrationQuestions :joiningQuestions.sync="formData.joiningQuestions"/>
           <v-row justify="center" class="my-4">
             <v-btn color="blue-grey" dark @click="nextTab">
@@ -86,6 +81,7 @@
 
 <script>
 import { pick, isEmpty, isEqual } from 'lodash-es'
+import { mapGetters, mapActions } from 'vuex'
 
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers'
@@ -95,10 +91,6 @@ import Permissions from './Permissions.vue'
 import TribeSettings from './TribeSettings.vue'
 import DataModel from './DataModel.vue'
 import RegistrationQuestions from './RegistrationQuestions.vue'
-// import IdentityRequirements from './IdentityRequirements.vue'
-import AcceptCredentials from './AcceptCredentials.vue'
-
-import { mapGetters } from 'vuex'
 
 const customFieldTypes = ['text', 'list', 'array', 'checkbox', 'number', 'date']
 
@@ -110,9 +102,7 @@ export default {
     Permissions,
     TribeSettings,
     DataModel,
-    RegistrationQuestions,
-    // IdentityRequirements,
-    AcceptCredentials
+    RegistrationQuestions
   },
   props: {
     show: { type: Boolean, required: true },
@@ -173,6 +163,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tribe', ['setBetaFeaturesEnabled']),
     async updateSettings ({ key, value }) {
       this.formData[key] = value
     },
@@ -239,6 +230,9 @@ export default {
       if (this.tab === 'tab-2') tab = 'tab-3'
       this.tab = tab
     }
+  },
+  beforeDestroy () {
+    this.setBetaFeaturesEnabled(false)
   }
 }
 </script>
