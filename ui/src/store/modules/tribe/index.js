@@ -93,14 +93,20 @@ export default function (apollo) {
       const tribe = getters.parentTribe || state.currentTribe
       return getRawCustomFields(tribe, rootGetters.isKaitiaki)
     },
-    tribeDefaultFields (state, getters) {
+    tribeDefaultFields: (state, getters, _, rootGetters) => {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => (
-          // keep fields that are NOT person group, NOT kaitiaki-only
-          !getters.isPersonalTribe ||
-          field.visibleBy !== 'admin'
-        ))
+        .filter(field => {
+          return !field.tombstone && (field.visibleBy !== 'admin' || getters.isPersonalTribe || rootGetters.isKaitiaki)
+        })
     },
+    // tribeDefaultFields (state, getters) {
+    //   return getDefaultFields(getters.rawTribeCustomFields)
+    //     .filter(field => (
+    //       // keep fields that are NOT person group, NOT kaitiaki-only
+    //       !getters.isPersonalTribe ||
+    //       field.visibleBy !== 'admin'
+    //     ))
+    // },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
     },

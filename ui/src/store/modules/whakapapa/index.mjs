@@ -614,7 +614,7 @@ export default function (apollo) {
       dispatch('addLinks', { ...links, isLoadingFocus })
     },
 
-    async saveWhakapapaView ({ commit, dispatch, state }, input) {
+    async saveWhakapapaView ({ commit, dispatch, rootGetters, state }, input) {
       const { id: whakapapaId } = input
 
       if (!whakapapaId) return // no update without an id
@@ -623,7 +623,7 @@ export default function (apollo) {
       if (!updateId) return
 
       const view = await dispatch('getWhakapapaView', whakapapaId)
-
+      view.canEdit = rootGetters.isKaitiaki || view.permission === 'edit'
       // if updating whakapapa while in whakapapa view
       if (state.view.id) commit('setView', view)
       // else if updating recordCount after leaving whakapapa view
