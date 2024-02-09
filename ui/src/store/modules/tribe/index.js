@@ -26,8 +26,8 @@ export default function (apollo) {
     betaFeaturesEnabled: (state, getters) => {
       return (
         state.betaFeaturesEnabled ||
-        getters.tribeSettings.issuesVerifiedCredentials ||
-        getters.tribeSettings.acceptsVerifiedCredentials
+        getters.tribeSettings?.issuesVerifiedCredentials ||
+        getters.tribeSettings?.acceptsVerifiedCredentials
       )
     },
     tribeId: state => state?.currentTribe?.id,
@@ -233,7 +233,6 @@ export default function (apollo) {
     },
     setBetaFeaturesEnabled (state, enabled) {
       state.betaFeaturesEnabled = enabled
-      console.log('state', state.betaFeaturesEnabled)
     }
   }
 
