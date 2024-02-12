@@ -116,7 +116,7 @@ export default {
   watch: {
     mobileServerLoaded: {
       handler (nextValue) {
-        if (nextValue && process.env.VUE_APP_PLATFORM === 'cordova') {
+        if (nextValue && import.meta.env.VITE_APP_PLATFORM === 'cordova') {
           this.getCurrentIdentity()
         }
       },
@@ -124,9 +124,10 @@ export default {
     }
   },
   mounted () {
-    if (process.env.VUE_APP_PLATFORM !== 'cordova') {
-      this.getCurrentIdentity()
-    }
+    if (import.meta.env.VITE_APP_PLATFORM === 'cordova') return
+    // wait for mobileServerLoaded
+
+    this.getCurrentIdentity()
   },
   methods: {
     ...mapActions(['setWhoami', 'setSyncing']),

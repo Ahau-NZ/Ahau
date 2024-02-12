@@ -2,7 +2,8 @@ import mixpanel from './mixpanel'
 import mobilePkg from '../../../../../mobile/package.json'
 import desktopPkg from '../../../../../desktop/package.json'
 
-const version = process.env.VUE_APP_PLATFORM === 'cordova' // isMobile?
+// TODO use isCordova?
+const version = import.meta.env.VITE_APP_PLATFORM === 'cordova'
   ? mobilePkg.version
   : desktopPkg.version
 

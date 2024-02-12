@@ -46,7 +46,8 @@ export default {
   computed: {
     ...mapGetters('tribe', ['tribeSettings', 'betaFeaturesEnabled']),
     isOneSettingEnabled () {
-      return this.tribeSettings.issuesVerifiedCredentials || this.tribeSettings.acceptsVerifiedCredentials
+      // return this.tribeSettings.issuesVerifiedCredentials || this.tribeSettings.acceptsVerifiedCredentials
+      return false
     },
     label () {
       return this.betaFeaturesEnabled

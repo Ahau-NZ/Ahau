@@ -6,9 +6,7 @@ module.exports.createOrMigrate = function createOrMigrate (basepath, appName, ol
   const currentSsbPath = path.resolve(basepath, `.${appName}`)
   const currentExists = fs.existsSync(currentSsbPath)
 
-  if (currentExists) {
-    return
-  }
+  if (currentExists) return
 
   const oldSsbPath = path.resolve(basepath, `.${oldAppName}`)
   const oldExists = fs.existsSync(oldSsbPath)

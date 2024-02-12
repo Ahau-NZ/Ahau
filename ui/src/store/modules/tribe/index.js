@@ -26,8 +26,8 @@ export default function (apollo) {
     betaFeaturesEnabled: (state, getters) => {
       return (
         state.betaFeaturesEnabled ||
-        getters.tribeSettings.issuesVerifiedCredentials ||
-        getters.tribeSettings.acceptsVerifiedCredentials
+        getters.tribeSettings?.issuesVerifiedCredentials ||
+        getters.tribeSettings?.acceptsVerifiedCredentials
       )
     },
     tribeId: state => state?.currentTribe?.id,
@@ -93,14 +93,20 @@ export default function (apollo) {
       const tribe = getters.parentTribe || state.currentTribe
       return getRawCustomFields(tribe, rootGetters.isKaitiaki)
     },
-    tribeDefaultFields (state, getters) {
+    tribeDefaultFields: (state, getters, _, rootGetters) => {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => (
-          // keep fields that are NOT person group, NOT kaitiaki-only
-          !getters.isPersonalTribe ||
-          field.visibleBy !== 'admin'
-        ))
+        .filter(field => {
+          return !field.tombstone && (field.visibleBy !== 'admin' || getters.isPersonalTribe || rootGetters.isKaitiaki)
+        })
     },
+    // tribeDefaultFields (state, getters) {
+    //   return getDefaultFields(getters.rawTribeCustomFields)
+    //     .filter(field => (
+    //       // keep fields that are NOT person group, NOT kaitiaki-only
+    //       !getters.isPersonalTribe ||
+    //       field.visibleBy !== 'admin'
+    //     ))
+    // },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
     },
@@ -233,7 +239,6 @@ export default function (apollo) {
     },
     setBetaFeaturesEnabled (state, enabled) {
       state.betaFeaturesEnabled = enabled
-      console.log('state', state.betaFeaturesEnabled)
     }
   }
 

@@ -1,7 +1,16 @@
 diff --git a/node_modules/nodejs-mobile-cordova/src/android/build.gradle b/node_modules/nodejs-mobile-cordova/src/android/build.gradle
-index 4e5783d..a1e429e 100644
+index 4e5783d..0247d16 100644
 --- a/node_modules/nodejs-mobile-cordova/src/android/build.gradle
 +++ b/node_modules/nodejs-mobile-cordova/src/android/build.gradle
+@@ -95,7 +95,7 @@ cdvPluginPostBuildExtras += { ->
+ 
+     if ("1".equals(shouldRebuildNativeModules)) {
+ 
+-        String npmCommandName = 'npm';
++        String npmCommandName = "${System.properties['user.home']}/.nvm/versions/node/v12.19.0/bin/npm";
+         if (OperatingSystem.current().isMacOsX()) {
+             // On macOS, npm's location may not be in the PATH environment variable if gradle is being run
+             // by Android Studio. We need npm to build native modules, so we use a helper script that
 @@ -220,14 +220,14 @@ cdvPluginPostBuildExtras += { ->
                  description = "Building a native toolchain to compile nodejs-mobile native modules for ${abi_name}."
                  executable = "${ndk_bundle_path}/build/tools/make-standalone-toolchain.sh"

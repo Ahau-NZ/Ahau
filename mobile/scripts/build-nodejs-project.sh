@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. ~/.nvm/nvm.sh
+nvm use 12;
+
 INFO='\e[1;30m\e[46m';
 WARN='\e[1;30m\e[41m';
 RESET='\e[0m';
@@ -31,7 +34,7 @@ fi
 
 # Install node-gyp in order to Cordova to run `prepare`
 log "Installing node-gyp in order to Cordova to run 'prepare'"
-npm install node-gyp --no-save
+npm install node-gyp@9 --no-save
 
 cd ./www/nodejs-project
 
@@ -92,6 +95,8 @@ done
 
 declare -a modulesRoot=(
   "sodium-native"
+  "sodium-browserify"
+  "sodium-browserify-tweetnacl"
   "leveldown"
   "bufferutil"
   "systeminformation"
@@ -121,21 +126,26 @@ if [ $BUILD_PLATFORM == "android" ]; then
   ./scripts/android/build-native-modules.sh
 fi
 
-log "Bundling some dependencies with babel to support Node version...";
+log "Babel-bundling some dependencies to support Node 12";
 cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
+  "@apollo/cache-control-types"
   "@envelop/core"
   "@envelop/validation-cache"
   "@graphql-yoga/logger"
   "@graphql-yoga/subscription"
+  "@ssb-graphql/main"
   "@ssb-graphql/profile"
   "@ssb-graphql/submissions"
   "@ssb-graphql/whakapapa"
   "graphql-yoga"
-  "ssb-profile"
-  "ssb-whakapapa"
+  "secret-stack"
   "ssb-ahau"
+  "ssb-profile"
+  "ssb-ref"
+  "ssb-serve-blobs"
+  "ssb-whakapapa"
   "urlpattern-polyfill"
 )
 # TIP: to find module that need transpiling, run `npm run relsease:android`
