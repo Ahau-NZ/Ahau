@@ -230,10 +230,10 @@ export default {
       if (this.tab === 'tab-2') tab = 'tab-3'
       this.tab = tab
     }
-  },
-  beforeDestroy () {
-    this.setBetaFeaturesEnabled(false)
   }
+  // beforeDestroy () {
+  //   this.setBetaFeaturesEnabled(false)
+  // }
 }
 </script>
 

@@ -10,7 +10,6 @@
         color="blue"
         class="py-0 switch"
         hide-details
-        disabled
         @change="setBetaFeaturesEnabled"
       ></v-switch>
       <v-expand-transition>
@@ -39,7 +38,7 @@ export default {
     betaFeaturesEnabled: {
       immediate: true,
       handler (enabled) {
-        this.toggled = false // TODO: = enabled
+        this.toggled = enabled
       }
     }
   },
