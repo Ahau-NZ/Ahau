@@ -14,7 +14,6 @@ export default defineConfig(async () => {
   const { default: stdLibBrowser } = await import('node-stdlib-browser')
 
   return {
-    // TODO may want to tweak based on cordova...
     base: process.env.NODE_ENV !== 'development' ? './' : '/',
     resolve: {
       alias: {
