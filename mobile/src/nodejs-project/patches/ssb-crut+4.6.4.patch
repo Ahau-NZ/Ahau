@@ -1,0 +1,49 @@
+diff --git a/node_modules/ssb-crut/lib/get-updates.js b/node_modules/ssb-crut/lib/get-updates.js
+index 6b47e02..4bc40c8 100644
+--- a/node_modules/ssb-crut/lib/get-updates.js
++++ b/node_modules/ssb-crut/lib/get-updates.js
+@@ -41,43 +41,5 @@ function GetUpdates1 (ssb, crut) {
+ }
+ 
+ function GetUpdates2 (ssb, crut) {
+-  const { seekKey } = require('bipf')
+-  const { spec } = crut
+-  const isUpdate = msg => crut.isUpdate(getCanonicalContent(msg, spec.getTransformation))
+-  const B_TANGLE = Buffer.from(spec.tangle)
+-
+-  function tangleRoot (value) {
+-    return ssb.db.operators.equal(seekTangleRoot, value, {
+-      indexType: `value.content.tangles.${spec.tangle}.root`
+-    })
+-  }
+-  function seekTangleRoot (buffer) {
+-    let p = 0 // note you pass in p!
+-    p = seekKey(buffer, p, B_VALUE)
+-    if (p < 0) return
+-    p = seekKey(buffer, p, B_CONTENT)
+-    if (p < 0) return
+-    p = seekKey(buffer, p, B_TANGLES)
+-    if (p < 0) return
+-    p = seekKey(buffer, p, B_TANGLE)
+-    if (p < 0) return
+-    return seekKey(buffer, p, B_ROOT)
+-  }
+-
+-  return function getUpdates (id, cb) {
+-    const { where, and, type, toPullStream } = ssb.db.operators
+-    pull(
+-      ssb.db.query(
+-        where(
+-          and(
+-            type(spec.type),
+-            tangleRoot(id)
+-          )
+-        ),
+-        toPullStream()
+-      ),
+-      pull.filter(isUpdate),
+-      pull.collect(cb)
+-    )
+-  }
++  throw Error('TODO change this when installing DB2')
+ }

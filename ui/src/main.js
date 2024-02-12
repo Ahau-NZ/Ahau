@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VuexRouterSync from 'vuex-router-sync'
 import VueRx from 'vue-rx'
-import VuejsClipper from 'vuejs-clipper/dist/vuejs-clipper.umd.min'
+import VuejsClipper from 'vuejs-clipper/dist/vuejs-clipper.umd.js'
 import 'vuejs-clipper/dist/vuejs-clipper.css'
 import VueZoomer from 'vue-zoomer'
 import gql from 'graphql-tag'
@@ -19,6 +19,7 @@ import nodejsClient from './plugins/cordova-nodejs-client'
 import { isCordova } from './lib/cordova-helpers'
 
 if (isCordova()) {
+  console.log('starting up, waiting for "deviceready"')
   document.addEventListener('deviceready', main, false)
 } else {
   main()
@@ -50,10 +51,13 @@ async function main () {
 
   if (isCordova()) {
     nodejsClient.start({
-      onReady: () => {
+      onReady () {
         // console.log('nodejs-mobile and GraphQL server are fully ready')
         startVue()
         navigator.splashscreen.hide()
+      },
+      onAnyMessage (msg) {
+        console.log(msg)
       }
     })
     return

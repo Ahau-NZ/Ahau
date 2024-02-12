@@ -40,7 +40,9 @@ to pin down the exact versions of tools needed to all work together.
       - `java -version` should be 8
     - Gradle
       - `sdk install gradle 8.1`
-    - Android Studio: https://developer.android.com/studio/
+    - Android Studio
+      - https://developer.android.com/studio/
+        - download the latest from this page
       - https://developer.android.com/studio/install#linux
         ```bash
         sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
@@ -48,20 +50,21 @@ to pin down the exact versions of tools needed to all work together.
         sudo mv android-studio /opt/
         cd /usr/bin && sudo ln -s /opt/android-studio/bin/studio.sh studio
         ```
-      - start android studio from terminal `studio`, and follow the default path for setup
-        - went "More actions > SDK Manager" and added
-          - SDK Platforms tab
-             - [x] Android 10.0 (Q)
-          - SDK Tools tab:
-             - [x] Android SDK Build-Tools > 30.0.3
-                - check "show package details"
-             - [x] Android NDK (side by side) > 22.1.7161670
-                - note this is the last version which has the `make-standalone-toolchain.sh` we need
-             - [x] Android SDK Command-line Tools (latest)
-             - [x] CMake > 3.10.2.4988404
-                - check "show package details"
-             - [x] Android SDK Tools (obselete)
-                - uncheck "hide obselete packages"
+        - the `tar.gz` file name will depend on your download
+      - start android studio from terminal `studio`, choose "Standard" Install Type
+      - once installed on dashboard click "More actions > SDK Manager" and added
+        - SDK Platforms tab
+           - [x] Android 10.0 (Q)
+        - SDK Tools tab:
+           - [x] Android SDK Build-Tools > 30.0.3
+              - check "show package details"
+           - [x] Android NDK (side by side) > 22.1.7161670
+              - note this is the last version which has the `make-standalone-toolchain.sh` we need
+           - [x] Android SDK Command-line Tools (latest)
+           - [x] CMake > 3.10.2.4988404
+              - check "show package details"
+           - [x] Android SDK Tools (obselete)
+              - uncheck "hide obselete packages"
       - added vars to my `.zshrc` (or `.bash_profile` `.bashrc`)
         ```
         export ANDROID_HOME=$HOME/Android/Sdk
@@ -83,7 +86,12 @@ to pin down the exact versions of tools needed to all work together.
     ```bash
     sudo apt-get install make gcc python2 libtool
     ```
-    - may need to set up "python" to point at correct version of python
+    - NOTE: modern linux defaults to python3, but does not set up `python` in `$PATH`
+    - a script in NDK uses "python".. you need to make it point at python 2:
+      - **Option 1** - patch the script (recommended)
+        - open `Android/Sdk/ndk/22.1.7171670/build/tools/make-standalone-toolchain.sh`
+        - change `python` → `python2`
+      - **Option 2** - symlink
         ```bash
         cd /usr/bin
         sudo ln -s python2 python
@@ -92,6 +100,7 @@ to pin down the exact versions of tools needed to all work together.
 4. set the mobile part of the repo up
     ```bash
     cd mobile
+    nvm use 12
     npm install && npm run setup
     ```
 
@@ -102,6 +111,29 @@ NOTES:
     - preserving the object structure to make it clear how to merge those back in later
 - Gradle intro : https://developer.android.com/build
 
+- our new Vite setup generate ESM JS by default
+    - fix: use `@vitejs/plugin-legacy` to support no-module
+- debugging in production
+    - change the `--release` flag to `--debug` in `scripts/run.sh`
+    - connect the phone by USB
+    - enable USB debugging
+    - open the app
+    - open `chrome://inspect#devices` in Chrome / Chromium
+      - you may have to run `adb devices` to get the daemon running for it to show up in Chrome
+
+- this folder should be managed with node 12, npm 6
+  - assumes you are using EXACTLY node 12.19.0
+  - assumes npm installed at `~/.nvm/versions/node/v12.19.0/bin/npm`
+    - see `mobile/patches/nodejs-mobile-cordova+*.patch`
+    - this was done because somehow gradle was picking up wrong npm version
+
+- buggy android setup? Burn them all:
+    ```bash
+    $ cd mobile
+    $ rm -rf node_module platform plugins
+    $ npm i
+    $ npm run setup
+    ```
 
 ```bash
 $ npm install
