@@ -437,7 +437,7 @@
             :profile="tribe.profileInTribe"
             :readonly="readonly"
             :sideView="isSideViewDialog"
-            
+
             :isRegistration="isRegistration"
           />
         </v-col>

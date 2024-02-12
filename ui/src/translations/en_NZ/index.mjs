@@ -34,6 +34,7 @@ import reviewSubmissionDialog from './profile-change-request.json'
 import linkSubmissions from './link-submissions.json'
 import walletShow from './wallet-show.json'
 import identityRequirements from './identity-requirements.json'
+import toggleBetaSettings from './toggle-beta-settings.json'
 
 /* Nav / misc */
 import accessButton from './access-button.json'
@@ -86,6 +87,7 @@ export {
   reviewSubmissionDialog,
   linkSubmissions,
   identityRequirements,
+  toggleBetaSettings,
 
   accessButton,
   appBarMenu,

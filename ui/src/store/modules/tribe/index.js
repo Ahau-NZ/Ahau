@@ -18,10 +18,18 @@ const defaultTribeSettings = {
 export default function (apollo) {
   const state = {
     currentTribe: null,
-    tribes: []
+    tribes: [],
+    betaFeaturesEnabled: false
   }
 
   const getters = {
+    betaFeaturesEnabled: (state, getters) => {
+      return (
+        state.betaFeaturesEnabled ||
+        getters.tribeSettings?.issuesVerifiedCredentials ||
+        getters.tribeSettings?.acceptsVerifiedCredentials
+      )
+    },
     tribeId: state => state?.currentTribe?.id,
     tribePoboxId: state => {
       return get(state, 'currentTribe.public[0].poBoxId')
@@ -85,14 +93,20 @@ export default function (apollo) {
       const tribe = getters.parentTribe || state.currentTribe
       return getRawCustomFields(tribe, rootGetters.isKaitiaki)
     },
-    tribeDefaultFields (state, getters) {
+    tribeDefaultFields: (state, getters, _, rootGetters) => {
       return getDefaultFields(getters.rawTribeCustomFields)
-        .filter(field => (
-          // keep fields that are NOT person group, NOT kaitiaki-only
-          !getters.isPersonalTribe ||
-          field.visibleBy !== 'admin'
-        ))
+        .filter(field => {
+          return !field.tombstone && (field.visibleBy !== 'admin' || getters.isPersonalTribe || rootGetters.isKaitiaki)
+        })
     },
+    // tribeDefaultFields (state, getters) {
+    //   return getDefaultFields(getters.rawTribeCustomFields)
+    //     .filter(field => (
+    //       // keep fields that are NOT person group, NOT kaitiaki-only
+    //       !getters.isPersonalTribe ||
+    //       field.visibleBy !== 'admin'
+    //     ))
+    // },
     tribeCustomFields (state, getters) {
       return getCustomFields(getters.rawTribeCustomFields)
     },
@@ -222,6 +236,9 @@ export default function (apollo) {
     },
     resetCurrentTribe (state) {
       state.currentTribe = null
+    },
+    setBetaFeaturesEnabled (state, enabled) {
+      state.betaFeaturesEnabled = enabled
     }
   }
 
@@ -234,6 +251,9 @@ export default function (apollo) {
     },
     updateTribes ({ commit }, tribes) {
       commit('updateTribes', tribes)
+    },
+    setBetaFeaturesEnabled ({ commit }, enabled) {
+      commit('setBetaFeaturesEnabled', enabled)
     },
     async getTribe ({ rootState, dispatch }, id) {
       try {

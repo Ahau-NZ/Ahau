@@ -59,8 +59,8 @@
           <v-text-field
             class="mx-2 mt-2"
             label="list options"
-            :disabled="item.label === 'gender'"
-            v-model="item.options"
+            disabled
+            :value="item.options"
           />
         </td>
       </template>
@@ -130,6 +130,16 @@
                     :label="t('required')"
                     v-model="newField.required"
                   ></v-checkbox>
+                </v-col>
+                <v-col
+                  cols="12"
+                  v-if="newField.type === 'list'"
+                >
+                  <v-text-field
+                    v-model="newField.options"
+                    label="List options"
+                    placeholder="Comma separated e.g. Yellow,Orange,Red,Blue"
+                  />
                 </v-col>
               </v-row>
             </v-container>
@@ -345,7 +355,7 @@ export default {
       const newCustomFields = clone(this.customFields)
 
       // if is existing customField, mutate that
-      const index = this.customFields.findIndex(field => field === this.currentField)
+      const index = this.customFields.findIndex(field => field.label === this.currentField.label)
       const existingField = newCustomFields[index]
       if (existingField) {
         // if it's already in customFields, away we go!
