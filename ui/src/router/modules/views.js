@@ -9,6 +9,7 @@ import Profile from '@/components/profile/Profile.vue' // this is ProfileShow
 import Archive from '@/components/archive/Archive.vue'
 
 import PersonIndex from '@/views/PersonIndex.vue'
+import WalletShow from '@/components/wallet/WalletShow.vue'
 
 // Unfortunately Vue Router doesn't work without at least a fake component
 // If you do only data handling
@@ -84,7 +85,8 @@ function sharedRoutes (type) {
       component: CollectionShow
     },
     { path: 'whakapapa', name: `${type}/whakapapa`, component: WhakapapaIndex, props: true },
-    { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow }
+    { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow },
     // TODO change "name" to be 'whakapapaShow'
+    { path: 'wallet', name: `${type}/wallet`, component: WalletShow }
   ]
 }

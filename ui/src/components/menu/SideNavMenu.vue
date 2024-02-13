@@ -116,6 +116,23 @@
             </v-col>
           </v-btn>
         </v-col>
+        <v-col cols="3" md="12" v-if="isPersonalTribe && credentials.length" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+          <v-btn @click="setActive(WALLET)" light :fab="mobile" text>
+            <v-col class="pa-0" :cols="mobile ? '12' : '2'">
+              <WalletIcon
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === PERSON? '#B02425' : 'black'"
+              />
+            </v-col>
+            <v-col class="py-0" v-if="!mobile && !isOverflowing">
+              <span
+                ref="text"
+                :style="$route.name === 'personIndex' ? 'color:#B02425;' : 'black'"
+                class="ml-2 subtitle-1"
+              >{{ t(WALLET) }}</span>
+            </v-col>
+          </v-btn>
+        </v-col>
       </v-row>
     </v-col>
   </v-row>
@@ -137,6 +154,7 @@ const PROFILE = 'profile'
 const ARCHIVE = 'archive'
 const WHAKAPAPA = 'whakapapa'
 const PERSON = 'person'
+const WALLET = 'wallet'
 
 export default {
   name: 'SideNavMenu',
@@ -165,6 +183,7 @@ export default {
       ARCHIVE,
       WHAKAPAPA,
       PERSON,
+      WALLET,
 
       offset: 0,
       componentLoaded: false,
@@ -177,6 +196,7 @@ export default {
   mounted () {
     this.componentLoaded = true
     this.offset = this.$refs.sideNav.offsetTop - 50
+    this.getAllCredentials()
   },
   watch: {
     '$route.name' (name) {
@@ -190,6 +210,7 @@ export default {
     ...mapGetters(['storeDialog', 'whoami']),
     ...mapGetters('archive', ['showStory']),
     ...mapGetters('tribe', ['tribeSettings', 'isPersonalTribe']),
+    ...mapGetters('identity', ['credentials']),
     settings () {
       if (this.tribeSettings) return this.tribeSettings
       return {}
@@ -259,6 +280,7 @@ export default {
   methods: {
     ...mapActions(['setDialog', 'setNavComponent']),
     ...mapActions('archive', ['toggleShowStory']),
+    ...mapActions('identity', ['getAllCredentials']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()
