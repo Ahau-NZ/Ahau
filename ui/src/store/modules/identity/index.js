@@ -25,7 +25,6 @@ export default function (apollo) {
         .catch(err => {
           if (err)console.error('error getting credentials ' + err)
         })
-      console.log({ credentials })
       commit('setCredentials', credentials.data.verifiableCredentials)
     }
   }
