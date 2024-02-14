@@ -498,8 +498,15 @@ export default {
     issuesVerifiedCredentials () {
       return this.tribeSettings.issuesVerifiedCredentials
     },
+    acceptsVerifiedCredentials () {
+      return this.tribeSettings.acceptsVerifiedCredentials
+    },
     lastStep () {
-      return this.issuesVerifiedCredentials ? 6 : 5
+      let step = 5
+      if (this.issuesVerifiedCredentials) step++
+      if (this.acceptsVerifiedCredentials) step++
+      console.log(step)
+      return step
     },
     personalProfile () {
       return {
