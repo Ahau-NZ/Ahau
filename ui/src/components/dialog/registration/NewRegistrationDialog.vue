@@ -330,41 +330,6 @@
                 <v-checkbox v-model="step4Checkbox" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- Step 5: Verified Credentials -->
-              <!-- TODO: when uncommented, you must change all step 5's to step 6 -->
-              <!-- <v-stepper-step
-                v-if="tribeSettings.acceptsVerifiedCredentials"
-                step="5"
-                :complete="step > 5"
-                :color="checkbox2 ? 'green' : 'black'"
-              >
-                {{ tribeSettings.acceptsVerifiedCredentials ? t('verifiedCredentials') : t('noVerifiedCredentials') }}
-              </v-stepper-step>
-
-              <v-stepper-content  step="5" v-if="tribeSettings.acceptsVerifiedCredentials">
-                <v-card
-                  color="grey lighten-5"
-                  class="mb-6"
-                  height="auto"
-                  outlined
-                >
-                  <v-row class="ma-3">
-                    <v-col cols="12" class="font-italic">
-                      {{ t('featureUnavailable') }}
-                    </v-col>
-                    <v-col cols=12>
-                      <v-btn
-                        color="primary"
-                        @click="step = 6"
-                      >
-                        {{ t('next') }}
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-
-                </v-card>
-              </v-stepper-content> -->
-
               <!-- STEP 5 Agree to recieve digital credentials -->
               <v-stepper-step
                 v-if="issuesVerifiedCredentials"

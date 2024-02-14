@@ -45,33 +45,20 @@ export default {
       model: null
     }
   },
-  // watch: {
-  //   credentialIds: {
-  //     immediate: true,
-  //     deep: true,
-  //     handler (newVal) {
-  //       this.getCredentialsById(newVal)
-  //     }
-  //   }
-  // },
   mounted () {
     this.getAllCredentials()
   },
   computed: {
-    ...mapGetters('identity', ['credentials']),
+    ...mapGetters('credentials', ['credentials']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
   methods: {
-    ...mapActions('identity', ['getAllCredentials']),
+    ...mapActions('credentials', ['getAllCredentials']),
     t (key, vars) {
       return this.$t('walletShow.' + key, vars)
     }
-    // async getCredentialsById (ids) {
-    //   const credentials = await Promise.all(ids.map(id => getCredentialById(id)))
-    //   this.credentials = uniqBy(credentials, 'claims.memberOf.tribeId')
-    // }
   }
 }
 </script>

@@ -29,7 +29,6 @@ import story from './modules/story/'
 import table from './modules/table'
 import submissions from './modules/submissions'
 import notifications from './modules/notifications'
-import identity from './modules/identity'
 
 import apolloProvider from '../plugins/vue-apollo'
 import router from '@/router'
@@ -98,8 +97,7 @@ export default new Vuex.Store({
 
     table: table(apollo),
 
-    settings: settings(apollo),
-    identity: identity(apollo)
+    settings: settings(apollo)
   },
   plugins: [
     updateTree

@@ -115,7 +115,6 @@ export default {
     return {
       formData: setDefaultCommunity(this.profile),
       tab: null
-      // identityRequirements: null,
     }
   },
   watch: {
@@ -231,9 +230,6 @@ export default {
       this.tab = tab
     }
   }
-  // beforeDestroy () {
-  //   this.setBetaFeaturesEnabled(false)
-  // }
 }
 </script>
 

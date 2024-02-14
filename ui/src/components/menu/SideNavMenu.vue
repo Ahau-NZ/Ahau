@@ -210,7 +210,7 @@ export default {
     ...mapGetters(['storeDialog', 'whoami']),
     ...mapGetters('archive', ['showStory']),
     ...mapGetters('tribe', ['tribeSettings', 'isPersonalTribe']),
-    ...mapGetters('identity', ['credentials']),
+    ...mapGetters('credentials', ['credentials']),
     settings () {
       if (this.tribeSettings) return this.tribeSettings
       return {}
@@ -280,7 +280,7 @@ export default {
   methods: {
     ...mapActions(['setDialog', 'setNavComponent']),
     ...mapActions('archive', ['toggleShowStory']),
-    ...mapActions('identity', ['getAllCredentials']),
+    ...mapActions('credentials', ['getAllCredentials']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()

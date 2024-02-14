@@ -502,7 +502,7 @@ export default {
       // up properly for this tribe
       // and dont approve
       if (!this.isValidIssuer(this.tribeId)) {
-        alert('TODO: Missing required config to issue credentials with atala prism')
+        alert('TODO: Missing required config to issue credentials. Please contact the Ahau team for information on how to set this up')
         return
       }
 

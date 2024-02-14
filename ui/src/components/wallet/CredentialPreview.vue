@@ -1,11 +1,4 @@
 <template>
- <!-- <div
-    light
-    class="pa-2 ma-2"
-    style="border-color: green"
-    @click="$emit('click')"
-    elevated="16"
-  > -->
   <v-expansion-panels light v-model="panel">
     <v-expansion-panel :readonly="!mobile" align-start class="align-start"
       :style="
@@ -14,22 +7,20 @@
       "
       >
       <v-expansion-panel-header class="pa-0" hide-actions >
-        <!-- <v-row> -->
-          <v-col cols="5">
-            <v-img
-              :src="image"
-              class="grey darken-4 align-end"
-            />
-          </v-col>
-          <v-col>
-            <v-row class="overline font-weight-light">
-                {{ t('tribalMember') }}
-            </v-row>
-            <v-row class="title text-uppercase">
-              {{ tribe.preferredName }}
-            </v-row>
-          </v-col>
-        <!-- </v-row> -->
+        <v-col cols="5">
+          <v-img
+            :src="image"
+            class="grey darken-4 align-end"
+          />
+        </v-col>
+        <v-col>
+          <v-row class="overline font-weight-light">
+              {{ t('tribalMember') }}
+          </v-row>
+          <v-row class="title text-uppercase">
+            {{ tribe.preferredName }}
+          </v-row>
+        </v-col>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="pa-o">
         <v-divider light class="mx-4"/>
@@ -70,11 +61,6 @@
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
-    <!--
-    <v-row class="px-2">
-
-    </v-row>
-  </div> -->
 </template>
 
 <script>
@@ -84,12 +70,6 @@ export default {
   name: 'CredentialPreview',
   props: {
     credential: Object
-  },
-  data () {
-    return {
-    }
-  },
-  watch: {
   },
   computed: {
     ...mapGetters('tribe', ['tribes']),
@@ -135,6 +115,4 @@ export default {
 .v-expansion-panel-content__wrap {
   padding: 0px !important
 }
-
-
 </style>

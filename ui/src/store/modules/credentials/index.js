@@ -1,4 +1,5 @@
 import { offerMembershipCredential } from '@/lib/tribes-application-helpers.mjs'
+import { getAllCredentials } from './credential-helpers'
 
 const handleErr = (msg) => {
   console.error(msg)
@@ -6,9 +7,21 @@ const handleErr = (msg) => {
 }
 
 export default function (apollo) {
-  const state = {}
-  const getters = {}
-  const mutations = {}
+  const state = {
+    credentials: []
+  }
+
+  const getters = {
+    credentials: state => {
+      return state.credentials
+    }
+  }
+
+  const mutations = {
+    setCredentials (state, credentials) {
+      state.credentials = credentials
+    }
+  }
 
   const actions = {
     async isValidIssuer (context, tribeId) {
@@ -37,6 +50,14 @@ export default function (apollo) {
 
         return null
       }
+    },
+    async getAllCredentials ({ commit, dispatch, state }) {
+      // get all credentials
+      const credentials = await apollo.query(getAllCredentials)
+        .catch(err => {
+          if (err)console.error('error getting credentials ' + err)
+        })
+      commit('setCredentials', credentials.data.verifiableCredentials)
     }
   }
 
