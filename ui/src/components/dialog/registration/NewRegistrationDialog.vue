@@ -534,8 +534,7 @@ export default {
       return this.tribeSettings.issuesVerifiedCredentials
     },
     lastStep () {
-      if (this.issuesVerifiedCredentials) return 6
-      return 5
+      return this.issuesVerifiedCredentials ? 6 : 5
     },
     personalProfile () {
       return {

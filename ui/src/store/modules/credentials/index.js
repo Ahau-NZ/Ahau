@@ -17,7 +17,7 @@ export default function (apollo) {
       const atalaPrismConfig = config?.atalaPrism
 
       if (!atalaPrismConfig) return handleErr('Missing atalaPrism ssb config')
-      if (!atalaPrismConfig?.mediatorId) return handleErr('Missing atalaPrism.mediatorId ssb config')
+      if (!atalaPrismConfig?.mediatorDID) return handleErr('Missing atalaPrism.mediatorDID ssb config')
       if (!atalaPrismConfig.issuers[tribeId]) return handleErr('Missing atalaPrism.issuers ssb config for the tribe with id: ' + tribeId)
 
       return true

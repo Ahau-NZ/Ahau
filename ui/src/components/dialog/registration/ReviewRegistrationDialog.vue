@@ -371,7 +371,7 @@ export default {
       return this.notification?.group
     },
     tribeCustomFields () {
-      return getCustomFields(this.group?.customFields)
+      return getCustomFields(this.group?.customFields || [])
         .filter(field => !field.tombstone)
     },
     tribeId () {

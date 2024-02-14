@@ -88,7 +88,7 @@ function mapValues (whoami) {
       type: 'application',
       from,
       applicant: applicant || null,
-      applicantId,
+      applicantId, // feedId of the applicant
 
       group: _group,
       rawGroup: group,

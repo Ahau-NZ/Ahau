@@ -38,7 +38,7 @@
           {{ t('info') }}
         </v-col>
         <v-col cols="12" class="caption font-weight-light py-0">
-          {{ t('name' )}}:
+          {{ t('name') }}:
         </v-col>
         <v-col cols="12" class="pt-0 font-weight-medium pb-1">
           <div >{{ person.fullName }}</div>
@@ -136,9 +136,5 @@ export default {
   padding: 0px !important
 }
 
-// .v-expansion-panel {
-// background: linear-gradient(to right, rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.7)), url(http://localhost:28067/get/%26VXDgDT0aHAFmB9nYoAI24SgRIv97Ml3OSAtCLnTSAwE%3D.sha256?unbox=WgrA%2FdvF3Wb%2BUjqCLsiz3EajmHMBMYZDx8%2Bs8IIg%2Bpw%3D.boxs);
-// background-position: center
-// }
 
 </style>
