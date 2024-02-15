@@ -110,6 +110,21 @@ export const APPLICATION_FRAGMENT = gql`
         }
       }
     }
+    credentialPresentations {
+      state
+      credentials {
+        credentialSubject {
+          memberOf {
+            tribeId
+            tribeName
+          }
+          person {
+            dateOfBirth
+            fullName
+          }
+        }
+      }
+    }
   }
 `
 
