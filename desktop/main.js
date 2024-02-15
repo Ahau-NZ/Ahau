@@ -7,7 +7,6 @@ const level = require('level')
 const { join } = require('path')
 const { app } = require('electron')
 const { autoUpdater } = require('electron-updater')
-const pull = require('pull-stream')
 
 // WARNING monkey patch! --------------------------------------
 const na = require('sodium-native')
@@ -131,18 +130,27 @@ function printConfig (config) {
   }))
 }
 
-function startAtalaPrism (ssb) {
-  if (!ssb.config?.atalaPrism?.mediatorDID) return
+// TODO extract
 
-  console.log('starting atala-prism...')
+const pull = require('pull-stream')
+const CRUT = require('ssb-crut')
+
+const { pullAutoPresentationByRecps } = require('ssb-atala-prism/lib')
+const registrationGroupSpec = require('ssb-tribes-registration/spec/registration-group')
+
+function startAtalaPrism (ssb) {
+  if (!ssb.config?.atalaPrism?.mediatorDID) {
+    console.log('skipping atala-prism (no mediatorDID)')
+    return
+  }
+
+  const registrationGroup = new CRUT(ssb, registrationGroupSpec)
 
   ssb.atalaPrism.start()
     .then(autoRequestPresentations)
     .catch(err => console.log('atala no!', err))
 
   function autoRequestPresentations () {
-    // TODO check if you have any verifiers
-
     pull(
       ssb.messagesByType({
         type: 'registration/group',
@@ -150,14 +158,30 @@ function startAtalaPrism (ssb) {
         live: true,
         old: false
       }),
-      // TODO add validation of message using schema
-      pull.map(m => m?.value?.content),
-      pull.filter(content => (
-        typeof content === 'object' &&
-        content?.tangles?.registration?.root === null
-        // only keep root messages
-        // TODO check you're not the author!
+
+      pull.filter(m => (
+        m.value.author !== ssb.id && // ignore registrations I sent
+        registrationGroup.isRoot(m)
       )),
+
+      // filter for regristations which haven't had auto-presentation started
+      pull.asyncMap((m, cb) => {
+        const { recps } = m.value.content
+        if (!recps) return cb(null, null) // filter at next step
+
+        pull(
+          pullAutoPresentationByRecps(ssb, recps),
+          pull.take(1),
+          pull.collect((err, autoPresentations) => {
+            // if there was an error OR
+            // if there is already an auto-presentation
+            if (err || autoPresentations.length) cb(null, null) // filter at next step
+            else cb(null, m.value.content) // allow to continue
+          })
+        )
+      }),
+      pull.filter(Boolean),
+
       pull.drain(content => {
         const { groupId, recps } = content // eslint-disable-line
         const [poBoxId, feedId] = recps
