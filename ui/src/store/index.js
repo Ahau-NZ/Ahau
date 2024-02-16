@@ -17,6 +17,7 @@ import error from './modules/error'
 
 // new
 import tribe from './modules/tribe'
+import credentials from './modules/credentials'
 import subtribe from './modules/subtribe'
 import profile from './modules/profile'
 import community from './modules/community'
@@ -81,6 +82,7 @@ export default new Vuex.Store({
 
     // new
     tribe: tribe(apollo),
+    credentials: credentials(apollo),
     subtribe: subtribe(apollo),
     profile: profile(apollo),
     community: community(apollo),

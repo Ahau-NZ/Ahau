@@ -330,51 +330,20 @@
                 <v-checkbox v-model="step4Checkbox" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- Step 5: Verified Credentials -->
-              <!-- TODO: when uncommented, you must change all step 5's to step 6 -->
-              <!-- <v-stepper-step
-                v-if="tribeSettings.acceptsVerifiedCredentials"
-                step="5"
-                :complete="step > 5"
-                :color="checkbox2 ? 'green' : 'black'"
-              >
-                {{ tribeSettings.acceptsVerifiedCredentials ? t('verifiedCredentials') : t('noVerifiedCredentials') }}
-              </v-stepper-step>
-
-              <v-stepper-content  step="5" v-if="tribeSettings.acceptsVerifiedCredentials">
-                <v-card
-                  color="grey lighten-5"
-                  class="mb-6"
-                  height="auto"
-                  outlined
-                >
-                  <v-row class="ma-3">
-                    <v-col cols="12" class="font-italic">
-                      {{ t('featureUnavailable') }}
-                    </v-col>
-                    <v-col cols=12>
-                      <v-btn
-                        color="primary"
-                        @click="step = 6"
-                      >
-                        {{ t('next') }}
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-
-                </v-card>
-              </v-stepper-content> -->
-
               <!-- STEP 5 Agree to recieve digital credentials -->
-              <!-- <v-stepper-step
+              <v-stepper-step
                 v-if="issuesVerifiedCredentials"
                 step="5"
-                :color="step4Checkbox ? 'gray' : 'black'"
+                :complete="step > 5"
+                :color="step4Checkbox ? 'green' : 'black'"
               >
                 {{ translateIdentity('credsTnC.title') }}
-                <small></small>
               </v-stepper-step>
-              <v-stepper-content v-if="issuesVerifiedCredentials" step="5">
+
+              <v-stepper-content
+                v-if="issuesVerifiedCredentials"
+                step="5"
+              >
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -394,26 +363,14 @@
                     <p>{{ translateIdentity('credsTnC.video') }}<a href="https://www.youtube.com/watch?v=Ew-_F-OtDFI&list=RDLVlixl_FRhlhE&index=2&ab_channel=MicrosoftSecurity">video</a></p>
                   </v-card-text>
                 </v-card>
-                <v-row>
-                  <v-col cols="12" class="font-italic">
-                    {{ t('featureUnavailable') }}
-                  </v-col>
-                  <v-col cols="12">
-                    <v-btn
-                      color="primary"
-                      @click="step5Checkbox = true"
-                    >
-                      {{ t('skip') }}
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-stepper-content> -->
+                <v-checkbox v-model="step5Checkbox" label="I Agree"/>
+              </v-stepper-content>
 
               <!-- Step 6: Comment -->
-              <v-stepper-step step="5">
+              <v-stepper-step :step="lastStep">
                 {{ t('sendComment') }}
               </v-stepper-step>
-              <v-stepper-content step="5">
+              <v-stepper-content :step="lastStep">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -494,7 +451,7 @@ export default {
       step: 1,
       step3Checkbox: null,
       step4Checkbox: null,
-      // step5Checkbox: null,
+      step5Checkbox: null,
       formData: clone(this.profile),
       showEditDialog: false,
 
@@ -523,33 +480,27 @@ export default {
     },
     step (step) {
       if (step === 2 && !this.hasJoiningQuestions) this.step = 3
-
-      // TODO uncomment when vc step is added back in
-      // skip vc step if its disabled
-      // else if (step === 5 && this.tribeSettings.acceptsVerifiedCredentials === false) this.step = 6
-      // else this.step = 5
     },
     step3Checkbox (isStep3) {
       if (isStep3) this.step = 4 // step to the next section
     },
     step4Checkbox (isStep4) {
-      if (isStep4) {
-        // figure out the next step, depending on if step 5 is visible or not
-        // if (this.issuesVerifiedCredentials) this.step = 5
-        this.step = 5
-      }
+      if (isStep4) this.step = 5
+    },
+    step5Checkbox (isStep5) {
+      if (isStep5) this.step = 6
     }
-    // step5Checkbox (isStep5) {
-    //   if (isStep5) this.step = 6
-    // }
   },
   computed: {
     ...mapGetters(['whoami']),
     ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields', 'tribeSettings']),
-    // issuesVerifiedCredentials () {
-    //   return this.tribeSettings.issuesVerifiedCredentials
-    // },
+    issuesVerifiedCredentials () {
+      return this.tribeSettings.issuesVerifiedCredentials
+    },
+    lastStep () {
+      return this.issuesVerifiedCredentials ? 6 : 5
+    },
     personalProfile () {
       return {
         ...this.whoami.personal.profile,
@@ -623,8 +574,7 @@ export default {
       return this.answers && this.answers.length > 0
     },
     disableSubmission () {
-      // return this.issuesVerifiedCredentials ? this.step !== 6 : this.step !== 5
-      return this.step !== 5
+      return this.step !== this.lastStep
     },
     submission () {
       return {

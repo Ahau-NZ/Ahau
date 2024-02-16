@@ -115,7 +115,6 @@ export default {
     return {
       formData: setDefaultCommunity(this.profile),
       tab: null
-      // identityRequirements: null,
     }
   },
   watch: {
@@ -230,9 +229,6 @@ export default {
       if (this.tab === 'tab-2') tab = 'tab-3'
       this.tab = tab
     }
-  },
-  beforeDestroy () {
-    this.setBetaFeaturesEnabled(false)
   }
 }
 </script>

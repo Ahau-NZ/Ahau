@@ -69,6 +69,9 @@ export const APPLICATION_FRAGMENT = gql`
       id
       public {
         ...CommunityFragment
+
+        # public settings
+        issuesVerifiedCredentials
       }
       private {
         ...CommunityFragment
@@ -137,6 +140,24 @@ export const getGroupApplication = gql`
     }
   }
 `
+
+export const offerMembershipCredential = ({ tribeId, poBoxId, feedId, claims }) => {
+  return {
+    mutation: gql`
+      mutation($tribeId: String!, $poBoxId: String!, $feedId: String!, $claims: MembershipClaimInput!) {
+        offerCredential(
+          tribeId: $tribeId, 
+          poBoxId: $poBoxId, 
+          feedId: $feedId, 
+          claims: $claims
+        )
+      }
+    `,
+    variables: {
+      tribeId, poBoxId, feedId, claims
+    }
+  }
+}
 
 export function copyProfileInformation (profile) {
   profile = clone(profile)

@@ -368,11 +368,23 @@ export default {
       return this.applicant.customFields
     },
     group () {
-      return this.notification.group
+      return this.notification?.group
     },
     tribeCustomFields () {
-      return getCustomFields(this.group.customFields)
+      return getCustomFields(this.group?.customFields || [])
         .filter(field => !field.tombstone)
+    },
+    tribeId () {
+      return this.notification?.tribeId
+    },
+    poBoxId () {
+      return this.group?.poBoxId
+    },
+    applicantId () {
+      return this.notification?.applicantId
+    },
+    issuesVerifiedCredentials () {
+      return get(this.notification, 'rawGroup.public[0].issuesVerifiedCredentials')
     },
     answers () {
       return this.notification.answers
@@ -436,6 +448,7 @@ export default {
   },
   methods: {
     ...mapActions('tribe', ['approveRegistration', 'declineRegistration']),
+    ...mapActions('credentials', ['isValidIssuer', 'offerCredential']),
     getFieldValue (fieldDef) {
       // find the value from the applicants profile (if there is one)
       let field = this.applicantCustomFields.find(field => field.key === fieldDef.key)
@@ -468,8 +481,49 @@ export default {
         // TODO (later): groupIntro
       }
 
-      if (approved) await this.approveRegistration(input)
-      else await this.declineRegistration(input)
+      // decline the registration if it wasnt approved
+      if (!approved) {
+        await this.declineRegistration(input)
+        this.close()
+        return
+      }
+
+      // if this tribe doesnt issue credentials, then approve
+      if (!this.issuesVerifiedCredentials) {
+        await this.approveRegistration(input)
+        this.close()
+        return
+      }
+
+      await this.handleIssuingCredential(input)
+    },
+    async handleIssuingCredential (input) {
+      // otherwise, we make sure the config is set
+      // up properly for this tribe
+      // and dont approve
+      if (!this.isValidIssuer(this.tribeId)) {
+        alert('TODO: Missing required config to issue credentials. Please contact the Ahau team for information on how to set this up')
+        return
+      }
+
+      // approve the registration
+      // TODO: should we wait until they have accepted the credential offer to then approve the registration?
+      await this.approveRegistration(input)
+
+      // start the offer process
+      const offerInput = {
+        tribeId: this.tribeId,
+        poBoxId: this.poBoxId,
+        feedId: this.applicantId,
+        claims: {
+          person: {
+            fullName: this.applicant.legalName || this.applicant.preferredName,
+            dateOfBirth: this.dob.trim()
+          }
+        }
+      }
+
+      await this.offerCredential(offerInput)
 
       this.close()
     },
