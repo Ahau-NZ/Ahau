@@ -40,7 +40,6 @@ export default {
           case 'en_US': return { text: 'English (US)', value: locale }
           case 'es_ES': return { text: 'Español', value: locale }
           case 'nl_NL': return { text: 'Nederlandse (NL)', value: locale }
-          case 'nl_SR': return { text: 'Nederlandse (SR)', value: locale }
           case 'pt_BR': return { text: 'Português (BR)', value: locale }
           case 'mi_NZ': return { text: 'Te Reo Māori', value: locale }
 
