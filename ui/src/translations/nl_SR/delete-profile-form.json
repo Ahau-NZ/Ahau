@@ -1,0 +1,10 @@
+{
+  "title": "Delete Your Ahau Profile",
+  "warning": "WARNING: ",
+  "undone": "This will delete your Ahau database from your computer.",
+  "notBackedUp": "If you have not backed up your keys this cannot be undone and all of your personal records will be lost.",
+  "deleteButton": "Yes, Delete My Profile and Database",
+  "cancelButton": "Cancel",
+  "confirmDeletePrompt": "If you would like to continue, please type the following phrase",
+  "deletePhrase": "DELETE"
+}

@@ -1,0 +1,17 @@
+{
+  "archiveTitle": "Your Personal Archive",
+  "archiveTitleName": "{name} Archive",
+  "addStory": "Add a story",
+  "newCollectionButton": "new collection",
+  "newStoryButton": "new story",
+  "collections": "Collections",
+  "updated": "Updated",
+  "stories": "Stories",
+  "storiesAbout": "Stories about {name}",
+  "archiveRecords": "Archive Records",
+  "access": "Access",
+  "mentions": "Mentions",
+  "location": "Location",
+  "collectionNotFound": "No collections found",
+  "storyNotFound": " No stories found"
+}
