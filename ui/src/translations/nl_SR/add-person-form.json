@@ -1,0 +1,59 @@
+{
+  "addPersonFormTitle": "Edit {displayName}",
+  "legalName": "Full name",
+  "aka": "Also known as",
+  "preferredName": "First name / Known as",
+  "dob": {
+    "title": "Date of birth",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year"
+  },
+  "dod": "Date of death",
+  "uploadPhoto": "Upload profile photo",
+  "relatedBy": "Related to {displayName} by",
+  "birthPlace": "Place of birth",
+  "deathPlace": "Place of death",
+  "burialLocation": "Burial location",
+  "notLiving": "No longer living",
+  "profileExists": "This profile already exists in this whakapapa record. How would you like to see this relationship",
+  "movePerson": "Move {person} to {displayName}'s position",
+  "createLink": "Create a link between {person} and {displayName}",
+  "birthOrder": "Order of birth",
+  "genderIdentity": "Identifies as",
+  "gender": {
+    "title": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "other": "Other",
+    "unknown": "Unknown"
+  },
+  "moreInfo": "Provide more information",
+  "addName": "Add another name",
+  "altNames": "Other names",
+  "description": "About {displayName} ",
+  "skills": {
+    "title": "Skills and qualifications",
+    "profession": "Profession",
+    "skillsQuals": "Skill/qualification",
+    "addSkill": "Add skill/qualification",
+    "placeOfEducation": "Place of education",
+    "addEducation": "Add a place of education"
+  },
+  "personalInfo": {
+    "title": "Personal information",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "city": "City",
+    "postCode": "Postcode",
+    "country": "Country"
+  },
+  "formHandlers": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "dataDescription": "Description",
+  "kaitiakiOnly": "Kaitiaki only",
+  "communityFieldsTitle": "Community fields"
+}

@@ -1,0 +1,59 @@
+{
+  "addPersonFormTitle": "Bewerk {displayName}",
+  "legalName": "Volledige naam",
+  "aka": "Ook bekend als",
+  "preferredName": "Voornaam / Bekend als",
+  "dob": {
+    "title": "Geboortedatum",
+    "day": "Dag",
+    "month": "Maand",
+    "year": "Jaar"
+  },
+  "dod": "Datum van overlijden",
+  "uploadPhoto": "Upload profielfoto",
+  "relatedBy": "Verwant aan {displayName} door",
+  "birthPlace": "Geboorteplaats",
+  "deathPlace": "Plaats van overlijden",
+  "burialLocation": "Begraafplaats",
+  "notLiving": "Leeft niet meer",
+  "profileExists": "Dit profiel bestaat al in deze genealogie. Hoe zou je deze relatie willen zien",
+  "movePerson": "Verplaats {person} naar {displayName}'s positie",
+  "createLink": "Maak een koppeling tussen {person} en {displayName}",
+  "birthOrder": "Volgorde van geboorte",
+  "genderIdentity": "Identificeert als",
+  "gender": {
+    "title": "Geslacht",
+    "female": "Vrouw",
+    "male": "Mannelijk",
+    "other": "Andere",
+    "unknown": "Onbekend"
+  },
+  "moreInfo": "Meer informatie geven",
+  "addName": "Een andere naam toevoegen",
+  "altNames": "Andere namen",
+  "description": "Over {displayName} ",
+  "skills": {
+    "title": "Vaardigheden en kwalificaties",
+    "profession": "Beroep",
+    "skillsQuals": "Vaardigheden/kwalificaties",
+    "addSkill": "Vaardigheid/kwalificatie toevoegen",
+    "placeOfEducation": "Plaats van onderwijs",
+    "addEducation": "Een onderwijsplek toevoegen"
+  },
+  "personalInfo": {
+    "title": "Persoonlijke informatie",
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "address": "Adres",
+    "city": "Stad",
+    "postCode": "Postcode",
+    "country": "Land"
+  },
+  "formHandlers": {
+    "cancel": "Annuleren",
+    "save": "Sla"
+  },
+  "dataDescription": "Beschrijving",
+  "kaitiakiOnly": "Alleen beheerder",
+  "communityFieldsTitle": "Velden in de Gemeenschap"
+}

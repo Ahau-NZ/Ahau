@@ -1,0 +1,15 @@
+{
+  "titleArchive": "Archief",
+  "archiveDescription": "Een Archief is waar je je verhalen creëert, opslaat en opent",
+  "storyDescription": "Een verhaal is een digitale hervertelling of opname van een stukje informatie dat van persoonlijk of gemeenschappelijk belang is. In het bijzonder informatie met betrekking tot je erfgoed of cultuur. Dit kunnen dingen zijn als herinneringen, geschiedenissen, verhalen, gebeurtenissen en legendes.",
+  "archiveTypes": "In Āhau zijn er twee soorten archieven",
+  "personalArchive": "Uw persoonlijke archief, volledig privé en veilig versleuteld naar uw eigen persoonlijke apparaat. Uw persoonlijk archief wordt aangemaakt wanneer u voor het eerst een account aanmaakt op Āhau",
+  "whanauArchive": "Een whānau archief, dit is een gedeeld archief met een privé gedeelde encryptiesleutel en is alleen toegankelijk voor persoonlijke apparaten van goedgekeurde whānau leden. Een gemeenschapsarchief wordt aangemaakt wanneer u een nieuwe stam aanmaakt in Āhau",
+  "createRecord": "Bij het maken van een Record kun je beslissen in welk Archief je het Record wilt opslaan door de \"Toegang\" te veranderen in jezelf, of een whānau groep waar je deel van uitmaakt.",
+  "exampleImages": "Voorbeeldafbeeldingen",
+  "itemsStories": "verhalen en records toevoegen aan archief",
+  "itemsArtefacts": "artefacten en media toevoegen aan verhalen ",
+  "itemsViewAll": "bekijk al je verhalen op één plek",
+  "itemsIndividual": "bekijk individuele verhalen voor meer informatie",
+  "close": "sluiten"
+}

@@ -1,0 +1,55 @@
+{
+  "cancel": "cancel",
+  "whakapapaShow": {
+    "title": {
+      "delete": "Delete {name}",
+      "ignore": "Hide {name}"
+    },
+    "options": {
+      "ignore": "Hide this profile from this whakapapa record",
+      "delete": "Delete this profile from all whakapapa records"
+    },
+    "confirmation": {
+      "delete": "Are you sure you want to delete this profile from this whakapapa record?",
+      "ignore": "Are you sure you want to hide this profile from this whakapapa record?"
+    },
+    "buttonLabel": {
+      "delete": "verwijderen",
+      "ignore": "verbergen"
+    },
+    "warnAboutChildren": "Dit verwijdert ook alle verbonden kinderen uit het whakapapa record."
+  },
+  "personIndex": {
+    "title": {
+      "delete": "Verwijder {name}"
+    },
+    "confirmation": {
+      "delete": "Weet je zeker dat je dit profiel wilt verwijderen?"
+    },
+    "warnAboutChildren": "Dit verwijdert ook alle verbonden kinderen uit alle whakapapa records waar dit profiel aan gekoppeld is.",
+    "buttonLabel": {
+      "delete": "verwijderen"
+    }
+  },
+  "submission": {
+    "title": {
+      "delete": "Dien een voorstel in om {name} te verwijderen",
+      "ignore": "Dien een voorstel in om {name} te verwijderen"
+    },
+    "options": {
+      "ignore": "Verberg dit profiel van deze genealogie",
+      "delete": "Verwijder dit profiel uit alle whakapapa records"
+    },
+    "buttonLabel": {
+      "delete": "indienen",
+      "ignore": "indienen"
+    },
+    "confirmation": {
+      "delete": "Weet je zeker dat je een bericht wilt sturen naar de kaitiaki van deze stam om dit profiel te verwijderen uit dit genealogie-record?",
+      "ignore": "Weet je zeker dat je een bericht wilt sturen naar de beheerder van deze stam om dit profiel te verbergen voor deze genealogie?"
+    },
+    "warnAboutChildren": "Eenmaal aanvaard door de beheerder, zal dit ook alle verbonden kinderen verwijderen uit de genealogie-record.",
+    "comment": "Opmerking (optioneel)",
+    "commentText": "Stuur een opmerking mee met je inzending"
+  }
+}

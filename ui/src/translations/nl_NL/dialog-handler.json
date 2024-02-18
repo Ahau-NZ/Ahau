@@ -1,0 +1,11 @@
+{
+  "reviewRegistrationTitle": "Verzoek om lid te worden van {groupPreferredName}",
+  "reviewSubmissionTitle": "Bekijk profielwijzigingen op {preferredName}",
+  "createCommunityTitle": "Nieuwe stam aanmaken",
+  "newPersonTitle": "Voeg {dialogType} toe aan {displayName}",
+  "addPerson": "Persoon toevoegen",
+  "editPersonTitle": "Bewerk {displayName}",
+  "whakapapaShowHelperTitle": "Stamboom",
+  "whakapapaRegistryTitle": "Genealogie register",
+  "filterMenuTitle": "Tabel Filter Menu"
+}

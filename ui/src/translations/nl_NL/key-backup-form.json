@@ -1,0 +1,12 @@
+{
+  "title": "Maak een back-up van uw Ahau-sleutel",
+  "whyBackUp": "Waarom is een back-up van mijn Ahau-sleutel belangrijk?",
+  "allInformation": "Alle informatie in Ahau is versleuteld met je persoonlijke sleutel of je tribal sleutel",
+  "noAccess": "Als je geen toegang meer hebt tot je apparaat (als het beschadigd of zoek is)",
+  "yourAhauKey": "Uw Ahau-coderingssleutel moet op een veilige plaats worden bewaard waar u hem gemakkelijk kunt bereiken.",
+  "recommendations": "Aanbevelingen over waar je je sleutel veilig kunt opbergen:",
+  "personal": "Persoonlijke harde schijf of USB-stick",
+  "trustedPerson": "De harde schijf of USB-stick van een vertrouwd persoon (bijv. een familielid of vriend)",
+  "printFile": "Afdrukken en opslaan op een veilige locatie",
+  "downloadButton": "Back-up toets downloaden"
+}

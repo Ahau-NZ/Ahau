@@ -1,0 +1,16 @@
+{
+    "titlePataka": "Pātaka",
+    "description": "Een Pātaka lijkt veel op een 'cloud' server. Het maakt een back-up van informatie van iedereen die ermee verbonden is en geeft individuen de mogelijkheid om informatie binnen een stam te bewaren en te delen.",
+    "difference": "Het grootste verschil tussen een 'Pātaka' en een 'cloud' is dat een cloud over het algemeen een opslagplaats is van computers die worden beheerd door een bedrijf en gekozen door de productontwikkelaars. Een Pātaka is een netwerk van computers dat wordt beheerd door individuen en stammen en wordt gekozen door de gebruikers.",
+    "setup": "Individuen en stammen kunnen hun eigen Pātaka beheren om meer eigenaarschap en controle over hun netwerk en gegevens te hebben.",
+    "patakaDescription": "Pātaka in gemeenschapsbezit kan zelf gehost worden met je eigen internetverbinding en een speciale laptop of computer, of ze kunnen tegen betaling virtueel draaien via een cloud service provider.",
+    "ahau": "Ahau heeft ook een publieke Pātaka voor iedereen die geen toegang heeft tot een Tribal Pātaka.",
+    "ecryption": "Alle informatie op een Pātaka is volledig versleuteld en alleen toegankelijk voor jou of leden van je stam",
+    "info": "Ga voor meer informatie naar ",
+    "close": "sluiten",
+    "replication": "Synchroniseren met Pātaka",
+    "onPataka": "Gegevensencryptie",
+    "corporateServer": "De 'Wolk",
+    "ahauServer": "A Pātaka",
+    "exampleImages": "Pātaka diagrammen"
+}

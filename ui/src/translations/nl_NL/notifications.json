@@ -1,0 +1,86 @@
+{
+  "system": "Back up your key now",
+  "personal": {
+    "application": {
+      "new": "Your request to join {groupName} is pending",
+      "accepted": "Has accepted your request to join {groupName}",
+      "declined": "Your request to join {groupName} has been declined"
+    },
+    "submission": {
+      "profile": {
+        "new": "Your submission to create a new profile in {groupName} is pending",
+        "edit": "Your submission to edit a profile in {groupName} is pending",
+        "declined": "Your submission to create/edit a profile has been declined",
+        "accepted": "Your submission to create/edit a profile has been accepted"
+      },
+      "link": {
+        "partner": {
+          "new": "Your submission to link a partner in {groupName} is pending",
+          "accepted": "Your submission to link a partner has been approved",
+          "declined": "Your submission to link a partner has been declined"
+        },
+        "child": {
+          "new": "Your submission to link a child in {groupName} is pending",
+          "accepted": "Your submission to link a child has been approved",
+          "declined": "Your submission to link a child has been declined"
+        }
+      },
+      "ignore": {
+        "new": "Your submission to hide a person in {groupName} is pending",
+        "accepted": "Your submission to hide a person in {groupName} has been approved",
+        "declined": "Your submission to hide a person in {groupName} has been declined"
+      },
+      "new": "Your submission to {groupName} is pending",
+      "accepted": "Your submission to {groupName} has been accepted",
+      "declined": "Your submission to {groupName} has been declined"
+    }
+  },
+  "application": {
+    "new": "Has requested to join {groupName}",
+    "accepted": "Has joined {groupName}",
+    "declined": "Is afgewezen voor {groupName}"
+  },
+  "submission": {
+    "archiveConfirmation": "Weet je zeker dat je deze inzending wilt archiveren?",
+    "profile": {
+      "new": {
+        "title": "Registratieverzoek van {from}",
+        "web": "Verzoek ontvangen om te registreren op {groupName} via het webregistratieformulier",
+        "ahau": "Verzoek ontvangen om een profiel aan te maken op {groupName}"
+      },
+      "edit": "Verzoek ontvangen om {profileName} te bewerken in {groupName}",
+      "delete": "Verzoek ontvangen om een profiel te verwijderen op {groupName}",
+      "accepted": "Deze aanvraag om een profiel aan te maken is goedgekeurd",
+      "declined": "Deze aanvraag om een profiel aan te maken is geweigerd"
+    },
+    "link": {
+      "partner": {
+        "new": "Verzoek ontvangen van {authorName} om een partner te koppelen in {groupName}",
+        "accepted": "Deze aanvraag om een partner te koppelen is goedgekeurd",
+        "declined": "Deze aanvraag om een partner te koppelen is geweigerd"
+      },
+      "child": {
+        "new": "Verzoek ontvangen van {authorName} om een kind te linken in {groupName}",
+        "accepted": "Deze aanvraag om een kind te koppelen is goedgekeurd",
+        "declined": "Deze aanvraag om een kind te koppelen is geweigerd"
+      },
+      "new": "Verzoek ontvangen om een whakapapa link te maken in {groupName}"
+    },
+    "ignore": {
+      "new": "Verzoek ontvangen van {authorName} om een persoon te verbergen in {groupName}",
+      "accepted": "Deze inzending om een profiel te verbergen op {groupName} is goedgekeurd",
+      "declined": "Deze aanvraag om een profiel te verbergen op {groupName} is afgewezen"
+    },
+    "new": "Heeft een wijziging ingediend bij {groupName}",
+    "accepted": "Deze inzending naar {groupName} is geaccepteerd",
+    "declined": "Deze inzending naar {groupName} is geweigerd ",
+    "review": "Uw inzending is in behandeling",
+    "delete": {
+      "review": "Je aanvraag om dit profiel te verwijderen is in behandeling"
+    }
+  },
+  "systemTitle": "Systeem",
+  "newTitle": "Nieuw",
+  "pendingTitle": "In afwachting van",
+  "completeTitle": "Compleet"
+}

@@ -1,0 +1,11 @@
+{
+  "reviewRegistrationTitle": "Request to join {groupPreferredName}",
+  "reviewSubmissionTitle": "Review profile changes to {preferredName}",
+  "createCommunityTitle": "Create New Tribe",
+  "newPersonTitle": "Add {dialogType} to {displayName}",
+  "addPerson": "Add person",
+  "editPersonTitle": "Edit {displayName}",
+  "whakapapaShowHelperTitle": "Family tree",
+  "whakapapaRegistryTitle": "Whakapapa registry",
+  "filterMenuTitle": "Table Filter Menu"
+}
