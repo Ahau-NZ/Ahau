@@ -1,0 +1,19 @@
+{
+  "private": "Privé",
+  "whoHasAccess": "Kies wie toegang krijgt tot deze { recordType }",
+  "privateAccess": "Alleen jij hebt toegang tot deze {recordType}",
+  "kaitiaki": "Alleen beheerder",
+  "kaitiakiAccess": "Alleen beheerder van deze stam kunnen deze {recordType} bekijken",
+  "allMembers": "Alle leden",
+  "membersCanAccess": "Leden van deze stam kunnen deze {recordType} lezen. Alleen Beheerder kan bewerken.",
+  "membersCanEdit": "Leden van deze stam kunnen deze {recordType} bewerken",
+  "membersCanSubmit": "Leden van deze stam kunnen wijzigingen doorgeven aan deze {recordType}. Wijzigingen worden beoordeeld door Beheerder",
+  "setAccess": "ingestelde toegang",
+  "addToArchive": "{recordType} toevoegen aan archief",
+  "tribeName": "{tribeName} (stam)",
+  "personal": "Persoonlijk",
+  "edit": "Bewerk",
+  "read": "Bekijk",
+  "view": "Bekijk",
+  "submit": "Stuur in"
+}

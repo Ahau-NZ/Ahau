@@ -1,0 +1,10 @@
+{
+  "title": "Je Ahau-profiel verwijderen",
+  "warning": "WAARSCHUWING: ",
+  "undone": "Dit verwijdert je Ahau database van je computer.",
+  "notBackedUp": "Als je geen back-up van je sleutels hebt gemaakt, kan dit niet ongedaan worden gemaakt en zullen al je persoonlijke gegevens verloren gaan.",
+  "deleteButton": "Ja, verwijder mijn profiel en database",
+  "cancelButton": "Annuleren",
+  "confirmDeletePrompt": "Als u wilt doorgaan, typ dan de volgende zin in",
+  "deletePhrase": "DELETE"
+}

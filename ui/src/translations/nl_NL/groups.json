@@ -1,0 +1,20 @@
+{
+  "groups": "groepen",
+  "tribalKaitiaki": "Tribale beheerder",
+  "groupYourMembers": "Groepeer je leden om een extra laag van toegang tot records te bieden",
+  "kaitiakiDescription": "Beheerder zijn stambeheerders en zijn verantwoordelijk voor de leden en inhoud in je stam. Let op: je kunt beheerder nog niet verwijderen.",
+  "addKaitiaki": "Beheerder toevoegen",
+  "addGroup": "Groep toevoegen",
+  "groupDialogTitle": {
+    "edit": "Bewerk deze substam",
+    "create": "Maak een nieuwe substam"
+  },
+  "groupDialogButton": {
+    "create": "Maak",
+    "edit": "Update"
+  },
+  "kaitiaki": "Beheerder",
+  "member": "Lid",
+  "addMembers": "Leden toevoegen",
+  "delete": "groep verwijderen"
+}
