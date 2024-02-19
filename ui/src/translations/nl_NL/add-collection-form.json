@@ -1,0 +1,13 @@
+{
+  "addCollection": "Een collectie toevoegen",
+  "collectionName": "Naam collectie",
+  "collectionDescription": "Collectie Beschrijving",
+  "addStories": "Verhalen uit archief toevoegen aan deze collectie",
+  "stories": "Verhalen",
+  "addRelatedStories": "Gerelateerde verhalen toevoegen",
+  "editImage": "Afbeelding collectie bewerken",
+  "editCollection": "Verzameling bewerken",
+  "description": "Beschrijving",
+  "privacySelection": "Privé",
+  "privacy": "Alleen jij hebt toegang tot dit verhaal"
+}

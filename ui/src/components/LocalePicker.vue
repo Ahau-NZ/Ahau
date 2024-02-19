@@ -21,7 +21,7 @@ export default {
   computed: {
     locale: {
       get () {
-        return this.$i18n.locale
+        return this.$i18n.locale || 'en_NZ'
       },
       set (val) {
         this.$i18n.locale = val
@@ -39,6 +39,7 @@ export default {
           case 'en_NZ': return { text: 'English (NZ)', value: locale }
           case 'en_US': return { text: 'English (US)', value: locale }
           case 'es_ES': return { text: 'Español', value: locale }
+          case 'nl_NL': return { text: 'Nederlandse (NL)', value: locale }
           case 'pt_BR': return { text: 'Português (BR)', value: locale }
           case 'mi_NZ': return { text: 'Te Reo Māori', value: locale }
 
@@ -65,7 +66,7 @@ export default {
 .LocalePicker {
   margin: 0;
   padding: 0;
-  max-width: 180px;
+  max-width: 200px;
   font-size: 14px;
   letter-spacing: 1px;
 }
