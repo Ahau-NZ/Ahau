@@ -215,21 +215,3 @@ function copyImage (image) {
   const allowed = pick(image, ['blob', 'mimeType', 'size', 'unbox', 'width', 'height'])
   return pruneEmptyValues(allowed)
 }
-
-export const offerMembershipCredential = ({ tribeId, poBoxId, feedId, claims }) => {
-  return {
-    mutation: gql`
-      mutation($tribeId: String!, $poBoxId: String!, $feedId: String!, $claims: MembershipClaimInput!) {
-        offerCredential(
-          tribeId: $tribeId, 
-          poBoxId: $poBoxId, 
-          feedId: $feedId, 
-          claims: $claims
-        )
-      }
-    `,
-    variables: {
-      tribeId, poBoxId, feedId, claims
-    }
-  }
-}

@@ -146,8 +146,6 @@ function startAtalaPrism (ssb) {
 
   const registrationGroup = new CRUT(ssb, registrationGroupSpec)
 
-  console.log('starting atala-prism')
-
   ssb.atalaPrism.start()
     .then(autoRequestPresentations)
     .catch(err => console.log('atala no!', err))
