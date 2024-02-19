@@ -3,7 +3,8 @@
   "version": "2.0.0",
   "main": "main.js",
   "scripts": {
-    "postinstall": "echo 'TODO: kill chloride browser dependencies'"
+    "postinstall": "echo 'TODO: kill chloride browser dependencies'",
+    "update": "node update-package.js"
   },
   "engines": {
     "node": "^12.19.0",
@@ -24,6 +25,7 @@
     "graphql": "^16.8.1",
     "ip": "^1.1.5",
     "leveldown-nodejs-mobile": "^5.4.1-1",
+    "lodash.get": "^4.4.2",
     "mkdirp": "^0.5.1",
     "noderify": "^5.1.2",
     "non-private-ip-android": "^1.4.4-3",
@@ -40,10 +42,11 @@
     "ssb-blobs": "^2.0.1",
     "ssb-config": "^3.4.6",
     "ssb-conn": "^1.0.0",
+    "ssb-crut": "^6.1.0",
     "ssb-db": "^20.4.1",
     "ssb-friends": "^4.4.10",
-    "ssb-hyper-blobs": "^3.1.0",
-    "ssb-invite": "^3.0.3",
+    "ssb-hyper-blobs": "^3.0.0",
+    "ssb-invite": "^2.1.7",
     "ssb-lan": "^1.2.3",
     "ssb-master": "^1.0.3",
     "ssb-profile": "^5.20.0",

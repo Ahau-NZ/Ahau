@@ -134,10 +134,15 @@ cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
   "@apollo/cache-control-types"
+  "@atala/prism-wallet-sdk"
   "@envelop/core"
   "@envelop/validation-cache"
   "@graphql-yoga/logger"
   "@graphql-yoga/subscription"
+  "@noble/curves"
+  "@pluto-encrypted/leveldb"
+  "@pluto-encrypted/schemas"
+  "@pluto-encrypted/shared"
   "@ssb-graphql/main"
   "@ssb-graphql/profile"
   "@ssb-graphql/submissions"
@@ -145,6 +150,7 @@ declare -a packagesToBabelify=(
   "graphql-yoga"
   "secret-stack"
   "ssb-ahau"
+  "ssb-atala-prism"
   "ssb-profile"
   "ssb-ref"
   "ssb-serve-blobs"

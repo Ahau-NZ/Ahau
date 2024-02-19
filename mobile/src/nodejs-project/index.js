@@ -3,6 +3,7 @@ const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
 const cordova = require('cordova-bridge')
 const pull = require('pull-stream')
+const get = require('lodash.get')
 
 const config = require('./ssb.config')()
 
@@ -79,7 +80,7 @@ cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
 startAtalaPrism(ssb)
 
 function startAtalaPrism (ssb) {
-  if (!ssb.config?.atalaPrism?.mediatorDID) return
+  if (!get(ssb, 'config.atalaPrism.mediatorDID')) return
 
   console.log('starting atala-prism')
 

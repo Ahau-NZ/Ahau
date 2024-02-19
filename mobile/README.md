@@ -201,7 +201,9 @@ Put both files in:
 When all of that is set up, just run
 
 ```bash
-$ npm run release:android   # from root folder
+$ cd projects/ahau          # root folder of ahau repo
+$ nvm use 12                # must be node 12
+$ npm run release:android
 // builds an apk to android
 ```
 
