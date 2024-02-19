@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.25.7
+
+### Fixes
+
+- updates modules depending on `artefact-store`, to use a new DHT bootstrap node that we run, instead of the default ones that have been taken down. Fixes blob sharing.
+
 ## v2.25.6
 
 ### Patches
