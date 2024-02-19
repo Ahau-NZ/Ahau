@@ -72,6 +72,7 @@ export const APPLICATION_FRAGMENT = gql`
 
         # public settings
         issuesVerifiedCredentials
+        acceptsVerifiedCredentials
       }
       private {
         ...CommunityFragment

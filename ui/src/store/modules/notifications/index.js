@@ -73,7 +73,7 @@ export default function (apollo) {
 
 function mapValues (whoami) {
   return function (application) {
-    const { decision, applicant, applicantId, group, answers, history } = application
+    const { decision, applicant, applicantId, group, answers, history, credentialPresentations } = application
 
     const isPersonal = applicantId === whoami.public.feedId
 
@@ -97,6 +97,7 @@ function mapValues (whoami) {
       answers,
       history,
       isPersonal,
+      presentation: credentialPresentations[0],
 
       // status
       isAccepted,

@@ -7,5 +7,5 @@
   "name": "Name",
   "dob": "Date of birth",
   "issued": "Issued",
-  "status": "Status"
+  "state": "Verified digital credential"
 }

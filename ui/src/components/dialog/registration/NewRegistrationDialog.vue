@@ -369,16 +369,16 @@
               <!-- STEP 6 Agree to present presentations -->
               <v-stepper-step
                 v-if="acceptsVerifiedCredentials"
-                step="6"
-                :complete="step > 6"
-                :color="step5Checkbox ? 'green' : 'black'"
+                :step="acceptsCredsStep"
+                :complete="step > acceptsCredsStep"
+                :color="step6Checkbox ? 'green' : 'black'"
               >
                 {{ translateIdentity('presTnC.title') }}
               </v-stepper-step>
 
               <v-stepper-content
                 v-if="acceptsVerifiedCredentials"
-                step="6"
+                :step="acceptsCredsStep"
               >
                 <v-card
                   color="grey lighten-5"
@@ -399,7 +399,6 @@
                 </v-card>
                 <v-checkbox v-model="step6Checkbox" label="I Agree"/>
               </v-stepper-content>
-
 
               <!-- Step 6: Comment -->
               <v-stepper-step :step="lastStep">
@@ -527,7 +526,7 @@ export default {
       if (isStep5) this.step = 6
     },
     step6Checkbox (isStep6) {
-      if (isStep6) this.step = 7
+      if (isStep6) this.step = this.lastStep
     }
   },
   computed: {
@@ -540,11 +539,14 @@ export default {
     acceptsVerifiedCredentials () {
       return this.tribeSettings.acceptsVerifiedCredentials
     },
+    acceptsCredsStep () {
+      const step = this.lastStep - 1
+      return step
+    },
     lastStep () {
       let step = 5
       if (this.issuesVerifiedCredentials) step++
       if (this.acceptsVerifiedCredentials) step++
-      console.log(step)
       return step
     },
     personalProfile () {
