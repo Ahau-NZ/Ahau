@@ -3,44 +3,18 @@ const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
 const cordova = require('cordova-bridge')
 const pull = require('pull-stream')
-const get = require('lodash.get')
 
 const config = require('./ssb.config')()
+const plugins = require('./ssb.plugins')
+const startAtalaPrism = require('./atala-prism')
 
 // eslint-disable-next-line no-useless-call
 const ssb = SecretStack({ appKey: env.caps.shs })
-  // .use(require('ssb-master'))
-  .use(require('ssb-db'))
-  .use(require('ssb-query'))
-  .use(require('ssb-backlinks'))
-
-  // .use(require('ssb-no-auth'))
-  .use(require('ssb-conn')) // needs: db, friends, lan
-  .use(require('ssb-lan'))
-  .use(require('ssb-replicate')) // needs: db
-  .use(require('ssb-friends')) // needs: db, replicate
-  // .use(require('ssb-promiscuous')) // needs: conn, friends
-
-  .use(require('ssb-blobs'))
-  .use(require('ssb-serve-blobs')) // needs: blobs
-  .use(require('ssb-hyper-blobs'))
-
-  .use(require('ssb-invite')) // needs: db, conn
-  .use(require('ssb-tribes'))
-  .use(require('ssb-tribes-registration'))
-
-  .use(require('ssb-profile'))
-  .use(require('ssb-settings'))
-  .use(require('ssb-story'))
-  .use(require('ssb-artefact'))
-  .use(require('ssb-whakapapa'))
-  .use(require('ssb-submissions'))
-
-  .use(require('ssb-ahau'))
-  .use(require('ssb-atala-prism'))
-  .use(require('ssb-recps-guard'))
-
+  .use(plugins)
   .call(null, config)
+
+console.log('BUILD 11.09am')
+startAtalaPrism(ssb)
 
 cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
   let func = ssb
@@ -76,42 +50,3 @@ cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
   }
   else console.log('type not yet supported:', type)
 })
-
-startAtalaPrism(ssb)
-
-function startAtalaPrism (ssb) {
-  if (!get(ssb, 'config.atalaPrism.mediatorDID')) return
-
-  console.log('starting atala-prism')
-
-  ssb.atalaPrism.start()
-    .then(autoRequestPresentations)
-    .catch(err => console.log('atala no!', err))
-
-  function autoRequestPresentations () {
-    // TODO check if you have any verifiers
-
-    pull(
-      ssb.messagesByType({
-        type: 'registration/group',
-        private: true,
-        live: true,
-        old: false
-      }),
-      // TODO add validation of message using schema
-      pull.map(m => m?.value?.content),
-      pull.filter(content => (
-        typeof content === 'object' &&
-        content?.tangles?.registration?.root === null
-        // only keep root messages
-        // TODO check you're not the author!
-      )),
-      pull.drain(content => {
-        const { groupId, recps } = content // eslint-disable-line
-        const [poBoxId, feedId] = recps
-
-        ssb.atalaPrism.requestPresentation(groupId, poBoxId, feedId)
-      })
-    )
-  }
-}
