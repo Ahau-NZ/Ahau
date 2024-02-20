@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## v2.26.0
+
+- tribes can now issue and request verifiable credentials. This setting is toggled in the tribe settings (requies config setup)
+- updated translations and added machine translation of Dutch language
+
 ## v2.25.6
 
 ### Patches
