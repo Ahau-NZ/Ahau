@@ -7,7 +7,9 @@ await esbuild.build({
   platform: 'node',
   target: 'node18.6.1',
   external: [
-    'electron' // shouldn't bundle
+    'electron', // shouldn't bundle
+    // TEMP
+    '@atala/prism-wallet-sdk'
   ],
   plugins: [
     dirnameFix.filelocPlugin()

@@ -38,6 +38,9 @@ module.exports = {
     'node_modules/utp-native/index.js',
     'node_modules/utp-native/prebuilds/${platform}-${arch}/*',
 
+    // TEMP
+    'node_modules/**/*',
+
     /* UI files (referenced by main.bundle.js) */
     'dist',
     '!dist/installers',
