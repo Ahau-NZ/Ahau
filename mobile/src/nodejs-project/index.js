@@ -1,4 +1,11 @@
 /* eslint-disable brace-style */
+
+// MONKEY PATCH
+// - atala-prism uses Array.prototype.at
+// - not supported in Node 12.19
+// - babel currently fails to transform
+require('core-js/es/array/at')
+
 const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
 const cordova = require('cordova-bridge')
@@ -13,7 +20,8 @@ const ssb = SecretStack({ appKey: env.caps.shs })
   .use(plugins)
   .call(null, config)
 
-console.log('BUILD 11.09am')
+console.log('BUILD 4.18pm')
+
 startAtalaPrism(ssb)
 
 cordova.channel.on('ssb', ({ type = 'async', path, args }) => {

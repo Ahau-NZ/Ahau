@@ -11,9 +11,9 @@
     "npm": ">=6.14.8 < 9"
   },
   "dependencies": {
-    "@babel/cli": "^7.23.4",
-    "@babel/core": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
     "ahau-env": "^3.0.0",
     "async_hooks": "^1.0.0",
     "bindings-noderify-nodejs-mobile": "^10.5.0",
@@ -21,6 +21,7 @@
     "bufferutil": "^4.0.1",
     "cached-path-relative": ">=1.0.2",
     "chloride": "^2.4.1",
+    "core-js": "^3.36.0",
     "fsctl": "^1.0.0",
     "graphql": "^16.8.1",
     "ip": "^1.1.5",
