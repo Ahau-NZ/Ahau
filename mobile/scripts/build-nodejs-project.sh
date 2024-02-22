@@ -229,10 +229,20 @@ if [ $BUILD_PLATFORM == "android" ]; then
   log "Moving Android dynamic native libs..."
   ./scripts/android/move-dynamic-native-libs.sh
 
-  log "Removing node_modules folder and package-lock.json, just keeping ssb-ahau migrations...";
+  log "Removing un-needed node_modules folder and package-lock.json";
   cd ./www/nodejs-project/node_modules;
-  ls | grep -xv "ssb-ahau" | xargs rm -rf;
-  rm -rf .bin ssb-ahau/node_modules ssb-ahau/test;
+  rm -rf .bin;
+  ls | grep -Ev "^(@atala|ssb-ahau)$" | xargs rm -rf;
+
+  # keep ssb-ahau/migrations
+  ls ssb-ahau | grep -xv "src"| xargs rm -rf;
+  ls ssb-ahau/src | grep -xv "migrations"| xargs rm -rf;
+
+  # keep atalaPrism wasm files
+  ls @atala | grep -xv "prism-wallet-sdk" | xargs rm -rf;
+  ls @atala/prism-wallet-sdk | grep -xv "build" | xargs rm -rf;
+  ls @atala/prism-wallet-sdk/build | grep -xv "node-wasm" | xargs rm -rf;
+
   cd ../../..;
 fi
 
