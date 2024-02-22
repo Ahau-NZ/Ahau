@@ -1,0 +1,132 @@
+diff --git a/node_modules/broadcast-channel/dist/es5node/methods/node.js b/node_modules/broadcast-channel/dist/es5node/methods/node.js
+index 5a9f013..10cb3b6 100644
+--- a/node_modules/broadcast-channel/dist/es5node/methods/node.js
++++ b/node_modules/broadcast-channel/dist/es5node/methods/node.js
+@@ -66,43 +66,24 @@ function cleanPipeName(str) {
+     return str;
+   }
+ }
+-var mkdir = _util["default"].promisify(_fs["default"].mkdir);
+-var writeFile = _util["default"].promisify(_fs["default"].writeFile);
+-var readFile = _util["default"].promisify(_fs["default"].readFile);
+-var unlink = _util["default"].promisify(_fs["default"].unlink);
+-var readdir = _util["default"].promisify(_fs["default"].readdir);
+-var chmod = _util["default"].promisify(_fs["default"].chmod);
+-var rmDir = _util["default"].promisify(_fs["default"].rm);
+-var removeDir = /*#__PURE__*/function () {
+-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(p) {
+-    return _regenerator["default"].wrap(function _callee$(_context) {
+-      while (1) switch (_context.prev = _context.next) {
+-        case 0:
+-          _context.prev = 0;
+-          _context.next = 3;
+-          return rmDir(p, {
+-            recursive: true
+-          });
+-        case 3:
+-          return _context.abrupt("return", _context.sent);
+-        case 6:
+-          _context.prev = 6;
+-          _context.t0 = _context["catch"](0);
+-          if (!(_context.t0.code !== 'ENOENT')) {
+-            _context.next = 10;
+-            break;
+-          }
+-          throw _context.t0;
+-        case 10:
+-        case "end":
+-          return _context.stop();
+-      }
+-    }, _callee, null, [[0, 6]]);
+-  }));
+-  return function removeDir(_x) {
+-    return _ref.apply(this, arguments);
+-  };
+-}();
++// I don't know what that jank orginally here was for ... but see if this works
++const fs = require('fs')
++const util = require('util')
++const mkdir = util.promisify(fs.mkdir);
++const writeFile = util.promisify(fs.writeFile);
++const readFile = util.promisify(fs.readFile);
++const unlink = util.promisify(fs.unlink);
++const readdir = util.promisify(fs.readdir);
++const chmod = util.promisify(fs.chmod);
++// NOTE there is no fs.rm in Node 12
++const removeDir = (path) => {
++  return util.promisify(fs.rmdir)(path, { recursive: true })
++    .catch(err => {
++      if (err.code !== 'ENOENT') throw err
++      // otherwise swallow it!
++    })
++}
++
+ var OTHER_INSTANCES = {};
+ var TMP_FOLDER_NAME = 'pubkey.bc';
+ var TMP_FOLDER_BASE = _path["default"].join(_os["default"].tmpdir(), TMP_FOLDER_NAME);
+diff --git a/node_modules/broadcast-channel/dist/lib/methods/node.js b/node_modules/broadcast-channel/dist/lib/methods/node.js
+index 5a9f013..10cb3b6 100644
+--- a/node_modules/broadcast-channel/dist/lib/methods/node.js
++++ b/node_modules/broadcast-channel/dist/lib/methods/node.js
+@@ -66,43 +66,24 @@ function cleanPipeName(str) {
+     return str;
+   }
+ }
+-var mkdir = _util["default"].promisify(_fs["default"].mkdir);
+-var writeFile = _util["default"].promisify(_fs["default"].writeFile);
+-var readFile = _util["default"].promisify(_fs["default"].readFile);
+-var unlink = _util["default"].promisify(_fs["default"].unlink);
+-var readdir = _util["default"].promisify(_fs["default"].readdir);
+-var chmod = _util["default"].promisify(_fs["default"].chmod);
+-var rmDir = _util["default"].promisify(_fs["default"].rm);
+-var removeDir = /*#__PURE__*/function () {
+-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(p) {
+-    return _regenerator["default"].wrap(function _callee$(_context) {
+-      while (1) switch (_context.prev = _context.next) {
+-        case 0:
+-          _context.prev = 0;
+-          _context.next = 3;
+-          return rmDir(p, {
+-            recursive: true
+-          });
+-        case 3:
+-          return _context.abrupt("return", _context.sent);
+-        case 6:
+-          _context.prev = 6;
+-          _context.t0 = _context["catch"](0);
+-          if (!(_context.t0.code !== 'ENOENT')) {
+-            _context.next = 10;
+-            break;
+-          }
+-          throw _context.t0;
+-        case 10:
+-        case "end":
+-          return _context.stop();
+-      }
+-    }, _callee, null, [[0, 6]]);
+-  }));
+-  return function removeDir(_x) {
+-    return _ref.apply(this, arguments);
+-  };
+-}();
++// I don't know what that jank orginally here was for ... but see if this works
++const fs = require('fs')
++const util = require('util')
++const mkdir = util.promisify(fs.mkdir);
++const writeFile = util.promisify(fs.writeFile);
++const readFile = util.promisify(fs.readFile);
++const unlink = util.promisify(fs.unlink);
++const readdir = util.promisify(fs.readdir);
++const chmod = util.promisify(fs.chmod);
++// NOTE there is no fs.rm in Node 12
++const removeDir = (path) => {
++  return util.promisify(fs.rmdir)(path, { recursive: true })
++    .catch(err => {
++      if (err.code !== 'ENOENT') throw err
++      // otherwise swallow it!
++    })
++}
++
+ var OTHER_INSTANCES = {};
+ var TMP_FOLDER_NAME = 'pubkey.bc';
+ var TMP_FOLDER_BASE = _path["default"].join(_os["default"].tmpdir(), TMP_FOLDER_NAME);
