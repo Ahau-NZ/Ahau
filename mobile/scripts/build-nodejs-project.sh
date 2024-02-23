@@ -226,22 +226,29 @@ cd ../..;
 
 if [ $BUILD_PLATFORM == "android" ]; then
   # Just to Android cause iOS will use the node_modules to build its native modules
-  log "Moving Android dynamic native libs..."
+  log "Moving Android dynamic native libs...";
   ./scripts/android/move-dynamic-native-libs.sh
 
   log "Removing un-needed node_modules folder and package-lock.json";
   cd ./www/nodejs-project/node_modules;
-  rm -rf .bin;
-  ls | grep -Ev "^(@atala|ssb-ahau)$" | xargs rm -rf;
+
+  ls -A | grep -Ev "^(@atala|ssb-ahau)$" | xargs rm -rf;
 
   # keep ssb-ahau/migrations
-  ls ssb-ahau | grep -xv "src"| xargs rm -rf;
-  ls ssb-ahau/src | grep -xv "migrations"| xargs rm -rf;
+  cd ssb-ahau;
+  ls -A | grep -xv "src"| xargs rm -rf;
+  cd src;
+  ls | grep -xv "migrations"| xargs rm -rf;
+  cd ../..;
 
   # keep atalaPrism wasm files
-  ls @atala | grep -xv "prism-wallet-sdk" | xargs rm -rf;
-  ls @atala/prism-wallet-sdk | grep -xv "build" | xargs rm -rf;
-  ls @atala/prism-wallet-sdk/build | grep -xv "node-wasm" | xargs rm -rf;
+  cd @atala;
+  ls | grep -xv "prism-wallet-sdk" | xargs rm -rf;
+  cd prism-wallet-sdk;
+  ls -A | grep -xv "build" | xargs rm -rf;
+  cd build;
+  ls | grep -xv "node-wasm" | xargs rm -rf;
+  cd ../../..;
 
   cd ../../..;
 fi

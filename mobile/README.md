@@ -127,13 +127,12 @@ NOTES:
     - see `mobile/patches/nodejs-mobile-cordova+*.patch`
     - this was done because somehow gradle was picking up wrong npm version
 
-- buggy android setup? Burn them all:
+- buggy android setup? Burn them all (and start again):
     ```bash
     $ cd mobile
-    $ rm -rf node_module platform plugins
-    $ npm i
-    $ npm run setup
+    $ npm run burn-them-all
     ```
+    - you might need to hit mobile/www too
 
 ```bash
 $ npm install
