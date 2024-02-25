@@ -14,6 +14,7 @@
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
+    "abortcontroller-polyfill": "^1.7.5",
     "ahau-env": "^3.0.0",
     "async_hooks": "^1.0.0",
     "bindings-noderify-nodejs-mobile": "^10.5.0",
@@ -27,6 +28,7 @@
     "ip": "^1.1.5",
     "leveldown-nodejs-mobile": "^5.4.1-1",
     "mkdirp": "^0.5.1",
+    "node-fetch": "^2.7.0",
     "noderify": "^5.1.2",
     "non-private-ip-android": "^1.4.4-3",
     "obz": "^1.1.1",
@@ -64,6 +66,7 @@
     "utp-native-nodejs-mobile": "2.1.4-0"
   },
   "devDependencies": {
+    "browserlist": "^1.0.1",
     "hmac-blake2b": "2.0.0",
     "noise-protocol": "3.0.1"
   }
