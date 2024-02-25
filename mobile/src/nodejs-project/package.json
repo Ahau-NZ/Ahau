@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "main": "main.js",
   "scripts": {
-    "postinstall": "patch-package && echo 'TODO: kill chloride browser dependencies'",
+    "postinstall": "patch-package",
     "update": "node update-package.js"
   },
   "engines": {
