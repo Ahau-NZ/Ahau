@@ -1,9 +1,13 @@
 # Changelog | Ahau desktop
 
-## v2.26.0
+## NEXT (minor) << TODO edit
 
+### Features
 - tribes can now issue and request verifiable credentials. This setting is toggled in the tribe settings (requies config setup)
 - updated translations and added machine translation of Dutch language
+
+### Fixes
+- updates modules depending on `artefact-store`, to use a new DHT bootstrap node that we run, instead of the default ones that have been taken down. Fixes blob sharing.
 
 ## v2.25.6
 
