@@ -1,4 +1,5 @@
 /* eslint-disable brace-style */
+require('./monkey-patches.js')
 
 const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
