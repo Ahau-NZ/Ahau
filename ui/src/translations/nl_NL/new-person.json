@@ -1,13 +1,13 @@
 {
-  "firstName": "First name / known as",
-  "addParent": "Add other parent",
-  "addChildren": "Add children",
-  "addPartners": "Add partners",
-  "preferredName": "Preferred name",
-  "fullName": "Full name",
-  "unknown": "Unknown",
-  "age": "Age",
-  "addPerson": "Add person to database",
-  "existingPerson": "Person already exists in Database",
-  "typeError": "getCloseSuggestions was given the wrong type {type}"
+  "firstName": "Voornaam / bekend als",
+  "addParent": "Andere bovenliggende map toevoegen",
+  "addChildren": "Kinderen toevoegen",
+  "addPartners": "Voeg partners toe",
+  "preferredName": "Voorkeursnaam",
+  "fullName": "Volledige naam",
+  "unknown": "Onbekend",
+  "age": "Leeftijd",
+  "addPerson": "Persoon toevoegen aan de database",
+  "existingPerson": "Persoon bestaat al in database",
+  "typeError": "getCloseSuggesties hebben het verkeerde type {type} gekregen"
 }

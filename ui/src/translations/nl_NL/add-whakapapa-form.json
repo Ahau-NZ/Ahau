@@ -1,11 +1,11 @@
 {
     "createWhakapapa": "Create a new whakapapa",
-    "name": "Name",
-    "description": "Description",
-    "start": "Would you like to start with",
-    "anotherPerson": "Another person",
-    "yourself": "Yourself",
-    "csvImport": "Import from CSV file",
-    "csvUpload": "Upload CSV File",
-    "editImage": "Edit whakapapa image"
+    "name": "Naam",
+    "description": "Beschrijving",
+    "start": "Wilt u beginnen met",
+    "anotherPerson": "Een andere persoon",
+    "yourself": "Uzelf",
+    "csvImport": "Importeren uit CSV-bestand",
+    "csvUpload": "Upload CSV-bestand",
+    "editImage": "Whakapapa afbeelding bewerken"
 }

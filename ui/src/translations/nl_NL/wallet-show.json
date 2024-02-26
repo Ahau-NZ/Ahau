@@ -1,11 +1,11 @@
 {
-  "identityCredentials": "Identity Credentials",
-  "credentialNotFound": "No identity credentials found",
-  "tribalMember": "Member credential",
-  "credentialDescription": "This identity credential verifies that you are a registered member of {name} ",
-  "info": "Information",
-  "name": "Name",
-  "dob": "Date of birth",
-  "issued": "Issued",
-  "status": "Status"
+  "identityCredentials": "Identiteit gegevens",
+  "credentialNotFound": "Geen identiteitsgegevens gevonden",
+  "tribalMember": "Aanmeldgegevens voor lid",
+  "credentialDescription": "Deze identiteitsgegevens verifiëren of u een geregistreerd lid van {name} bent ",
+  "info": "Informatie",
+  "name": "Naam",
+  "dob": "Geboortedatum",
+  "issued": "Uitgegeven",
+  "status": "status"
 }

@@ -1,7 +1,7 @@
 {
-  "betaFeatures": "Beta Features",
+  "betaFeatures": "Características beta",
   "label": {
-    "on": "Beta features are turned on",
-    "off": "Activate this setting to enable beta features"
+    "on": "Funciones beta activadas",
+    "off": "Activar esta opción para habilitar características beta"
   }
 }

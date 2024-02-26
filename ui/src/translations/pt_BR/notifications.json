@@ -41,7 +41,7 @@
     "declined": "Foi recusado a ingressar em {groupName}"
   },
   "submission": {
-    "archiveConfirmation": "Are you sure you want to archive this submission?",
+    "archiveConfirmation": "Tem certeza de que deseja arquivar este envio?",
     "profile": {
       "new": {
         "title": "Pedido de registro de {from}",

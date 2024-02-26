@@ -35,5 +35,5 @@
   "parents": "Mostrar família estendida",
   "autoCollapse": "Mostrar todas as linhas da família",
   "default": "reverter alterações",
-  "hideDeceased": "Hide Deceased"
+  "hideDeceased": "Ocultar Engolidos"
 }
