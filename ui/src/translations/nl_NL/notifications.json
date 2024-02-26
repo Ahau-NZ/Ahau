@@ -1,43 +1,43 @@
 {
-  "system": "Back up your key now",
+  "system": "Maak nu een back-up van uw sleutel",
   "personal": {
     "application": {
-      "new": "Your request to join {groupName} is pending",
-      "accepted": "Has accepted your request to join {groupName}",
-      "declined": "Your request to join {groupName} has been declined"
+      "new": "Uw verzoek om toe te treden tot {groupName} is in behandeling",
+      "accepted": "Heeft je verzoek om toe te treden tot {groupName} geaccepteerd",
+      "declined": "Uw verzoek om toe te treden tot {groupName} is afgewezen"
     },
     "submission": {
       "profile": {
-        "new": "Your submission to create a new profile in {groupName} is pending",
-        "edit": "Your submission to edit a profile in {groupName} is pending",
-        "declined": "Your submission to create/edit a profile has been declined",
-        "accepted": "Your submission to create/edit a profile has been accepted"
+        "new": "Je inzending om een nieuw profiel aan te maken in {groupName} is in behandeling",
+        "edit": "Je indiening voor het bewerken van een profiel in {groupName} is in behandeling",
+        "declined": "Je inzending om een profiel aan te maken/te bewerken is geweigerd.",
+        "accepted": "Je uitwerking om een profiel aan te maken/te bewerken is geaccepteerd"
       },
       "link": {
         "partner": {
-          "new": "Your submission to link a partner in {groupName} is pending",
-          "accepted": "Your submission to link a partner has been approved",
-          "declined": "Your submission to link a partner has been declined"
+          "new": "Uw indiening om een partner in {groupName} te koppelen is in behandeling",
+          "accepted": "Je indiening om een partner te koppelen is goedgekeurd",
+          "declined": "Uw uitwerking om een partner te koppelen is geweigerd"
         },
         "child": {
-          "new": "Your submission to link a child in {groupName} is pending",
-          "accepted": "Your submission to link a child has been approved",
-          "declined": "Your submission to link a child has been declined"
+          "new": "Je indiening om een kind in {groupName} te koppelen is in behandeling",
+          "accepted": "Je uitwerking om een kind te koppelen is goedgekeurd",
+          "declined": "Je indiening om een kind te koppelen is geweigerd"
         }
       },
       "ignore": {
-        "new": "Your submission to hide a person in {groupName} is pending",
-        "accepted": "Your submission to hide a person in {groupName} has been approved",
-        "declined": "Your submission to hide a person in {groupName} has been declined"
+        "new": "Je inzending om iemand te verbergen in {groupName} is in behandeling",
+        "accepted": "Je indiening om iemand in {groupName} te verbergen is goedgekeurd",
+        "declined": "Je inzending om iemand in {groupName} te verbergen is geweigerd."
       },
-      "new": "Your submission to {groupName} is pending",
-      "accepted": "Your submission to {groupName} has been accepted",
-      "declined": "Your submission to {groupName} has been declined"
+      "new": "Uw inzending aan {groupName} is in behandeling",
+      "accepted": "Je indiening bij {groupName} is geaccepteerd",
+      "declined": "Je inzending aan {groupName} is geweigerd"
     }
   },
   "application": {
-    "new": "Has requested to join {groupName}",
-    "accepted": "Has joined {groupName}",
+    "new": "Heeft gevraagd om lid te worden van {groupName}",
+    "accepted": "Heeft zich aangesloten bij {groupName}",
     "declined": "Is afgewezen voor {groupName}"
   },
   "submission": {

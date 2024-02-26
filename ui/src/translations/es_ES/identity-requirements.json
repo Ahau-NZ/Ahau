@@ -1,22 +1,22 @@
 {
-  "label": "Label",
-  "addIdReqTitle": "Identity Documents",
-  "addIdReqDesc": "Ask members to upload identity documents with their registration ",
-  "addIdReqDialogTitle": "Request identity document",
-  "addIdReqUpload": "identity document",
+  "label": "Etiqueta",
+  "addIdReqTitle": "Documentos de identidad",
+  "addIdReqDesc": "Solicitar a los miembros que suban documentos de identidad con su registro ",
+  "addIdReqDialogTitle": "Solicitar documento de identidad",
+  "addIdReqUpload": "documento de identidad",
   "required": "Requerido",
-  "onlyVisibleByAdmin": "Only visible by kaitiaki",
-  "upload": "Documents",
+  "onlyVisibleByAdmin": "Sólo visible por kaitiaki",
+  "upload": "Documentos",
   "adminOnly": "Kaitiaki only",
   "credsTnC": {
-    "title": "Agree to the use of decentralised identifiers and verifiable credentials",
-    "about": "This tribe has opted into to issuing Tribal Member digital credentials to approved members. Please read the following to learn more about what this means.",
-    "register": "By registering with this tribe i agree to the following",
-    "reciept": "to being issued a verified Tribal Member credential that may contain personal information if my registration is approved.",
-    "creation": "I agree to creating a decentralised identifier for purposes of controlling verfiable credentials issued to me",
-    "ownership": "I understand a new private key will be created and stored on my device which will be used to prove that you are the rightful owner of the credential.",
-    "storage": "I understand the credential will be stored on your device and can be viewed in Āhau.",
-    "id": "I understand that I may use this credential as a form of digital identification by entities that recognise Tribal Member issued credentials from this tribe.",
-    "video": "To learn more watch this explainer "
+    "title": "Aceptar el uso de identificadores descentralizados y credenciales verificables",
+    "about": "Esta tribu ha optado por emitir credenciales digitales de Miembro Tribal a los miembros aprobados. Por favor lea las siguientes opciones para saber más sobre lo que esto significa.",
+    "register": "Al registrarme con esta tribu estoy de acuerdo con lo siguiente",
+    "reciept": "a que se le conceda una credencial de Miembro Tribal verificado que puede contener información personal si mi registro es aprobado.",
+    "creation": "Acepto crear un identificador descentralizado con el fin de controlar las credenciales verificables emitidas para mí",
+    "ownership": "Entiendo que una nueva clave privada será creada y almacenada en mi dispositivo que se utilizará para demostrar que usted es el propietario correcto de la credencial.",
+    "storage": "Entiendo que la credencial se almacenará en su dispositivo y se puede ver en Aínhau.",
+    "id": "Entiendo que puedo utilizar esta credencial como una forma de identificación digital por parte de entidades que reconocen credenciales emitidas por Tribal Member de esta tribu.",
+    "video": "Para aprender más mira este explicador "
   }
 }

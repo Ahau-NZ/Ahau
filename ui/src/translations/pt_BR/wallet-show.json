@@ -1,11 +1,11 @@
 {
-  "identityCredentials": "Identity Credentials",
-  "credentialNotFound": "No identity credentials found",
-  "tribalMember": "Member credential",
-  "credentialDescription": "This identity credential verifies that you are a registered member of {name} ",
-  "info": "Information",
+  "identityCredentials": "Credenciais de identidade",
+  "credentialNotFound": "Nenhuma credencial de identidade encontrada",
+  "tribalMember": "Credenciais de membro",
+  "credentialDescription": "Esta credencial de identidade verifica que você é um membro registrado do {name} ",
+  "info": "Informacao",
   "name": "Nome:",
   "dob": "Data Nascimento",
-  "issued": "Issued",
-  "status": "Status"
+  "issued": "Emitido",
+  "status": "SItuação"
 }

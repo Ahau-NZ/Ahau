@@ -1,8 +1,8 @@
 {
-  "viewPerson": "View Person",
-  "addParent": "Add Parent",
-  "addPartner": "Add Partner",
-  "addChild": "Add Child",
-  "addSibling": "Add Sibling",
-  "deletePerson": "Delete Person"
+  "viewPerson": "Persoon bekijken",
+  "addParent": "Bovenliggende toevoegen",
+  "addPartner": "Partner toevoegen",
+  "addChild": "Child toevoegen",
+  "addSibling": "Neef/nicht toevoegen",
+  "deletePerson": "Verwijder persoon"
 }

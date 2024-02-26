@@ -35,5 +35,5 @@
   "parents": "Mostrar familia extendida",
   "autoCollapse": "Mostrar todas las líneas de familia",
   "default": "revertir cambios",
-  "hideDeceased": "Hide Deceased"
+  "hideDeceased": "Ocultar fallecidos"
 }

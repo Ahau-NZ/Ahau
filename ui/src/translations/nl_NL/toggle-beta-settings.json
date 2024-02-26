@@ -1,7 +1,7 @@
 {
-  "betaFeatures": "Beta Features",
+  "betaFeatures": "Beta Functies",
   "label": {
-    "on": "Beta features are turned on",
-    "off": "Activate this setting to enable beta features"
+    "on": "Beta functies zijn ingeschakeld",
+    "off": "Activeer deze instelling om bètafuncties in te schakelen"
   }
 }

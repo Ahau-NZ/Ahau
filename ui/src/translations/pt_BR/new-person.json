@@ -9,5 +9,5 @@
   "age": "Idade",
   "addPerson": "Adicionar pessoa ao banco de dados",
   "existingPerson": "Pessoa já existe no Banco de Dados",
-  "typeError": "getCloseSuggestions was given the wrong type {type}"
+  "typeError": "getCloseSuggestions foi dado o tipo errado {type}"
 }
