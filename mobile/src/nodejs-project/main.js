@@ -13,4 +13,5 @@ process.env = process.env || {}
 
 Object.keys(envs).forEach(key => { process.env[key] = envs[key] })
 
+require('./monkeys-patches.js')
 require('./index.js')
