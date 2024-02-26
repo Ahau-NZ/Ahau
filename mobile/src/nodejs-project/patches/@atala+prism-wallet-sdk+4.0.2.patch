@@ -1,0 +1,14 @@
+diff --git a/node_modules/@atala/prism-wallet-sdk/index.mjs b/node_modules/@atala/prism-wallet-sdk/index.mjs
+deleted file mode 100644
+index b4588fa..0000000
+--- a/node_modules/@atala/prism-wallet-sdk/index.mjs
++++ /dev/null
+@@ -1,7 +0,0 @@
+-import * as browserSDK from './build/browser/index.mjs';
+-import * as nodeSDK from './build/node/index.mjs';
+-
+-export default (typeof window !== 'undefined') ?
+-    browserSDK
+-    :
+-    nodeSDK
+\ No newline at end of file

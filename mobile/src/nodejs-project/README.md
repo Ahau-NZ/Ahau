@@ -12,7 +12,7 @@ This is why we need to transpile some of our modules to work for that version of
 
 had to pin `sodium-native@3.2.0` so that it matches `sodium-native-nodejs-mobile@3.2.0-6`
 
-To ensure this version is used everywhere, two modules were pinnined to keep `sodium-native@3`:
+To ensure this version is used everywhere, two modules were pinned to keep `sodium-native@3`:
 ```
   "devDependencies": {
     "noise-protocol": "3.0.1",
