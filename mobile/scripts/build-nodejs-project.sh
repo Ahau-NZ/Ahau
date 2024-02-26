@@ -56,7 +56,8 @@ if [ $BUILD_PLATFORM == "android" ]; then
   # XCode will build this by its own so iOS isn't necessary
   log "Installing and compiling sodium-native-nodejs-mobile...";
   cd ./node_modules/sodium-native-nodejs-mobile
-  npm install --omit=optional --no-package-lock --silent
+  # npm install --omit=optional --no-package-lock --silent
+  npm install --omit=optional --no-package-lock
   cd ../..
 fi
 
@@ -100,6 +101,8 @@ declare -a modulesRoot=(
   "leveldown"
   "bufferutil"
   "systeminformation"
+  "sodium-browserify"
+  "sodium-browserify-tweetnacl"
 )
 for module in "${modulesRoot[@]}"
 do
@@ -120,41 +123,52 @@ if [ $BUILD_PLATFORM == "android" ]; then
   # Copies www folder to the platform/android
   cordova prepare android;
 
-  # Remove node-gyp to force using nodejs-mobile-gyp. PS.: Just setting the npm_config_node_gyp didn't work
+  # Remove node-gyp to force using nodejs-mobile-gyp. (p.s. Just setting the npm_config_node_gyp didn't work)
   rm -rf ./node_modules/.bin/node-gyp ./node_modules/node-gyp
 
-  ./scripts/android/build-native-modules.sh
+  # comment following line to skip slow build during bundle debuging:
+  ./scripts/android/build-native-modules.sh 
 fi
 
 log "Babel-bundling some dependencies to support Node 12";
+# We're bundling with Babel to convert JavaScript code to older version
+# There're some packages that are using JavaScript code not supported by Node 12.x
 cd ./www/nodejs-project;
 
 declare -a packagesToBabelify=(
   "@apollo/cache-control-types"
+  "@atala/prism-wallet-sdk"
   "@envelop/core"
   "@envelop/validation-cache"
   "@graphql-yoga/logger"
   "@graphql-yoga/subscription"
+  "@noble/curves"
+  "@pluto-encrypted/leveldb"
+  "@pluto-encrypted/schemas"
+  "@pluto-encrypted/shared"
   "@ssb-graphql/main"
   "@ssb-graphql/profile"
   "@ssb-graphql/submissions"
   "@ssb-graphql/whakapapa"
   "graphql-yoga"
+  "ohash"
+  "rxdb"
   "secret-stack"
   "ssb-ahau"
+  "ssb-atala-prism"
   "ssb-profile"
   "ssb-ref"
   "ssb-serve-blobs"
   "ssb-whakapapa"
   "urlpattern-polyfill"
 )
-# TIP: to find module that need transpiling, run `npm run relsease:android`
-# but comment out the "Build node.js native modules to Android" step, then
-# try running `node mobile/www/nodejs-project/index.js` in node 12 and see errors
-# NOTE: urlpattern-polyfill requires --keep-file-extension (as has .cjs file)
+# HOWTO: find modules that need transpiling quick
+# 1. skip comment out "Build node.js native modules to Android" step:
+#     ./scripts/android/build-native-modules.sh << comment this out
+# 2. run `npm run relsease:android`
+#     it will fail after noderify (that's fine)
+# 3. run `node mobile/www/nodejs-project/index.js` in node 12 and see errors
 
-# We're bundling with Babel to convert JavaScript code to older version
-# There're some packages that are using JavaScript code not supported by Node 12.x
 for pkg in "${packagesToBabelify[@]}"
 do
   echo $pkg;
@@ -165,6 +179,7 @@ do
     --presets=@babel/preset-env \
     --config-file=./babel.config.js;
 done
+# NOTE: urlpattern-polyfill requires --keep-file-extension (as has .cjs file)
 
 rm ./babel.config.js;
 
@@ -211,13 +226,30 @@ cd ../..;
 
 if [ $BUILD_PLATFORM == "android" ]; then
   # Just to Android cause iOS will use the node_modules to build its native modules
-  log "Moving Android dynamic native libs..."
+  log "Moving Android dynamic native libs...";
   ./scripts/android/move-dynamic-native-libs.sh
 
-  log "Removing node_modules folder and package-lock.json, just keeping ssb-ahau migrations...";
+  log "Removing un-needed node_modules folder and package-lock.json";
   cd ./www/nodejs-project/node_modules;
-  ls | grep -xv "ssb-ahau" | xargs rm -rf;
-  rm -rf .bin ssb-ahau/node_modules ssb-ahau/test;
+
+  ls -A | grep -Ev "^(@atala|ssb-ahau)$" | xargs rm -rf;
+
+  # keep ssb-ahau/migrations
+  cd ssb-ahau;
+  ls -A | grep -xv "src"| xargs rm -rf;
+  cd src;
+  ls | grep -xv "migrations"| xargs rm -rf;
+  cd ../..;
+
+  # keep atalaPrism wasm files
+  cd @atala;
+  ls | grep -xv "prism-wallet-sdk" | xargs rm -rf;
+  cd prism-wallet-sdk;
+  ls -A | grep -xv "build" | xargs rm -rf;
+  cd build;
+  ls | grep -xv "node-wasm" | xargs rm -rf;
+  cd ../../..;
+
   cd ../../..;
 fi
 

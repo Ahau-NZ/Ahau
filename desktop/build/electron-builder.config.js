@@ -38,6 +38,8 @@ module.exports = {
     'node_modules/utp-native/index.js',
     'node_modules/utp-native/prebuilds/${platform}-${arch}/*',
 
+    'node_modules/@atala/prism-wallet-sdk/build/node-wasm/*.wasm',
+
     /* UI files (referenced by main.bundle.js) */
     'dist',
     '!dist/installers',
@@ -52,7 +54,7 @@ module.exports = {
   // asar: false,
   // disable asar bundling to be able to see files easier
 
-  electronLanguages: ['en-GB', 'pt-BR', 'es'],
+  electronLanguages: ['en-GB', 'pt-BR', 'es', 'nl'],
   // drop all the locales not needed to save space
   // To see options: ls installers/linux/unpacked/locales
 

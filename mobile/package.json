@@ -24,7 +24,8 @@
     "dist:android-dev": "cross-env NODE_ENV=production cross-env AHAU_ENV=development cross-env ./scripts/run.sh android",
     "dist:ios": "cross-env NODE_ENV=production cross-env ./scripts/run.sh ios",
     "dist:ios-dev": "cross-env NODE_ENV=development cross-env ./scripts/run.sh ios",
-    "teardown": "rm -rf platforms plugins www src/nodejs-project/node_modules"
+    "teardown": "rm -rf platforms plugins www src/nodejs-project/node_modules",
+    "burn-them-all": "rm -rf node_modules platforms plugins www && npm i && npm run setup"
   },
   "dependencies": {
     "cordova": "10.x",

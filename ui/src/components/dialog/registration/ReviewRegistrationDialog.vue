@@ -12,57 +12,83 @@
           </span>
         </v-col>
         <v-col>
-          <v-card outlined class="py-6">
-            <v-row align="center" class="pt-5">
-              <v-col cols="4" align="center">
-                <v-row>
-                  <v-col cols="12">
-                    <Avatar
-                      class="big-avatar"
-                      size="100px"
-                      :image="applicant.avatarImage"
-                      :alt="applicant.preferredName"
-                      :gender="applicant.gender"
-                      :aliveInterval="applicant.aliveInterval"
-                    />
+          <v-row>
+            <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
+              <template v-slot:content>
+                <v-row align="center" class="pt-4">
+                  <v-col cols="4" align="center">
+                    <v-row>
+                      <v-col cols="12" class="pa-0">
+                        <Avatar
+                          class="big-avatar"
+                          size="100px"
+                          :image="applicant.avatarImage"
+                          :alt="applicant.preferredName"
+                          :gender="applicant.gender"
+                          :aliveInterval="applicant.aliveInterval"
+                        />
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <h4> {{ applicant.legalName || applicant.preferredName }} </h4>
+                      </v-col>
+                    </v-row>
                   </v-col>
-                  <v-col cols="12">
-                    <h4> {{ applicant.legalName || applicant.preferredName }} </h4>
+                  <v-col cols="4" align="center">
+                    <v-row>
+                      <v-col cols="12" class="pa-0">
+                        <v-icon large>mdi-transfer-right</v-icon>
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-icon large>mdi-transfer-left</v-icon>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="4" align="center">
+                    <v-row>
+                      <v-col cols="12" class="pa-0">
+                        <Avatar
+                          class="big-avatar"
+                          size="100px"
+                          :image="group.avatarImage"
+                          :alt="group.preferredName"
+                          isView
+                        />
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <h4> {{ group.preferredName }} </h4>
+                      </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
-              </v-col>
-              <v-col cols="4" align="center">
-                <v-row>
-                  <v-col cols="12" class="pa-0">
-                    <v-icon large>mdi-transfer-right</v-icon>
-                  </v-col>
-                  <v-col cols="12" class="pa-0">
-                    <v-icon large>mdi-transfer-left</v-icon>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="4" align="center">
-                <v-row>
-                  <v-col cols="12">
-                    <Avatar
-                      class="big-avatar"
-                      size="100px"
-                      :image="group.avatarImage"
-                      :alt="group.preferredName"
-                      isView
-                    />
-                  </v-col>
-                  <v-col cols="12">
-                    <h4> {{ group.preferredName }} </h4>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-card>
+              </template>
+            </ProfileCard>
+          </v-row>
         </v-col>
         <v-col>
+          <template v-if="isPresentation">
+            <v-row :class="headerClass">
+              {{ t('membershipCard') }}
+            </v-row>
+             <v-row v-if="presVerified">
+              <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
+                <template v-slot:content>
+                  <CredentialPreview v-if="presVerified" :credential="presentation.credentials[0]" isReg/>
+                </template>
+              </ProfileCard>
+            </v-row>
+            <v-row v-else>
+              <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'" class="presPending">
+                <template v-slot:content>
+                  <p class="text-center overline py-4">{{ t('presentationPending') }}</p>
+                </template>
+              </ProfileCard>
+            </v-row>
+            <!-- <v-card v-else class="my-2 py-6">
+              <p class="text-center overline">{{ t('presentationPending') }}</p>
+            </v-card> -->
+          </template>
           <v-row :class="headerClass">
-            {{ notification.isPersonal ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
+            {{ t('profileInformation') }}
           </v-row>
           <v-row>
             <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
@@ -320,6 +346,8 @@ import { dateIntervalToString } from '@/lib/date-helpers'
 import { getCustomFields, getDefaultFieldValue } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
+const PRES_VERIFIED = 'presentation complete'
+
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
@@ -338,6 +366,18 @@ export default {
     }
   },
   computed: {
+    acceptsVerifiedCredentials () {
+      return get(this.notification, 'rawGroup.public[0].acceptsVerifiedCredentials')
+    },
+    presentation () {
+      return get(this.notification, 'presentation')
+    },
+    isPresentation () {
+      return this.acceptsVerifiedCredentials && this.presentation
+    },
+    presVerified () {
+      return this.isPresentation && this.presentation.state === PRES_VERIFIED
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -551,5 +591,8 @@ export default {
 }
 .v-input--radio-group__input label {
   font-size: 14px;
+}
+.presPending {
+  background-color: #e0dede;
 }
 </style>

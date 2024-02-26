@@ -29,6 +29,7 @@ rm -rf ./www;
 
 # Bundle the new frontend
 section "Bundling UI"
+# comment to skip during backend bundle debugging
 ./scripts/build-ui.sh;
 
 # Bundle the new backend

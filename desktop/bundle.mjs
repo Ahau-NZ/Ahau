@@ -1,7 +1,8 @@
 import * as esbuild from 'esbuild'
 import dirnameFix from 'esbuild-plugin-fileloc'
+import fs from 'node:fs'
 
-await esbuild.build({
+const result = await esbuild.build({
   entryPoints: ['main.js'],
   bundle: true,
   platform: 'node',
@@ -17,5 +18,9 @@ await esbuild.build({
     // NOTE this plugin has been patched (see /patches/esbuild-plugin-fileloc.diff)
     // It was installing absolute paths (encoding the directories of the building computer!)
   ],
-  outfile: 'main.bundle.js'
+  outfile: 'main.bundle.js',
+  metafile: true
 })
+
+fs.writeFileSync('meta.json', JSON.stringify(result.metafile))
+// check it out: https://esbuild.github.io/analyze/

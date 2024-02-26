@@ -1,0 +1,11 @@
+diff --git a/node_modules/@atala/prism-wallet-sdk/index.cjs b/node_modules/@atala/prism-wallet-sdk/index.cjs
+index 9bfb79c..4875fb1 100644
+--- a/node_modules/@atala/prism-wallet-sdk/index.cjs
++++ b/node_modules/@atala/prism-wallet-sdk/index.cjs
+@@ -1,5 +1 @@
+-module.exports =
+-    (typeof window !== 'undefined') ?
+-        require('./build/browser/index.cjs')
+-        :
+-        require('./build/node/index.cjs')
++module.exports = require('./build/node/index.cjs')

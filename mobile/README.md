@@ -127,13 +127,12 @@ NOTES:
     - see `mobile/patches/nodejs-mobile-cordova+*.patch`
     - this was done because somehow gradle was picking up wrong npm version
 
-- buggy android setup? Burn them all:
+- buggy android setup? Burn them all (and start again):
     ```bash
     $ cd mobile
-    $ rm -rf node_module platform plugins
-    $ npm i
-    $ npm run setup
+    $ npm run burn-them-all
     ```
+    - you might need to hit mobile/www too
 
 ```bash
 $ npm install
@@ -201,7 +200,9 @@ Put both files in:
 When all of that is set up, just run
 
 ```bash
-$ npm run release:android   # from root folder
+$ cd projects/ahau          # root folder of ahau repo
+$ nvm use 12                # must be node 12
+$ npm run release:android
 // builds an apk to android
 ```
 

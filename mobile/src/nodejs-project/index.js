@@ -1,44 +1,21 @@
 /* eslint-disable brace-style */
+require('./monkey-patches.js')
+
 const SecretStack = require('secret-stack')
 const { ahau: env } = require('ahau-env')()
 const cordova = require('cordova-bridge')
 const pull = require('pull-stream')
 
 const config = require('./ssb.config')()
+const plugins = require('./ssb.plugins')
+const startAtalaPrism = require('./atala-prism')
 
 // eslint-disable-next-line no-useless-call
 const ssb = SecretStack({ appKey: env.caps.shs })
-  // .use(require('ssb-master'))
-  .use(require('ssb-db'))
-  .use(require('ssb-query'))
-  .use(require('ssb-backlinks'))
-
-  // .use(require('ssb-no-auth'))
-  .use(require('ssb-conn')) // needs: db, friends, lan
-  .use(require('ssb-lan'))
-  .use(require('ssb-replicate')) // needs: db
-  .use(require('ssb-friends')) // needs: db, replicate
-  // .use(require('ssb-promiscuous')) // needs: conn, friends
-
-  .use(require('ssb-blobs'))
-  .use(require('ssb-serve-blobs')) // needs: blobs
-  .use(require('ssb-hyper-blobs'))
-
-  .use(require('ssb-invite')) // needs: db, conn
-  .use(require('ssb-tribes'))
-  .use(require('ssb-tribes-registration'))
-
-  .use(require('ssb-profile'))
-  .use(require('ssb-settings'))
-  .use(require('ssb-story'))
-  .use(require('ssb-artefact'))
-  .use(require('ssb-whakapapa'))
-  .use(require('ssb-submissions'))
-
-  .use(require('ssb-ahau'))
-  .use(require('ssb-recps-guard'))
-
+  .use(plugins)
   .call(null, config)
+
+startAtalaPrism(ssb)
 
 cordova.channel.on('ssb', ({ type = 'async', path, args }) => {
   let func = ssb

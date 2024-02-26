@@ -1,5 +1,5 @@
 <template>
-  <v-expansion-panels light v-model="panel">
+  <v-expansion-panels light v-model="panel" :class="isReg ? 'ma-2': ''" :flat="isReg">
     <v-expansion-panel :readonly="!mobile" align-start class="align-start"
       :style="
         `background: linear-gradient(to right, rgba(255, 255, 255, 0.99), 60%, rgba(255, 255, 255, 0.8)), url(`+ image + `);
@@ -7,7 +7,7 @@
       "
       >
       <v-expansion-panel-header class="pa-0" hide-actions >
-        <v-col cols="5">
+        <v-col :cols="isReg ? 3 : 5">
           <v-img
             :src="image"
             class="grey darken-4 align-end"
@@ -19,6 +19,10 @@
           </v-row>
           <v-row class="title text-uppercase">
             {{ tribe.preferredName }}
+          </v-row>
+          <v-row v-if="isReg" class="pt-4 overline success--text font-weight-bold">
+            <v-icon color="success">mdi-checkbox-marked-circle</v-icon>
+            <span class="pa-1">{{ t('state') }}</span>
           </v-row>
         </v-col>
       </v-expansion-panel-header>
@@ -69,7 +73,8 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'CredentialPreview',
   props: {
-    credential: Object
+    credential: Object,
+    isReg: Boolean
   },
   computed: {
     ...mapGetters('tribe', ['tribes']),
@@ -77,7 +82,7 @@ export default {
       return this.mobile ? null : 0
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.isReg
     },
     tribe () {
       const id = this.credential?.credentialSubject.memberOf.tribeId

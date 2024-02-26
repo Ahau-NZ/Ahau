@@ -366,6 +366,40 @@
                 <v-checkbox v-model="step5Checkbox" label="I Agree"/>
               </v-stepper-content>
 
+              <!-- STEP 6 Agree to present presentations -->
+              <v-stepper-step
+                v-if="acceptsVerifiedCredentials"
+                :step="acceptsCredsStep"
+                :complete="step > acceptsCredsStep"
+                :color="step6Checkbox ? 'green' : 'black'"
+              >
+                {{ translateIdentity('presTnC.title') }}
+              </v-stepper-step>
+
+              <v-stepper-content
+                v-if="acceptsVerifiedCredentials"
+                :step="acceptsCredsStep"
+              >
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    <p><strong>{{ translateIdentity('presTnC.about') }}</strong></p>
+                    <p>{{ translateIdentity('credsTnC.register') }}</p>
+                    <div class="pl-4">
+                      <p>{{ translateIdentity('presTnC.present') }}</p>
+                      <p>{{ translateIdentity('presTnC.accept') }}</p>
+                      <p>{{ translateIdentity('presTnC.usage') }}</p>
+                    </div>
+                    <p>{{ translateIdentity('credsTnC.video') }}<a href="https://www.youtube.com/watch?v=Ew-_F-OtDFI&list=RDLVlixl_FRhlhE&index=2&ab_channel=MicrosoftSecurity">video</a></p>
+                  </v-card-text>
+                </v-card>
+                <v-checkbox v-model="step6Checkbox" label="I Agree"/>
+              </v-stepper-content>
+
               <!-- Step 6: Comment -->
               <v-stepper-step :step="lastStep">
                 {{ t('sendComment') }}
@@ -452,6 +486,7 @@ export default {
       step3Checkbox: null,
       step4Checkbox: null,
       step5Checkbox: null,
+      step6Checkbox: null,
       formData: clone(this.profile),
       showEditDialog: false,
 
@@ -489,6 +524,9 @@ export default {
     },
     step5Checkbox (isStep5) {
       if (isStep5) this.step = 6
+    },
+    step6Checkbox (isStep6) {
+      if (isStep6) this.step = this.lastStep
     }
   },
   computed: {
@@ -498,8 +536,18 @@ export default {
     issuesVerifiedCredentials () {
       return this.tribeSettings.issuesVerifiedCredentials
     },
+    acceptsVerifiedCredentials () {
+      return this.tribeSettings.acceptsVerifiedCredentials
+    },
+    acceptsCredsStep () {
+      const step = this.lastStep - 1
+      return step
+    },
     lastStep () {
-      return this.issuesVerifiedCredentials ? 6 : 5
+      let step = 5
+      if (this.issuesVerifiedCredentials) step++
+      if (this.acceptsVerifiedCredentials) step++
+      return step
     },
     personalProfile () {
       return {

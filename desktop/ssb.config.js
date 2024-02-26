@@ -9,6 +9,10 @@ const merge = require('lodash.merge')
 const appPath = envPaths(process.env.APP_NAME || env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
+// TEMP - this is a testing net hosted by atala-prism team
+// We will ultimately host an Ahau mediator
+const MEDIATOR_DID = 'did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjoiaHR0cHM6Ly9iZXRhLW1lZGlhdG9yLmF0YWxhcHJpc20uaW8iLCJyIjpbXSwiYSI6WyJkaWRjb21tL3YyIl19'
+
 const core = {
   path: appPath,
   port: env.ahau.port,
@@ -29,6 +33,9 @@ const core = {
   },
   graphql: {
     port: env.ahau.graphql.port
+  },
+  atalaPrism: {
+    mediatorDID: MEDIATOR_DID
   },
   recpsGuard: {
     allowedTypes: [

@@ -72,6 +72,7 @@ export const APPLICATION_FRAGMENT = gql`
 
         # public settings
         issuesVerifiedCredentials
+        acceptsVerifiedCredentials
       }
       private {
         ...CommunityFragment
@@ -107,6 +108,21 @@ export const APPLICATION_FRAGMENT = gql`
       ...on GroupApplicationDecisionHistory {
         decision {
           accepted
+        }
+      }
+    }
+    credentialPresentations {
+      state
+      credentials {
+        credentialSubject {
+          memberOf {
+            tribeId
+            tribeName
+          }
+          person {
+            dateOfBirth
+            fullName
+          }
         }
       }
     }

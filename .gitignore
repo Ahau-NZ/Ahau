@@ -4,6 +4,7 @@ yarn.lock
 
 /desktop/build/package-lock.json
 /desktop/main.bundle.js
+/desktop/meta.json
 /releases
 
 # Electron
