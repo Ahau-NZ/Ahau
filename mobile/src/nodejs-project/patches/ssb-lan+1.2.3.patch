@@ -1,0 +1,23 @@
+diff --git a/node_modules/ssb-lan/lib/index.js b/node_modules/ssb-lan/lib/index.js
+index 7776e14..07b1074 100644
+--- a/node_modules/ssb-lan/lib/index.js
++++ b/node_modules/ssb-lan/lib/index.js
+@@ -133,9 +133,18 @@ let LAN = class LAN {
+     getBroadcastIPs() {
+         if (process.platform === 'ios')
+             return ['255.255.255.255'];
++
+         const details = nonPrivateIP(null, IP.isPrivate, true);
+         if (!details)
+             return ['255.255.255.255'];
++
++        // NOTE - not sure why, by on android the details are coming back
++        // as the string of the address. Here we just guess the netmask :shrug:
++        if (typeof details === 'string') {
++          const { broadcastAddress } = IP.subnet(details, '255.255.255.0');
++          return [broadcastAddress];
++        }
++
+         const { broadcastAddress } = IP.subnet(details.address, details.netmask);
+         return [broadcastAddress];
+     }

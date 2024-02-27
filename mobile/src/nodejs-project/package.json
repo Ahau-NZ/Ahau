@@ -25,7 +25,6 @@
     "core-js": "^3.36.0",
     "fsctl": "^1.0.0",
     "graphql": "^16.8.1",
-    "ip": "^1.1.5",
     "leveldown-nodejs-mobile": "^5.4.1-1",
     "mkdirp": "^0.5.1",
     "node-fetch": "^2.7.0",
