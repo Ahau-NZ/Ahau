@@ -20,6 +20,12 @@ To ensure this version is used everywhere, two modules were pinned to keep `sodi
   }
 ```
 
+### ip
+
+This module has a known vulnerability in version `v1.1.8`, this was patched in `v1.1.9`,
+but unfortunately this introduced another bug! https://github.com/indutny/node-ip/issues/146
+
+We should update this module later.
 
 
 ### NPM v6
