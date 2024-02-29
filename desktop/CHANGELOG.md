@@ -1,5 +1,16 @@
 # Changelog | Ahau desktop
 
+## v2.26.1
+
+### Fixes
+- patch update `ssb-invite` (`rcp.close` callback)
+- revert to `ip@1.1.8` which has vulerabilities but doesn't throw on domain
+  names!
+- minor update `ssb-hyper-blobs` (use a new DHT bootstrap node that we run,
+  instead of the default ones that have been taken down. Fixes sharing of large
+  artefacts
+- patch update `ssb-atala-prism`
+
 ## v2.26.0
 
 ### Features
@@ -7,11 +18,6 @@
   toggled in the tribe settings (requires config setup, please get in touch if
   you're interested)
 - updated translations and added machine translation of Dutch language
-
-### Fixes
-- updates modules depending on `artefact-store`, to use a new DHT bootstrap node
-  that we run, instead of the default ones that have been taken down. Fixes
-  sharing of large artefacts
 
 ## v2.25.6
 
