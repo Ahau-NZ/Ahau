@@ -1,0 +1,30 @@
+diff --git a/node_modules/ssb-conn-hub/lib/index.js b/node_modules/ssb-conn-hub/lib/index.js
+index e48425d..bab37e3 100644
+--- a/node_modules/ssb-conn-hub/lib/index.js
++++ b/node_modules/ssb-conn-hub/lib/index.js
+@@ -94,10 +94,21 @@ function inferPeerType(address, meta) {
+         var netAddr = address.split('~')[0];
+         var parsed = msNetPlugin.parse(netAddr);
+         if (parsed && parsed.host) {
+-            if (IP.isPrivate(parsed.host))
+-                return 'lan';
+-            else
+-                return 'internet';
++            try {
++              if (IP.isPrivate(parsed.host))
++                  return 'lan';
++              else
++                  return 'internet';
++            } catch (err) {
++              // NOTE this was happening because of a bug in ip@1.1.9
++              // which fails to parse domain names :D
++              console.log('problem with inferPeerType:', {
++                err,
++                baseAddress: address,
++                parsedHost: parsed.host
++              })
++              return 'internet'
++            }
+         }
+     }
+     return;

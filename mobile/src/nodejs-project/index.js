@@ -10,6 +10,8 @@ const config = require('./ssb.config')()
 const plugins = require('./ssb.plugins')
 const startAtalaPrism = require('./atala-prism')
 
+console.log('BUILD 2024-02-29, 14:11am NZT')
+
 // eslint-disable-next-line no-useless-call
 const ssb = SecretStack({ appKey: env.caps.shs })
   .use(plugins)

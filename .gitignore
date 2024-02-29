@@ -3,6 +3,7 @@ node_modules
 yarn.lock
 
 /desktop/build/package-lock.json
+/desktop/build/win/signing-cert.pem
 /desktop/main.bundle.js
 /desktop/meta.json
 /releases

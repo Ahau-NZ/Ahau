@@ -1,0 +1,44 @@
+diff --git a/node_modules/ssb-tribes/rebuild-manager.js b/node_modules/ssb-tribes/rebuild-manager.js
+index 5d6d1bb..c40b729 100644
+--- a/node_modules/ssb-tribes/rebuild-manager.js
++++ b/node_modules/ssb-tribes/rebuild-manager.js
+@@ -20,6 +20,7 @@ module.exports = class RebuildManager {
+ 
+     this.requests = new Requests()
+     this.nextRequests = new Requests()
++    this.progress = () => ssb.progress().indexes
+ 
+     ssb.rebuild.hook((rebuild, [cb]) => {
+       log('(ﾉ´ヮ´)ﾉ*:･ﾟ✧')
+@@ -66,9 +67,30 @@ module.exports = class RebuildManager {
+     if (this.isInitializing) return
+ 
+     this.isInitializing = true
++    let count = 0
++    let scale, percentDone, done, notDone
++
+     const interval = setInterval(
+       () => {
+-        if (this.isIndexing) return
++        if (this.isIndexing) {
++          count++
++          if (count % 20 !== 0) return // every 2 seconds
++
++          const { current, target } = this.progress()
++          percentDone = current / target // proportion
++
++          if (!scale) scale = 40 / target
++          done = Math.round(percentDone * target * scale)
++          notDone = Math.round(target * scale) - done
++          console.log(
++            [
++              ...Array(done).fill('█'),
++              ...Array(notDone).fill('░')
++            ].join(''),
++            current, '/', target
++          )
++          return
++        }
+ 
+         this.ssb.rebuild()
+         this.isInitializing = false
