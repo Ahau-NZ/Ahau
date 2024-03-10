@@ -70,9 +70,9 @@
         </v-btn>
       </template>
       <v-progress-linear
-        v-if="syncing"
-        :active="syncing"
-        :indeterminate="syncing"
+        v-if="isJoiningPataka"
+        :active="isJoiningPataka"
+        :indeterminate="isJoiningPataka"
         absolute
         bottom
         color="#B71C1C"
@@ -130,9 +130,9 @@
     </v-navigation-drawer>
 
     <v-progress-linear
-      v-if="syncing"
-      :active="syncing"
-      :indeterminate="syncing"
+      v-if="isJoiningPataka"
+      :active="isJoiningPataka"
+      :indeterminate="isJoiningPataka"
       absolute
       bottom
       color="#B71C1C"
@@ -210,8 +210,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters(['whoami', 'storeDialog', 'navComponent']),
     ...mapGetters('archive', ['showStory']),
+    ...mapGetters('loading', ['isJoiningPataka']),
     // mix (T_T) why is the navComponent in the archive store??
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
@@ -237,8 +238,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions('tribe', ['updateTribes']),
     ...mapActions(['setWhoami', 'setDialog']),
+    ...mapActions('tribe', ['updateTribes']),
     ...mapActions('archive', ['toggleShowStory']),
     ...mapActions('notifications', ['getAllNotifications']),
     showMobileBackButton ($event) {

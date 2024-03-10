@@ -165,7 +165,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setSyncing']),
+    ...mapActions('loading', ['setJoiningPataka']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('pataka', ['blockPataka', 'unblockPataka']),
 
@@ -175,7 +175,7 @@ export default {
         message: text,
         color: 'green'
       })
-      this.setSyncing(true)
+      this.setJoiningPataka(true)
 
       // update to check ssb.status
     },

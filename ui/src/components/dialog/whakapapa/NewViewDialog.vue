@@ -95,7 +95,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setCurrentAccess']),
+    ...mapActions('loading', ['setLoading']),
+    ...mapActions(['setCurrentAccess']),
     closeOrCancel () {
       // need to reset the access, only when the close or cancel button was pressed
       // not when the submit is pressed

@@ -36,7 +36,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading']),
+    ...mapActions('loading', ['setLoading']),
     close () {
       this.$emit('close')
     },

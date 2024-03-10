@@ -225,11 +225,10 @@ export default {
     ...mapActions('person', ['loadPersonList', 'setSelectedProfileId', 'deletePerson', 'loadPersonFull']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('whakapapa', ['bulkCreateWhakapapaView']),
-    ...mapActions(['setLoading']),
     ...mapActions('community', ['updateCommunity', 'updateCommunityFieldDefs']),
     ...mapActions('tribe', ['loadTribe']),
-    ...mapActions(['setCurrentAccess']),
-    ...mapActions(['setLoading', 'setDialog', 'setCurrentAccess']),
+    ...mapActions('loading', ['setLoading']),
+    ...mapActions(['setDialog', 'setCurrentAccess']),
     addPerson () {
       this.setDialog({
         active: 'new-person',

@@ -1,16 +1,16 @@
 import test from 'tape'
 
-import Root from './root.mjs'
+import Loading from './index.mjs'
 
 const NEW_LOADING_TIMEOUT = 100
 
-test('store/root - loadingState', async t => {
-  const root = Root({})
+test('store/loading - loadingState', async t => {
+  const loading = Loading({})
 
-  root.state.loadingTimeout = NEW_LOADING_TIMEOUT
+  loading.state.loadingTimeout = NEW_LOADING_TIMEOUT
   // make the timeout short so we can run tests fast
 
-  root.mutations.updateIndexingData(root.state, {
+  loading.mutations.updateIndexingData(loading.state, {
     isIndexing: true,
     isRebuilding: false,
     percentageIndexed: 99,
@@ -18,7 +18,7 @@ test('store/root - loadingState', async t => {
   })
 
   t.equal(
-    root.getters.loadingState(root.state),
+    loading.getters.loadingState(loading.state),
     false,
     'loading false as have not been indexing for more that 2 seconds'
   )
@@ -26,22 +26,22 @@ test('store/root - loadingState', async t => {
   await new Promise(resolve => setTimeout(resolve, NEW_LOADING_TIMEOUT + 10))
 
   t.equal(
-    root.getters.loadingState(root.state),
+    loading.getters.loadingState(loading.state),
     50,
     'loading state appears as have been indexing for > 2 seconds now'
   )
 
-  root.mutations.updateIndexingData(root.state, {
+  loading.mutations.updateIndexingData(loading.state, {
     isIndexing: false,
     isRebuilding: false,
     percentageIndexed: 100,
     percentageIndexedSinceStartup: 100
   })
 
-  t.equal(root.state.indexingSince, null, 'indexingSince zeroed')
+  t.equal(loading.state.indexingSince, null, 'indexingSince zeroed')
 
   t.equal(
-    root.getters.loadingState(root.state),
+    loading.getters.loadingState(loading.state),
     false,
     'loading done'
   )

@@ -129,15 +129,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isKaitiaki']),
+    ...mapGetters(['isKaitiaki', 'storeDialog']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
-    ...mapGetters(['storeDialog', 'loadingState']),
+    ...mapGetters('loading', ['isIndexing']),
     isMobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
-      if (typeof this.loadingState === 'boolean') return 4000
-      else return 500
+      return this.isIndexing ? 500 : 4000
     },
     enableMenu () {
       if (
@@ -157,9 +156,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
+    ...mapActions(['setWhoami']),
     ...mapActions('tribe', ['loadTribe', 'resetCurrentTribe']),
     ...mapActions('analytics', ['appUsed']),
+    ...mapActions('loading', ['setLoading', 'setIndexingData']),
     validateRoute () {
       if (this.isPersonalTribe) return
 
