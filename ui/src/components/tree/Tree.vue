@@ -150,7 +150,6 @@ export default {
   },
 
   methods: {
-    ...mapActions('loading', ['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', ['saveWhakapapaView', 'toggleNodeCollapse', 'getRecordCount']),
 

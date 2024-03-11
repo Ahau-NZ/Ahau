@@ -33,7 +33,6 @@ import Spinner from '@/components/Spinner.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import AlertMessage from './components/dialog/AlertMessage.vue'
-import { getIndexes } from '@/store/modules/settings/apollo-helpers'
 
 import { mapGetters, mapActions } from 'vuex'
 import pkg from '../../desktop/package.json'
@@ -55,14 +54,6 @@ export default {
     Spinner,
     DialogHandler,
     AlertMessage
-  },
-  apollo: {
-    indexes: {
-      ...getIndexes,
-      pollInterval () {
-        return this.indexPollingInterval
-      }
-    }
   },
   created () {
     // try to be smart when picking the default language
@@ -88,6 +79,8 @@ export default {
     if (import.meta.env.VITE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
     }
+
+    this.startIndexingPoll()
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each .route.
@@ -104,14 +97,6 @@ export default {
         this.appUsed() // analytics logging some usage
       },
       immediate: true
-    },
-    indexes: {
-      deep: true,
-      handler (data) {
-        // if (this.$route.name === 'community/whakapapa/:whakapapaId' || this.$route.name === 'person/whakapapa/:whakapapaId') return
-
-        this.setIndexingData(data)
-      }
     },
     async '$route.params.tribeId' (id) {
       if (id) {
@@ -131,12 +116,8 @@ export default {
   computed: {
     ...mapGetters(['isKaitiaki', 'storeDialog']),
     ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe']),
-    ...mapGetters('loading', ['isIndexing']),
     isMobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    indexPollingInterval () {
-      return this.isIndexing ? 500 : 4000
     },
     enableMenu () {
       if (
@@ -159,7 +140,7 @@ export default {
     ...mapActions(['setWhoami']),
     ...mapActions('tribe', ['loadTribe', 'resetCurrentTribe']),
     ...mapActions('analytics', ['appUsed']),
-    ...mapActions('loading', ['setLoading', 'setIndexingData']),
+    ...mapActions('loading', ['setLoading', 'startIndexingPoll']),
     validateRoute () {
       if (this.isPersonalTribe) return
 

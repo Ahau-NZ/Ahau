@@ -275,7 +275,6 @@ export default {
   },
   methods: {
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('loading', ['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', [
       'loadWhakapapaView', 'resetWhakapapaView',

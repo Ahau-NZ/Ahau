@@ -117,6 +117,7 @@ NOTES:
     - change the `--release` flag to `--debug` in `scripts/run.sh`
     - connect the phone by USB
     - enable USB debugging
+    - install `adb install mobile/platforms/android/app/build/outputs/apk/debug/app-debug.apk`
     - open the app
     - open `chrome://inspect#devices` in Chrome / Chromium
       - you may have to run `adb devices` to get the daemon running for it to show up in Chrome

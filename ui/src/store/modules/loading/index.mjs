@@ -3,9 +3,11 @@
 // import pull from 'pull-stream'
 // import pullParaMap from 'pull-paramap'
 // import Pushable from 'pull-pushable'
+import { promisify } from 'util'
 
-// import {
-// } from './apollo-helpers'
+import {
+  getIndexes
+} from './apollo-helpers'
 
 const SECOND = 1000
 const DEFAULT_LOADING_TIMEOUT = 2 * SECOND
@@ -43,19 +45,12 @@ export default function (apollo) {
     isLoading: state => state.isLoading,
     isIndexing: state => state.isRebuilding || state.isIndexing,
 
-    // loadingState: state => {
     indexingPercent: state => {
-      if (state.isRebuilding) {
-        return (
-          state.percentageIndexed || // TODO check this right one to return?
-          state.percentageIndexedSinceStartup
-        )
-      }
-
-      if (hasBeenIndexingForABit(state.indexingSince)) {
+      if (
+        state.isRebuilding ||
+        hasBeenIndexingForABit(state.indexingSince)
         // we have this so it doesn't pop up which indexing like 2 newly replicated messages!
-        return state.percentageIndexedSinceStartup
-      }
+      ) return state.percentageIndexedSinceStartup
     },
 
     isJoiningPataka: state => {
@@ -92,8 +87,6 @@ export default function (apollo) {
   }
 
   const actions = {
-    // async personListAdd ({ commit, dispatch, getters }, id) {
-    // }
     setLoading ({ commit }, loading) {
       if (loading === false) commit('updateLoadingLabel', '')
       commit('updateLoading', loading)
@@ -107,6 +100,47 @@ export default function (apollo) {
     },
     setJoiningPataka ({ commit }, isJoiningPataka) {
       commit('updateJoiningPataka', isJoiningPataka)
+    },
+
+    startIndexingPoll ({ state, commit, dispatch }, lastCallTimedOut = false) {
+      // NOTE when the backend is indexing/ rebuilding on slow devices,
+      // sometimes graphql replies don't come quickly
+      // If there is a timeout of > 2s we:
+      // - cancel this request
+      // - manually call "setLoading" so the user sees something is happening
+      // - tell the next poll "lastCallTimedOut" so that we can later undo
+      //   "setLoading" when data is flowing again
+
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 2000)
+
+      return apollo.query({
+        ...getIndexes,
+        context: {
+          fetchOptions: {
+            signal: controller.signal
+          }
+        }
+      })
+        .then(res => {
+          clearTimeout(timeout)
+          if (lastCallTimedOut) dispatch('setLoading', false)
+
+          if (res?.data?.indexes) commit('updateIndexingData', res.data.indexes)
+          else throw Error('no indexing data')
+        })
+        .catch(err => {
+          if (err.message.match(/user aborted/i)) {
+            dispatch('setLoading', true)
+            lastCallTimedOut = true
+          } // eslint-disable-line
+          else console.log('Error polling indexing status', err)
+        })
+        .finally(() => {
+          const isIndexing = state.isIndexing || lastCallTimedOut
+          const delay = isIndexing ? 750 : 4000
+          setTimeout(dispatch, delay, 'startIndexingPoll', lastCallTimedOut)
+        })
     }
   }
 

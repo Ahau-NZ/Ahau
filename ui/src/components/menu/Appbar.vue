@@ -189,11 +189,16 @@ export default {
   apollo: {
     tribes: {
       ...getTribes,
-      pollInterval: 10e3
+      pollInterval: 10e3 // polling
     }
   },
-  created () {
-    this.getNotifications()
+  mounted () {
+    this.getAllNotifications()
+    this.polling = setInterval(this.getAllNotifications, 7e3)
+
+    if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') {
+      this.getCurrentIdentity()
+    }
   },
   beforeDestroy () {
     clearInterval(this.polling)
@@ -231,12 +236,6 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-  mounted () {
-    this.getAllNotifications()
-    if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') {
-      this.getCurrentIdentity()
-    }
-  },
   methods: {
     ...mapActions(['setWhoami', 'setDialog']),
     ...mapActions('tribe', ['updateTribes']),
@@ -247,9 +246,6 @@ export default {
     },
     isOutlinedTribe (tribe) {
       return this.$route.params.tribeId === tribe.id
-    },
-    getNotifications () {
-      this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()

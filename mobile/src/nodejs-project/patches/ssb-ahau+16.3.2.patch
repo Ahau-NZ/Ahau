@@ -1,32 +1,8 @@
 diff --git a/node_modules/ssb-ahau/src/graphql/index.js b/node_modules/ssb-ahau/src/graphql/index.js
-index c1341af..2970e5b 100644
+index c1341af..690f753 100644
 --- a/node_modules/ssb-ahau/src/graphql/index.js
 +++ b/node_modules/ssb-ahau/src/graphql/index.js
-@@ -22,7 +22,6 @@ const AtalaPrism = require('ssb-atala-prism/graphql')
- const Author = require('./author')
- const GroupInit = require('./group-init')
- const Backup = require('./backup')
--const Stats = require('./stats')
- 
- module.exports = async function graphqlServer (ssb) {
-   const PORT = (ssb.config.graphql && ssb.config.graphql.port) || env.graphql.port
-@@ -46,7 +45,6 @@ module.exports = async function graphqlServer (ssb) {
- 
-   const invite = Invite(ssb)
-   const backup = Backup(ssb)
--  const stats = Stats(ssb)
-   const atalaPrism = AtalaPrism(ssb)
- 
-   let context = {}
-@@ -68,7 +66,6 @@ module.exports = async function graphqlServer (ssb) {
-       author,
-       groupInit,
-       invite,
--      stats,
-       backup,
-       atalaPrism
-     ],
-@@ -87,12 +84,12 @@ module.exports = async function graphqlServer (ssb) {
+@@ -87,12 +87,12 @@ module.exports = async function graphqlServer (ssb) {
      cordova-bridge is used in Cordova, DO NOT REMOVE!
      The if statement is uncommented by patch-package in the mobile platform
    */
@@ -45,3 +21,30 @@ index c1341af..2970e5b 100644
  
    return httpServer
  }
+diff --git a/node_modules/ssb-ahau/src/graphql/stats.js b/node_modules/ssb-ahau/src/graphql/stats.js
+index fe98fa0..a60d05a 100644
+--- a/node_modules/ssb-ahau/src/graphql/stats.js
++++ b/node_modules/ssb-ahau/src/graphql/stats.js
+@@ -1,5 +1,4 @@
+ const gql = require('graphql-tag')
+-const si = require('systeminformation')
+ const fs = require('fs')
+ const path = require('path')
+ 
+@@ -77,15 +76,7 @@ function Resolvers (ssb, externalGetters) {
+ 
+   const resolvers = {
+     Query: {
+-      fileSystemStats: async () => {
+-        const fsSize = await si.fsSize()
+-        const sizes = fsSize
+-          .filter(fs => appPath.startsWith(fs.mount))
+-          .sort((a, b) => b.mount.length - a.mount.length) // longest first
+-
+-        if (!sizes.length) return null
+-        return sizes[0]
+-      },
++      fileSystemStats: () => null,
+       ahauDBStats: async () => {
+         return {}
+       },
