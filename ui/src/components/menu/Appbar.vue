@@ -70,9 +70,9 @@
         </v-btn>
       </template>
       <v-progress-linear
-        v-if="syncing"
-        :active="syncing"
-        :indeterminate="syncing"
+        v-if="isJoiningPataka"
+        :active="isJoiningPataka"
+        :indeterminate="isJoiningPataka"
         absolute
         bottom
         color="#B71C1C"
@@ -130,9 +130,9 @@
     </v-navigation-drawer>
 
     <v-progress-linear
-      v-if="syncing"
-      :active="syncing"
-      :indeterminate="syncing"
+      v-if="isJoiningPataka"
+      :active="isJoiningPataka"
+      :indeterminate="isJoiningPataka"
       absolute
       bottom
       color="#B71C1C"
@@ -189,11 +189,16 @@ export default {
   apollo: {
     tribes: {
       ...getTribes,
-      pollInterval: 10e3
+      pollInterval: 10e3 // polling
     }
   },
-  created () {
-    this.getNotifications()
+  mounted () {
+    this.getAllNotifications()
+    this.polling = setInterval(this.getAllNotifications, 7e3)
+
+    if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') {
+      this.getCurrentIdentity()
+    }
   },
   beforeDestroy () {
     clearInterval(this.polling)
@@ -210,8 +215,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters(['whoami', 'storeDialog', 'navComponent']),
     ...mapGetters('archive', ['showStory']),
+    ...mapGetters('loading', ['isJoiningPataka']),
     // mix (T_T) why is the navComponent in the archive store??
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
@@ -230,15 +236,9 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-  mounted () {
-    this.getAllNotifications()
-    if (import.meta.env.VITE_APP_PLATFORM !== 'cordova') {
-      this.getCurrentIdentity()
-    }
-  },
   methods: {
-    ...mapActions('tribe', ['updateTribes']),
     ...mapActions(['setWhoami', 'setDialog']),
+    ...mapActions('tribe', ['updateTribes']),
     ...mapActions('archive', ['toggleShowStory']),
     ...mapActions('notifications', ['getAllNotifications']),
     showMobileBackButton ($event) {
@@ -246,9 +246,6 @@ export default {
     },
     isOutlinedTribe (tribe) {
       return this.$route.params.tribeId === tribe.id
-    },
-    getNotifications () {
-      this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()

@@ -230,7 +230,7 @@ export default {
     this.loadWhakapapaView(this.$route.params.whakapapaId)
   },
   computed: {
-    ...mapGetters(['whoami', 'isKaitiaki', 'loadingState']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapGetters('person', ['selectedProfile', 'isLoadingProfiles', 'selectedProfileId']),
     ...mapGetters('tribe', ['tribes']),
     ...mapGetters('whakapapa', ['whakapapaView', 'isLoadingWhakapapa']),
@@ -275,7 +275,6 @@ export default {
   },
   methods: {
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions(['setLoading']),
     ...mapActions('person', ['setSelectedProfileById']),
     ...mapActions('whakapapa', [
       'loadWhakapapaView', 'resetWhakapapaView',

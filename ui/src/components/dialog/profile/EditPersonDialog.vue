@@ -160,10 +160,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading']),
     ...mapActions('person', ['updatePerson', 'deletePerson']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('settings', ['deleteAhau']),
+    ...mapActions('loading', ['setLoading']),
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
     },

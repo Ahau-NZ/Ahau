@@ -6,8 +6,8 @@ import { ACCESS_KAITIAKI } from '../../../lib/constants.mjs'
 export default {
   // create a whakapapa from rows containing a profile + link
   async bulkCreateWhakapapaView ({ dispatch }, { whakapapaViewInput, rows, type }) {
-    dispatch('setLoading', true, { root: true })
-    dispatch('setLoadingLabel', 'importing CSV...', { root: true })
+    dispatch('loading/setLoading', true, { root: true })
+    dispatch('loading/setLoadingLabel', 'importing CSV...', { root: true })
 
     const { recps } = whakapapaViewInput
     if (!recps) throw new Error('no recps found on the import input!')
@@ -20,8 +20,8 @@ export default {
     for (let i = 0; i < length; i += chunkSize) {
       // show progress percentage
       const percentage = Math.round((Object.keys(totalProfiles).length / length * 100) * 10) / 10 || true
-      dispatch('setLoading', percentage, { root: true })
-      dispatch('setLoadingLabel', 'creating profiles...', { root: true })
+      dispatch('loading/setLoading', percentage, { root: true })
+      dispatch('loading/setLoadingLabel', 'creating profiles...', { root: true })
       // split out 100 profiles
       const chunk = rows.slice(i, i + chunkSize)
       // create profiles
@@ -34,13 +34,13 @@ export default {
 
     if (totalLinks.length) {
       // show progress percentage
-      dispatch('setLoading', true, { root: true })
-      dispatch('setLoadingLabel', 'adding family links...', { root: true })
+      dispatch('loading/setLoading', true, { root: true })
+      dispatch('loading/setLoadingLabel', 'adding family links...', { root: true })
 
       for (let i = 0; i < length; i += chunkSize) {
         // show progress percentage
         const percentage = Math.round((i / totalLinks.length * 100) * 10) / 10 || true
-        dispatch('setLoading', percentage, { root: true })
+        dispatch('loading/setLoading', percentage, { root: true })
         // split 100 links
         const linksChunk = totalLinks.slice(i, i + chunkSize)
         // create links
@@ -92,7 +92,7 @@ export default {
     )
       .catch((err) => {
         console.error('failed to create profile with csv bulk create', err)
-        dispatch('setLoading', false, { root: true })
+        dispatch('loading/setLoading', false, { root: true })
       })
 
     if (!res) return

@@ -158,7 +158,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading']),
+    ...mapActions('loading', ['setLoading']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('person', ['createPerson', 'findPersonByName']),
     ...mapActions('whakapapa', ['createWhakapapaView', 'getWhakapapaViews', 'bulkCreateWhakapapaView']),

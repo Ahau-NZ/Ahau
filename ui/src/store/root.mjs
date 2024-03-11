@@ -4,8 +4,6 @@ import Vue from 'vue'
 import { whoami } from '../lib/person-helpers.mjs'
 import { ACCESS_TYPES, ACCESS_KAITIAKI } from '../lib/constants.mjs'
 
-const SECOND = 1000
-
 export default function rootModule (apollo) {
   return {
     state: {
@@ -33,19 +31,8 @@ export default function rootModule (apollo) {
         }
       },
       linkedProfiles: {},
-      loading: false, // boolean
-      loadingLabel: '',
-      loadingTimeout: 2 * SECOND,
       navComponent: 'profile',
 
-      /* indexing data */
-      indexingSince: null,
-      isIndexing: false,
-      isRebuilding: false,
-      percentageIndexed: 100,
-      percentageIndexedSinceStartup: 100,
-
-      syncing: false, // when you're joing a pataka
       goBack: '', // TODO deprecate?
       allowSubmissions: true, // TODO extract to specific domain,
 
@@ -72,26 +59,6 @@ export default function rootModule (apollo) {
         return get(state, 'whoami.linkedProfileIds', []).includes(profileId)
       },
       navComponent: state => state.navComponent,
-      loadingState: state => {
-        if (state.isRebuilding) return state.percentageIndexedSinceStartup
-
-        // if it's been indexing longer than 2 seconds
-        if (
-          state.indexingSince &&
-          (Date.now() - state.indexingSince > state.loadingTimeout)
-        ) {
-          return state.percentageIndexedSinceStartup
-        }
-
-        return state.loading
-      },
-      loadingLabel: state => {
-        if (state.isRebuilding || (state.indexingSince &&
-          (Date.now() - state.indexingSince > state.loadingTimeout)
-        )) return 'Syncing...'
-        else return state.loadingLabel
-      },
-      syncing: state => state.syncing,
       isKaitiaki: (state, getters) => {
         if (getters['tribe/isPersonalTribe']) return true
 
@@ -119,30 +86,6 @@ export default function rootModule (apollo) {
       setNavComponent (state, component) {
         state.navComponent = component
       },
-      updateLoading (state, loading) {
-        state.loading = loading
-      },
-      updateLoadingLabel (state, label) {
-        state.loadingLabel = label
-      },
-      updateIndexingData (state, { isIndexing, isRebuilding, percentageIndexed, percentageIndexedSinceStartup }) {
-        if (!isIndexing && !isRebuilding) state.indexingSince = null
-        else if (!state.isIndexingSince) state.indexingSince = Date.now()
-
-        if (typeof isIndexing === 'boolean') state.isIndexing = isIndexing
-        if (typeof isRebuilding === 'boolean') state.isRebuilding = isRebuilding
-        if (typeof percentageIndexed === 'number') state.percentageIndexed = roundOneDP(percentageIndexed)
-        if (typeof percentageIndexedSinceStartup === 'number') {
-          state.percentageIndexedSinceStartup = roundOneDP(percentageIndexedSinceStartup)
-        }
-      },
-      updateSyncing (state, syncing) {
-        state.syncing = syncing
-        setTimeout(() => {
-          state.syncing = !state.syncing
-        }, 30000)
-      },
-
       updateGoBack (state, id) {
         state.goBack = id
       },
@@ -191,19 +134,6 @@ export default function rootModule (apollo) {
       setCurrentAccess ({ commit }, access) {
         commit('setCurrentAccess', access)
       },
-      setLoading ({ commit }, loading) {
-        if (loading === false) commit('updateLoadingLabel', '')
-        commit('updateLoading', loading)
-      },
-      setLoadingLabel ({ commit }, label) {
-        commit('updateLoadingLabel', label)
-      },
-      setIndexingData ({ commit }, data) {
-        commit('updateIndexingData', data)
-      },
-      setSyncing ({ commit }, syncing) {
-        commit('updateSyncing', syncing)
-      },
       setGoBack ({ commit }, id) {
         commit('updateGoBack', id)
       },
@@ -212,8 +142,4 @@ export default function rootModule (apollo) {
       }
     }
   }
-}
-
-function roundOneDP (percent) {
-  return Math.round(percent * 10) / 10
 }

@@ -29,6 +29,7 @@ import story from './modules/story/'
 import table from './modules/table'
 import submissions from './modules/submissions'
 import notifications from './modules/notifications'
+import loading from './modules/loading'
 
 import apolloProvider from '../plugins/vue-apollo'
 import router from '@/router'
@@ -64,7 +65,6 @@ Vue.use(Vuex)
 /*
   TODO (later):
     - [ ] assess which bits of these should be namespaced
-    - [ ] root: move loading and syncing to alerts modules
     - [ ] change modules to be namespaced
           - https://vuex.vuejs.org/guide/modules.html#namespacing
           - see alerts module for another example
@@ -97,7 +97,8 @@ export default new Vuex.Store({
 
     table: table(apollo),
 
-    settings: settings(apollo)
+    settings: settings(apollo),
+    loading: loading(apollo)
   },
   plugins: [
     updateTree

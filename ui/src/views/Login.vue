@@ -130,7 +130,8 @@ export default {
     this.getCurrentIdentity()
   },
   methods: {
-    ...mapActions(['setWhoami', 'setSyncing']),
+    ...mapActions(['setWhoami']),
+    ...mapActions('loading', ['setJoiningPataka']),
     ...mapActions('person', ['updatePerson']),
     ...mapActions('alerts', ['showAlert']),
     async getCurrentIdentity () {
@@ -191,7 +192,7 @@ export default {
         color: 'green'
       })
       // update to check ssb.status
-      this.setSyncing(true)
+      this.setJoiningPataka(true)
       this.skip()
     },
 

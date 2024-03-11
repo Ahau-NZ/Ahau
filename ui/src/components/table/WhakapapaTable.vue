@@ -307,7 +307,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading']),
+    ...mapActions('loading', ['setLoading']),
     ...mapActions('whakapapa', ['setAutoCollapse']),
     ...mapActions('person', ['loadPersonFull']),
     // sets the width of the table

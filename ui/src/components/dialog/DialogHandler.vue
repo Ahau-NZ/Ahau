@@ -225,7 +225,7 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapActions(['loading', 'setDialog']),
+    ...mapActions(['setDialog']),
     ...mapActions('profile', ['getProfile']),
     ...mapActions('alerts', ['showAlert']),
     ...mapActions('tribe', ['initGroup']),
