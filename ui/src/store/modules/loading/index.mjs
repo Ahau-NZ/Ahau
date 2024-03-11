@@ -1,8 +1,3 @@
-// import Vue from 'vue'
-// import { isEmpty, cloneDeep as clone } from 'lodash-es'
-// import pull from 'pull-stream'
-// import pullParaMap from 'pull-paramap'
-// import Pushable from 'pull-pushable'
 import { promisify } from 'util'
 
 import {
