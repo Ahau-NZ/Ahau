@@ -2,33 +2,35 @@
   <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
     <v-col :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-row
-        justify-center
         v-if="!mobile"
+        justify-center
         :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'"
         cols="12"
       >
-          <v-btn
-            :class="tablet ? 'pl-2':''"
-            @click="setActive(PROFILE)"
-            light
-            text
-            style="height: auto;"
-          >
-            <Avatar
-              :image="profile.avatarImage"
-              :gender="profile.gender"
-              :aliveInterval="profile.aliveInterval"
-              :alt="profile.preferredName"
-              :size="tablet ? '110px':'170px'"
-              :isView="isView"
-            />
-          </v-btn>
+        <v-btn
+          :class="tablet ? 'pl-2':''"
+          @click="setActive(PROFILE)"
+          light
+          text
+          style="height: auto;"
+        >
+          <Avatar
+            :image="profile.avatarImage"
+            :gender="profile.gender"
+            :aliveInterval="profile.aliveInterval"
+            :alt="profile.preferredName"
+            :size="tablet ? '110px':'170px'"
+            :isView="isView"
+          />
+        </v-btn>
       </v-row>
 
+      <!-- if not member register -->
       <RegisterButton v-if="nonMember" :text="buttonText" @click="$emit('new-registration')" />
 
-      <v-row v-else :class="customClass">
-        <v-col :cols="cols" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+      <!-- else, show buttons (profile/ archive/ whakapapa/ personIndex/ credentials) -->
+      <v-row v-else justify="space-around" :class="customClass">
+        <v-col v-if="showWhakapapa" cols="auto" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(PROFILE)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
@@ -65,7 +67,7 @@
             </v-col>
           </v-btn>
         </v-col>-->
-        <v-col v-if="isPersonalTribe || settings.allowStories" :cols="cols" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="isPersonalTribe || settings.allowStories" cols="auto" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
@@ -82,7 +84,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :cols="cols" md="12" v-if="showWhakapapa && (isPersonalTribe || settings.allowWhakapapaViews)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="showWhakapapa && (isPersonalTribe || settings.allowWhakapapaViews)" cols="auto" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(WHAKAPAPA)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
@@ -99,7 +101,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :cols="cols" md="12" v-if="showPeopleList && (isPersonalTribe || settings.allowPersonsList)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="showPeopleList && (isPersonalTribe || settings.allowPersonsList)" cols="auto" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(PERSON)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <PersonListIcon
@@ -116,7 +118,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :cols="cols" md="12" v-if="showCredentials" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="showCredentials" cols="auto" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(WALLET)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WalletIcon
@@ -215,13 +217,8 @@ export default {
       return {
         'rounded-border box-shadow': this.mobile,
         'ml-10': this.tablet,
-        'row-padding': this.cols < 4,
         'ml-12 px-4': !this.mobile && !this.tablet
       }
-    },
-    cols () {
-      if (this.showCredentials || this.showPeopleList) return 3
-      else return 4
     },
     showCredentials () {
       return this.isPersonalTribe && this.credentials.length
@@ -250,7 +247,6 @@ export default {
     showPeopleList () {
       if (!this.profile) return false
       if (!Array.isArray(this.profile.kaitiaki)) return false
-      if (this.credentials.length) return false
 
       return this.profile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId)
     },
