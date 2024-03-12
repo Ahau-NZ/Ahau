@@ -16,6 +16,13 @@
       :expanded="expandedFields"
       item-key="label"
     >
+      <template v-slot:item.order="{ item }">
+        <v-select
+          :items="orders"
+          :value="determineOrder(item)"
+          @change="changeOrder(item, $event)"
+        ></v-select>
+      </template>
 
       <!-- TODO: this is disabled for now as we do not implement this yet -->
       <template v-slot:item.visibleBy="{ item }"> <!-- eslint-disable-line -->
@@ -205,6 +212,7 @@ export default {
       newFieldDialog: false,
       deleteFieldDialog: false,
       headers: [
+        { text: this.t('order'), value: 'order', width: '50px' }, // TODO: translate
         { text: this.t('data'), value: 'label' },
         { text: this.t('type'), value: 'type' },
         { text: this.t('access'), value: 'visibleBy' },
@@ -233,11 +241,17 @@ export default {
     window.scrollTo(0, 0)
   },
   computed: {
+    filteredFields () {
+      return this.allFields
+        .filter(field => !field.tombstone)
+        // put the fields in order based on the order
+        .sort(({ order: a }, { order: b }) => {
+          if (a === null) return 1000
+          return a - b
+        })
+    },
     allFields () {
       return [...this.defaultFields, ...this.customDataFields]
-    },
-    filteredFields () {
-      return this.allFields.filter(field => !field.tombstone)
     },
     defaultFields () {
       return getDefaultFields(this.customFields)
@@ -261,9 +275,90 @@ export default {
         light: true,
         autoFocus: true
       }
+    },
+    orders () {
+      return [...Array(this.filteredFields.length).keys()]
+        .map(i => i + 1)
     }
   },
   methods: {
+    // (Based on https://softwareengineering.stackexchange.com/a/195317/54663)
+    // (Taken from https://github.com/cobudget/cobudget/blob/20e2c6ad20c94c9f621c1323b119880db7c70205/ui/components/RoundSettings/DraggableItems.js#L41)
+    changeOrder (item, newIndex) {
+      // 1. determine the "newOrder" of the item, based on desired newIndex
+      // we add one when determining the index to show, this just reverts it
+      newIndex = newIndex - 1
+
+      const localItems = this.filteredFields
+      const oldIndex = localItems.indexOf(item)
+
+      let beforeOrder
+      let afterOrder
+      let beforeItem
+
+      const afterItem = localItems[newIndex]
+
+      if (oldIndex > newIndex) {
+        beforeItem = localItems[newIndex - 1]
+      } else {
+        beforeItem = localItems[newIndex + 1]
+      }
+
+      if (beforeItem) {
+        beforeOrder = beforeItem.order
+      } else {
+        // Last element
+        beforeOrder = localItems[localItems.length - 1].order + 1
+      }
+      if (newIndex === 0) {
+        // First element
+        afterOrder = localItems[0].order - 1
+        beforeOrder = localItems[0].order
+      } else {
+        afterOrder = afterItem.order
+      }
+
+      const newOrder = (beforeOrder - afterOrder) / 2.0 + afterOrder
+
+      // 2. figure out what sort of mutation this means for customFields
+      // is it a customField already? or is it about to become a "customisted default field"
+      const newCustomFields = clone(this.customFields)
+      const isMatch = (field) => field.label === item.label
+
+      // if is existing customField, mutate that
+      const index = newCustomFields.findIndex(isMatch)
+      const existingField = newCustomFields[index]
+      if (existingField) {
+        newCustomFields[index] = {
+          ...clone(item),
+          order: newOrder
+        }
+      } // eslint-disable-line
+      else {
+        // otherwise, check if it's an existing defaultField we want to use as a template
+        // (or revert to empty)
+        const existingField = this.defaultFields.find(isMatch)
+        if (!existingField) {
+          console.error('cannot change order as could not find field of', item)
+          return
+        }
+
+        newCustomFields.push({
+          key: this.generateTimestamp(),
+          ...clone(existingField),
+          order: newOrder
+        })
+      }
+
+      this.$emit('update:customFields', newCustomFields)
+      // this triggers a change:
+      // customFields => defaultFields + customDataFields => allFields => filteredFields
+    },
+
+    determineOrder (item) {
+      // NOTE: the order shown and the order saved to the items are not the same
+      return this.filteredFields.indexOf(item) + 1
+    },
     isDisabledField (field) {
       return DISABLED_DEFAULT_FIELDS.includes(field.label)
     },
@@ -343,13 +438,6 @@ export default {
       this.$emit('update:customFields', newCustomFields)
       this.closeNewFieldDialog()
     },
-    t (key, vars) {
-      return this.$t('addCommunityForm.' + key, vars)
-    },
-    showDeleteFieldDialog (field) {
-      this.currentField = field
-      this.deleteFieldDialog = true
-    },
     deleteField () {
       // mutate the customFields
       const newCustomFields = clone(this.customFields)
@@ -381,6 +469,14 @@ export default {
       this.$emit('update:customFields', newCustomFields)
       this.deleteFieldDialog = false
     },
+    t (key, vars) {
+      return this.$t('addCommunityForm.' + key, vars)
+    },
+    showDeleteFieldDialog (field) {
+      this.currentField = field
+      this.deleteFieldDialog = true
+    },
+
     generateTimestamp () {
       return Date.now().toString()
     }

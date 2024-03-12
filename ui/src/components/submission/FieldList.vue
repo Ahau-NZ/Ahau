@@ -2,19 +2,53 @@
   <v-card outlined class="py-1 mx-3">
     <v-checkbox
       v-if="showActions && !isTombstone"
-      hide-details
-      v-model="selectAllCopy"
-      class="shrink pl-9 my-2"
       :label="selectAllCopy ? t('unselectAll') : t('selectAll')"
+      v-model="selectAllCopy"
+      hide-details
+      class="shrink pl-9 my-2"
     >
     </v-checkbox>
+
     <v-divider v-if="showActions && !isTombstone" light width="50%" class="ml-8"/>
-    <v-col v-for="([key, value], i) in fields" :key="i" class="py-0">
+
+    <v-col v-for="([key, value, customFieldDefn], i) in fields" :key="i" class="py-0">
+
+      <div v-if="customFieldDefn && !isDefaultField(key)">
+        <v-checkbox
+          v-if="showActions && !isTombstone"
+          :value="Boolean(selectedChanges?.customFields?.find(field => field.key === key))"
+          hide-details
+          color="green"
+          class="shrink pl-6 mt-0 black-label"
+          @change="addCustomField(key, value, customFieldDefn)"
+        >
+        <template v-slot:label>
+          <span>
+            <strong>
+              {{ getLabel(key, value, customFieldDefn) }}:
+            </strong>
+            {{ getValue(value, customFieldDefn) }}
+          </span>
+        </template>
+        </v-checkbox>
+        <li v-else class="pl-6">
+          <strong>
+            {{ getLabel(key, value, customFieldDefn) }}:
+          </strong>
+          {{ getValue(value) }}
+        </li>
+      </div>
+
       <!-- avatarImage has a unique structure -->
-      <div v-if="key == 'avatarImage'">
+      <div v-else-if="key == 'avatarImage'">
         <div v-if="sourceProfile[key] == null">
-          <v-checkbox hide-details v-model="selectedChangesCopy[key]" :value="value" color="green"
-            class="shrink pl-6 mt-0 black-label">
+          <v-checkbox
+            v-model="selectedChangesCopy[key]"
+            hide-details
+            :value="value"
+            color="green"
+            class="shrink pl-6 mt-0 black-label"
+          >
             <template v-slot:label>
               <span class="checkbox_label">
                 {{ t('addedPicture') }}
@@ -24,8 +58,13 @@
           <Avatar class="small-avatar" size="80px" :image="changes.avatarImage"/>
         </div>
         <div v-else>
-          <v-checkbox hide-details v-model="selectedChangesCopy[key]" :value="value" color="green"
-            class="shrink pl-6 mt-0 black-label">
+          <v-checkbox
+            v-model="selectedChangesCopy[key]"
+            hide-details
+            :value="value"
+            color="green"
+            class="shrink pl-6 mt-0 black-label"
+          >
             <template v-slot:label>
               <span class="checkbox_label">
                 {{ t('changedPicture') }}
@@ -65,13 +104,14 @@
           </v-col>
         </div>
       </div>
+
       <!-- Improving readability of deceased changes -->
       <div v-else-if="key == 'deceased'" class="pl-6">
         <v-checkbox
           v-if="showActions && !isTombstone"
           v-model="selectedChangesCopy[key]"
-          :value="value"
           :label="t('userDeceased', { value })"
+          :value="value"
           hide-details
           color="green"
           class="shrink mt-0 black-label"
@@ -84,32 +124,43 @@
       <!-- Alt names has different structure {add:[],remove:[]} -->
       <div v-else-if="key == 'altNames'">
         <div v-if="value && value.add && value.add.length" class="pl-6">
-          <div v-for="name in value.add" :key="name">
+          <div v-for="(name, i) in [...new Set(value.add)]" :key="name + i">
             <v-checkbox
               v-if="showActions && !isTombstone"
-              :label="t('altNameChanges.add', { name })"
+              :value="getAltNameValue('add', name)"
               hide-details
               color="green"
               class="mt-0"
               @change="addAltName('add', name)"
-              :value="getAltNameValue('add', name)"
-            />
+            >
+              <template v-slot:label>
+                <span>
+                  <strong>
+                    {{ t('altNameChanges.add') }}:
+                  </strong>
+                  {{ name }}
+                </span>
+              </template>
+            </v-checkbox>
             <li v-else>
-              {{ t('altNameChanges.add', { name }) }}
+              <strong>
+                {{ t('altNameChanges.add') }}:
+              </strong>
+              {{ name }}
             </li>
           </div>
         </div>
 
         <div v-if="value && value.remove && value.remove.length" class="pl-6">
-          <div v-for="name in value.remove" :key="name">
+          <div v-for="(name, i) in value.remove" :key="name + i">
             <v-checkbox
               v-if="showActions && !isTombstone"
               :label="t('altNameChanges.remove', { name })"
+              :value="getAltNameValue('remove', name)"
               hide-details
               color="green"
               class="mt-0"
-              @change="addAltName('remove', name)"
-              :value="getAltNameValue('remove', name)"
+              @change="addAltName('remove', name, i)"
             />
             <li v-else>
               {{ t('altNameChanges.remove', { name }) }}
@@ -118,35 +169,29 @@
         </div>
       </div>
 
-      <div v-else-if="key === 'customFields'">
-        <div v-for="field in value" :key="field.key">
-          <v-checkbox
-            v-if="showActions && !isTombstone"
-            :label="getCustomFieldLabel(field.key, field.value)"
-            hide-details
-            color="green"
-            class="shrink pl-6 mt-0 black-label"
-            @change="addCustomField(field)"
-            :value="getCustomFieldValue(field)"
-          />
-          <li v-else class="pl-6">
-            {{ getCustomFieldLabel(field.key, field.value) }}
-          </li>
-        </div>
-      </div>
-
       <div v-else>
         <v-checkbox
           v-if="showActions && !isTombstone"
-          :label="getLabel(key, value)"
-          @change="addSelectedItem(key, value, $event)"
           :value="Boolean(selectedChangesCopy[key])"
           hide-details
           color="green"
           class="shrink pl-6 mt-0 black-label"
-        />
+          @change="addSelectedItem(key, value, $event)"
+        >
+          <template v-slot:label>
+            <span>
+              <strong>
+                {{ getLabel(key, value) }}:
+              </strong>
+              {{ getValue(value) }}
+            </span>
+          </template>
+        </v-checkbox>
         <li v-else class="pl-6">
-          {{ getLabel(key, value) }}
+          <strong>
+            {{ getLabel(key) }}:
+          </strong>
+          {{ getValue(value) }}
         </li>
       </div>
     </v-col>
@@ -154,13 +199,16 @@
 </template>
 
 <script>
+import { cloneDeep as clone } from 'lodash-es'
+import { DEFAULT_PROFILE_MODEL, mapPropToLabel } from '@/lib/custom-field-helpers'
+
 export default {
   name: 'FieldList',
   props: {
     fields: Array,
+    changes: Array,
     sourceProfile: Object,
     selectedChanges: Object,
-    changes: Array,
     showActions: Boolean,
     isTombstone: Boolean,
     selectAll: Boolean,
@@ -168,9 +216,9 @@ export default {
   },
   data () {
     return {
-      selectedChangesCopy: this.selectedChanges,
+      selectedChangesCopy: clone(this.selectedChanges), // is this a copy though?
       selectAllCopy: this.selectAll,
-      updatedKeys: {
+      defaultFieldTranslations: {
         preferredName: this.t('preferredName'),
         profession: this.t('profession'),
         address: this.t('address'),
@@ -220,6 +268,10 @@ export default {
     t (key, vars) {
       return this.$t('reviewSubmissionDialog.' + key, vars)
     },
+    isDefaultField (key) {
+      const label = mapPropToLabel(key)
+      return DEFAULT_PROFILE_MODEL.find(field => field.label === label)
+    },
     isEmptyValue (value) {
       return (
         value === null ||
@@ -244,32 +296,16 @@ export default {
     formatValue (value) {
       return Array.isArray(value) ? this.formatArray(value) : value
     },
-    getLabel (key, value) {
-      return this.isEmptyValue(this.sourceProfile[key])
-        ? this.t('newField', { fieldName: this.updatedKeys[key], fieldValue: this.formatValue(value) })
-        : this.getChangesLabel(key, value)
-    },
-    // NOTE: cherese 1/05/23
-    // I removed the "from" text from here, change from ... to, because when the sourceProfile is updated, it shows
-    // the updated values, so there isnt an "easy" way to show the old values
-    getChangesLabel (key, value) {
-      const fieldName = this.updatedKeys[key]
-      const fieldValue = this.formatValue(value)
-      return this.t('newField', { fieldName, fieldValue })
-    },
-    getCustomFieldLabel (key, value) {
-      const fieldDef = this.tribeCustomFields.find(field => field.key === key)
-      if (!fieldDef) {
-        console.error('getCustomFieldLabel failed', { key, value, tribeCustomFields: this.tribeCustomFields })
-      }
-      const fieldName = fieldDef?.label || 'custom field?'
-      return this.t('newField', { fieldName, fieldValue: this.formatValue(value) })
-    },
-    getCustomFieldValue (field) {
-      const customFieldChanges = this.selectedChangesCopy?.customFields
-      if (!customFieldChanges) return false
+    getLabel (key, value, customFieldDefn) {
+      const fieldName = customFieldDefn?.label || this.defaultFieldTranslations[key]
+      // NOTE: mix 2024/03/07 because custom field labels may be different in different languages
+      // we might get some funny behaviour if an applicant and kaitiaki are running different languages?
+      // We may need to review our code for edge cases
 
-      return customFieldChanges.find(customField => customField.key === field.key)
+      return fieldName
+    },
+    getValue (value) {
+      return this.formatValue(value)
     },
     addSelectedItem (key, value, isChecked) {
       if (isChecked) this.selectedChangesCopy[key] = value
@@ -282,25 +318,29 @@ export default {
       else items.push(name) // add it
 
       this.selectedChangesCopy.altNames[key] = items
+
       this.cleanupAltNames()
     },
-    cleanupAltNames () {
-      if (this.selectedChangesCopy.altNames.add.length === 0 && this.selectedChangesCopy.altNames.remove.length === 0) delete this.selectedChangesCopy.altNames
-    },
-    cleanupCustomFields () {
-      if (this.selectedChangesCopy?.customFields?.length === 0) delete this.selectedChangesCopy.customFields
-    },
-    addCustomField (customField) {
+    addCustomField (key, value, customFieldDefn) {
       if (!this.selectedChangesCopy.customFields) this.selectedChangesCopy.customFields = []
 
-      const items = this.selectedChangesCopy.customFields
-      const field = items.find(field => field.key === customField.key)
-      if (field) items.splice(items.indexOf(field), 1)
-      else {
-        delete customField.__typename
-        items.push(customField)
-      }
+      const customFields = this.selectedChangesCopy.customFields
+      const index = customFields.findIndex(field => field.key === key)
+      if (index >= 0) customFields.splice(index, 1)
+      else customFields.push({ key, value }) // graphql suggests { key!, value, type }
+
       this.cleanupCustomFields()
+    },
+    cleanupAltNames () {
+      if (
+        this.selectedChangesCopy?.altNames?.add?.length === 0 &&
+        this.selectedChangesCopy?.altNames?.remove?.length === 0
+      ) delete this.selectedChangesCopy.altNames
+    },
+    cleanupCustomFields () {
+      if (this.selectedChangesCopy?.customFields?.length === 0) {
+        delete this.selectedChangesCopy.customFields
+      }
     },
     getAltNameValue (key, name) {
       const altNameChanges = this.selectedChangesCopy?.altNames
@@ -311,16 +351,19 @@ export default {
     },
     selectAllChanges () {
       this.selectedChangesCopy = {}
-      this.changes.forEach(([key, value]) => {
+
+      this.changes.forEach(([key, value, customFieldDefn]) => {
         if (key === 'altNames') {
-          const { add = [], remove = [] } = (value || {})
+          let { add = [], remove = [] } = (value || {})
+          add = [...new Set(add)]
+          remove = [...new Set(remove)]
           add.forEach(name => this.addAltName('add', name))
           remove.forEach(name => this.addAltName('remove', name))
-        } else if (key === 'customFields') {
-          (value || []).forEach(field => {
-            this.addCustomField(field)
-          })
-        } else {
+        } // eslint-disable-line
+        else if (customFieldDefn && !this.isDefaultField(key)) {
+          this.addCustomField(key, value, customFieldDefn)
+        } // eslint-disable-line
+        else {
           this.addSelectedItem(key, value, true)
         }
       })

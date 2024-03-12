@@ -193,6 +193,7 @@ ${PublicProfileFieldsFragment}
       type
       required
       visibleBy
+      order
       ...on CommunityCustomFieldList {
         multiple
         options
