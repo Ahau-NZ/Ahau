@@ -1,4 +1,6 @@
 <template>
+<div>
+
   <v-expansion-panels light v-model="panel" :class="isReg ? 'ma-2': ''" :flat="isReg">
     <v-expansion-panel :readonly="!mobile" align-start class="align-start"
       :style="
@@ -24,6 +26,11 @@
             <v-icon color="success">mdi-checkbox-marked-circle</v-icon>
             <span class="pa-1">{{ t('state') }}</span>
           </v-row>
+          <v-row justify="end" class="mr-4 mt-6">
+            <v-btn text circle @click="toggleInviteDialog">
+              <v-icon color="black"> mdi-share </v-icon>
+            </v-btn>
+        </v-row>
         </v-col>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="pa-o">
@@ -65,16 +72,33 @@
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
+  <InputInviteDialog
+    v-if="showInviteDialog"
+    :credential="credential"
+    @close="showInviteDialog = false"
+    :show="showInviteDialog"
+  />
+</div>
+
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import InputInviteDialog from './InputInviteDialog.vue'
 
 export default {
   name: 'CredentialPreview',
+  components: {
+    InputInviteDialog
+  },
   props: {
     credential: Object,
     isReg: Boolean
+  },
+  data () {
+    return {
+      showInviteDialog: false
+    }
   },
   computed: {
     ...mapGetters('tribe', ['tribes']),
@@ -105,6 +129,9 @@ export default {
   methods: {
     t (key, vars) {
       return this.$t('walletShow.' + key, vars)
+    },
+    toggleInviteDialog () {
+      this.showInviteDialog = !this.showInviteDialog
     }
   }
 }
