@@ -8,12 +8,12 @@
       <div :class="mobile ? 'mobile-title order-3 d-flex' : 'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
-    <div :class="mobile ? 'mobile-profile-btn' : 'align-self-end mr-10 order-3'">
+      <div :class="mobile ? 'mobile-profile-btn' : 'align-self-end mr-10 order-3'">
         <ProfileButton
           v-if="profile.canEdit"
-          @click="goEdit"
           icon="mdi-account-cog"
           :label="editButtonLabel"
+          @click="goEdit"
         />
         <v-divider v-else class="py-5" />
       </div>
@@ -418,6 +418,6 @@ export default {
     justify-content: flex-end;
   }
   .mobile-profile-btn {
-    position:absolute
+    position: absolute;
   }
 </style>

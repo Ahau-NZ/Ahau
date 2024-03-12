@@ -2,7 +2,7 @@ import {
   getIndexes
 } from './apollo-helpers.mjs'
 
-const SECOND = 100000
+const SECOND = 1000
 const DEFAULT_LOADING_TIMEOUT = 2 * SECOND
 
 export default function (apollo) {

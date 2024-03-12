@@ -6,7 +6,12 @@
         {{ t('timeline') }}
       </v-col>
       <v-col cols="1" :class="`pa-0 pl-4 ${mobile ? 'ml-auto mr-12' : 'mt-6'}`">
-        <TimelineButton class="ml-auto mr-4" v-if="filteredStories && filteredStories.length" @toggle="$emit('toggleTimeline')" :timeline="timeline"/>
+        <TimelineButton
+          v-if="filteredStories && filteredStories.length"
+          :timeline="timeline"
+          class="ml-auto mr-4"
+          @toggle="$emit('toggleTimeline')"
+        />
       </v-col>
       <v-col
         v-if="filteredStories && filteredStories.length"

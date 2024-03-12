@@ -16,9 +16,10 @@
                 :error-messages="errorMsg"
               />
             </v-col>
-            <p class="mx-2 ml-4" v-if="tryingConnection">Establishing secure connection and sending credential proof. This may take a minute of so.</p>
+            <p class="mx-2 ml-4" v-if="tryingConnection">{{ t('tryingConnection') }}</p>
             <v-col class="py-0">
               <v-btn
+                v-if="!successMsg.length"
                 color="black"
                 class="white--text"
                 :loading="tryingConnection"
@@ -61,7 +62,7 @@ export default {
       successMsg: [],
       errorMsg: [],
       tryingConnection: false,
-      title: 'Send Credential'
+      title: this.t('sendProofTitle')
     }
   },
   computed: {
@@ -87,11 +88,11 @@ export default {
           }
         })
         this.tryingConnection = false
+        this.successMsg = [this.t('connectSuccess')]
         this.showAlert({
           message: this.t('connectSuccess'),
           color: 'green'
         })
-        this.close()
       } catch (err) {
         this.tryingConnection = false
         this.errorMsg = [this.t('connectError')]
