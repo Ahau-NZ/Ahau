@@ -1,7 +1,7 @@
 <template>
 <div>
 
-  <v-expansion-panels light v-model="panel" :class="isReg ? 'ma-2': ''" :flat="isReg">
+  <v-expansion-panels light :value="panel" :class="isReg ? 'ma-2': ''" :flat="isReg">
     <v-expansion-panel :readonly="!mobile" align-start class="align-start"
       :style="
         `background: linear-gradient(to right, rgba(255, 255, 255, 0.99), 60%, rgba(255, 255, 255, 0.8)), url(`+ image + `);

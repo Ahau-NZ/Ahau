@@ -319,7 +319,6 @@ export default {
     onScroll (e) {
       this.scroll = window.pageYOffset
       const sideNav = this.$refs.sideNav
-      console.log(this.scroll)
       // TODO tidy this up by making methods?
       if (!this.mobile && this.activeComponent === PROFILE) {
         if (this.scroll > this.offset) {

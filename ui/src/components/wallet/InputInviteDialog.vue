@@ -1,7 +1,7 @@
 <template>
   <DialogContainer :show="show" :title="title" width="65vw" :goBack="close" enableMenu @close="close">
     <template v-slot:content>
-      <v-row class="py-2 pl-6">
+      <v-row :class="mobile ? 'py-2 ' : 'py-2 pl-6'">
         <v-col cols="12">
           <p class="sub-headline pa-0"> {{ t('inviteLabel') }} </p>
           <v-row>
@@ -14,11 +14,9 @@
                 dense
                 :success-messages="successMsg"
                 :error-messages="errorMsg"
-                append-icon="mdi-lan-connect"
-                clearable
               />
             </v-col>
-            <p v-if="tryingConnection">Establishing secure connection and sending credential proof</p>
+            <p class="mx-2 ml-4" v-if="tryingConnection">Establishing secure connection and sending credential proof. This may take a minute of so.</p>
             <v-col class="py-0">
               <v-btn
                 color="black"
@@ -73,14 +71,12 @@ export default {
   },
   methods: {
     ...mapActions('alerts', ['showAlert']),
-    ...mapActions('loading', ['setLoading']),
     async acceptInvite (invitationUrl) {
       console.log('accepting invitation')
       this.tryingConnection = true
       this.errorMsg = []
-      this.setLoading(true)
       try {
-        const res = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: gql`
           mutation($invitationUrl: String!, $credentialId: String!) {
             sendCredentialProof(invitationUrl: $invitationUrl, credentialId: $credentialId)
@@ -90,8 +86,6 @@ export default {
             credentialId: this.credential.id
           }
         })
-        console.log(res)
-        this.setLoading(false)
         this.tryingConnection = false
         this.showAlert({
           message: this.t('connectSuccess'),
@@ -101,9 +95,9 @@ export default {
       } catch (err) {
         this.tryingConnection = false
         this.errorMsg = [this.t('connectError')]
-        this.setLoading(false)
+        console.error('something went wrong trying to send credential proof', err)
         this.showAlert({
-          message: this.t('connectError :', err),
+          message: this.t('connectError'),
           color: 'red'
         })
         return
