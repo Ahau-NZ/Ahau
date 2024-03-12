@@ -82,9 +82,9 @@
           <!-- Profile Field (changes) and Select all section -->
           <FieldList
             :fields="profileFields"
+            :changes="changes"
             :source-profile="sourceProfile"
             :selected-changes.sync="selectedChanges"
-            :changes="changes"
             :show-actions="showActions"
             :is-tombstone="isTombstone"
             :tribeCustomFields="tribeCustomFields"
@@ -210,7 +210,7 @@ import FieldList from '@/components/submission/FieldList.vue'
 import LinkSubmission from '@/components/submission/LinkSubmission.vue'
 import WhakapapaViewSubmission from '@/components/submission/WhakapapaViewSubmission.vue'
 
-import { getTribeCustomFields } from '@/lib/custom-field-helpers'
+import { getTribeCustomFields, getDefaultFields, mapPropToLabel, getRawCustomFields } from '@/lib/custom-field-helpers'
 import calculateAge from '@/lib/calculate-age'
 
 import {
@@ -362,6 +362,10 @@ export default {
     tribeCustomFields () {
       return getTribeCustomFields(this.notification?.rawGroup, !this.notification?.isPersonal)
     },
+    defaultFieldDefs () {
+      const rawCustomFields = getRawCustomFields(this.notification?.rawGroup, !this.notification?.isPersonal)
+      return getDefaultFields(rawCustomFields)
+    },
     tribeJoiningQuestions () {
       return this.notification?.group?.joiningQuestions
     },
@@ -443,45 +447,74 @@ export default {
       }
     },
     changes () {
+      // output shape is an array of items each with shape:
+      //   [key, value, customFieldDefn?]
+      //
+      // where
+      //   - key = defaultFieldName || customFieldId
+      //   - value = value of field
+      //   - customFieldDefn = the definition of the custom field (optional)
       const changes = this.notification?.changes
-
       if (!changes) return []
-      delete changes.__typename
-
-      // filter all custom fields that dont have a definition
-      changes.customFields = changes?.customFields?.filter(field => {
-        return this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
-      })
 
       return Object.entries(changes)
-        .filter(([key, value]) => {
+        .reduce((acc, [key, value]) => {
           // filter out altNames here so we arent showing empty labels for nothing
-          if (key === 'altNames' && !this.hasAltnameChanges) return false
-          if (key === 'customFields' && !value?.length) return false
+          if (
+            key === '__typename' ||
+            (key === 'altNames' && !this.hasAltnameChanges) ||
+            key === 'tombstone' ||
+            isEmpty(value)
+          ) return acc
 
-          if (key === 'tombstone') return false
+          if (key === 'customFields') return [...acc, ...this.flattenCustomFields(value)]
+          else {
+            const label = mapPropToLabel(key)
+            const definition = (
+              this.tribeCustomFields.find(fieldDef => fieldDef.label === label) ||
+              this.defaultFieldDefs.find(fieldDef => fieldDef.label === label)
+            )
 
-          return value
+            if (!definition) return acc
+            return [...acc, [key, value, definition]]
+          }
+        }, [])
+        .sort(([aKey, aVal, aDef], [bKey, bVal, bDef]) => {
+          const aOrder = aDef?.order
+          const bOrder = bDef?.order
+
+          return (aOrder ?? 100) - (bOrder ?? 100)
         })
     },
     profileFields () {
+      // output shape same as this.changes (above)
       if (!this.isTombstone) return this.changes
 
       const profile = this.sourceProfile
       if (!profile) return []
 
-      delete profile.__typename
-
-      profile.customFields = profile?.customFields.filter(field => {
-        return this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
-      })
+      const ignoredKeys = new Set(['__typename', 'recps', 'id', 'originalAuthor', 'canEdit', 'type'])
 
       return Object.entries(this.sourceProfile)
-        .filter(([key, value]) => {
-          if (['recps', 'id', 'originalAuthor', 'canEdit', 'type'].includes(key)) return false
-          if (value === null || isEmpty(value)) return false
+        .reduce((acc, [key, value]) => {
+          if (ignoredKeys.has(key) || isEmpty(value) || value === null) return acc
 
-          return true
+          if (key === 'customFields') return [...acc, ...this.flattenCustomFields(value)]
+          else {
+            const label = mapPropToLabel(key)
+            const definition = (
+              this.tribeCustomFields.find(fieldDef => fieldDef.label === label) ||
+              this.defaultFieldDefs.find(fieldDef => fieldDef.label === label)
+            )
+            if (!definition) return acc
+            return [...acc, [key, value, definition]]
+          }
+        }, [])
+        .sort(([aKey, aVal, aDef], [bKey, bVal, bDef]) => {
+          const aOrder = aDef?.order
+          const bOrder = bDef?.order
+
+          return (aOrder ?? 100) - (bOrder ?? 100)
         })
     },
     hasAltnameChanges () {
@@ -489,8 +522,11 @@ export default {
 
       if (!altNames) return false
 
-      const { add, remove } = altNames
-      return (
+      let { add, remove } = altNames
+      add = [...new Set(add)]
+      remove = [...new Set(remove)]
+
+      return Boolean(
         (add && add.length) ||
         (remove && remove.length)
       )
@@ -591,6 +627,15 @@ export default {
     updateSelectedDependencies (type, dependencies) {
       if (dependencies?.length) this.selectedDependencies[type] = dependencies
       else delete this.selectedDependencies[type]
+    },
+    flattenCustomFields (customFields) {
+      return customFields.reduce((acc, field) => {
+        const definition = this.tribeCustomFields.find(fieldDef => fieldDef.key === field.key)
+        if (!definition) return acc
+
+        if (!isEmpty(field.value)) acc.push([definition.key, field.value, definition])
+        return acc
+      }, [])
     }
   }
 }

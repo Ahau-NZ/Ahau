@@ -206,8 +206,10 @@ export default {
         })
         .map(field => {
           delete field.__typename
+          // order must be a number, so if we try save it with null, it will fail
+          if (field.order === null) delete field.order
           if (field.type === 'list' && typeof field.options === 'string' && field.options.length > 0) {
-            field.options = field.options.split(',')
+            field.options = field.options.split(',').map(str => str.trim())
           }
 
           return field
