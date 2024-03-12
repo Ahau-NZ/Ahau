@@ -23,18 +23,16 @@
           @change="addCustomField(key, value, customFieldDefn)"
         >
         <template v-slot:label>
-          <span>
-            <strong>
-              {{ getLabel(key, value, customFieldDefn) }}:
-            </strong>
-            {{ getValue(value, customFieldDefn) }}
+          <span class='field-label'>
+            {{ getLabel(key, value, customFieldDefn) }}
           </span>
+          {{ getValue(value, customFieldDefn) }}
         </template>
         </v-checkbox>
         <li v-else class="pl-6">
-          <strong>
-            {{ getLabel(key, value, customFieldDefn) }}:
-          </strong>
+          <span class='field-label'>
+            {{ getLabel(key, value, customFieldDefn) }}
+          </span>
           {{ getValue(value) }}
         </li>
       </div>
@@ -134,18 +132,16 @@
               @change="addAltName('add', name)"
             >
               <template v-slot:label>
-                <span>
-                  <strong>
-                    {{ t('altNameChanges.add') }}:
-                  </strong>
-                  {{ name }}
+                <span class='field-label'>
+                  {{ t('altNameChanges.add') }}
                 </span>
+                {{ name }}
               </template>
             </v-checkbox>
             <li v-else>
-              <strong>
-                {{ t('altNameChanges.add') }}:
-              </strong>
+              <span class='field-label'>
+                {{ t('altNameChanges.add') }}
+              </span>
               {{ name }}
             </li>
           </div>
@@ -179,18 +175,16 @@
           @change="addSelectedItem(key, value, $event)"
         >
           <template v-slot:label>
-            <span>
-              <strong>
-                {{ getLabel(key, value) }}:
-              </strong>
-              {{ getValue(value) }}
+            <span class='field-label'>
+              {{ getLabel(key, value) }}
             </span>
+            {{ getValue(value) }}
           </template>
         </v-checkbox>
         <li v-else class="pl-6">
-          <strong>
-            {{ getLabel(key) }}:
-          </strong>
+          <span class='field-label'>
+            {{ getLabel(key) }}
+          </span>
           {{ getValue(value) }}
         </li>
       </div>
@@ -371,3 +365,11 @@ export default {
   }
 }
 </script>
+
+<style scoped lang='scss'>
+.field-label {
+  font-weight: 500;
+  min-width: 160px;
+  margin-right: 10px;
+}
+</style>
