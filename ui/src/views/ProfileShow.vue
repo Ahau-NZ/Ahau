@@ -8,7 +8,7 @@
       <div :class="mobile ? 'mobile-title order-3 d-flex' : 'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
-      <div :class="mobile ? '' : 'align-self-end mr-10 order-3'">
+    <div :class="mobile ? 'mobile-profile-btn' : 'align-self-end mr-10 order-3'">
         <ProfileButton
           v-if="profile.canEdit"
           @click="goEdit"
@@ -36,7 +36,7 @@
         :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'"
         style="z-index: 1; height: 100%;"
       >
-        <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
+        <v-overlay dark :value="showArtefact" z-index="2" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
           <router-view :profile="profile" :key="JSON.stringify(profile)" />
         </transition>
@@ -417,5 +417,7 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-
+  .mobile-profile-btn {
+    position:absolute
+  }
 </style>

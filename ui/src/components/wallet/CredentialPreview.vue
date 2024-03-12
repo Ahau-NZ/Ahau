@@ -28,7 +28,7 @@
           </v-row>
           <v-row justify="end" class="mr-4 mt-6">
             <v-btn text circle @click="toggleInviteDialog">
-              <v-icon color="black"> mdi-share </v-icon>
+              <v-icon color="black"> mdi-send </v-icon>
             </v-btn>
         </v-row>
         </v-col>

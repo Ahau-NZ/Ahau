@@ -27,8 +27,8 @@
 
       <RegisterButton v-if="nonMember" :text="buttonText" @click="$emit('new-registration')" />
 
-      <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
-        <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+      <v-row v-else :class="customClass">
+        <v-col :cols="cols" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(PROFILE)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
@@ -65,7 +65,7 @@
             </v-col>
           </v-btn>
         </v-col>-->
-        <v-col v-if="isPersonalTribe || settings.allowStories" cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col v-if="isPersonalTribe || settings.allowStories" :cols="cols" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
@@ -82,7 +82,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" v-if="showWhakapapa && (isPersonalTribe || settings.allowWhakapapaViews)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col :cols="cols" md="12" v-if="showWhakapapa && (isPersonalTribe || settings.allowWhakapapaViews)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(WHAKAPAPA)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
@@ -99,7 +99,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" v-if="showPeopleList && (isPersonalTribe || settings.allowPersonsList)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col :cols="cols" md="12" v-if="showPeopleList && (isPersonalTribe || settings.allowPersonsList)" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(PERSON)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <PersonListIcon
@@ -116,7 +116,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col cols="3" md="12" v-if="isPersonalTribe && credentials.length" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col :cols="cols" md="12" v-if="showCredentials" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive(WALLET)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WalletIcon
@@ -211,6 +211,21 @@ export default {
     ...mapGetters('archive', ['showStory']),
     ...mapGetters('tribe', ['tribeSettings', 'isPersonalTribe']),
     ...mapGetters('credentials', ['credentials']),
+    customClass () {
+      return {
+        'rounded-border box-shadow': this.mobile,
+        'ml-10': this.tablet,
+        'row-padding': this.cols < 4,
+        'ml-12 px-4': !this.mobile && !this.tablet
+      }
+    },
+    cols () {
+      if (this.showCredentials || this.showPeopleList) return 3
+      else return 4
+    },
+    showCredentials () {
+      return this.isPersonalTribe && this.credentials.length
+    },
     settings () {
       if (this.tribeSettings) return this.tribeSettings
       return {}
@@ -234,8 +249,8 @@ export default {
     },
     showPeopleList () {
       if (!this.profile) return false
-      if (this.isPersonalTribe) return true
       if (!Array.isArray(this.profile.kaitiaki)) return false
+      if (this.credentials.length) return false
 
       return this.profile.kaitiaki.some(k => k.feedId === this.whoami.public.feedId)
     },
@@ -301,10 +316,10 @@ export default {
         }
       }).catch(() => {})
     },
-    onScroll () {
+    onScroll (e) {
       this.scroll = window.pageYOffset
       const sideNav = this.$refs.sideNav
-
+      console.log(this.scroll)
       // TODO tidy this up by making methods?
       if (!this.mobile && this.activeComponent === PROFILE) {
         if (this.scroll > this.offset) {
@@ -403,19 +418,20 @@ export default {
 
 .userMobile {
   position: absolute;
-  top: 310px;
+  top: 280px;
   width: 102%;
 }
 .archiveMobile {
-  position: absolute;
-  top: 0px;
+  position: fixed;
+  top: 50px;
   width: 102%;
+  z-index: 3
 }
 .stickyMobile {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
   top: 50px;
   width: 102%;
-  z-index: 3;
+  z-index: 1;
   background: linear-gradient(
     rgba(255, 255, 255, 0.9),
     rgba(255, 255, 255, 0.02)

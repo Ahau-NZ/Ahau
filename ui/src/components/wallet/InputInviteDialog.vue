@@ -5,7 +5,7 @@
         <v-col cols="12">
           <p class="sub-headline pa-0"> {{ t('inviteLabel') }} </p>
           <v-row>
-            <v-col cols="12" md='10' class="py-0">
+            <v-col cols="12" class="py-0">
               <v-textarea
                 v-model="invitationUrl"
                 placeholder="xxxx-xxxxx-xxxx-xxxx"
@@ -18,10 +18,12 @@
                 clearable
               />
             </v-col>
+            <p v-if="tryingConnection">Establishing secure connection and sending credential proof</p>
             <v-col class="py-0">
               <v-btn
                 color="black"
                 class="white--text"
+                :loading="tryingConnection"
                 @click="acceptInvite(invitationUrl)"
               >
                 <span>{{ t('connect') }}</span>
@@ -47,6 +49,7 @@
 
 <script>
 import gql from 'graphql-tag'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'InputInviteDialog',
@@ -60,7 +63,6 @@ export default {
       successMsg: [],
       errorMsg: [],
       tryingConnection: false,
-      connectionErrMsg: null,
       title: 'Send Credential'
     }
   },
@@ -70,12 +72,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('alerts', ['showAlert']),
+    ...mapActions('loading', ['setLoading']),
     async acceptInvite (invitationUrl) {
+      console.log('accepting invitation')
       this.tryingConnection = true
       this.errorMsg = []
-      this.connectionErrMsg = null
+      this.setLoading(true)
       try {
-        await this.$apollo.mutate({
+        const res = await this.$apollo.mutate({
           mutation: gql`
           mutation($invitationUrl: String!, $credentialId: String!) {
             sendCredentialProof(invitationUrl: $invitationUrl, credentialId: $credentialId)
@@ -85,13 +90,22 @@ export default {
             credentialId: this.credential.id
           }
         })
+        console.log(res)
+        this.setLoading(false)
         this.tryingConnection = false
-        this.successMsg = [this.$t('connectSuccess')]
+        this.showAlert({
+          message: this.t('connectSuccess'),
+          color: 'green'
+        })
         this.close()
       } catch (err) {
         this.tryingConnection = false
-        this.errorMsg = [this.$t('connectError')]
-        console.error('Invite error: ', err)
+        this.errorMsg = [this.t('connectError')]
+        this.setLoading(false)
+        this.showAlert({
+          message: this.t('connectError :', err),
+          color: 'red'
+        })
         return
       }
       this.errorMsg = []

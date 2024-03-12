@@ -12,7 +12,7 @@
   "connectSuccess": "Credential successfully sent",
   "connectError": "Something went wrong. Please check your internet connection and try again",
   "inviteLabel": "Please enter a valid 'Out Of Band' or oob invitation code to connect and share this credential",
-  "sendProofTitle": "Send Credential",
+  "sendProofTitle": "Send Credential Proof",
   "connect": "Send",
   "cancel": "Cancel"
 }
