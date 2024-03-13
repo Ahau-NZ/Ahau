@@ -1,5 +1,18 @@
 # Changelog | Ahau desktop
 
+## v2.27.0
+
+### Features
+- custom field ordering for web-registration form
+- presentation to verifier using pasted oob link - galaxy maps prototype
+
+### Fixes
+- loading spinner in mobile now works :D
+- credentials look more like drivers license now
+  - based on community feedback from Whangaroa Papa Hapū
+  - shows photo of associated Āhau profile
+
+
 ## v2.26.1
 
 ### Fixes
