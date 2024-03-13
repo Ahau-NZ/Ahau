@@ -20,5 +20,8 @@
   "message": "Stuur een bericht",
   "approve": "Goedkeuren",
   "decline": "Afwijzen",
-  "close": "Sluit"
+  "close": "Sluit",
+  "profileInformation": "Profile information",
+  "membershipCard": "Membership credentials",
+  "presentationPending": "Membership credential is still pending verification"
 }

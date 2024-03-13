@@ -9,14 +9,21 @@
   "upload": "Documents",
   "adminOnly": "Kaitiaki only",
   "credsTnC": {
-    "title": "Agree to the use of decentralised identifiers and verifiable credentials",
-    "about": "This tribe has opted into to issuing Tribal Member digital credentials to approved members. Please read the following to learn more about what this means.",
-    "register": "By registering with this tribe i agree to the following",
-    "reciept": "to being issued a verified Tribal Member credential that may contain personal information if my registration is approved.",
-    "creation": "I agree to creating a decentralised identifier for purposes of controlling verfiable credentials issued to me",
-    "ownership": "I understand a new private key will be created and stored on my device which will be used to prove that you are the rightful owner of the credential.",
-    "storage": "I understand the credential will be stored on your device and can be viewed in Āhau.",
-    "id": "I understand that I may use this credential as a form of digital identification by entities that recognise Tribal Member issued credentials from this tribe.",
+    "title": "Agree to recieve Tribal Membership Credentials",
+    "about": "This tribe issues Digital Tribal Membership Credentials to new members. Please read the following to learn more about what this means.",
+    "register": "By registering with this tribe you agree to the following",
+    "reciept": "to being issued a Tribal Membership Credential that may contain personal information if your registration is approved.",
+    "creation": "You agree to creating a decentralised identifier for purposes of controlling your verfiable credentials (digital membership credential) issued to you",
+    "ownership": "You understand a new private key will be created and stored on your device which will be used to prove that you are the rightful owner of the digital credential.",
+    "storage": "You understand the digital credential will be stored on my device and can be viewed in Āhau.",
+    "id": "You understand that I may use this credential as a form of digital identification by entities that recognise Tribal Member issued credential from this tribe.",
     "video": "To learn more watch this explainer "
+  },
+  "presTnC": {
+    "title": "Agree to use your Tribal Membership Credential",
+    "about": "This tribe would like to use your Tribal Membership Credential to verify your relationship to this community and your personal information. Please read the following to learn more about what this means.",
+    "present": "to sharing your membership credential with the tribal administrators of this tribe.",
+    "accept": "You understand that this will share all information presented and associated with the membership credential.",
+    "usage": "The information on the membership credential will not be shared with anyone else and will only be used for the purposes of verifying your tribal registration."
   }
 }

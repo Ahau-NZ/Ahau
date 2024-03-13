@@ -7,5 +7,5 @@
   "name": "Naam",
   "dob": "Geboortedatum",
   "issued": "Uitgegeven",
-  "status": "status"
+  "state": "Verified digital credential"
 }

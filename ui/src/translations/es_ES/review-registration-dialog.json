@@ -20,5 +20,8 @@
   "message": "Enviar un mensaje",
   "approve": "Aprobar",
   "decline": "Rechazar",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "profileInformation": "Profile information",
+  "membershipCard": "Membership credentials",
+  "presentationPending": "Membership credential is still pending verification"
 }

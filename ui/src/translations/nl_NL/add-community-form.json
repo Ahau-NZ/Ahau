@@ -37,6 +37,7 @@
   "dataModelInstructions": "Stel uw gegevensmodel in voor stamprofielen",
   "data": "Gegevens",
   "type": "Type",
+  "order": "Order",
   "included": "Inbegrepen",
   "access": "Toegang",
   "required": "Vereist",

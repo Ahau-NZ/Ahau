@@ -18,5 +18,12 @@
     "storage": "Eu entendo que a credencial será armazenada no seu dispositivo e pode ser vista no A➲ hau.",
     "id": "Entendo que posso usar esta credencial como uma forma de identificação digital por entidades que reconhecem o membro da Tribal emitiu credenciais desta tribo.",
     "video": "Para saber mais, veja este explicador "
+  },
+  "presTnC": {
+    "title": "Agree to use your Tribal Membership Credential",
+    "about": "This tribe would like to use your Tribal Membership Credential to verify your relationship to this community and your personal information. Please read the following to learn more about what this means.",
+    "present": "to sharing your membership credential with the tribal administrators of this tribe.",
+    "accept": "You understand that this will share all information presented and associated with the membership credential.",
+    "usage": "The information on the membership credential will not be shared with anyone else and will only be used for the purposes of verifying your tribal registration."
   }
 }

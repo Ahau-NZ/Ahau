@@ -37,6 +37,7 @@
   "dataModelInstructions": "Set your tribal registry data model",
   "data": "Dado",
   "type": "tipo",
+  "order": "Order",
   "included": "Incluído",
   "access": "Acesso",
   "required": "Obrigatório",
