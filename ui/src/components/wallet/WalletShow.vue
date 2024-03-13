@@ -2,13 +2,18 @@
   <div>
     <v-row style="margin-top: 100px">
       <v-col cols="10" class="sub-headliner black--text pa-0 pl-6 pb-2">
-          {{ t('identityCredentials') }}
+        {{ t('identityCredentials') }}
       </v-col>
     </v-row>
-    <v-row v-if="credentials && credentials.length > 0" class="ma-6">
-      <v-col v-for="credential in credentials" :key="credential.id" cols="12" md="3" class="pr-4">
+    <v-row v-if="credentials && credentials.length > 0" class="ma-2">
+      <!-- TODO hacky styling fix! -->
+      <v-col v-for="credential in credentials" :key="credential.id"
+        cols="12" md="6" class="pr-4"
+        style="max-width: 440px;"
+      >
         <CredentialPreview
           :credential="credential"
+          :avatarImage="whoami.public.profile.avatarImage"
         />
       </v-col>
     </v-row>
@@ -49,6 +54,7 @@ export default {
     this.getAllCredentials()
   },
   computed: {
+    ...mapGetters(['whoami']),
     ...mapGetters('credentials', ['credentials']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
