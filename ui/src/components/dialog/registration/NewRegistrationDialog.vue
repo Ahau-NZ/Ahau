@@ -12,10 +12,7 @@
         <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
           <!-- PROFILE INFOMATION -->
           <v-form>
-            <v-card
-              outlined
-              class="mb-5"
-            >
+            <v-card outlined class="mb-5" >
               <v-row>
                 <v-col cols="12" md="3" class="py-0">
                   <v-row class="justify-center pt-12">
@@ -28,11 +25,8 @@
                     />
                   </v-row>
                 </v-col>
-                <v-col
-                  cols="12"
-                  md="9"
-                  sm="12"
-                >
+
+                <v-col cols="12" md="9" sm="12" >
                   <h1
                     class="primary--text pt-12"
                     :style="mobile ? length : ''"
@@ -368,7 +362,7 @@
 
               <!-- STEP 6 Agree to present presentations -->
               <v-stepper-step
-                v-if="acceptsVerifiedCredentials"
+                v-if="canOfferCredentials"
                 :step="acceptsCredsStep"
                 :complete="step > acceptsCredsStep"
                 :color="step6Checkbox ? 'green' : 'black'"
@@ -377,7 +371,7 @@
               </v-stepper-step>
 
               <v-stepper-content
-                v-if="acceptsVerifiedCredentials"
+                v-if="canOfferCredentials"
                 :step="acceptsCredsStep"
               >
                 <v-card
@@ -536,8 +530,8 @@ export default {
     issuesVerifiedCredentials () {
       return this.tribeSettings.issuesVerifiedCredentials
     },
-    acceptsVerifiedCredentials () {
-      return this.tribeSettings.acceptsVerifiedCredentials
+    canOfferCredentials () {
+      return this.tribeSettings.acceptsVerifiedCredentials && this.credentials.length
     },
     acceptsCredsStep () {
       const step = this.lastStep - 1
@@ -546,7 +540,7 @@ export default {
     lastStep () {
       let step = 5
       if (this.issuesVerifiedCredentials) step++
-      if (this.acceptsVerifiedCredentials) step++
+      if (this.canOfferCredentials) step++
       return step
     },
     personalProfile () {

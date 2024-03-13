@@ -69,12 +69,13 @@
             <v-row :class="headerClass">
               {{ t('membershipCard') }}
             </v-row>
-             <v-row v-if="presVerified">
-              <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'">
-                <template v-slot:content>
-                  <CredentialPreview v-if="presVerified" :credential="presentation.credentials[0]" isReg/>
-                </template>
-              </ProfileCard>
+            <v-row v-if="presVerified">
+              <CredentialPreview v-if="presVerified"
+                :credential="presentation.credentials[0]"
+                :avatarImage="notification.from.avatarImage"
+                isReg
+                :style="mobile ? 'margin: 10px;' : 'margin: 20px;'"
+              />
             </v-row>
             <v-row v-else>
               <ProfileCard :style="mobile ? 'margin: 10px;' : 'margin:20px'" class="presPending">

@@ -1,5 +1,5 @@
 <template>
-  <v-overlay opacity="0.8" :value="isLoading || isIndexing" :z-index="1">
+  <v-overlay opacity="0.8" :value="isLoading || isIndexing" :z-index="5">
     <div class="text-center">
       <v-progress-circular
         :value="indexingPercent"
