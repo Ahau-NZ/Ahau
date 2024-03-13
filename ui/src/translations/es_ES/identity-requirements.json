@@ -18,5 +18,12 @@
     "storage": "Entiendo que la credencial se almacenará en su dispositivo y se puede ver en Aínhau.",
     "id": "Entiendo que puedo utilizar esta credencial como una forma de identificación digital por parte de entidades que reconocen credenciales emitidas por Tribal Member de esta tribu.",
     "video": "Para aprender más mira este explicador "
+  },
+  "presTnC": {
+    "title": "Agree to use your Tribal Membership Credential",
+    "about": "This tribe would like to use your Tribal Membership Credential to verify your relationship to this community and your personal information. Please read the following to learn more about what this means.",
+    "present": "to sharing your membership credential with the tribal administrators of this tribe.",
+    "accept": "You understand that this will share all information presented and associated with the membership credential.",
+    "usage": "The information on the membership credential will not be shared with anyone else and will only be used for the purposes of verifying your tribal registration."
   }
 }

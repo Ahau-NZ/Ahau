@@ -37,6 +37,7 @@
   "dataModelInstructions": "Set your data model for tribal profiles",
   "data": "Data",
   "type": "Type",
+  "order": "Order",
   "included": "Included",
   "access": "Access",
   "required": "Required",

@@ -37,6 +37,7 @@
   "dataModelInstructions": "Establece tu modelo de datos para perfiles tribales",
   "data": "Datos",
   "type": "Tipo",
+  "order": "Order",
   "included": "Incluye",
   "access": "Acceder",
   "required": "Requerido",

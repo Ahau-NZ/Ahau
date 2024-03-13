@@ -57,8 +57,8 @@
     "newField": "{fieldName}: {fieldValue}",
     "changedField": "Cambiado {fieldName} a {fieldValue}",
     "altNameChanges": {
-        "add": "nombre alternativo (añadido): {name}",
-        "remove": "nombre alternativo (eliminado): {name}"
+        "add": "alternative name (added)",
+        "remove": "alternative name (removed)"
     },
     "deleteSubmission": "Eliminar este envío",
     "addedPicture": "Nueva foto de perfil añadida:",
