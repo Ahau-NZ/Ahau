@@ -7,5 +7,13 @@
   "name": "Nome:",
   "dob": "Data Nascimento",
   "issued": "Emitido",
-  "state": "Verified digital credential"
+  "state": "Verified digital credential",
+  "status": "Active",
+  "tryingConnection": "Establishing secure connection and sending credential proof. This may take a couple of minutes.",
+  "connectSuccess": "Credential successfully sent",
+  "connectError": "Something went wrong. Please check your internet connection or try a different invitation code.",
+  "inviteLabel": "Please enter a valid 'Out Of Band' or oob invitation code to connect and share this credential",
+  "sendProofTitle": "Send Credential Proof",
+  "connect": "Send",
+  "cancel": "cancelar"
 }
