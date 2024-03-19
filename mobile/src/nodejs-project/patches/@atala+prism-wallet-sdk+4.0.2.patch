@@ -1,14 +1,68 @@
-diff --git a/node_modules/@atala/prism-wallet-sdk/index.mjs b/node_modules/@atala/prism-wallet-sdk/index.mjs
-deleted file mode 100644
-index b4588fa..0000000
---- a/node_modules/@atala/prism-wallet-sdk/index.mjs
-+++ /dev/null
-@@ -1,7 +0,0 @@
--import * as browserSDK from './build/browser/index.mjs';
--import * as nodeSDK from './build/node/index.mjs';
--
--export default (typeof window !== 'undefined') ?
--    browserSDK
--    :
--    nodeSDK
-\ No newline at end of file
+diff --git a/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-00869b44.js b/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-00869b44.js
+index 5d3724e..b81a4a2 100644
+--- a/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-00869b44.js
++++ b/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-00869b44.js
+@@ -2817,7 +2817,12 @@ module.exports.__wbg_static_accessor_MODULE_ef3aa2eb251158a5 = function() {
+     return addHeapObject(ret);
+ };
+ module.exports.__wbg_require_900d5c3984fe7703 = function(arg0, arg1, arg2) {
+-    const ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
++    const val = getStringFromWasm0(arg1, arg2);
++    if (val === 'crypto') {
++      return addHeapObject(require('crypto'));
++    }
++
++    const ret = getObject(arg0).require(val);
+     return addHeapObject(ret);
+ };
+ module.exports.__wbg_getRandomValues_307049345d0bd88c = function(arg0) {
+diff --git a/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-4c3caa55.js b/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-4c3caa55.js
+index c79edd0..45dcf5a 100644
+--- a/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-4c3caa55.js
++++ b/node_modules/@atala/prism-wallet-sdk/build/node/anoncreds-4c3caa55.js
+@@ -2815,7 +2815,12 @@ module.exports.__wbg_static_accessor_MODULE_ef3aa2eb251158a5 = function() {
+     return addHeapObject(ret);
+ };
+ module.exports.__wbg_require_900d5c3984fe7703 = function(arg0, arg1, arg2) {
+-    const ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
++    const val = getStringFromWasm0(arg1, arg2);
++    if (val === 'crypto') {
++      return addHeapObject(require('crypto'));
++    }
++
++    const ret = getObject(arg0).require(val);
+     return addHeapObject(ret);
+ };
+ module.exports.__wbg_getRandomValues_307049345d0bd88c = function(arg0) {
+diff --git a/node_modules/@atala/prism-wallet-sdk/build/node/index.cjs b/node_modules/@atala/prism-wallet-sdk/build/node/index.cjs
+index 8c11f81..06f35d5 100644
+--- a/node_modules/@atala/prism-wallet-sdk/build/node/index.cjs
++++ b/node_modules/@atala/prism-wallet-sdk/build/node/index.cjs
+@@ -6608,7 +6608,7 @@ class AnoncredsLoader {
+     async load() {
+         /*START.NODE_ONLY*/
+         if (!this.loaded) {
+-            this.pkg = await Promise.resolve().then(function () { return require('./anoncreds-00869b44.js'); });
++            this.pkg = require('./anoncreds-00869b44.js');
+             this.loaded = true;
+         }
+         /*END.NODE_ONLY*/
+@@ -6621,6 +6621,7 @@ class AnoncredsLoader {
+     }
+     createLinksecret() {
+         return this.wasm.proverCreateLinkSecret();
++
+     }
+     createCredentialRequest(credentialOffer, credentialDefinition, linkSecret, linkSecretId) {
+         const result = this.wasm.proverCreateCredentialRequest(credentialOffer, credentialDefinition, linkSecret, linkSecretId);
+diff --git a/node_modules/@atala/prism-wallet-sdk/index.cjs b/node_modules/@atala/prism-wallet-sdk/index.cjs
+index 9bfb79c..4875fb1 100644
+--- a/node_modules/@atala/prism-wallet-sdk/index.cjs
++++ b/node_modules/@atala/prism-wallet-sdk/index.cjs
+@@ -1,5 +1 @@
+-module.exports =
+-    (typeof window !== 'undefined') ?
+-        require('./build/browser/index.cjs')
+-        :
+-        require('./build/node/index.cjs')
++module.exports = require('./build/node/index.cjs')

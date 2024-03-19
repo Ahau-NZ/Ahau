@@ -9,7 +9,7 @@ module.exports = function startAtalaPrism (ssb) {
 
   ssb.atalaPrism.start()
     .then(autoRequestPresentations)
-    .catch(err => console.log('atala no!', err))
+    .catch(err => console.log('ATALA ERROR (failed to start)', err))
 
   function autoRequestPresentations () {
     pull(
