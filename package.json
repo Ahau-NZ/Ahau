@@ -1,6 +1,6 @@
 {
   "name": "ahau",
-  "version": "2.27.0",
+  "version": "2.27.1",
   "description": "Desktop and mobile applications for gathering and sharing whakapapa (family trees, traditional knowledge). Built using Scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {

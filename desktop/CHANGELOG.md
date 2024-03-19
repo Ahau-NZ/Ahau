@@ -1,5 +1,9 @@
 # Changelog | Ahau desktop
 
+## v2.27.1
+- Fix issues with atala prism not starting
+- Fix broken wallet UI
+
 ## v2.27.0
 
 ### Features

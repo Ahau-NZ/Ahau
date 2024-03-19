@@ -1,6 +1,6 @@
 {
   "name": "ahau-mobile-server",
-  "version": "2.27.0",
+  "version": "2.27.1",
   "main": "main.js",
   "scripts": {
     "postinstall": "patch-package",
