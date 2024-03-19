@@ -531,7 +531,7 @@ export default {
       return this.tribeSettings.issuesVerifiedCredentials
     },
     canOfferCredentials () {
-      return this.tribeSettings.acceptsVerifiedCredentials && this.credentials.length
+      return this.tribeSettings.acceptsVerifiedCredentials && this.credentials?.length
     },
     acceptsCredsStep () {
       const step = this.lastStep - 1

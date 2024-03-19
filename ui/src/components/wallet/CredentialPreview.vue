@@ -20,7 +20,7 @@
               </v-col>
               <v-col v-if="avatarImage" cols=12 class="pt-4">
                 <v-img
-                  :src="avatarImage.uri"
+                  :src="avatarImage?.uri"
                   width="100px"
                 />
               </v-col>
@@ -136,7 +136,7 @@ export default {
       return tribe.public[0]
     },
     tribeImage () {
-      return this.tribe.avatarImage.uri
+      return this.tribe?.avatarImage?.uri
     },
     issuedDate () {
       return new Date(this.credential.issuanceDate).toDateString()
