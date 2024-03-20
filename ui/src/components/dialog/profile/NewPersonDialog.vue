@@ -451,7 +451,7 @@ export default {
           suggestions = await this.findPartners()
           break
         default:
-          if (this.$route.name !== 'community/whakapapa') console.error(this.t('typeError', { type: this.type }))
+          if (this.$route.name !== 'community/whakapapa' && this.$route.name !== 'login') console.error(this.t('typeError', { type: this.type }))
           suggestions = []
       }
 
