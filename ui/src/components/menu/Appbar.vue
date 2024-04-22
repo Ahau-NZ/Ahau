@@ -9,9 +9,10 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
+        <HelpButton v-if="!mobile" color="white"/>
         <v-tooltip  bottom nudge-bottom="-12" open-delay="300">
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">
+            <v-btn v-on="on" text active-class="no-active" to="/tribe" class="white--text text-uppercase">
               <span class="font-weight-light" style="font-size:2em">+</span>
             </v-btn>
           </template>
@@ -125,25 +126,17 @@
         </v-row>
         <v-divider class="ma-6"/>
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ml-3">
-          <p class="font-weight-light" style="font-size: 0.8em;">+ add tribe</p>
+          <p class="font-weight-light" style="font-size: 0.8em;">+ {{ t('add-tribe') }}</p>
         </v-btn>
+        <HelpButton color="white"/>
     </v-navigation-drawer>
-
-    <v-progress-linear
-      v-if="isJoiningPataka"
-      :active="isJoiningPataka"
-      :indeterminate="isJoiningPataka"
-      absolute
-      bottom
-      color="#B71C1C"
-      height='5'
-    />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import HelpButton from '@/components/button/HelpButton.vue'
 import BackButton from '@/components/button/BackButton.vue'
 import Avatar from '@/components/Avatar.vue'
 import NotificationPanel from '@/components/menu/NotificationPanel.vue'
@@ -172,6 +165,7 @@ export default {
     sideMenu: { type: Boolean, default: false }
   },
   components: {
+    HelpButton,
     Avatar,
     NotificationPanel,
     BackButton

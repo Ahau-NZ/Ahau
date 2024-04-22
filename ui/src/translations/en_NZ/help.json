@@ -1,0 +1,22 @@
+{
+  "help": "Support",
+  "title": "Application Support",
+  "context": "If you are experincing any issues please fill out the form below to let the team know",
+  "support": "Otherwise you need any help with something or you would like  chat with some from our team please click this button to open up the help chat channel",
+  "subject": "What are you trying to do?",
+  "action": "Explain as best you can what you are doing",
+  "outcome": "Explain what happens",
+  "expected": "Explain what you think should happen",
+  "moreInfo": "Is there anything else that we should know?",
+  "name": "Your name",
+  "email": "Your email",
+  "send": "send",
+  "report": "Report a bug",
+  "chat": "Chat with the team",
+  "chatDesc": "If you need any help and want to chat with our team please click the button below to open the Āhau online help channel. We will do our best to respond to you as soon as possible.",
+  "chatBtn": "Open chat now",
+  "completeForm": "Please complete all required fields",
+  "issueSent": "Issue successfully sent. Thank you for letting us know",
+  "sendErr": "Something went wrong please let us know in the chat option above",
+  "mobile-btn": "get help"
+}
