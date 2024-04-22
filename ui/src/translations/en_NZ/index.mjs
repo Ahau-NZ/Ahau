@@ -54,8 +54,10 @@ import groups from './groups.json'
 import support from './support.json'
 import button from './button.json'
 import importPeopleForm from './import-csv.json'
+import help from './help.json'
 
 export {
+  help,
   walletShow,
   viewTribes,
   personIndex,

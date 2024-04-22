@@ -71,10 +71,7 @@
           <InfoButton v-if="whakapapaView.tree" @click="updateDialog('whakapapa-helper', null)" />
           <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </div>
-        <div class="icon-button">
-          <HelpButton />
-        </div>
-        </v-row>
+      </v-row>
       </v-expand-transition>
       <!-- speed dial menu for mobile -->
       <v-expand-transition v-else-if="mobile">
@@ -135,16 +132,13 @@
         />
       </div>
     </v-container>
-
     <NodeMenu @open="updateDialog($event.dialog, $event.type)" />
-
     <FilterMenu
       :show="searchFilter"
       :isTable="whakapapaView.table"
       @close="clickedOffSearchFilter()"
       @toggleAvatars="toggleShowAvatars()"
     />
-
     <DialogHandler
       :dialog.sync="dialog.active"
       :type.sync="dialog.type"
@@ -172,7 +166,6 @@ import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.
 import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 
 import Tree from '@/components/tree/Tree.vue'
-import HelpButton from '@/components/button/HelpButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import InfoButton from '@/components/button/InfoButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
@@ -196,7 +189,6 @@ export default {
     SearchBar,
     SearchButton,
     SearchFilterButton,
-    HelpButton,
     Tree,
     DialogHandler,
     WhakapapaBanner,
@@ -488,7 +480,7 @@ export default {
     &>.select {
       position: fixed;
       top: 80px;
-      right: 110px;
+      right: 50px;
       .col {
           padding-top: 0;
           padding-bottom: 0;
