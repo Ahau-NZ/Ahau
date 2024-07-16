@@ -1,5 +1,9 @@
 # Changelog | Ahau desktop
 
+## v2.27.2
+- Fix issue with registration form to join a tribe getting stuck on the first step when there were required custom fields
+  - NOTE: if this fix introduces other issues, we should relax required custom fields on the registration form.
+
 ## v2.27.1
 - Fix issues with atala prism not starting
 - Fix broken wallet UI
