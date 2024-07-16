@@ -437,7 +437,7 @@
             :profile="tribe.profileInTribe"
             :readonly="readonly"
             :sideView="isSideViewDialog"
-
+            :fieldValues.sync="formData.customFields[tribe.tribeId]"
             :isRegistration="isRegistration"
           />
         </v-col>
@@ -674,7 +674,8 @@ export default {
       if (!label) return
 
       if (this.isPersonalProfile) { // if editing a personal profle show all default fields except those which have been tombstoned
-        console.warn('There may be an issue with loading custom fields in this ProfileForm')
+        // Warning: There may be an issue with loading custom fields in this ProfileForm when viewing from your personal
+        // profile page
 
         return this.tribeDefaultFields
           .filter(field => !field.tombstone)

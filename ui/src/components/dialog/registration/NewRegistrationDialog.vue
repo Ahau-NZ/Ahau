@@ -671,6 +671,7 @@ export default {
 
       if (customFields) {
         const customFieldValues = getInitialCustomFieldChanges(customFields[this.currentTribe.id], this.tribeCustomFields)
+
         if (!isEmpty(customFieldValues)) {
           this.rawCustomFields = customFields
           this.customFields = customFieldValues
