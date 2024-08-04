@@ -1,16 +1,25 @@
 # Changelog | Ahau desktop
 
+## v2.28.0
+
+### Features
+
+- Updates atala prism wallet SDK to version 6
+
 ## v2.27.1
+
 - Fix issues with atala prism not starting
 - Fix broken wallet UI
 
 ## v2.27.0
 
 ### Features
+
 - custom field ordering for web-registration form
 - presentation to verifier using pasted oob link - galaxy maps prototype
 
 ### Fixes
+
 - loading spinner in mobile now works :D
 - credentials look more like drivers license now
   - based on community feedback from Whangaroa Papa Hapū
@@ -20,6 +29,7 @@
 ## v2.26.1
 
 ### Fixes
+
 - patch update `ssb-invite` (`rcp.close` callback)
 - revert to `ip@1.1.8` which has vulerabilities but doesn't throw on domain
   names!
@@ -31,6 +41,7 @@
 ## v2.26.0
 
 ### Features
+
 - tribes can now issue and request verifiable credentials. This setting is
   toggled in the tribe settings (requires config setup, please get in touch if
   you're interested)
@@ -51,7 +62,6 @@
   and `NewPersonDialog` to crash
 - removes .woff files from roboto-latin
 - translations
-
 
 ## v2.25.4
 
