@@ -13,5 +13,10 @@
   "issueCredentialsToggle": "Issue membership credentials: {toggle}",
   "credentialVerifier": "Accept membership credentials: {toggle}",
   "on": "on",
-  "off": "off"
+  "off": "off",
+  "configHelpText": "Note: To properly set up verified credential features, you will need to add configuration to the configuration file below. See https://docs.ahau.io/#/credentials_guide for more information.",
+  "copyTribeId": "Copy your Tribe ID",
+  "copyPath": "Copy your config path",
+  "copyConfig": "Copy recommended config",
+  "configuration": "Configuration"
 }

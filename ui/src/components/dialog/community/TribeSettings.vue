@@ -49,21 +49,39 @@
           <v-col cols="12" class="overline">
             {{ t('credentialFeatures') }}
           </v-col>
+          <IssueCredentials :settings="settings" @change="emitCredChanges" />
+          <AcceptCredentials :settings="settings" @change="emitCredChanges" class="mt-8" />
+
+          <v-col cols="12" class="overline mt-4">
+            {{ t('configuration') }}
+          </v-col>
+          <!-- Configuration Helpers -->
+          <v-col class="py-0 font-italic">
+            {{ t('configHelpText') }}
+          </v-col>
           <v-col cols="12" style="cursor: pointer;" v-if="currentTribe">
             <v-text-field
               :value="currentTribe.id"
               :append-icon="copyTribeId"
               @click:append="copyCode(currentTribe.id, 'copyTribeId')"
-              label="Copy your Tribe ID"
+              :label="t('copyTribeId')"
               style="max-width: 550px;"
               readonly
             ></v-text-field>
           </v-col>
-          <IssueCredentials :settings="settings" @change="emitCredChanges" />
-          <AcceptCredentials :settings="settings" @change="emitCredChanges" class="mt-8" />
+          <v-col cols="12" style="cursor: pointer;" v-if="configPath">
+            <v-text-field
+              :value="configPath"
+              :append-icon="copyPath"
+              @click:append="copyCode(configPath, 'copyPath')"
+              :label="t('copyPath')"
+              style="max-width: 550px;"
+              readonly
+            ></v-text-field>
+          </v-col>
           <v-col cols="12" v-if="recommendedConfig">
             <v-textarea
-              label="Copy recommended config"
+              :label="t('copyConfig')"
               :value="recommendedConfig"
               :append-icon="copyConfig"
               @click:append="copyCode(recommendedConfig, 'copyConfig')"
@@ -82,9 +100,19 @@ import ToggleBetaFeatures from './ToggleBetaFeatures.vue'
 import AcceptCredentials from './AcceptCredentials.vue'
 import IssueCredentials from './IssueCredentials.vue'
 import { mapGetters } from 'vuex'
+import { isEmpty } from 'lodash-es'
+import path from 'path'
 
 const COPY_ICON = 'mdi-content-copy'
 const CHECK_ICON = 'mdi-check'
+
+const LOCAL_ISSUER_EXAMPLE = 'http://localhost:8000/'
+const LOCAL_VERIFIER_EXAMPLE = 'http://localhost:9000/'
+const API_KEY_EXAMPLE = 'my-api-key'
+
+const ALLOW_PERSON_LIST = 'allowPersonsList'
+const ALLOW_WHAKAPAPA_VIEWS = 'allowWhakapapaViews'
+const ALLOW_STORIES = 'allowStories'
 
 export default {
   name: 'TribeSettings',
@@ -100,23 +128,24 @@ export default {
     return {
       copyTribeId: COPY_ICON,
       copyConfig: COPY_ICON,
-      recommendedConfig: null,
+      copyPath: COPY_ICON,
+      config: {},
       kaitiakiSettings: [
         {
-          key: 'allowPersonsList',
-          label: d => this.t('allowPersonsList', { toggle: this.getSwitchLabel(d) }),
+          key: ALLOW_PERSON_LIST,
+          label: d => this.t(ALLOW_PERSON_LIST, { toggle: this.getSwitchLabel(d) }),
           value: this.settings.allowPersonsList
         }
       ],
       memberSettings: [
         {
-          key: 'allowWhakapapaViews',
-          label: d => this.t('allowWhakapapaViews', { toggle: this.getSwitchLabel(d) }),
+          key: ALLOW_WHAKAPAPA_VIEWS,
+          label: d => this.t(ALLOW_WHAKAPAPA_VIEWS, { toggle: this.getSwitchLabel(d) }),
           value: this.settings.allowWhakapapaViews
         },
         {
-          key: 'allowStories',
-          label: d => this.t('allowStories', { toggle: this.getSwitchLabel(d) }),
+          key: ALLOW_STORIES,
+          label: d => this.t(ALLOW_STORIES, { toggle: this.getSwitchLabel(d) }),
           value: this.settings.allowStories
         }
       ]
@@ -130,43 +159,38 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    config () {
-      if (!this.currentTribe) return null
+    atalaConfig () {
+      if (!this.currentTribe?.id || isEmpty(this.config)) return {}
 
-      return JSON.stringify(this.recommendedConfig, null, 2)
-    }
-  },
-  methods: {
-    async getConfig () {
-      const config = await window.ahoy?.getConfig()
-
-      const atalaConfig = config?.atalaPrism || {}
+      const atalaConfig = this.config?.atalaPrism
 
       // get the issuer config
       let issuerConfig = Object.assign({}, atalaConfig.issuers)
-      if (this.settings.issuesVerifiedCredentials) {
+
+      if (this.settings.issuesVerifiedCredentials && !issuerConfig[this.currentTribe.id]) {
         issuerConfig = Object.assign({}, issuerConfig, {
           [this.currentTribe.id]: {
             tribeName: this.tribeProfile.preferredName,
-            ISSUER_URL: 'https://your.agent.address/prism-agent/',
-            ISSUER_APIKEY: 'yourApiKey'
+            ISSUER_URL: LOCAL_ISSUER_EXAMPLE,
+            ISSUER_APIKEY: API_KEY_EXAMPLE
           }
         })
       }
 
       // get the verifier config
       let verifierConfig = Object.assign({}, atalaConfig.verifiers)
-      if (this.settings.acceptsVerifiedCredentials) {
+
+      if (this.settings.acceptsVerifiedCredentials && !verifierConfig[this.currentTribe.id]) {
         verifierConfig = Object.assign({}, verifierConfig, {
           [this.currentTribe.id]: {
             tribeName: this.tribeProfile.preferredName,
-            VERIFIER_URL: 'https://your.agent.address/prism-agent/',
-            VERIFIER_APIKEY: 'yourApiKey'
+            VERIFIER_URL: LOCAL_VERIFIER_EXAMPLE,
+            VERIFIER_APIKEY: API_KEY_EXAMPLE
           }
         })
       }
 
-      this.recommendedConfig = JSON.stringify({
+      return {
         atalaPrism: Object.assign(
           {},
           atalaConfig,
@@ -175,7 +199,23 @@ export default {
             issuers: issuerConfig
           }
         )
-      }, null, 2)
+      }
+    },
+    recommendedConfig () {
+      if (isEmpty(this.atalaConfig)) return null
+
+      return JSON.stringify(this.atalaConfig, null, 2)
+    },
+    configPath () {
+      if (isEmpty(this.config)) return null
+
+      return path.join(this.config?.path, 'config')
+    }
+  },
+  methods: {
+    async getConfig () {
+      this.config = await window.ahoy?.getConfig()
+      console.log(this.config)
     },
     getSwitchLabel (val) {
       return val === true ? this.t('on') : this.t('off')
