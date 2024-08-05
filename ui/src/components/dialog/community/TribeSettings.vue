@@ -106,8 +106,8 @@ import path from 'path'
 const COPY_ICON = 'mdi-content-copy'
 const CHECK_ICON = 'mdi-check'
 
-const LOCAL_ISSUER_EXAMPLE = 'http://localhost:8000/'
-const LOCAL_VERIFIER_EXAMPLE = 'http://localhost:9000/'
+const LOCAL_ISSUER_EXAMPLE = 'http://localhost:8000/cloud-agent'
+const LOCAL_VERIFIER_EXAMPLE = 'http://localhost:9000/cloud-agent'
 const API_KEY_EXAMPLE = 'my-api-key'
 
 const ALLOW_PERSON_LIST = 'allowPersonsList'
