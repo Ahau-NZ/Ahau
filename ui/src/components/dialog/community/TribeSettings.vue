@@ -49,6 +49,16 @@
           <v-col cols="12" class="overline">
             {{ t('credentialFeatures') }}
           </v-col>
+          <v-col cols="12" style="cursor: pointer;">
+            <v-text-field
+              :value="tribeId"
+              :append-icon="copyIcon"
+              @click:append="copyCode"
+              label="Copy your Tribe ID"
+              style="max-width: 550px;"
+            ></v-text-field>
+
+          </v-col>
           <IssueCredentials :settings="settings" @change="emitCredChanges" />
           <AcceptCredentials :settings="settings" @change="emitCredChanges" class="mt-8" />
         </template>
@@ -62,9 +72,13 @@ import ToggleBetaFeatures from './ToggleBetaFeatures.vue'
 import AcceptCredentials from './AcceptCredentials.vue'
 import IssueCredentials from './IssueCredentials.vue'
 
+const COPY_ICON = 'mdi-content-copy'
+const CHECK_ICON = 'mdi-check'
+
 export default {
   name: 'TribeSettings',
   props: {
+    tribeId: String,
     settings: Object
   },
   components: {
@@ -74,6 +88,7 @@ export default {
   },
   data () {
     return {
+      copyIcon: COPY_ICON,
       credentialSettings: [
         {
           key: 'issuesVerifiedCredentials',
@@ -120,6 +135,19 @@ export default {
     emitCredChanges ({ key, value }) {
       console.log(key, value)
       this.$emit('change', { key, value })
+    },
+    async copyCode () {
+      navigator.clipboard.writeText(this.tribeId)
+        .then(() => {
+          this.copyIcon = CHECK_ICON
+          setTimeout(() => {
+            this.copyIcon = COPY_ICON
+          }, 2000)
+        })
+        .catch(err => {
+          // This can happen if the user denies clipboard permissions:
+          console.error('Could not copy text: ', err)
+        })
     }
   }
 }
@@ -131,4 +159,5 @@ export default {
 center {
   text-align: center;
 }
+
 </style>
