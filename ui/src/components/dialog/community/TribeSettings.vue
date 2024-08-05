@@ -49,18 +49,28 @@
           <v-col cols="12" class="overline">
             {{ t('credentialFeatures') }}
           </v-col>
-          <v-col cols="12" style="cursor: pointer;">
+          <v-col cols="12" style="cursor: pointer;" v-if="currentTribe">
             <v-text-field
-              :value="tribeId"
-              :append-icon="copyIcon"
-              @click:append="copyCode"
+              :value="currentTribe.id"
+              :append-icon="copyTribeId"
+              @click:append="copyCode(currentTribe.id, 'copyTribeId')"
               label="Copy your Tribe ID"
               style="max-width: 550px;"
+              readonly
             ></v-text-field>
-
           </v-col>
           <IssueCredentials :settings="settings" @change="emitCredChanges" />
           <AcceptCredentials :settings="settings" @change="emitCredChanges" class="mt-8" />
+          <v-col cols="12" v-if="recommendedConfig">
+            <v-textarea
+              label="Copy recommended config"
+              :value="recommendedConfig"
+              :append-icon="copyConfig"
+              @click:append="copyCode(recommendedConfig, 'copyConfig')"
+              readonly
+              auto-grow
+            />
+          </v-col>
         </template>
       </ToggleBetaFeatures>
     </v-row>
@@ -71,6 +81,7 @@
 import ToggleBetaFeatures from './ToggleBetaFeatures.vue'
 import AcceptCredentials from './AcceptCredentials.vue'
 import IssueCredentials from './IssueCredentials.vue'
+import { mapGetters } from 'vuex'
 
 const COPY_ICON = 'mdi-content-copy'
 const CHECK_ICON = 'mdi-check'
@@ -78,7 +89,6 @@ const CHECK_ICON = 'mdi-check'
 export default {
   name: 'TribeSettings',
   props: {
-    tribeId: String,
     settings: Object
   },
   components: {
@@ -88,14 +98,9 @@ export default {
   },
   data () {
     return {
-      copyIcon: COPY_ICON,
-      credentialSettings: [
-        {
-          key: 'issuesVerifiedCredentials',
-          label: d => this.t('issuesVerifiedCredentials', { toggle: this.getSwitchLabel(d) }),
-          value: false // this.settings.issuesVerifiedCredentials TODO: update when ataprism in merged
-        }
-      ],
+      copyTribeId: COPY_ICON,
+      copyConfig: COPY_ICON,
+      recommendedConfig: null,
       kaitiakiSettings: [
         {
           key: 'allowPersonsList',
@@ -117,31 +122,81 @@ export default {
       ]
     }
   },
+  async mounted () {
+    await this.getConfig()
+  },
   computed: {
+    ...mapGetters('tribe', ['currentTribe', 'tribeProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    config () {
+      if (!this.currentTribe) return null
+
+      return JSON.stringify(this.recommendedConfig, null, 2)
     }
   },
   methods: {
+    async getConfig () {
+      const config = await window.ahoy?.getConfig()
+
+      const atalaConfig = config?.atalaPrism || {}
+
+      // get the issuer config
+      let issuerConfig = Object.assign({}, atalaConfig.issuers)
+      if (this.settings.issuesVerifiedCredentials) {
+        issuerConfig = Object.assign({}, issuerConfig, {
+          [this.currentTribe.id]: {
+            tribeName: this.tribeProfile.preferredName,
+            ISSUER_URL: 'https://your.agent.address/prism-agent/',
+            ISSUER_APIKEY: 'yourApiKey'
+          }
+        })
+      }
+
+      // get the verifier config
+      let verifierConfig = Object.assign({}, atalaConfig.verifiers)
+      if (this.settings.acceptsVerifiedCredentials) {
+        verifierConfig = Object.assign({}, verifierConfig, {
+          [this.currentTribe.id]: {
+            tribeName: this.tribeProfile.preferredName,
+            VERIFIER_URL: 'https://your.agent.address/prism-agent/',
+            VERIFIER_APIKEY: 'yourApiKey'
+          }
+        })
+      }
+
+      this.recommendedConfig = JSON.stringify({
+        atalaPrism: Object.assign(
+          {},
+          atalaConfig,
+          {
+            verifiers: verifierConfig,
+            issuers: issuerConfig
+          }
+        )
+      }, null, 2)
+    },
     getSwitchLabel (val) {
       return val === true ? this.t('on') : this.t('off')
     },
     t (key, vars) {
       return this.$t('tribeSettings.' + key, vars)
     },
-    emitChanges (key, value) {
+    async emitChanges (key, value) {
       this.$emit('change', { key, value })
+      await this.getConfig()
     },
-    emitCredChanges ({ key, value }) {
-      console.log(key, value)
+    async emitCredChanges ({ key, value }) {
       this.$emit('change', { key, value })
+      await this.getConfig()
     },
-    async copyCode () {
-      navigator.clipboard.writeText(this.tribeId)
+    async copyCode (text, name) {
+      navigator.clipboard.writeText(text)
         .then(() => {
-          this.copyIcon = CHECK_ICON
+          this[name] = CHECK_ICON
           setTimeout(() => {
-            this.copyIcon = COPY_ICON
+            this[name] = COPY_ICON
           }, 2000)
         })
         .catch(err => {

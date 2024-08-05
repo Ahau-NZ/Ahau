@@ -66,7 +66,7 @@
           </v-row>
         </v-tab-item>
         <v-tab-item light value="tab-3">
-          <TribeSettings :tribeId="tribeId" :settings="settings" @change="updateSettings" />
+          <TribeSettings :settings="settings" @change="updateSettings" />
           <v-divider/>
           <GroupsList :formData.sync="formData" :profile="profile" :mobile="mobile" :isEditing="editing"/>
           <v-divider/>
@@ -134,7 +134,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tribe', ['tribeId', 'tribeSettings']),
+    ...mapGetters('tribe', ['tribeSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
