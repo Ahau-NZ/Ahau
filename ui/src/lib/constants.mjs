@@ -104,3 +104,5 @@ export const DELETE = 'delete'
 export const WHAKAPAPA_TYPE = 'whakapapa/view'
 
 export const WEB_FORM = 'webForm'
+
+export const KAITIAKI_ONLY_FIELDS = ['email', 'phone', 'address']

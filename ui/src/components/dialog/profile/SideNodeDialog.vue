@@ -345,7 +345,7 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import EditRelationships from '@/components/profile/EditRelationships.vue'
 
 import calculateAge from '@/lib/calculate-age'
-import { ACCESS_KAITIAKI } from '@/lib/constants'
+import { ACCESS_KAITIAKI, KAITIAKI_ONLY_FIELDS } from '@/lib/constants'
 import { getDisplayName, PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 import { parseInterval, dateToString } from '@/lib/date-helpers'
 import { getDefaultFieldValue, getCustomFieldChanges, mapPropToLabel } from '@/lib/custom-field-helpers'
@@ -398,7 +398,7 @@ export default {
   computed: {
     ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters(['isKaitiaki', 'currentAccess', 'isMyProfile', 'whoami']),
-    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'tribeCustomFields', 'tribeDefaultFields']),
+    ...mapGetters('tribe', ['currentTribe', 'tribeSettings', 'isPersonalTribe', 'tribeCustomFields', 'tribeDefaultFields']),
     ...mapGetters('person', ['person']),
     ...mapGetters('whakapapa', [
       'getRawParentIds', 'getRawChildIds', 'getRawPartnerIds',
@@ -572,6 +572,10 @@ export default {
       }
     },
     hasDefaultField (key) {
+      // we need to hide kaitiaki-only fields when we are in our personal tribe
+      // as they are not supported
+      if (this.isPersonalTribe && KAITIAKI_ONLY_FIELDS.includes(key)) return false
+
       const label = mapPropToLabel(key)
 
       if (!label) return

@@ -1,25 +1,38 @@
 # Changelog | Ahau desktop
 
+## v2.27.2
+
+### Fixes
+
+- Fix authorship issue where multiple authors were getting into a forked state and were being classed as invalid author, due to simultaneous updates to the same record
+- Fix issue with registration form to join a tribe getting stuck on the first step when there were required custom fields
+  - NOTE: if this fix introduces other issues, we should relax required custom fields on the registration form.
+
 ## v2.27.1
+
+### Fixes
+
 - Fix issues with atala prism not starting
 - Fix broken wallet UI
 
 ## v2.27.0
 
 ### Features
+
 - custom field ordering for web-registration form
 - presentation to verifier using pasted oob link - galaxy maps prototype
 
 ### Fixes
+
 - loading spinner in mobile now works :D
 - credentials look more like drivers license now
   - based on community feedback from Whangaroa Papa Hapū
   - shows photo of associated Āhau profile
 
-
 ## v2.26.1
 
 ### Fixes
+
 - patch update `ssb-invite` (`rcp.close` callback)
 - revert to `ip@1.1.8` which has vulerabilities but doesn't throw on domain
   names!
@@ -31,6 +44,7 @@
 ## v2.26.0
 
 ### Features
+
 - tribes can now issue and request verifiable credentials. This setting is
   toggled in the tribe settings (requires config setup, please get in touch if
   you're interested)
@@ -84,7 +98,6 @@ notarazing updates, plus intial replication updates
 
 - submissions for proposing profiles to be ignored from a whakapapa
 
-
 ### Updates
 
 - `ssb-friends` updated - fixes initial sync
@@ -94,7 +107,6 @@ notarazing updates, plus intial replication updates
 - `secret-stack` updated to version 7
 - replaced `noderify` with `esbuild`
 - translations updated
-
 
 ### Patches
 
