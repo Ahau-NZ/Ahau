@@ -5,8 +5,27 @@
 ### Features
 
 - Updates atala prism wallet SDK to version 6
+- Beta Settings in the Tribe Settings
+  - Allow users to view and copy the tribeId
+  - Allow users to view and copy the ssb config file path
+  - Allow users to see recommended config they would need to add to their config file, to enable verified credentials for the current tribe they are viewing.
+  > Note: these new features are only viewable from the electron window
+
+### Fixes
+
+- Stops registration from being approved if the credential offer wasnt not successfully sent
+
+## v2.27.2
+
+### Fixes
+
+- Fix authorship issue where multiple authors were getting into a forked state and were being classed as invalid author, due to simultaneous updates to the same record
+- Fix issue with registration form to join a tribe getting stuck on the first step when there were required custom fields
+  - NOTE: if this fix introduces other issues, we should relax required custom fields on the registration form.
 
 ## v2.27.1
+
+### Fixes
 
 - Fix issues with atala prism not starting
 - Fix broken wallet UI
@@ -24,7 +43,6 @@
 - credentials look more like drivers license now
   - based on community feedback from Whangaroa Papa Hapū
   - shows photo of associated Āhau profile
-
 
 ## v2.26.1
 
@@ -94,7 +112,6 @@ notarazing updates, plus intial replication updates
 
 - submissions for proposing profiles to be ignored from a whakapapa
 
-
 ### Updates
 
 - `ssb-friends` updated - fixes initial sync
@@ -104,7 +121,6 @@ notarazing updates, plus intial replication updates
 - `secret-stack` updated to version 7
 - replaced `noderify` with `esbuild`
 - translations updated
-
 
 ### Patches
 

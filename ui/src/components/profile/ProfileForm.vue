@@ -437,7 +437,7 @@
             :profile="tribe.profileInTribe"
             :readonly="readonly"
             :sideView="isSideViewDialog"
-
+            :fieldValues.sync="formData.customFields[tribe.tribeId]"
             :isRegistration="isRegistration"
           />
         </v-col>
@@ -455,7 +455,7 @@ import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 import CustomFieldGroup from '@/components/profile/CustomFieldGroup.vue'
 
-import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import { GENDERS, RELATIONSHIPS, KAITIAKI_ONLY_FIELDS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers'
 import { getCustomFields, mapPropToLabel } from '@/lib/custom-field-helpers'
 
@@ -544,7 +544,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki', 'whoami', 'isMyProfile', 'getPersonalProfileInTribe']),
-    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields', 'rawTribeCustomFields']),
+    ...mapGetters('tribe', ['tribeProfile', 'currentTribe', 'isPersonalTribe', 'tribeCustomFields', 'joinedTribes', 'tribeRequiredDefaultFields', 'tribeDefaultFields', 'rawTribeCustomFields']),
     ...mapGetters('person', ['person']),
     phone () {
       return this.hasDefaultField('phone')
@@ -668,13 +668,20 @@ export default {
     getDisplayName,
     hasDefaultField (key) {
       if (this.isLoginPage) return true
-      if (!this.currentTribe) return false // avoid displaying any fields until the tribe has loaded
+
+      // avoid displaying any fields until the tribe has loaded
+      if (!this.currentTribe) return false
+
+      // we need to hide kaitiaki-only fields when we are in our personal tribe
+      // as they are not supported
+      if (this.isPersonalTribe && KAITIAKI_ONLY_FIELDS.includes(key)) return false
 
       const label = mapPropToLabel(key)
       if (!label) return
 
       if (this.isPersonalProfile) { // if editing a personal profle show all default fields except those which have been tombstoned
-        console.warn('There may be an issue with loading custom fields in this ProfileForm')
+        // Warning: There may be an issue with loading custom fields in this ProfileForm when viewing from your personal
+        // profile page
 
         return this.tribeDefaultFields
           .filter(field => !field.tombstone)
