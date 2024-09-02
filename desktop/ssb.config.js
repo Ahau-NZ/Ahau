@@ -9,7 +9,11 @@ const merge = require('lodash.merge')
 const appPath = envPaths(process.env.APP_NAME || env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
-const MEDIATOR_DID = 'did:peer:2.Ez6LSjefEEGLdAo2sRdpyj4H2s7X1C7wKosuEnyJHmsq1JsqK.Vz6Mks5Ffushz8V3TRh7JDnLZDRozMmpbPdkQW6C16mizk9zH.SeyJ0IjoiZG0iLCJzIjoiaHR0cDovLzE2NS4yMi4yNDUuNzA6ODA4MCIsInIiOltdLCJhIjpbImRpZGNvbW0vdjIiXX0'
+// mediator.ahau.io
+const MEDIATOR_DID = 'did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImEiOlsiZGlkY29tbS92MiJdfX0.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6IndzOi8vbG9jYWxob3N0OjgwODAvd3MiLCJhIjpbImRpZGNvbW0vdjIiXX19'
+
+// my local
+// const MEDIATOR_DID = 'did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHA6Ly8xOTIuMTY4LjY4LjYxOjgwODAiLCJhIjpbImRpZGNvbW0vdjIiXX19.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6IndzOi8vMTkyLjE2OC42OC42MTo4MDgwL3dzIiwiYSI6WyJkaWRjb21tL3YyIl19fQ'
 
 const core = {
   path: appPath,
