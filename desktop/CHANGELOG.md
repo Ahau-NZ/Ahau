@@ -1,5 +1,13 @@
 # Changelog | Ahau desktop
 
+## v2.27.3
+
+### Fixes
+
+- Fix bug where custom field ordering in the DataModel wasnt working correctly
+  - Custom fields without an order set previously or by default will now show up without an order
+  - When choosing an order, the number will go up to the last custom field with an order
+
 ## v2.27.2
 
 ### Fixes
