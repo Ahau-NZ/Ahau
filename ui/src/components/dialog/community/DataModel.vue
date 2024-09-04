@@ -18,9 +18,10 @@
     >
       <template v-slot:item.order="{ item }">
         <v-select
-          :items="orders"
+          :items="item.order ? ordersForOrdered : ordersForUnordered"
           :value="determineOrder(item)"
           @change="changeOrder(item, $event)"
+          :disabled="item.type === 'image'"
         ></v-select>
       </template>
 
@@ -241,14 +242,24 @@ export default {
     window.scrollTo(0, 0)
   },
   computed: {
-    filteredFields () {
+    fieldsWithOrders () {
       return this.allFields
-        .filter(field => !field.tombstone)
-        // put the fields in order based on the order
-        .sort(({ order: a }, { order: b }) => {
-          if (a === null) return 1000
-          return a - b
-        })
+        .filter(field => !field.tombstone && field.order !== null)
+        .sort((a, b) => a.order - b.order)
+    },
+
+    // Computed property for fields without orders
+    fieldsWithoutOrders () {
+      return this.allFields
+        .filter(field => !field.tombstone && field.order === null)
+    },
+
+    // Computed property to combine the two lists
+    filteredFields () {
+      return [
+        ...this.fieldsWithOrders,
+        ...this.fieldsWithoutOrders
+      ]
     },
     allFields () {
       return [...this.defaultFields, ...this.customDataFields]
@@ -276,27 +287,42 @@ export default {
         autoFocus: true
       }
     },
-    orders () {
-      return [...Array(this.filteredFields.length).keys()]
-        .map(i => i + 1)
+
+    maxOrder () {
+      return this.fieldsWithOrders.length + (this.fieldsWithoutOrders.length ? 1 : 0)
+    },
+
+    // Generate order numbers up to the length of fieldsWithOrders
+    ordersForOrdered () {
+      return Array.from({ length: this.fieldsWithOrders.length }, (_, i) => i + 1)
+    },
+
+    // Generate order numbers up to maxOrder, which includes one extra slot for new unordered fields
+    ordersForUnordered () {
+      return Array.from({ length: this.maxOrder }, (_, i) => i + 1)
     }
   },
   methods: {
     // (Based on https://softwareengineering.stackexchange.com/a/195317/54663)
     // (Taken from https://github.com/cobudget/cobudget/blob/20e2c6ad20c94c9f621c1323b119880db7c70205/ui/components/RoundSettings/DraggableItems.js#L41)
     changeOrder (item, newIndex) {
-      // 1. determine the "newOrder" of the item, based on desired newIndex
-      // we add one when determining the index to show, this just reverts it
+      // 1. Determine the "newOrder" of the item, based on the desired newIndex
       newIndex = newIndex - 1
 
       const localItems = this.filteredFields
       const oldIndex = localItems.indexOf(item)
 
-      let beforeOrder
-      let afterOrder
+      let beforeOrder, afterOrder
       let beforeItem
 
       const afterItem = localItems[newIndex]
+
+      // If afterItem has no order, temporarily use its index as the order
+      if (!afterItem || afterItem.order === null) {
+        afterOrder = newIndex
+      } else {
+        afterOrder = afterItem.order
+      }
 
       if (oldIndex > newIndex) {
         beforeItem = localItems[newIndex - 1]
@@ -304,28 +330,26 @@ export default {
         beforeItem = localItems[newIndex + 1]
       }
 
-      if (beforeItem) {
-        beforeOrder = beforeItem.order
+      // If beforeItem has no order, temporarily use its index as the order
+      if (!beforeItem || beforeItem.order === null) {
+        beforeOrder = beforeItem ? (newIndex + (oldIndex > newIndex ? -1 : 1)) : afterOrder + 1
       } else {
-        // Last element
-        beforeOrder = localItems[localItems.length - 1].order + 1
+        beforeOrder = beforeItem.order
       }
+
       if (newIndex === 0) {
         // First element
-        afterOrder = localItems[0].order - 1
-        beforeOrder = localItems[0].order
-      } else {
-        afterOrder = afterItem.order
+        afterOrder = afterItem ? (afterItem.order || 0) : 0
+        beforeOrder = afterOrder - 1
       }
 
       const newOrder = (beforeOrder - afterOrder) / 2.0 + afterOrder
 
-      // 2. figure out what sort of mutation this means for customFields
-      // is it a customField already? or is it about to become a "customisted default field"
+      // 2. Determine what this means for customFields
       const newCustomFields = clone(this.customFields)
       const isMatch = (field) => field.label === item.label
 
-      // if is existing customField, mutate that
+      // If it's an existing customField, mutate it
       const index = newCustomFields.findIndex(isMatch)
       const existingField = newCustomFields[index]
       if (existingField) {
@@ -333,29 +357,30 @@ export default {
           ...clone(item),
           order: newOrder
         }
-      } // eslint-disable-line
-      else {
-        // otherwise, check if it's an existing defaultField we want to use as a template
-        // (or revert to empty)
-        const existingField = this.defaultFields.find(isMatch)
-        if (!existingField) {
-          console.error('cannot change order as could not find field of', item)
+      } else {
+        // Otherwise, check if it's an existing defaultField we want to use as a template
+        const existingDefaultField = this.defaultFields.find(isMatch)
+        if (!existingDefaultField) {
+          console.error('Cannot change order as could not find field of', item)
           return
         }
 
         newCustomFields.push({
           key: this.generateTimestamp(),
-          ...clone(existingField),
+          ...clone(existingDefaultField),
           order: newOrder
         })
       }
 
       this.$emit('update:customFields', newCustomFields)
-      // this triggers a change:
+      // This triggers a change:
       // customFields => defaultFields + customDataFields => allFields => filteredFields
     },
 
     determineOrder (item) {
+      // dont show an order for fields that dont have one - this is to save confusion in the ui
+      if (!item.order) return
+
       // NOTE: the order shown and the order saved to the items are not the same
       return this.filteredFields.indexOf(item) + 1
     },
