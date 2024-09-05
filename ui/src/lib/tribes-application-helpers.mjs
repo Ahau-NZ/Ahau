@@ -114,6 +114,7 @@ export const APPLICATION_FRAGMENT = gql`
     credentialPresentations {
       state
       credentials {
+        issuanceDate
         credentialSubject {
           memberOf {
             tribeId
