@@ -1,6 +1,6 @@
 {
   "name": "Ahau",
-  "version": "2.27.2",
+  "version": "2.27.3",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/ahau",
   "main": "main.bundle.js",
@@ -25,7 +25,7 @@
     "ssb-ahau": "^16.5.1",
     "ssb-ahoy": "^6.1.1",
     "ssb-artefact": "^3.2.2",
-    "ssb-atala-prism": "^2.1.1",
+    "ssb-atala-prism": "^2.1.4",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.1",
     "ssb-config": "^3.4.6",

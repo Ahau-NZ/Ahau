@@ -527,6 +527,7 @@ export default {
     ...mapGetters(['whoami']),
     ...mapGetters('alerts', ['alertSettings']),
     ...mapGetters('tribe', ['currentTribe', 'tribeJoiningQuestions', 'tribeCustomFields', 'tribeRequiredFields', 'tribeDefaultFields', 'tribeSettings']),
+    ...mapGetters('credentials', ['credentials']),
     issuesVerifiedCredentials () {
       return this.tribeSettings.issuesVerifiedCredentials
     },

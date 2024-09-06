@@ -1,6 +1,6 @@
 {
   "name": "ahau-ui",
-  "version": "2.27.2",
+  "version": "2.27.3",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "author": "Āhau Ltd.",
   "scripts": {

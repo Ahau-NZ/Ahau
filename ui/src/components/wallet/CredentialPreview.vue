@@ -142,7 +142,7 @@ export default {
       return new Date(this.credential.issuanceDate).toDateString()
     },
     status () {
-      return this.credential.credentialStatus ?? 'Active'
+      return this.credential.credentialStatus && Object.keys(this.credential.credentialStatus).length > 0 ? 'Active' : 'Inactive'
     },
     person () {
       return this.credential?.credentialSubject.person
