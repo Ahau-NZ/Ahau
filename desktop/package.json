@@ -1,6 +1,6 @@
 {
   "name": "Ahau",
-  "version": "2.27.3",
+  "version": "2.27.4",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/ahau",
   "main": "main.bundle.js",

@@ -1,5 +1,9 @@
 # Changelog | Ahau desktop
 
+## v2.27.4
+
+Just adds "Matou" as a publisher for future windows signing
+
 ## v2.27.3
 
 ### Fixes
