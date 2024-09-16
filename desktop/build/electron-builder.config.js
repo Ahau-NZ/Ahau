@@ -125,8 +125,8 @@ function windows () {
       publisherName: [
         'Ahau NZ Ltd', //        name that will probably happen
         'Āhau NZ Ltd', //     << current name
-        'Āhau NZ Limited', //    last name
-        'Ahau NZ Limited' //     oldest name
+        'Mātou', //              future name
+        'Matou' //               future name (without macron, in case)
       ],
       // WARNING - this name must *exactly* match the subject/ "issued to" field on the Signing Certificate
       // otherwise in future if this name changes, auto-updating will fail D:
