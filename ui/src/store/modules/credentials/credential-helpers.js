@@ -12,3 +12,9 @@ export const getAllCredentials = ({
     }
   }`
 })
+
+export const getAllMessages = ({
+  query: gql`query{
+    getPlutoMessages
+  }`
+})

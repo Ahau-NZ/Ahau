@@ -15,5 +15,14 @@
   "inviteLabel": "Please enter a valid 'Out Of Band' or oob invitation code to connect and share this credential",
   "sendProofTitle": "Send Credential Proof",
   "connect": "Send",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "connectionRequest": "Connection request recieved",
+  "connectionResponse": "Connection response sent",
+  "credentialRequest": "Credential request sent",
+  "credentialOffer": "Credential offer accepted",
+  "credentialIssue": "Credential recieved",
+  "presentationRequest": "Credential presentation requested",
+  "presentationResponse": "Credential presented",
+  "from": "from",
+  "activity": "wallet activity"
 }

@@ -1,5 +1,5 @@
 <template>
-<v-card style="max-width: 440px;">
+<v-card style="max-width: 440px; z-index:0">
   <v-expansion-panels light :value="panel" :flat="isReg">
     <v-expansion-panel :readonly="!mobile" align-start class="align-start"
       :style="
@@ -83,11 +83,21 @@
         </v-row>
 
         <v-row v-if="!isReg" justify="end" class="mr-2 mb-4">
+          <v-btn dark circle @click="toggleShowActivity" class="mr-auto ml-5">
+            <p class="mt-4">activity</p>
+            <v-icon> {{showActivity ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
           <v-btn text circle @click="toggleInviteDialog">
             <v-icon color="black"> mdi-send </v-icon>
           </v-btn>
         </v-row>
-
+        <div v-if="!mobile && showActivity">
+            <v-divider light class="mx-4"></v-divider>
+            <p class="caption font-weight-light pa-4">Credential activity</p>
+            <v-row v-for="(action, i) in actions" :key="i">
+              <p>{{ action.piuri }}</p>
+            </v-row>
+        </div>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -119,7 +129,8 @@ export default {
   },
   data () {
     return {
-      showInviteDialog: false
+      showInviteDialog: false,
+      showActivity: false
     }
   },
   computed: {
@@ -154,6 +165,9 @@ export default {
     },
     toggleInviteDialog () {
       this.showInviteDialog = !this.showInviteDialog
+    },
+    toggleShowActivity () {
+      this.showActivity = !this.showActivity
     }
   }
 }

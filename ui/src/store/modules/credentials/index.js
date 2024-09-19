@@ -9,7 +9,7 @@ const handleErr = (msg) => {
 export default function (apollo) {
   const state = {
     credentials: [],
-    message: []
+    messages: []
   }
 
   const getters = {
@@ -67,13 +67,12 @@ export default function (apollo) {
       commit('setCredentials', credentials.data.verifiableCredentials)
     },
     async getAllMessages ({ commit, dispatch, state }) {
-      // get all credentials
+      // get all credential messages
       const messages = await apollo.query(getAllMessages)
         .catch(err => {
           if (err)console.error('error getting messages ' + err)
         })
-      console.log({ messages })
-      commit('setMessages', messages.data.messages)
+      commit('setMessages', messages.data.getPlutoMessages)
     }
   }
 
