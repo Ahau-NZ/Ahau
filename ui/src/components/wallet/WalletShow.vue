@@ -27,7 +27,7 @@
             <v-row>
               <div :class="mobile ? 'd-flex':'d-flex-column'" :style="mobile ? 'width:100%':''">
                 <div><p class="font-weight-bold mb-0">{{message.time}}</p></div>
-                <div><p class="font-weight-bold">{{message.date}}</p></div>
+                <div><p class="font-weight-bold" :class="mobile ? 'pl-2':''">{{message.date}}</p></div>
               </div>
               <div :class="mobile ? 'pa-0 mt-n2':'pl-2'">
                 <span>{{ t('from') + ': ' }}</span>
