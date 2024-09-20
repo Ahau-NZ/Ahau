@@ -83,10 +83,6 @@
         </v-row>
 
         <v-row v-if="!isReg" justify="end" class="mr-2 mb-4">
-          <v-btn dark circle @click="toggleShowActivity" class="mr-auto ml-5">
-            <p class="mt-4">activity</p>
-            <v-icon> {{showActivity ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-          </v-btn>
           <v-btn text circle @click="toggleInviteDialog">
             <v-icon color="black"> mdi-send </v-icon>
           </v-btn>

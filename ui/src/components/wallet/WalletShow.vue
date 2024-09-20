@@ -6,7 +6,7 @@
       </v-col>
       <v-col :class="mobile ? 'mt-n5': ''">
         <BigAddButton v-if="!mobile" class="addBtnDesktop" :label="t('activity')" icon="mdi-chevron-left" @click.native.stop="showActivity = !showActivity" />
-        <v-icon large class="grey--text" v-else @click.native.stop="showActivity = !showActivity">mdi-history</v-icon>
+        <v-icon large class="black--text ml-n4" v-else @click.native.stop="showActivity = !showActivity">mdi-history</v-icon>
         </v-col>
     </v-row>
     <v-navigation-drawer right bottom absolute light
@@ -16,27 +16,27 @@
       v-model="showActivity"
     >
       <div class="d-flex justify-end">
-        <v-icon @click="showActivity = !showActivity" class="mr-6 mt-8">mdi-close</v-icon>
+        <v-icon @click="showActivity = !showActivity" class="mr-6" :class="mobile ? 'mt-4':'mt-8'">mdi-close</v-icon>
       </div>
-      <v-row class="ma-2 black--text ml-8">
-        <h1 class="headliner mb-4">{{ t('activity') }}</h1>
-        <!-- TODO hacky styling fix! -->
+      <v-row class="ma-2 black--text" :class="mobile ? '':'ml-8'">
+        <h1 class="headliner mb-4" :class="mobile ? 'mt-n8':''">{{ t('activity') }}</h1>
         <v-col v-for="message in sortedMessages.reverse()" :key="message.id"
           cols="12" class="pa-0 pl-4"
         >
           <div class="d-flex align-start caption">
             <v-row>
-              <div class="d-flex-column">
+              <div :class="mobile ? 'd-flex':'d-flex-column'" :style="mobile ? 'width:100%':''">
                 <div><p class="font-weight-bold mb-0">{{message.time}}</p></div>
                 <div><p class="font-weight-bold">{{message.date}}</p></div>
               </div>
-              <div class="pl-2">
+              <div :class="mobile ? 'pa-0 mt-n2':'pl-2'">
                 <span>{{ t('from') + ': ' }}</span>
-                <span class="d-block text-truncate" style="max-width:200px">{{ message.author }} </span>
+                <span class="d-block text-truncate" :style="mobile ? 'width:100%':'max-width:200px'">{{ message.author }} </span>
               </div>
-              <div class="pl-2 pt-5 blue--text font-weight-bold"><p>{{ message.action }}</p></div>
+              <div :class="mobile ? 'pt-2':'pl-2 pt-5'" class="blue--text font-weight-bold"><p>{{ message.action }}</p></div>
             </v-row>
           </div>
+          <v-divider light />
         </v-col>
       </v-row>
     </v-navigation-drawer>
