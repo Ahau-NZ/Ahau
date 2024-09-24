@@ -1,5 +1,5 @@
 import { offerMembershipCredential } from '@/lib/tribes-application-helpers.mjs'
-import { getAllCredentials } from './credential-helpers'
+import { getAllCredentials, getAllMessages } from './credential-helpers'
 
 const handleErr = (msg) => {
   console.error(msg)
@@ -8,18 +8,25 @@ const handleErr = (msg) => {
 
 export default function (apollo) {
   const state = {
-    credentials: []
+    credentials: [],
+    messages: []
   }
 
   const getters = {
     credentials: state => {
       return state.credentials
+    },
+    messages: state => {
+      return state.messages
     }
   }
 
   const mutations = {
     setCredentials (state, credentials) {
       state.credentials = credentials
+    },
+    setMessages (state, messages) {
+      state.messages = messages
     }
   }
 
@@ -58,6 +65,14 @@ export default function (apollo) {
           if (err)console.error('error getting credentials ' + err)
         })
       commit('setCredentials', credentials.data.verifiableCredentials)
+    },
+    async getAllMessages ({ commit, dispatch, state }) {
+      // get all credential messages
+      const messages = await apollo.query(getAllMessages)
+        .catch(err => {
+          if (err)console.error('error getting messages ' + err)
+        })
+      commit('setMessages', messages.data.getPlutoMessages)
     }
   }
 

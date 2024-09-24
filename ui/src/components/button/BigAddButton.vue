@@ -8,7 +8,7 @@
     fixed
     outlined
     >
-    <v-icon :large="mobile" class="">mdi-plus</v-icon>
+    <v-icon :large="mobile" class="">{{ icon }}</v-icon>
     <span v-if="!mobile" class="px-3" style="font-size:0.9em">
     {{label}}
     </span>
@@ -21,6 +21,7 @@ export default {
   props: {
     label: String,
     color: String,
+    icon: { type: String, default: 'mdi-plus' },
     customClass: String
   },
   methods: {
