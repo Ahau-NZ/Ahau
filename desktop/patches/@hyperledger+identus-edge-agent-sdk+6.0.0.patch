@@ -1,0 +1,45 @@
+diff --git a/node_modules/@hyperledger/identus-edge-agent-sdk/build/node/index.cjs b/node_modules/@hyperledger/identus-edge-agent-sdk/build/node/index.cjs
+index c48903f..4b80897 100644
+--- a/node_modules/@hyperledger/identus-edge-agent-sdk/build/node/index.cjs
++++ b/node_modules/@hyperledger/identus-edge-agent-sdk/build/node/index.cjs
+@@ -9297,14 +9297,14 @@ class Pluto {
+     /** DIDs **/
+     async storeDID(did, keys, alias) {
+         await this.Repositories.DIDs.save(did, alias);
+-        await Promise.all(asArray(keys).map(async (key) => {
++        for (const key of asArray(keys)) {
+             await this.Repositories.Keys.save(key);
+             await this.Repositories.DIDKeyLinks.insert({
+                 alias,
+                 didId: did.uuid,
+                 keyId: key.uuid
+             });
+-        }));
++        }
+     }
+     /** Prism DIDs **/
+     async storePrismDID(did, privateKey, alias) {
+@@ -9342,8 +9342,10 @@ class Pluto {
+     /** Peer DIDs **/
+     async storePeerDID(did, privateKeys) {
+         await this.Repositories.DIDs.save(did);
+-        await Promise.all(privateKeys.map(x => this.Repositories.Keys.save(x)));
+-        await Promise.all(privateKeys.map(x => this.Repositories.DIDKeyLinks.insert({ didId: did.uuid, keyId: x.uuid })));
++        for (const key of privateKeys) {
++          await this.Repositories.Keys.save(key);
++          await this.Repositories.DIDKeyLinks.insert({ didId: did.uuid, keyId: key.uuid });
++        }
+     }
+     async getAllPeerDIDs() {
+         const allDids = await this.Repositories.DIDs.find({ method: "peer" });
+@@ -9371,7 +9373,9 @@ class Pluto {
+         await this.Repositories.Messages.save(message);
+     }
+     async storeMessages(messages) {
+-        await Promise.all(messages.map(x => this.Repositories.Messages.save(x)));
++        for (const msg of messages) {
++            await this.Repositories.Messages.save(msg);
++        }
+     }
+     async getMessage(id) {
+         return await this.Repositories.Messages.findOne({ id });

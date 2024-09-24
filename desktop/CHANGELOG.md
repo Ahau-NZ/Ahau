@@ -1,8 +1,21 @@
 # Changelog | Ahau desktop
 
-## v2.27.4
+## v2.28.0
 
-Just adds "Matou" as a publisher for future windows signing
+### Features
+
+- Updates ssb-atala-prism
+  - Updates atala prism wallet SDK to version v6.1.0
+  - Adds better validation around the Issuer, Verifier and Mediator being used.
+- Beta Settings in the Tribe Settings
+  - Allow users to view and copy the tribeId
+  - Allow users to view and copy the ssb config file path
+  - Allow users to see recommended config they would need to add to their config file, to enable verified credentials for the current tribe they are viewing.
+  > Note: these new features are only viewable from the electron window
+
+### Fixes
+
+- Stops registration from being approved if the credential offer wasnt not successfully sent
 
 ## v2.27.3
 
@@ -77,7 +90,6 @@ Just adds "Matou" as a publisher for future windows signing
   and `NewPersonDialog` to crash
 - removes .woff files from roboto-latin
 - translations
-
 
 ## v2.25.4
 

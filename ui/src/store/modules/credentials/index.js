@@ -41,14 +41,14 @@ export default function (apollo) {
           offerMembershipCredential(input)
         )
 
-        if (res.errors) throw res
+        if (res.errors) throw res.errors
 
         dispatch('alerts/showMessage', 'The membership credential was offered!', { root: true })
       } catch (err) {
         console.error(err)
         dispatch('alerts/showError', 'Something went wrong while trying to offer a membership credential!', { root: true })
 
-        return null
+        throw err
       }
     },
     async getAllCredentials ({ commit, dispatch, state }) {

@@ -8,7 +8,7 @@
   "dob": "Date of birth",
   "issued": "Issued",
   "state": "Verified digital credential",
-  "status": "Active",
+  "status": "Status",
   "tryingConnection": "Establishing secure connection and sending credential proof. This may take a couple of minutes.",
   "connectSuccess": "Credential successfully sent",
   "connectError": "Something went wrong. Please check your internet connection or try a different invitation code.",

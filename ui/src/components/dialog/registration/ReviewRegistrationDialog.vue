@@ -547,10 +547,6 @@ export default {
         return
       }
 
-      // approve the registration
-      // TODO: should we wait until they have accepted the credential offer to then approve the registration?
-      await this.approveRegistration(input)
-
       // start the offer process
       const offerInput = {
         tribeId: this.tribeId,
@@ -565,6 +561,10 @@ export default {
       }
 
       await this.offerCredential(offerInput)
+        .then(async () => {
+          // approve the registration if the offer was made successfully
+          await this.approveRegistration(input)
+        })
 
       this.close()
     },
