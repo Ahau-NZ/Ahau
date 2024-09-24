@@ -324,7 +324,7 @@
                 <v-checkbox v-model="step4Checkbox" label="I Agree"/>
               </v-stepper-content>
 
-              <!-- STEP 5 Agree to recieve digital credentials -->
+              <!-- STEP 5 Agree to receive digital credentials -->
               <v-stepper-step
                 v-if="issuesVerifiedCredentials"
                 step="5"
