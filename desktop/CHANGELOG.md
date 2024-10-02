@@ -12,6 +12,8 @@
   - Allow users to view and copy the ssb config file path
   - Allow users to see recommended config they would need to add to their config file, to enable verified credentials for the current tribe they are viewing.
   > Note: these new features are only viewable from the electron window
+- Wallet Activity Feed
+  - Adds a new activity feed to the verified credentials wallet
 
 ### Fixes
 
