@@ -1,0 +1,112 @@
+diff --git a/node_modules/ky-universal/index.js b/node_modules/ky-universal/index.js
+index d2bebeb..6d9a17c 100644
+--- a/node_modules/ky-universal/index.js
++++ b/node_modules/ky-universal/index.js
+@@ -1,35 +1,93 @@
+-import fetch, {Headers, Request, Response} from 'node-fetch';
++import fetch, { Headers, Request, Response } from 'node-fetch';
+ import AbortController from 'abort-controller';
+ 
+ const TEN_MEGABYTES = 1000 * 1000 * 10;
+ 
++// Ensure globalThis fetch, Headers, Request, Response, and AbortController are available
+ if (!globalThis.fetch) {
+-	globalThis.fetch = (url, options) => fetch(url, {highWaterMark: TEN_MEGABYTES, ...options});
++  globalThis.fetch = (url, options) =>
++    fetch(url, { highWaterMark: TEN_MEGABYTES, ...options });
+ }
+ 
+ if (!globalThis.Headers) {
+-	globalThis.Headers = Headers;
++  globalThis.Headers = Headers;
+ }
+ 
+ if (!globalThis.Request) {
+-	globalThis.Request = Request;
++  globalThis.Request = Request;
+ }
+ 
+ if (!globalThis.Response) {
+-	globalThis.Response = Response;
++  globalThis.Response = Response;
+ }
+ 
+ if (!globalThis.AbortController) {
+-	globalThis.AbortController = AbortController;
++  globalThis.AbortController = AbortController;
+ }
+ 
+-if (!globalThis.ReadableStream) {
+-	try {
+-		globalThis.ReadableStream = await import('web-streams-polyfill/ponyfill/es2018');
+-	} catch {}
+-}
++// Patch applied: Move top-level await into an async function to avoid issues with CommonJS.
++// Top-level await is not supported in CJS, so we refactor this to be inside an async IIFE (Immediately Invoked Function Expression).
++(async () => {
++  // Dynamically import 'web-streams-polyfill' only if ReadableStream is not available globally
++  if (!globalThis.ReadableStream) {
++    try {
++      globalThis.ReadableStream = (await import('web-streams-polyfill/ponyfill/es2018')).ReadableStream;
++    } catch {
++      // Handle potential errors silently, since this is a fallback polyfill
++    }
++  }
++
++  // Dynamically import 'ky' and assign it to globalThis to maintain usage globally
++  const { default: ky, HTTPError, TimeoutError } = await import('ky');
++
++  // Assigning these imports to globalThis ensures they can still be used as globals
++  globalThis.ky = ky;
++  globalThis.HTTPError = HTTPError;
++  globalThis.TimeoutError = TimeoutError;
++})();
++
++// > Ahau@2.28.0 publish
++// > npm run dist -- --publish always
++
++
++// > Ahau@2.28.0 dist
++// > npm run build:main && electron-builder --config build/electron-builder.config.js --publish always
++
++
++// > Ahau@2.28.0 build:main
++// > node bundle.mjs
++
++// ✘ [ERROR] Top-level await is currently not supported with the "cjs" output format
++
++//     node_modules/ky-universal/index.js:29:30:
++//       29 │     globalThis.ReadableStream = await import('web-streams-polyfill/ponyfill/es2018');
++//          ╵                                 ~~~~~
++
++// ✘ [ERROR] Top-level await is currently not supported with the "cjs" output format
++
++//     node_modules/ky-universal/index.js:33:47:
++//       33 │ const {default: ky, HTTPError, TimeoutError} = await import('ky');
++//          ╵                                                ~~~~~
++
++// /whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1651
++//   let error = new Error(text);
++//               ^
+ 
+-const {default: ky, HTTPError, TimeoutError} = await import('ky');
++// Error: Build failed with 2 errors:
++// node_modules/ky-universal/index.js:29:30: ERROR: Top-level await is currently not supported with the "cjs" output format
++// node_modules/ky-universal/index.js:33:47: ERROR: Top-level await is currently not supported with the "cjs" output format
++//     at failureErrorWithLog (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1651:15)
++//     at /whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1059:25
++//     at runOnEndCallbacks (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1486:45)
++//     at buildResponseToResult (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1057:7)
++//     at /whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:1086:16
++//     at responseCallbacks.<computed> (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:704:9)
++//     at handleIncomingPacket (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:764:9)
++//     at Socket.readFromStdout (/whakapapa-ora/desktop/node_modules/esbuild/lib/main.js:680:7)
++//     at Socket.emit (node:events:517:28)
++//     at addChunk (node:internal/streams/readable:368:12) {
++//   errors: [Getter/Setter],
++//   warnings: [Getter/Setter]
++// }
+ 
+-export default ky;
+-export {HTTPError, TimeoutError};
++// Node.js v18.20.3
