@@ -1,5 +1,13 @@
 # Changelog | Ahau desktop
 
+## v2.29.0
+
+### Features
+
+- Connectionless Issuance and Presentation/Verification
+  - Updates credential flow to use the connectionless approach, reducing the steps in the tribal registration onboarding with issuance or presentation of credentials.
+  - Adds new documentation to ssb-atala-prism
+
 ## v2.28.0
 
 ### Features
