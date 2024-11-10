@@ -1,6 +1,6 @@
 require('@rushstack/eslint-patch/modern-module-resolution')
 
-const isTimeToFix = Date.now() > Number(new Date('2024-10-01'))
+const isTimeToFix = Date.now() > Number(new Date('2025-10-01'))
 const warnForNow = isTimeToFix ? 'error' : 'warn'
 
 module.exports = {

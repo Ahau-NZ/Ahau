@@ -161,17 +161,28 @@ export const getGroupApplication = gql`
 export const offerMembershipCredential = ({ tribeId, poBoxId, feedId, claims }) => {
   return {
     mutation: gql`
-      mutation($tribeId: String!, $poBoxId: String!, $feedId: String!, $claims: MembershipClaimInput!) {
+      mutation(
+        $tribeId: String!,
+        $poBoxId: String!,
+        $feedId: String!,
+        $claims: MembershipClaimInput!,
+        $connectionless: Boolean
+      ) {
         offerCredential(
           tribeId: $tribeId, 
           poBoxId: $poBoxId, 
           feedId: $feedId, 
-          claims: $claims
+          claims: $claims,
+          connectionless: $connectionless
         )
       }
     `,
     variables: {
-      tribeId, poBoxId, feedId, claims
+      tribeId,
+      poBoxId,
+      feedId,
+      claims,
+      connectionless: true
     }
   }
 }
