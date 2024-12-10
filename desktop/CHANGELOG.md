@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v2.29.1
+
+### Fixes
+
+- Fixes issue with auto-presentation being called for registrations to tribes that are issuing only
+
 ## v2.29.0
 
 ### Features
